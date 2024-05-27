@@ -1,0 +1,13 @@
+@import url(assets/reset.css);
+
+* {
+  user-select: none;
+  cursor: default;
+  -webkit-text-size-adjust: 100%;
+}
+
+div {
+  position: absolute;
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
