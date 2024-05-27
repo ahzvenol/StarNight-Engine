@@ -1,0 +1,31 @@
+{
+  "name": "-",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.2",
+    "vite": "^3.0.9",
+    "vite-plugin-cdn-import": "^0.3.5"
+  },
+  "dependencies": {
+    "@solidjs/router": "^0.8.3",
+    "@types/createjs": "^0.0.29",
+    "@types/node": "^18.11.9",
+    "axios": "^1.2.2",
+    "createjs-npm": "^0.2.0",
+    "devtools-detector": "^2.0.14",
+    "js-ini": "^1.6.0",
+    "localforage": "^1.10.0",
+    "micro-reactive": "^2.5.0",
+    "rollup": "2.25.0",
+    "solid-js": "^1.5.1",
+    "solid-styled": "^0.9.0",
+    "vite-plugin-solid": "^2.3.0"
+  }
+}
