@@ -1,1 +1,1 @@
-export function compile(define: string, target: string): (rowIndex: number) => Array<ObjectMap>
+export function compile(define: string, target: string): (rowIndex: number) => Array<Dictionary>

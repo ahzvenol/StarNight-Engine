@@ -24,18 +24,13 @@ v3=true
 // 'readed'似乎可以是'seen'
 // tag:archive:把list换成map，这样就不用初始化了
 // archive中应包含内容按照之前有 previewpic index text 具体名称修改待考虑
-type Store = Reactive<{ archive: Record<number, Object>, config: ObjectMap, global: ObjectMap }>
-
-// assiginObject之后要合并ini中读取设置项和其他设置项会用得到的->好像用Object.assign就够了，用默认值和storage取出的值简单的合并即可
+type Store = Reactive<{ archive: Record<number, Object>, config: Dictionary, global: Dictionary }>
 
 const createStore = async () => {
     localforage.config({ name: "GameName" })
 
-    // const config = Object.assign(parseIni(iniDemo), await localforage.getItem<Object>('config') || {})
-    // const global = await localforage.getItem<Object>('global') || {}
-    // const archive = await localforage.getItem<Record<number, Object>>('archive') || []
-    // localforage.getItem可能返回null,Object.assign遇到一个null不会有问题,parseIni遇到问题也会抛异常
-
+    // localforage.getItem可能返回null,Object.assign遇到一个null不会有问题,parseIni遇到问题会抛异常
+    // 合并配置文件和数据库内的配置，数据库中的配置会覆盖掉配置文件的默认配置
     const config = await localforage.getItem<Object>('config').then(res => Object.assign(parseIni(iniDemo), res)) || {}
     const global = await localforage.getItem<Object>('global') || {}
     const archive = await localforage.getItem<Record<number, Object>>('archive') || {}
@@ -54,8 +49,6 @@ const createStore = async () => {
     console.log(store())
     // console.log(store.config['graphics']())
 
-    // 直接返回Reactive<T>会有奇怪的事情发生
-    // 依赖库的bug修了,没事了
     return store
 }
 

@@ -1,4 +1,4 @@
 declare module 'ini-parser' {
-    function parse(ini: string): ObjectMap
+    function parse(ini: string): Dictionary
     export { parse }
 }
