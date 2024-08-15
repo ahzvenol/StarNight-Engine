@@ -1,4 +1,4 @@
-import type { Component, JSX } from 'solid-js'
+import type { Component, JSX, ParentProps } from 'solid-js'
 import { children as resolveChildren, onCleanup } from 'solid-js'
 
 const getLength = (element: HTMLElement, attr: string) => {
@@ -12,7 +12,7 @@ const getLength = (element: HTMLElement, attr: string) => {
     }
 }
 
-const Scale: Component<{ width: number, height: number, mode: 'auto' | 'full' | unknown, readonly children: JSX.Element }> =
+const Scale: Component<ParentProps<{ width: number, height: number, mode: 'auto' | 'full' | unknown }>> =
     (props) => {
         let intervalId!: NodeJS.Timer
         const resolved = resolveChildren(() => props.children)
@@ -38,7 +38,7 @@ const Scale: Component<{ width: number, height: number, mode: 'auto' | 'full' | 
                 } else if (props.mode == 'full') {
                     slot.style.transform = `scale(${width / props.width},${height / props.height})`
                 } else {
-                    throw Error("mode应该'auto'或'full'中的一个")
+                    throw Error("mode应该是'auto'或'full'")
                 }
             }
             resize()

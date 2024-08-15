@@ -2,7 +2,7 @@
 
 declare module '*.json'
 
-type ObjectMap<T = any> = { [key: string]: T }
+type Dictionary<T = any> = { [key: string]: T;[key: number]: T }
 
 type Function0<R> = () => R
 type Function1<T1, R> = (arg0: T1) => R

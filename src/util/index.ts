@@ -12,23 +12,6 @@ function getUuid(): string {
     return uuid
 };
 
-function assiginObject(target = {}, source = {}): any {
-    let obj = target
-    if (typeof target != 'object' || typeof source != 'object') {
-        throw new Error("参数中存在非Object类型")
-    }
-    for (let key in source) {
-        // 如果target也存在 那就再次合并
-        if (target.hasOwnProperty(key)) {
-            obj[key] = assiginObject(target[key], source[key])
-        } else {
-            // 不存在就直接添加
-            obj[key] = source[key]
-        }
-    }
-    return obj
-}
-
 class ObjectUtils {
     static isObject(value: unknown): value is Record<any, any> {
         return Object.prototype.toString.call(value) === "[object Object]"
@@ -87,6 +70,15 @@ class ArrayUtils {
         return count
             ? JSON.parse(JSON.stringify(this.shallowClone(array, count)))
             : JSON.parse(JSON.stringify(array))
+    }
+    static sameElements<T>(array1: Array<T>, array2: Array<T>) {
+        if (array1.length !== array2.length) return false
+        for (let i = 0; i < array1.length; i++) {
+            if (array1[i] !== array2[i]) {
+                return false
+            }
+        }
+        return true
     }
 }
 
@@ -175,16 +167,84 @@ const to = (start: number, end: number): Array<number> => {
     let i: Array<number> = []
     let go = (start: number, end: number) => {
         i.push(start)
-        if (start === end) return i //return不出去,迷惑极了
+        if (start === end) return i
         else go(start + 1, end)
     }
     go(start, end)
     return i
 }
 
+type EventHandler<T> = Function1<T, void>
+class EventDispatcher<T> {
+    private callbacks: Dictionary<EventHandler<T>> = {};
+
+    public publish(e: T): void {
+        Object.values(this.callbacks).forEach(fn => fn(e))
+    }
+
+    public subscribe(callback: EventHandler<T>): void {
+        const uuid = getUuid()
+        this.callbacks[uuid] = callback
+    }
+
+    public subscribeOnce(callback: EventHandler<T>): void {
+        const uuid = getUuid()
+        this.callbacks[uuid] = (e) => {
+            delete this.callbacks[uuid]
+            callback(e)
+        }
+    }
+}
+
+interface QuerablePromise<T> extends Promise<T> {
+    isFulfilled(): boolean
+    isPending(): boolean
+    isRejected(): boolean
+}
+
+function makeQuerablePromise<T>(promise: Promise<T>): QuerablePromise<T> {
+    // Don't modify any promise that has been already modified.
+    if ((promise as unknown as Dictionary).isFulfilled) return promise as QuerablePromise<T>
+
+    // Set initial state
+    let isPending = true
+    let isRejected = false
+    let isFulfilled = false
+
+    // Observe the promise, saving the fulfillment in a closure scope.
+    const result = promise.then(
+        (v: T) => {
+            isFulfilled = true
+            isPending = false
+            return v
+        },
+        (e: any) => {
+            isRejected = true
+            isPending = false
+            throw e
+        }
+    ) as QuerablePromise<T>
+
+    result.isFulfilled = () => isFulfilled
+    result.isPending = () => isPending
+    result.isRejected = () => isRejected
+    return result
+}
+
+// function eventDispatcher() {
+//     const callbackList: Array<Function0<void>> = []
+//     return {
+//         publish() {
+//             callbackList.forEach(fn => fn())
+//         },
+//         subscribe(callback: Function0<void>) {
+//             callbackList.push(callback)
+//         }
+//     }
+// }
+
 export {
     getUuid,
-    assiginObject,
     ObjectUtils,
     ArrayUtils,
     logger,
@@ -193,4 +253,6 @@ export {
     to,
     numberListToString,
     stringToNumberList,
+    EventDispatcher,
+    makeQuerablePromise
 }

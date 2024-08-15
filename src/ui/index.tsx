@@ -1,6 +1,6 @@
 import { Reactive, useReactive } from 'micro-reactive'
 import { Component, Show } from 'solid-js'
-import { Clone, Element, Graphics, Route, Variable, column, line } from './Elements'
+import { Clone, Element, Graphics, Route, Variable, column, line, navigate } from './Elements'
 import { Store } from '../store'
 
 const UI: Component<{ environment: Store }> = ({ environment }) =>
@@ -16,9 +16,10 @@ const UI: Component<{ environment: Store }> = ({ environment }) =>
                                     width: `121px`,
                                     height: `26px`,
                                     right: `570px`,
-                                    bottom: `${55 + 41 * line(4)(index)}px`,
+                                    bottom: `${55 + 41 * (4 - line(4)(index))}px`,
                                     'background-image': `url('title_${['01start', '02load', '03config', '04gallery'][index]}.png')`
-                                }} />
+                                }}
+                                onclick={() => navigate(['/game','/load', '/config', '/gallery'][index])} />
                             <style jsx>
                                 {`
                                 .menu-${index}:hover {
@@ -30,6 +31,9 @@ const UI: Component<{ environment: Store }> = ({ environment }) =>
                     }</Clone>
                 </Element>
         }</Route>
+        <Route path="/load">{() => <></>}</Route>
+        <Route path="/config">{() => <></>}</Route>
+        <Route path="/gallery">{() => <></>}</Route>
     </Graphics >
 
 

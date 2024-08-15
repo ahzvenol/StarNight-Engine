@@ -27,7 +27,7 @@ interface Graphics {
     "children"?: []
 }
 
-type Info = Element & { varMap?: ObjectMap<Signal<any>>, functionMap?: ObjectMap }
+type Info = Element & { varMap?: Dictionary<Signal<any>>, functionMap?: Dictionary }
 
 const parser = new (less.Parser)
 

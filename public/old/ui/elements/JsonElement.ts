@@ -2,7 +2,7 @@ import { ArrayUtils, ObjectUtils } from "../../util"
 
 // interface Base { "name": string }
 interface Generator { type: "generator", kind: string }
-interface Clone extends Generator { kind: "clone", count: number, args?: ObjectMap<[string, number?]> }
+interface Clone extends Generator { kind: "clone", count: number, args?: Dictionary<[string, number?]> }
 // issue:varName如果不需要,默认值可以弄uuid // 不过，可能出现这种情况吗
 interface Mutex extends Generator { kind: "mutex", varName: string }
 // tag:如果不限制生成器的顺序而只限制数量，感觉可以弄出很多魔法
@@ -104,7 +104,7 @@ interface ClassTag extends Tag { kind: "class", value: string }
 interface CssTag extends Tag { kind: "css", value: string }
 interface JsTag extends Tag { kind: "js", lifecycle: Lifecycle, value: string }
 interface ShowTag extends Tag { kind: "show", value: Array<{ var: string, operator: Operator, condition: string | number | boolean }> }
-interface VarTag extends Tag { kind: "var", value: ObjectMap<string | number | boolean> }
+interface VarTag extends Tag { kind: "var", value: Dictionary<string | number | boolean> }
 // tag:好像kind也没太大必要?
 interface JsonElement {
     id?: IdTag

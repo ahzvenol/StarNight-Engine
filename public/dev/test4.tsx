@@ -12,14 +12,14 @@ type GameContext = {
 }
 
 type CommandContent = {
-    Load(arg0: ObjectMap): Promise<void> | void
-    Init(arg0: ObjectMap): Promise<void> | void
-    Normal(arg0: ObjectMap): Promise<void> | void
-    Fast(arg0: ObjectMap): Promise<void> | void
+    Load(arg0: Dictionary): Promise<void> | void
+    Init(arg0: Dictionary): Promise<void> | void
+    Normal(arg0: Dictionary): Promise<void> | void
+    Fast(arg0: Dictionary): Promise<void> | void
 }
 
 type Command = (context: GameContext) => CommandContent
 
-const commands: ObjectMap<Command> = {}
+const commands: Dictionary<Command> = {}
 
 const init = (context: GameContext) => ObjectUtils.map(commands)(([key, command]) => [key, command(context)])

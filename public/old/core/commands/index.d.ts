@@ -1,3 +1,3 @@
-export declare const commands: ObjectMap<{ R: (arg0: ObjectMap) => void }>
+export declare const commands: Dictionary<{ R: (arg0: Dictionary) => void }>
 
 export declare const commandPrototype: {}

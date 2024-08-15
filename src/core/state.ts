@@ -1,4 +1,3 @@
-
 import Timer from './timer'
 import createjs from 'createjs-npm'
 import {compile} from '@/lib'
@@ -42,7 +41,7 @@ class State {
 }
 
 // #region
-// type Function1Map<T = void> = ObjectMap<(arg0: T) => void>
+// type Function1Map<T = void> = Dictionary<(arg0: T) => void>
 
 // interface Util {
 //     onActStart(arg0: () => void): void
@@ -74,7 +73,7 @@ interface Lifecycle {
 
 function newUtil(state: State): Util {
     // utils
-    const util: ObjectMap<Function1<Function0<void>, void>> = {}
+    const util: Dictionary<Function1<Function0<void>, void>> = {}
     let actStartCallBackList: Array<() => void> = []
     util.onActStart = fn => {
         actStartCallBackList.push(fn)

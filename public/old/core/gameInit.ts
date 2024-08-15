@@ -5,12 +5,12 @@ import { commands, commandPrototype } from './commands'
 export default () => {
     const state = new State()
 
-    // type Function1Map<T = void> = ObjectMap<(arg0: T) => void>
+    // type Function1Map<T = void> = Dictionary<(arg0: T) => void>
 
     // utils
     // #region
     // const util: Function1Map<() => void> = {}
-    const util: ObjectMap<Function1<Function0<void>, void>> = {}
+    const util: Dictionary<Function1<Function0<void>, void>> = {}
     let actStartCallBackList: Array<() => void> = []
     util.onActStart = fn => {
         actStartCallBackList.push(fn)
@@ -28,7 +28,7 @@ export default () => {
         actEndCallBackList = []
     }
     // #endregion
-    const lifecycle: ObjectMap<Function1<Function0<void>, void>> = {
+    const lifecycle: Dictionary<Function1<Function0<void>, void>> = {
         isInit: fn => {
             if (state.now === 'I') fn()
         },

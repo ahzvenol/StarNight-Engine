@@ -46,7 +46,7 @@ class Element {
     onMount: (element: HTMLDivElement) => void = () => { }
     onCleanup: (element: HTMLDivElement) => void = () => { }
     when: () => boolean = () => true
-    createVar: () => ObjectMap<Signal<any>> = () => ({})
+    createVar: () => Dictionary<Signal<any>> = () => ({})
     constructor(json: TElement | Container | JsonElement) {
         if ((json as any).type !== undefined) translate.bind(this)(unZipGenerator(json as TElement | Container))
         else translate.bind(this)(json)

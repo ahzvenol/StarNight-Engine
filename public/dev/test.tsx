@@ -4,9 +4,9 @@ import { Component, JSX, splitProps } from "solid-js"
 import { createEffect } from "solid-js"
 import { ObjectUtils } from "../util"
 
-const VariableMap: ObjectMap<Reactive<VariableType>> = {}
+const VariableMap: Dictionary<Reactive<VariableType>> = {}
 
-const defaultConfig: ObjectMap = {}
+const defaultConfig: Dictionary = {}
 
 type VariableType = string | number | boolean
 
@@ -24,7 +24,7 @@ const Variable: Component<{ name: string, type: VariableTypeString, defaultValue
 
 const Computation: Component<{ name: string, type: ArithmeticOperator, valueAName: string, valueBName: string }> =
     ({ name, type: operator, valueAName, valueBName }) => {
-        const operations: ObjectMap<(a: VariableType | any, b: VariableType | any) => VariableType> = {
+        const operations: Dictionary<(a: VariableType | any, b: VariableType | any) => VariableType> = {
             '+': (a, b) => a + b,
             '-': (a, b) => a - b,
             '*': (a, b) => a * b,
@@ -66,7 +66,7 @@ class AudioManager {
 
     private globalMuted = false
 
-    private audioTracks: ObjectMap<HTMLAudioElement> = {};
+    private audioTracks: Dictionary<HTMLAudioElement> = {};
 
     // 创建新的音频轨道
     createAudioTrack(trackName: string, src: string) {
@@ -112,12 +112,12 @@ const Audio: Component<{ name: string, src: string, bindValue: string }> =
     }
 
 
-const Element: Component<ObjectMap> = (props) => {
+const Element: Component<Dictionary> = (props) => {
     const [local, attributes] = splitProps(props, ["children"])
     return <div {...attributes}>{local.children}</div>
 }
 
-const Effector: Component<ObjectMap> = (props) => {
+const Effector: Component<Dictionary> = (props) => {
     //do something
     return <Element {...props}></Element>
 }

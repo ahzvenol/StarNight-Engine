@@ -11,13 +11,13 @@
 
 
 // type Command = {
-//     Load(arg0: ObjectMap): Promise<void> | void
-//     Init(arg0: ObjectMap): Promise<void> | void
-//     Normal(arg0: ObjectMap): Promise<void> | void
-//     Fast(arg0: ObjectMap): Promise<void> | void
+//     Load(arg0: Dictionary): Promise<void> | void
+//     Init(arg0: Dictionary): Promise<void> | void
+//     Normal(arg0: Dictionary): Promise<void> | void
+//     Fast(arg0: Dictionary): Promise<void> | void
 // }
 
-// const commands: ObjectMap<Command> = {}
+// const commands: Dictionary<Command> = {}
 
 const commandPrototype = {}
 
@@ -44,7 +44,7 @@ const EditTextArea: Command = {
     Load,
 }
 
-type Book = Array<Array<ObjectMap>>
+type Book = Array<Array<Dictionary>>
 
 declare const book: Book
 

@@ -1,7 +1,7 @@
 export default {
     // todo:需完善
     // c: condition, t: then, e: else
-    async R({ c, t, e }: { c: string, t: ObjectMap, e: ObjectMap }) {
+    async R({ c, t, e }: { c: string, t: Dictionary, e: Dictionary }) {
         // 手动泄漏所需变量到eval
         let evalVarStr = ""
         for (const key in this.args) {

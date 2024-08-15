@@ -62,7 +62,7 @@ function createArchive() {
     // 考虑使用字典而不是数组的方式，并设置存档显示的默认值
     const archive = { saveData: new Array(90).fill({}), globalData: {} }
     localforage.setItem('archive', archive)
-    return JSON.parse(JSON.stringify(archive)) as ObjectMap
+    return JSON.parse(JSON.stringify(archive)) as Dictionary
 }
 // tag api有改动,不过与之关联的debug页面删掉了，应该没问题的吧
 function deleteArchive() {
@@ -70,7 +70,7 @@ function deleteArchive() {
 }
 
 async function initArchive() {
-    let archive = await localforage.getItem<ObjectMap>('archive').then(e => e || createArchive())
+    let archive = await localforage.getItem<Dictionary>('archive').then(e => e || createArchive())
 
     function deepProxy(object: object, handler: ProxyHandler<object>) {
         for (let i in object) {

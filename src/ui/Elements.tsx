@@ -1,13 +1,18 @@
-import { Router, Routes, Route as SolidRoute } from "@solidjs/router"
+import { NavigateOptions, Router, Routes, Route as SolidRoute, useNavigate } from "@solidjs/router"
 import type { Reactive } from 'micro-reactive'
 import type { Component } from 'solid-js'
 import { Index, JSX } from 'solid-js'
 import { ObjectUtils, getUuid, to } from "../util"
 import Scale from "./Scale"
 
-const line = (x: number) => (index: number) => (index + 1) % x
-
+//横行竖列
+//给出总行数，返回每个index对应的行数
+const line = (x: number) => (index: number) => (index % x) + 1
+//给出总列数，返回每个index对应的列数
 const column = (x: number) => (index: number) => Math.ceil((index + 1) / x)
+
+// const navigate = (to: string, options?: Partial<NavigateOptions<unknown>> | undefined) => useNavigate()(to, options)
+const navigate = (to: string) => location.href = to
 
 const Route = <U extends JSX.Element>
     ({ path, children }: { path: string, children: () => U }) =>
@@ -36,10 +41,14 @@ const Element: Component<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
 }
 
 const Graphics = <U extends JSX.Element>
-    ({ config, children }: { config: Reactive<ObjectMap>, children: U }) =>
+    ({ config, children }: { config: Reactive<Dictionary>, children: U }) =>
     <Element style="width: 100vw;height: 100vh;background-color: #000;">
         <Router>
-            <Scale width={config()['width']} height={config()['height']} mode={config()['mode']}>
+            <Scale
+                width={config()['width']}
+                height={config()['height']}
+                mode={config()['mode']}
+            >
                 <Element>
                     <Routes>{children}</Routes>
                 </Element>
@@ -55,4 +64,4 @@ const Clone = <U extends JSX.Element>
     <Index each={to(0, count - 1)}>{(index) => children(index())}</Index>
 
 
-export { Clone, Element, Graphics, Route, Variable, column, line }
+export { Clone, Element, Graphics, Route, Variable, column, line, navigate }

@@ -7,7 +7,7 @@ import { to } from "../util"
 const preLoadArgs = ["cbg.p", "cm.a", "bgm.a", "se.a", "pc.p"]
 
 // 不是很清楚缓存需不需要主动取
-const preLoadResources:ObjectMap<HTMLImageElement> = {}
+const preLoadResources:Dictionary<HTMLImageElement> = {}
 
 // todo url不采取全称而要改用资源名的格式自由拼装
 
