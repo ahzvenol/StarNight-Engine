@@ -82,37 +82,7 @@ class ArrayUtils {
     }
 }
 
-type Level = "DEBUG" | "INFO" | "WARN" | "ERROR"
-class Logger {
-    static dic = { DEBUG: '#7799BB', INFO: '#009966', WARN: '#DD5544', ERROR: '#CC2233' }
-    static clog(level: Level, info: any) {
-        console.log(
-            `%c[${level}]%c [${new Date().format("yyyy/MM/dd hh:mm:ss")}] %c${info}`,
-            `color:white;background-color:${Logger.dic[level]}`,
-            `color:${Logger.dic[level]}`,
-            ''
-        )
-    }
-    debug(info: any) {
-        const level = 'DEBUG'
-        Logger.clog(level, info)
-    }
-    info(info: any) {
-        const level = 'INFO'
-        Logger.clog(level, info)
-    }
-    warn(info: any) {
-        const level = 'WARN'
-        Logger.clog(level, info)
-    }
-    error(info: any) {
-        const level = 'ERROR'
-        Logger.clog(level, info)
-    }
-}
 
-// 不全改成静态函数是因为代码提示问题
-const logger = new Logger()
 
 function cancleFullScreen() {
     const document = window.document as any
@@ -174,28 +144,6 @@ const to = (start: number, end: number): Array<number> => {
     return i
 }
 
-type EventHandler<T> = Function1<T, void>
-class EventDispatcher<T> {
-    private callbacks: Dictionary<EventHandler<T>> = {};
-
-    public publish(e: T): void {
-        Object.values(this.callbacks).forEach(fn => fn(e))
-    }
-
-    public subscribe(callback: EventHandler<T>): void {
-        const uuid = getUuid()
-        this.callbacks[uuid] = callback
-    }
-
-    public subscribeOnce(callback: EventHandler<T>): void {
-        const uuid = getUuid()
-        this.callbacks[uuid] = (e) => {
-            delete this.callbacks[uuid]
-            callback(e)
-        }
-    }
-}
-
 interface QuerablePromise<T> extends Promise<T> {
     isFulfilled(): boolean
     isPending(): boolean
@@ -231,6 +179,15 @@ function makeQuerablePromise<T>(promise: Promise<T>): QuerablePromise<T> {
     return result
 }
 
+function tryFn(fn: () => void) {
+    try {
+        fn()
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+
 // function eventDispatcher() {
 //     const callbackList: Array<Function0<void>> = []
 //     return {
@@ -247,12 +204,11 @@ export {
     getUuid,
     ObjectUtils,
     ArrayUtils,
-    logger,
     fullScreen,
     cancleFullScreen,
     to,
     numberListToString,
     stringToNumberList,
-    EventDispatcher,
-    makeQuerablePromise
+    makeQuerablePromise,
+    tryFn
 }

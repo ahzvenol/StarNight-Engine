@@ -24,7 +24,8 @@ v3=true
 // 'readed'似乎可以是'seen'
 // tag:archive:把list换成map，这样就不用初始化了
 // archive中应包含内容按照之前有 previewpic index text 具体名称修改待考虑
-type Store = Reactive<{ archive: Record<number, Object>, config: Dictionary, global: Dictionary }>
+type Save = { global: Dictionary, individual: Record<number, Dictionary> }
+type Store = Reactive<{ save: Save, config: Dictionary }>
 
 const createStore = async () => {
     localforage.config({ name: "GameName" })
@@ -32,14 +33,14 @@ const createStore = async () => {
     // localforage.getItem可能返回null,Object.assign遇到一个null不会有问题,parseIni遇到问题会抛异常
     // 合并配置文件和数据库内的配置，数据库中的配置会覆盖掉配置文件的默认配置
     const config = await localforage.getItem<Object>('config').then(res => Object.assign(parseIni(iniDemo), res)) || {}
-    const global = await localforage.getItem<Object>('global') || {}
-    const archive = await localforage.getItem<Record<number, Object>>('archive') || {}
+    // const global = await localforage.getItem<Object>('global') || {}
+    const save = await localforage.getItem<Save>('save') || {}
 
-    const store = useReactive({ config, global, archive })
+    const store = useReactive({ save, config })
 
     useEffect(() => { localforage.setItem('config', store['config']()) })
-    useEffect(() => { localforage.setItem('global', store['global']()) })
-    useEffect(() => { localforage.setItem('archive', store['archive']()) })
+    // useEffect(() => { localforage.setItem('global', store['global']()) })
+    useEffect(() => { localforage.setItem('save', store['save']()) })
 
     // 绑定对应的audio
     useEffect(() => { })
