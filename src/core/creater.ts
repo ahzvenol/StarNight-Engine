@@ -3,7 +3,7 @@ import createjs from "createjs-npm"
 class Tween {
     static tweenList: Array<createjs.Tween> = []
     static get(target: any, props?: createjs.TweenProps | undefined) {
-        const tween = createjs.Tween.get(target,props)
+        const tween = createjs.Tween.get(target, props)
         this.tweenList.push(tween)
         return tween
     }
@@ -13,8 +13,8 @@ class Tween {
     }
 }
 
-class Container extends createjs.Container{
+class Container extends createjs.Container {
 
 }
 
-export { Tween }
+export { Tween, Container }

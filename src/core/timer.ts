@@ -1,39 +1,38 @@
+// 对回调进行包装,实现了暂停,恢复,立即执行和取消执行的功能
 class TimeoutController {
-    private callbackFn: () => void
-    private timerId: number | null = null;
+    private executeOnceCallback: () => void
+    private timerId: number | undefined = undefined;
     private startTime: number = 0;
     private remainingTime: number
     private _isExecuted: boolean = false;
+    private _isStarted: boolean = true;
     public get isExecuted(): boolean {
         return this._isExecuted
     }
     constructor(callback: () => void, delay: number) {
-        this.callbackFn = callback
+        this.executeOnceCallback = () => {
+            this._isExecuted = true
+            callback()
+        }
         this.remainingTime = delay
         this.start()
     }
-    private executeCallback = () => {
-        this._isExecuted = true
-        this.callbackFn()
-    }
+
     public start() {
+        if (this._isStarted) return
+        this._isStarted = true
         this.startTime = Date.now()
-        if (this.timerId !== null) {
-            clearTimeout(this.timerId)
-        }
-        this.timerId = window.setTimeout(this.executeCallback, this.remainingTime)
+        this.timerId = window.setTimeout(this.executeOnceCallback, this.remainingTime)
     }
     public pause() {
-        if (this.timerId !== null) {
-            clearTimeout(this.timerId)
-        }
-        this.remainingTime -= Date.now() - this.startTime
+        if (!this._isStarted) return
+        this._isStarted = false
+        window.clearTimeout(this.timerId)
+        this.remainingTime = this.remainingTime - (Date.now() - this.startTime)
     }
     public immediateExecution() {
-        if (this.timerId !== null) {
-            clearTimeout(this.timerId)
-        }
-        this.executeCallback()
+        window.clearTimeout(this.timerId)
+        this.executeOnceCallback()
     }
     public cancel() {
         this._isExecuted = true
@@ -42,7 +41,6 @@ class TimeoutController {
 
 
 // Timer假设在最后一个延时回调完成之后不会再有新的新的延时回调被注册,否则永远无法确定执行是否结束
-// 场上还有类似create的动画延时，或许准确的确定actEnd是不现实的
 class Timer {
     private _isImmediate = false;
     public get isImmediate(): boolean {
@@ -54,16 +52,8 @@ class Timer {
         if (this._isImmediate) callback()
         else this.timeoutControllerList.push(new TimeoutController(callback, ms))
     }
-    // 立即执行时,会导致死循环
-    // public setInterval(callback: Function0<any>, ms: number) {
-    //     const run = () => {
-    //         this.setTimeout(() => {
-    //             callback()
-    //             run()
-    //         }, ms)
-    //     }
-    //     run()
-    // }
+    // 立即执行时,会导致死循环,暂时放弃这个功能
+    // public setInterval(callback: Function0<void>, ms: number) {
     public delay(wait: number) {
         if (this._isImmediate) return Promise.resolve()
         else return new Promise<void>((resolve) => {
@@ -92,39 +82,5 @@ class CountTimer extends Timer {
         else this.timeoutPromiseList.push(new Promise(res => super.setTimeout(() => { res(); callback() }, ms)))
     }
 }
-
-// class CountTimer extends Timer {
-//     timeoutDoneConut = 0
-//     unstableCallback = () => { }
-//     setTimeout(callback: Function0<any>, ms: number): void {
-//         // 记录调用时的immed变量状态,以这种方式实现在immed为true时跳过计数,配合上面...
-//         // fix 似乎有点藕,需要研究下方案
-//         // const nowImmed = this.immed
-//         // let conutedCallback = () => {
-//         //     callback()
-//         //     if (nowImmed === false) this.timeoutDoneConut++
-//         //     if (this.setTimeoutList.length === this.timeoutDoneConut) this.unstableCallback()
-//         // }
-//         // super.setTimeout(conutedCallback, ms)
-//         // 似乎好一点,但是这个if重复的问题怎么办呢
-//         if (this.immed) {
-//             callback()
-//         } else {
-//             let conutedCallback = () => {
-//                 callback()
-//                 this.timeoutDoneConut++
-//                 if (this.setTimeoutList.length === this.timeoutDoneConut) this.unstableCallback()
-//             }
-//             super.setTimeout(conutedCallback, ms)
-//         }
-//     }
-//     // allDone() {
-//     //     if (this.setTimeoutList.length === this.timeoutDoneConut) {
-//     //         return true
-//     //     } else {
-//     //         return false
-//     //     }
-//     // }
-// }
 
 export default CountTimer

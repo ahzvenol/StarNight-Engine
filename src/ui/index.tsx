@@ -3,6 +3,7 @@ import { Component, Show } from 'solid-js'
 import { Clone, Element, Graphics, Route, Variable, column, line, navigate } from './Elements'
 import { Store } from '../store'
 
+// todo:最后让AI去整理import的值和type吧
 const UI: Component<{ environment: Store }> = ({ environment }) =>
     <Graphics config={environment.config['graphics']}>
         <Route path="/">{

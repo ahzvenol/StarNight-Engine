@@ -1,5 +1,5 @@
-import { NavigateOptions, Router, Routes, Route as SolidRoute, useNavigate } from "@solidjs/router"
-import type { Reactive } from 'micro-reactive'
+import { Router, Routes, Route as SolidRoute } from "@solidjs/router"
+import { useReactive, type Reactive } from 'micro-reactive'
 import type { Component } from 'solid-js'
 import { Index, JSX } from 'solid-js'
 import { ObjectUtils, getUuid, to } from "../util"
