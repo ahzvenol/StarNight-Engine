@@ -9,11 +9,6 @@ export default defineConfig(({ command }) => ({
   importToCDN({
     modules: [
       {
-        name: 'less',
-        var: 'less',
-        path: 'http://cdn.bootcss.com/less.js/1.7.0/less.min.js'
-      },
-      {
         name: 'axios',
         var: 'axios',
         path: 'https://cdn.bootcdn.net/ajax/libs/axios/1.2.2/axios.min.js'
