@@ -1,8 +1,8 @@
-import { makeQuerablePromise } from "@/util"
+import { makeQuerablePromise } from "@/utils"
 import { Reactive } from "micro-reactive"
 import Timer from "./timer"
 import { EventDispatcher, on } from "./EventDispatcher"
-import logger from "@/util/logger"
+import logger from "@/utils/Logger"
 
 
 

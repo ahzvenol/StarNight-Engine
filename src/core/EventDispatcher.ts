@@ -1,11 +1,12 @@
-import { tryFn } from "@/util"
+import { tryFn } from "@/utils"
 
 type EventHandler<T> = Function1<T, void>
 class EventDispatcher<T> {
-    private callbacks: Dictionary<EventHandler<T>> = {};
+    private callbacks: Record<symbol, EventHandler<T>> = {};
 
     public publish(e: T): void {
-        Object.values(this.callbacks).forEach(fn => tryFn(() => fn(e)))
+        // @ts-ignore
+        Reflect.ownKeys(this.callbacks).forEach(key => tryFn(() => this.callbacks[key](e)))
     }
 
     public subscribe(callback: EventHandler<T>): void {

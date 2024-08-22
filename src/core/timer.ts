@@ -83,4 +83,5 @@ class CountTimer extends Timer {
     }
 }
 
-export default CountTimer
+// 这样方便代码提示一点
+export { CountTimer as Timer }

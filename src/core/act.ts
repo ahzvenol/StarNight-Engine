@@ -1,8 +1,8 @@
 import { Reactive } from "micro-reactive"
-import { makeQuerablePromise } from "@/util"
-import logger from "@/util/logger"
+import { makeQuerablePromise } from "@/utils"
+import logger from "@/utils/Logger"
 import { EventDispatcher, on } from "./EventDispatcher"
-import Timer from "./timer"
+import { Timer } from "./timer"
 
 declare const Book: Array<Array<Dictionary>>
 
@@ -12,20 +12,11 @@ type Command = Function1<GameContext, Function1<Dictionary, Promise<void> | void
 
 declare const commands: Dictionary<Command>
 
-const actStartEvent = new EventDispatcher<GameContext>()
-const actEndEvent = new EventDispatcher<GameContext>()
-const actSecondClickEvent = new EventDispatcher<GameContext>()
-
-actStartEvent.subscribe(context => logger.info(`开始执行第${context.actIndex()}幕...`))
-actEndEvent.subscribe(_ => logger.info('执行结束'))
-actSecondClickEvent.subscribe(_ => logger.info('一幕内第二次点击,立即执行'))
-
-
 enum State {
-    Init = 'I',
-    Normal = 'N',
-    Fast = 'F',
-    Auto = 'A'
+    Init,
+    Normal,
+    Fast,
+    Auto
 }
 
 // tag:State需要传递一个指针而不是一个值，暂时使用这种形式
@@ -33,14 +24,24 @@ function runActLoop(
     clickEvent: EventDispatcher<void>,
     fastEvent: EventDispatcher<void>,
     autoEvent: EventDispatcher<void>,
-    state: Reactive<State>
+    state: Reactive<State>,
+    actIndex: Reactive<number>
 ) {
     const onClick = on(clickEvent)
     const onFast = on(fastEvent)
     const onAuto = on(autoEvent)
-    // function onClick(): Promise<void> {
-    //     return new Promise(clickEvent.once) as unknown as Promise<void>
-    // }
+
+    // 放在外部不好清理内存,干脆都写到一起
+    const actStartEvent = new EventDispatcher<GameContext>()
+    const actEndEvent = new EventDispatcher<GameContext>()
+    const actSecondClickEvent = new EventDispatcher<GameContext>()
+    actStartEvent.subscribe(context => logger.info(`开始执行第${context.actIndex()}幕...`))
+    actEndEvent.subscribe(_ => logger.info('执行结束'))
+    actSecondClickEvent.subscribe(_ => logger.info('一幕内第二次点击,立即执行'))
+    const onActStart = on(actStartEvent)
+    const onSecondClick = on(actSecondClickEvent)
+    const onActEnd = on(actEndEvent)
+
     function runAct(rowIndex: number) {
         const timer = new Timer()
         const context = { timer }
@@ -70,11 +71,10 @@ function runActLoop(
             .then(onActEnd)
         return actPromise
     }
-    // 只有两个地方会有延迟,正在运行一幕,等待点击事件
-    // 只需要在进入fast模式之前发布一次点击事件,接下来就可以进入快速循环了
-    // 为了更清晰的表示,用Promise.race同时监听几个事件也可以达到相同效果
+    // 只有两个地方会有阻塞,正在运行一幕,等待点击事件
+    // 为了更清晰的表示,用Promise.race同时监听几个事件来推进幕循环
     // auto的话,不需要去加速正在运行的幕,但是需要去推动已经停止的循环
-    // 像是选项要卡死幕循环的情况,不在timer控制范围内的await就可以
+    // 像是选项要卡死幕循环的情况,使用不在timer控制范围内的await就可以
     function loop(actIndex: Reactive<number>) {
         runAct(actIndex())
             .then(() => state() === State.Fast
@@ -84,5 +84,5 @@ function runActLoop(
                     : Promise.race([onClick(), onAuto(), onFast()]))
             .then(() => loop(actIndex))
     }
-    loop(0)
+    loop(actIndex)
 }

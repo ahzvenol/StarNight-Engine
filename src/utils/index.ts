@@ -12,78 +12,6 @@ function getUuid(): string {
     return uuid
 };
 
-class ObjectUtils {
-    static isObject(value: unknown): value is Record<any, any> {
-        return Object.prototype.toString.call(value) === "[object Object]"
-    }
-    static isArray(value: unknown): value is Array<unknown> {
-        return Object.prototype.toString.call(value) === '[object Array]'
-    }
-    static isString(value: unknown): value is string {
-        return Object.prototype.toString.call(value) === '[object String]'
-    }
-    static isEmpty(object: Object): boolean {
-        return JSON.stringify(object) === "{}"
-    }
-    static isNotEmpty(object: Object): boolean {
-        return JSON.stringify(object) !== "{}"
-    }
-    static forEach<K extends string | number | symbol, V>(object: Partial<Record<K, V>>) {
-        return function (callback: (entry: [K, V]) => void) {
-            for (const key in object) {
-                callback([key, object[key]!])
-            }
-        }
-    }
-    static map<K extends string | number | symbol, V>(object: Partial<Record<K, V>>) {
-        return function <U>(callback: (entry: [K, V]) => [K, U]) {
-            const result = {} as Partial<Record<K, U>>
-            for (const key in object) {
-                const [k, v] = callback([key, object[key]!])
-                result[k] = v
-            }
-            return result
-        }
-    }
-    static fitter<K extends string | number | symbol, V>(object: Partial<Record<K, V>>) {
-        return function (callback: (entry: [K, V]) => boolean) {
-            const result = {} as Partial<Record<K, V>>
-            for (const key in object) {
-                if (callback([key, object[key]!])) {
-                    result[key] = object[key]
-                }
-            }
-            return result
-        }
-    }
-}
-
-class ArrayUtils {
-    static shallowClone<T>(array: Array<T>, count: number = 1): Array<T> {
-        let array1: Array<T> = []
-        for (let i = 0; i < count; i++) {
-            array1 = array1.concat(array)
-        }
-        return array1
-    }
-    static deepClone<T>(array: Array<T>, count?: number): Array<T> {
-        return count
-            ? JSON.parse(JSON.stringify(this.shallowClone(array, count)))
-            : JSON.parse(JSON.stringify(array))
-    }
-    static sameElements<T>(array1: Array<T>, array2: Array<T>) {
-        if (array1.length !== array2.length) return false
-        for (let i = 0; i < array1.length; i++) {
-            if (array1[i] !== array2[i]) {
-                return false
-            }
-        }
-        return true
-    }
-}
-
-
-
 function cancleFullScreen() {
     const document = window.document as any
     document?.cancleFullScreen?.()
@@ -202,8 +130,6 @@ function tryFn(fn: () => void) {
 
 export {
     getUuid,
-    ObjectUtils,
-    ArrayUtils,
     fullScreen,
     cancleFullScreen,
     to,

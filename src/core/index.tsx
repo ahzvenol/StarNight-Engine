@@ -2,25 +2,29 @@ import { Reactive, useReactive } from "micro-reactive"
 import { preLoad } from "public/old/store/preload"
 import { JSX, Component, createEffect, on, onMount } from "solid-js"
 import { State } from "./new"
-import { EventDispatcher } from "@/util"
+import { EventDispatcher } from "@/utils"
 import Timer from "./timer"
 import { Store } from "@/store"
 import createjs from "createjs-npm"
 import { Tween, Container } from "./creater"
-import { range } from "@/util/range"
+import { range } from "@/utils/range"
 
 type GameUIElement = Function2<HTMLCanvasElement, Reactive<Dictionary<string>>, JSX.Element>
 type GameContext = {
     store: Store,
-    stage: { tween: Tween, container: Container },
-    setTimeout: (callback: Function0<void>, ms: number) => void,
-    delay: (wait: number) => Promise<void>,
-    actIndex: Reactive<number>,
+    runtime: {
+        state: Reactive<State>,
+        actIndex: Reactive<number>,
+        tween: Tween,
+        container: Container,
+        setTimeout: (callback: Function0<void>, ms: number) => void,
+        delay: (wait: number) => Promise<void>,
+    }
     variable: Reactive<Dictionary>,
     save: { global: Reactive<Dictionary>, individual: Dictionary }
 }
 
-const Game: Component<{ propIndex: number, children: GameUIElement }> =
+const Core: Component<{ propIndex: number, children: GameUIElement }> =
     ({ propIndex, children }) => {
         const actIndex = useReactive(propIndex)
         const state = useReactive(State.Init)
@@ -38,7 +42,7 @@ const Game: Component<{ propIndex: number, children: GameUIElement }> =
         // tag:没做模式的toNormal
         fastButtonClickEvent.subscribe(() => state(State.Fast))
         autoButtonClickEvent.subscribe(() => state(State.Auto))
-        
+
         onMount(() => {
             // clickLock(true)
             BGM.src = ''
@@ -54,8 +58,11 @@ const Game: Component<{ propIndex: number, children: GameUIElement }> =
 
         const canvans = <canvas id="canvas" width="1280" height="720" onclick={() => clickLock() ? '' : gameClickEvent.publish()} />
         // 在这里需要命令和UI达成统一,在Game中挂载对应的变量到全局变量区,同时在UI中使用它
-        const variable: Reactive<Dictionary<string>> = useReactive({}) as Reactive<Dictionary<string>>
+        const variable = useReactive({}) as Reactive<Dictionary>
 
         // todo:空格等省力的点击方式
         return children(canvans as HTMLCanvasElement, variable)
     }
+
+
+export default Core

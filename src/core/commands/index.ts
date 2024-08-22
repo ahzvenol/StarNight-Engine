@@ -1,4 +1,4 @@
-import { ObjectUtils } from "../../util"
+import { ObjectUtils } from "../../utils"
 
 type GameContext = {
     $archive: {},
