@@ -25,9 +25,9 @@
     "es-toolkit": "^1.16.0",
     "js-ini": "^1.6.0",
     "localforage": "^1.10.0",
-    "micro-reactive": "^2.5.0",
+    "micro-reactive": "^2.8.1",
     "rollup": "2.25.0",
-    "solid-js": "^1.5.1",
+    "solid-js": "^1.8.21",
     "solid-styled": "^0.9.0",
     "vite-plugin-solid": "^2.3.0"
   }

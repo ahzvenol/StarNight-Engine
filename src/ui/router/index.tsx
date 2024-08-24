@@ -1,7 +1,10 @@
+import logger from "@/utils/Logger"
 import { useReactive } from "micro-reactive"
-import { Component, ParentProps, Show } from "solid-js"
+import { Component, ParentProps, Show, createEffect } from "solid-js"
 
 const active = useReactive("")
+
+createEffect(() => logger.info(`页面跳转:${active()}`))
 
 const history = [""]
 
