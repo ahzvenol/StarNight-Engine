@@ -3,6 +3,7 @@ import { Store } from '../store'
 import { Graphic } from './Elements'
 import { Route } from './router'
 import Title from './Title'
+import Config from './Config'
 
 // todo:最后让AI去整理import的值和type吧
 const UI: Component<{ environment: Store }> = ({ environment }) =>
@@ -11,10 +12,22 @@ const UI: Component<{ environment: Store }> = ({ environment }) =>
             <Title></Title>
         </Route>
         <Route path="Config">
-            {/* <Config></Config> */}
+            <Config></Config>
         </Route>
         <style jsx global>
             {`
+                @font-face {
+                    font-family: "思源宋体";
+                    src: url(${require("../assets/fonts/SourceHanSerifCN-Regular.ttf")}) format("truetype");
+                }
+                @font-face {
+                    font-family: "LXGW";
+                    src: url(${require("../assets/fonts/LXGWWenKai-Regular.ttf")}) format("truetype");
+                }
+                @font-face {
+                    font-family: "WebgalUI";
+                    src: url(${require("../assets/fonts/OPPOSans-R.ttf")}) format("truetype");
+                }
                 #root {
                     font-size: 160%;
                     overflow: hidden;
@@ -25,6 +38,5 @@ const UI: Component<{ environment: Store }> = ({ environment }) =>
             `}
         </style>
     </Graphic >
-
 
 export default UI

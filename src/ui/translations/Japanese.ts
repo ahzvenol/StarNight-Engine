@@ -1,5 +1,6 @@
 export const Japanese = {
-  // 通用
+  description: '日本語',
+
   common: {
     yes: 'はい',
     no: 'いいえ',
@@ -183,4 +184,4 @@ export const Japanese = {
   extra: {
     title: '鑑賞モード',
   },
-};
+}

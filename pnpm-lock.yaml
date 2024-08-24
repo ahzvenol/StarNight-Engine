@@ -7,7 +7,7 @@ settings:
 dependencies:
   '@solidjs/router':
     specifier: ^0.8.3
-    version: 0.8.3(solid-js@1.5.1)
+    version: 0.8.3(solid-js@1.8.21)
   '@types/createjs':
     specifier: ^0.0.29
     version: registry.npmmirror.com/@types/createjs@0.0.29
@@ -33,20 +33,20 @@ dependencies:
     specifier: ^1.10.0
     version: registry.npmmirror.com/localforage@1.10.0
   micro-reactive:
-    specifier: ^2.5.0
-    version: 2.5.0
+    specifier: ^2.8.1
+    version: 2.8.1
   rollup:
     specifier: 2.25.0
     version: registry.npmmirror.com/rollup@2.25.0
   solid-js:
-    specifier: ^1.5.1
-    version: 1.5.1
+    specifier: ^1.8.21
+    version: 1.8.21
   solid-styled:
     specifier: ^0.9.0
-    version: 0.9.0(solid-js@1.5.1)
+    version: 0.9.0(solid-js@1.8.21)
   vite-plugin-solid:
     specifier: ^2.3.0
-    version: registry.npmmirror.com/vite-plugin-solid@2.4.0(solid-js@1.5.1)(vite@3.0.9)
+    version: registry.npmmirror.com/vite-plugin-solid@2.4.0(solid-js@1.8.21)(vite@3.0.9)
 
 devDependencies:
   sass:
@@ -349,12 +349,12 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: false
 
-  /@solidjs/router@0.8.3(solid-js@1.5.1):
+  /@solidjs/router@0.8.3(solid-js@1.8.21):
     resolution: {integrity: sha512-oJuqQo10rVTiQYhe1qXIG1NyZIZ2YOwHnlLc8Xx+g/iJhFCJo1saLOIrD/Dkh2fpIaIny5ZMkz1cYYqoTYGJbg==}
     peerDependencies:
       solid-js: ^1.5.3
     dependencies:
-      solid-js: 1.5.1
+      solid-js: 1.8.21
     dev: false
 
   /@types/css-tree@2.3.2:
@@ -1032,9 +1032,11 @@ packages:
     resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
     dev: false
 
-  /micro-reactive@2.5.0:
-    resolution: {integrity: sha512-D2pPSWzfZflqwe9zBEqMCvT3K44FRGabynPfRQ5I9Zyc4gPabXbh6JEIRjL4rtiy/Nst7o10YdGcl8jrm+DAhg==}
+  /micro-reactive@2.8.1:
+    resolution: {integrity: sha512-MAw1XHddMAy77bqeau0ez0RiCUN8D1doHJUBxrNPGgX8aPYQ8PSGT3lBtAbA34ZThkLYy0izf5CE/OoiSR2d1g==}
     engines: {node: '>=14.20.0'}
+    dependencies:
+      prettier: 3.3.3
     dev: false
 
   /mime@1.6.0:
@@ -1202,6 +1204,12 @@ packages:
       source-map-js: 1.2.0
     dev: true
 
+  /prettier@3.3.3:
+    resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dev: false
+
   /prr@1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}
     requiresBuild: true
@@ -1263,13 +1271,29 @@ packages:
     hasBin: true
     dev: false
 
-  /solid-js@1.5.1:
-    resolution: {integrity: sha512-Y6aKystIxnrB0quV5nhqNuJV+l2Fk3/PQy1mMya/bzxlGiMHAym7v1NaqEgqDIvctbkxOi5dBj0ER/ewrH060g==}
+  /seroval-plugins@1.1.1(seroval@1.1.1):
+    resolution: {integrity: sha512-qNSy1+nUj7hsCOon7AO4wdAIo9P0jrzAMp18XhiOzA6/uO5TKtP7ScozVJ8T293oRIvi5wyCHSM4TrJo/c/GJA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      seroval: ^1.0
     dependencies:
-      csstype: 3.1.0
+      seroval: 1.1.1
     dev: false
 
-  /solid-styled@0.9.0(solid-js@1.5.1):
+  /seroval@1.1.1:
+    resolution: {integrity: sha512-rqEO6FZk8mv7Hyv4UCj3FD3b6Waqft605TLfsCe/BiaylRpyyMC0b+uA5TJKawX3KzMrdi3wsLbCaLplrQmBvQ==}
+    engines: {node: '>=10'}
+    dev: false
+
+  /solid-js@1.8.21:
+    resolution: {integrity: sha512-FHUGdoo7GVa1BTpGh/4UtwIISde0vSXoqNB6KFpHiTgkIY959tmCJ7NYQAWDfScBfnpoMGZR8lFz0DiwW/gFlw==}
+    dependencies:
+      csstype: 3.1.0
+      seroval: 1.1.1
+      seroval-plugins: 1.1.1(seroval@1.1.1)
+    dev: false
+
+  /solid-styled@0.9.0(solid-js@1.8.21):
     resolution: {integrity: sha512-x0tnvWVMGTvZnVqDnJnSkI8UOUdy/DfEdP0SPJQOMAWxrFeyl/kjlInDieOOfU4WlkKMc/JOhgvc51nzZlQqmA==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -1283,7 +1307,7 @@ packages:
       browserslist: 4.21.10
       css-tree: 2.3.1
       lightningcss: 1.21.7
-      solid-js: 1.5.1
+      solid-js: 1.8.21
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -2369,7 +2393,7 @@ packages:
     hasBin: true
     dev: false
 
-  registry.npmmirror.com/solid-refresh@0.4.1(solid-js@1.5.1):
+  registry.npmmirror.com/solid-refresh@0.4.1(solid-js@1.8.21):
     resolution: {integrity: sha512-v3tD/OXQcUyXLrWjPW1dXZyeWwP7/+GQNs8YTL09GBq+5FguA6IejJWUvJDrLIA4M0ho9/5zK2e9n+uy+4488g==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/solid-refresh/-/solid-refresh-0.4.1.tgz}
     id: registry.npmmirror.com/solid-refresh/0.4.1
     name: solid-refresh
@@ -2380,7 +2404,7 @@ packages:
       '@babel/generator': registry.npmmirror.com/@babel/generator@7.20.4
       '@babel/helper-module-imports': registry.npmmirror.com/@babel/helper-module-imports@7.18.6
       '@babel/types': registry.npmmirror.com/@babel/types@7.20.2
-      solid-js: 1.5.1
+      solid-js: 1.8.21
     dev: false
 
   registry.npmmirror.com/sourcemap-codec@1.4.8:
@@ -2431,7 +2455,7 @@ packages:
       - rollup
     dev: true
 
-  registry.npmmirror.com/vite-plugin-solid@2.4.0(solid-js@1.5.1)(vite@3.0.9):
+  registry.npmmirror.com/vite-plugin-solid@2.4.0(solid-js@1.8.21)(vite@3.0.9):
     resolution: {integrity: sha512-Rr+t2sr9TWIvH16yzBZzx6O9YSpYAvcwKUMPqbi/4iU3mRumXQ4O10i1XGtQIynC7U3XwJsMzAJigDFGbiJBiw==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/vite-plugin-solid/-/vite-plugin-solid-2.4.0.tgz}
     id: registry.npmmirror.com/vite-plugin-solid/2.4.0
     name: vite-plugin-solid
@@ -2444,8 +2468,8 @@ packages:
       '@babel/preset-typescript': registry.npmmirror.com/@babel/preset-typescript@7.18.6(@babel/core@7.20.2)
       babel-preset-solid: registry.npmmirror.com/babel-preset-solid@1.6.2(@babel/core@7.20.2)
       merge-anything: registry.npmmirror.com/merge-anything@5.1.3
-      solid-js: 1.5.1
-      solid-refresh: registry.npmmirror.com/solid-refresh@0.4.1(solid-js@1.5.1)
+      solid-js: 1.8.21
+      solid-refresh: registry.npmmirror.com/solid-refresh@0.4.1(solid-js@1.8.21)
       vite: 3.0.9(sass@1.77.8)
       vitefu: registry.npmmirror.com/vitefu@0.1.1(vite@3.0.9)
     transitivePeerDependencies:
