@@ -9,7 +9,7 @@ createEffect(() => logger.info(`页面跳转:${active()}`))
 const history = [""]
 
 const Route: Component<ParentProps<{ path: string }>> =
-    ({ path, children }) => <Show when={active().toLowerCase() === path.toLocaleLowerCase()}>{children}</Show>
+    (props) => <Show when={active().toLowerCase() === props.path.toLocaleLowerCase()}>{props.children}</Show>
 
 const navigate = (to: string) => { history.push(to), active(to) }
 

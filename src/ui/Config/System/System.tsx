@@ -1,15 +1,18 @@
 import { Clone, Variable } from '@/ui/Elements'
-import { lang, language, translation } from '@/ui/translations'
+import { language, translation } from '@/translations'
 import { useReactive } from 'micro-reactive'
 import { Component, For, onMount } from 'solid-js'
 import Button from '../Button'
 import ButtonGroup from '../ButtonGroup'
 import styles from '../config.module.scss'
 import logger from '@/utils/Logger'
+import { useStore } from '@/store/context'
 
 const System: Component = () => {
   const t = translation.menu.options.pages.system.options
   const showAbout = useReactive(false)
+
+  const config = useStore().config
 
   onMount(() => logger.info("mount"))
   return (
@@ -31,11 +34,11 @@ const System: Component = () => {
         </Variable>
       </ButtonGroup>
       <ButtonGroup title={t.language.title}>
-        <Variable value={useReactive(lang())}>{
+        <Variable value={useReactive(config.language())}>{
           (val) =>
             <For each={Object.keys(language)}>
               {(key) =>
-                <Button key={key} signal={val} onclick={() => lang(key as keyof typeof language)}>
+                <Button key={key} signal={val} onclick={() => config.language(key as keyof typeof language)}>
                   {language[key as keyof typeof language].description}
                 </Button>
               }

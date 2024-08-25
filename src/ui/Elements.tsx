@@ -5,7 +5,8 @@ import Scale from "./Scale"
 import { getUuid } from "../utils"
 import { ObjectUtils } from "@/utils/ObjectUtils"
 import { range } from 'es-toolkit'
-import { clickSoundEffect, hoverSoundEffect } from '@/store/AudioManager'
+import { clickSoundEffect, hoverSoundEffect } from '@/store/audioManager'
+import { Store } from '@/store/default'
 
 //横行竖列
 //给出总行数，返回每个index对应的行数
@@ -60,7 +61,7 @@ const Button: Component<JSX.HTMLAttributes<HTMLDivElement>> =
     }
 
 const Graphic = <U extends JSX.Element>
-    ({ config, children }: { config: Reactive<Dictionary>, children: U }) =>
+    ({ config, children }: { config: Store['system'], children: U }) =>
     <Element style="width: 100vw;height: 100vh;background-color: #000;">
         <Scale
             width={config['width']()}

@@ -1,11 +1,12 @@
 import { useReactive } from 'micro-reactive'
 import { Button, Clone } from '../Elements'
-import { translation } from '../translations'
+import { translation } from '../../translations'
 import styles from './config.module.scss'
-import { Component, Match, Switch, createEffect } from 'solid-js'
-import Menu from '../Menu'
+import { Component, Match, Switch, createEffect, getOwner, onMount } from 'solid-js'
+import Menu from '../Menu/Menu'
 import logger from '@/utils/Logger'
-import System from './System'
+import System from './System/System'
+import { useStore } from '@/store/context'
 
 enum Page {
   'System',
@@ -16,6 +17,7 @@ enum Page {
 export const Config: Component = () => {
   const currentPage = useReactive(Page.System)
   const t = translation.menu.options
+
   createEffect(() => logger.info(`Config-当前页面:${currentPage()}`))
   return (
     <Menu>

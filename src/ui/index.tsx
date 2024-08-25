@@ -1,21 +1,23 @@
 import { Component } from 'solid-js'
-import { Store } from '../store'
+import { Route } from '../router'
+import Config from './Config/Config'
 import { Graphic } from './Elements'
-import { Route } from './router'
-import Title from './Title'
-import Config from './Config'
+import Title from './Title/Title'
+import { Store } from '@/store/default'
+import { Context } from '@/store/context'
 
 // todo:最后让AI去整理import的值和type吧
 const UI: Component<{ environment: Store }> = ({ environment }) =>
-    <Graphic config={environment.system['graphic']}>
-        <Route path="">
-            <Title></Title>
-        </Route>
-        <Route path="Config">
-            <Config></Config>
-        </Route>
-        <style jsx global>
-            {`
+    <Context environment={environment}>
+        <Graphic config={environment.system}>
+            <Route path="">
+                <Title></Title>
+            </Route>
+            <Route path="Config">
+                <Config></Config>
+            </Route>
+            <style jsx global>
+                {`
                 @font-face {
                     font-family: "思源宋体";
                     src: url(${require("../assets/fonts/SourceHanSerifCN-Regular.ttf")}) format("truetype");
@@ -36,7 +38,8 @@ const UI: Component<{ environment: Store }> = ({ environment }) =>
                     line-height: 1.5;
                 }
             `}
-        </style>
-    </Graphic >
+            </style>
+        </Graphic >
+    </Context>
 
 export default UI
