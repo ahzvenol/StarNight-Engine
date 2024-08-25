@@ -1,4 +1,8 @@
-export const iniDemo = `
+import { parse } from "js-ini"
+import { IniKV } from "./default"
+import logger from "@/utils/Logger"
+
+const iniDemo = `
 ; 系统通用配置
 [info]
 name=demo
@@ -22,3 +26,18 @@ v1=1
 v2=""
 v3=true
 `
+
+// 如果用户输入了错误的配置数据,目前不做处理
+export const getUserIni = async () => {
+    const ini = parse(iniDemo) as Record<string, IniKV>
+
+    const { info = {}, graphic = {}, config = {}, user = {} } = ini
+
+    const system = { ...info, ...graphic }
+
+    logger.info("配置文件解析完毕:", ini)
+
+    const iniObj = { system, config, user }
+
+    return iniObj
+}
