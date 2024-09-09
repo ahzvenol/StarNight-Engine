@@ -1,6 +1,4 @@
-import { useReactive } from "micro-reactive"
-import { IndividualSaveData } from "."
+import { Reactive, useReactive } from "micro-reactive"
+import { IndividualSaveData } from "./default"
 
-const slot = useReactive({}) as IndividualSaveData
-
-// start.mount(()=>slot({}))
+const slot = useReactive({}) as Reactive<IndividualSaveData>
