@@ -18,6 +18,7 @@ GolbalVolume=1
 BGMVolume=1
 SEVolume=1
 ClipVolume=1
+UISEVolume=1
 language=zh-CN
 
 ; 用户配置

@@ -15,6 +15,7 @@ const systemDefaultStore = {
         BGMVolume: 1,
         SEVolume: 1,
         ClipVolume: 1,
+        UISEVolume: 1,
         language: 'zh-CN' as keyof typeof language
     },
     save: {
@@ -34,13 +35,14 @@ type IniKV = Record<string, string | number | boolean>
 type IndividualSaveData = Dictionary
 
 // & IniKV会丢失类型检查,所以不在类型上书写它
-type Store = Reactive<{
-    system: typeof systemDefaultStore['system'],
-    config: typeof systemDefaultStore['config'],
-    save: typeof systemDefaultStore['save'],
-    user: typeof systemDefaultStore['user']
-}>
+// type Store = Reactive<{
+//     system: typeof systemDefaultStore['system'],
+//     config: typeof systemDefaultStore['config'],
+//     save: typeof systemDefaultStore['save'],
+//     user: typeof systemDefaultStore['user']
+// }>
+type Store = Reactive<typeof systemDefaultStore>
 
 export default systemDefaultStore
 
-export type { IniKV, Store }
+export type { IniKV, Store, IndividualSaveData }

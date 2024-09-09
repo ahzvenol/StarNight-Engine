@@ -33,8 +33,11 @@ dependencies:
     specifier: ^1.10.0
     version: registry.npmmirror.com/localforage@1.10.0
   micro-reactive:
-    specifier: ^2.8.1
-    version: 2.8.1
+    specifier: 2.6.4
+    version: 2.6.4
+  mustache:
+    specifier: ^4.2.0
+    version: 4.2.0
   rollup:
     specifier: 2.25.0
     version: registry.npmmirror.com/rollup@2.25.0
@@ -49,6 +52,9 @@ dependencies:
     version: registry.npmmirror.com/vite-plugin-solid@2.4.0(solid-js@1.8.21)(vite@3.0.9)
 
 devDependencies:
+  '@types/mustache':
+    specifier: ^4.2.5
+    version: 4.2.5
   sass:
     specifier: ^1.77.8
     version: 1.77.8
@@ -360,6 +366,10 @@ packages:
   /@types/css-tree@2.3.2:
     resolution: {integrity: sha512-B5nF6h7xxpMLvZ1pzugAYUGj1aw4KgTpXZzOijkDMRzey4SlFi0jVWb3o0SS1CVSxyBciltVgjt67CwrgjmlWA==}
     dev: false
+
+  /@types/mustache@4.2.5:
+    resolution: {integrity: sha512-PLwiVvTBg59tGFL/8VpcGvqOu3L4OuveNvPi0EYbWchRdEVP++yRUXJPFl+CApKEq13017/4Nf7aQ5lTtHUNsA==}
+    dev: true
 
   /@types/postcss-modules-local-by-default@4.0.2:
     resolution: {integrity: sha512-CtYCcD+L+trB3reJPny+bKWKMzPfxEyQpKIwit7kErnOexf5/faaGpkFy4I5AwbV4hp1sk7/aTg0tt0B67VkLQ==}
@@ -1032,11 +1042,9 @@ packages:
     resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
     dev: false
 
-  /micro-reactive@2.8.1:
-    resolution: {integrity: sha512-MAw1XHddMAy77bqeau0ez0RiCUN8D1doHJUBxrNPGgX8aPYQ8PSGT3lBtAbA34ZThkLYy0izf5CE/OoiSR2d1g==}
+  /micro-reactive@2.6.4:
+    resolution: {integrity: sha512-UaaNwhmz6weEWEsPfHT64MZpD55jt1HbyngBhPwwxOh9sh0ObfR9nHGP0DvZMMz3uSR14s7t2vSHRMeUxvwe8g==}
     engines: {node: '>=14.20.0'}
-    dependencies:
-      prettier: 3.3.3
     dev: false
 
   /mime@1.6.0:
@@ -1059,6 +1067,11 @@ packages:
 
   /ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
+
+  /mustache@4.2.0:
+    resolution: {integrity: sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==}
+    hasBin: true
+    dev: false
 
   /nanoid@3.3.6:
     resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==}
@@ -1203,12 +1216,6 @@ packages:
       picocolors: 1.0.1
       source-map-js: 1.2.0
     dev: true
-
-  /prettier@3.3.3:
-    resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
-    engines: {node: '>=14'}
-    hasBin: true
-    dev: false
 
   /prr@1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}

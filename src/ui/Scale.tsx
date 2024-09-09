@@ -1,21 +1,12 @@
-import type { Component, JSX, ParentProps } from 'solid-js'
-import { children as resolveChildren, onCleanup } from 'solid-js'
+import type { Component, ParentProps } from 'solid-js'
+import { onCleanup, children } from 'solid-js'
 
-const getLength = (element: HTMLElement, attr: string) => {
-    //@ts-ignore
-    if (element.currentStyle) {
-        //@ts-ignore
-        return parseInt(element.currentStyle[attr])
-    } else {
-        //@ts-ignore
-        return parseInt(getComputedStyle(element, null)[attr])
-    }
-}
+const getLength = (element: HTMLElement, attr: string) => parseInt(getComputedStyle(element).getPropertyValue(attr))
 
 const Scale: Component<ParentProps<{ width: number, height: number, mode: 'auto' | 'full' | unknown }>> =
     (props) => {
         let intervalId!: NodeJS.Timer
-        const resolved = resolveChildren(() => props.children)
+        const resolved = children(() => props.children)
         const array = resolved.toArray()
         if (array.length !== 1 || typeof array[0] !== 'object') throw Error("需要且仅需要一个HTMLElement")
         const slot = array[0]! as HTMLElement
@@ -49,7 +40,7 @@ const Scale: Component<ParentProps<{ width: number, height: number, mode: 'auto'
             intervalId = setInterval(resize, 500)
         }
         onCleanup(() => { clearInterval(intervalId) })
-        return <div ref={autoResize} style="width: 100%;height: 100%;overflow: hidden;position: absolute;">{slot}</div>
+        return <div ref={autoResize} style="width: 100%;height: 100%;overflow: hidden;position: absolute;z-index: 9;">{slot}</div>
     }
 
 export default Scale

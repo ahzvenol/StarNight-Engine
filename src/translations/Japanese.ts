@@ -1,7 +1,5 @@
 export const Japanese = {
-  description: '日本語',
-
-  common: {
+common: {
     yes: 'はい',
     no: 'いいえ',
   },

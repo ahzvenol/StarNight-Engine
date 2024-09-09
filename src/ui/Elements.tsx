@@ -1,12 +1,11 @@
-import { type Reactive } from 'micro-reactive'
-import type { Component } from 'solid-js'
-import { Index, JSX, splitProps } from 'solid-js'
-import Scale from "./Scale"
-import { getUuid } from "../utils"
-import { ObjectUtils } from "@/utils/ObjectUtils"
-import { range } from 'es-toolkit'
 import { clickSoundEffect, hoverSoundEffect } from '@/store/audioManager'
 import { Store } from '@/store/default'
+import { ObjectUtils } from "@/utils/ObjectUtils"
+import { range } from 'es-toolkit'
+import type { Component } from 'solid-js'
+import { Index, JSX, splitProps } from 'solid-js'
+import { getUuid } from "../utils"
+import Scale from "./Scale"
 
 //横行竖列
 //给出总行数，返回每个index对应的行数
@@ -37,48 +36,42 @@ const Element: Component<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
     return <div  {...props}></div>
 }
 
-// const Button: Component<JSX.HTMLAttributes<HTMLDivElement>> =
-//     ({ classList, onclick, onmouseover, ...props }) =>
-//         // @ts-ignore
-//         <div
-//             classList={{ ...classList }}
-//             onclick={() => (clickSoundEffect(), onclick?.())}
-//             onmouseover={() => (hoverSoundEffect(), onmouseover?.())} {...props}
-//         />
-
-const Button: Component<JSX.HTMLAttributes<HTMLDivElement>> =
+const Button: Component<JSX.HTMLAttributes<HTMLDivElement> & { onclick?: Function0<void>, onmouseenter?: Function0<void> }> =
     (props) => {
-        const [local, others] = splitProps(props, ["classList", "onclick", "onmouseover"])
-        // @ts-ignore
+        const [local, others] = splitProps(props, ["classList", "onclick", "onmouseenter"])
         return <div
             classList={{ ...local.classList }}
-            // @ts-ignore
-            onclick={() => (clickSoundEffect(), local.onclick?.())}
-            // @ts-ignore
-            onmouseover={() => (hoverSoundEffect(), local.onmouseover?.())}
+            onclick={() => {
+                clickSoundEffect()
+                local.onclick?.()
+            }}
+            onmouseenter={() => {
+                hoverSoundEffect()
+                local.onmouseenter?.()
+            }}
             {...others}
         />
     }
 
-const Graphic = <U extends JSX.Element>
-    ({ config, children }: { config: Store['system'], children: U }) =>
-    <Element style="width: 100vw;height: 100vh;background-color: #000;">
-        <Scale
-            width={config['width']()}
-            height={config['height']()}
-            mode={config['mode']()}
-        >
-            <Element>
-                {children}
-            </Element>
-        </Scale>
-    </Element>
+const Graphic =
+    (props: { config: Store['system'], children: JSX.Element }) =>
+        <Element style="width: 100vw;height: 100vh;background-color: #000;">
+            <Scale
+                width={props.config['width']()}
+                height={props.config['height']()}
+                mode={props.config['mode']()}
+            >
+                <Element>
+                    {props.children}
+                </Element>
+            </Scale>
+        </Element>
 
-const Variable = <T, U extends JSX.Element>
-    ({ value, children }: { value: T, children: (value: T) => U }) => children(value)
+const Variable =
+    <T,>(props: { value: T, children: (value: T) => JSX.Element }) => props.children(props.value)
 
-const Clone = <U extends JSX.Element>
-    ({ count, children }: { count: number, children: (index: number) => U }) =>
-    <Index each={range(0, count)}>{(index) => children(index())}</Index>
+const Clone =
+    (props: { count: number, children: (index: number) => JSX.Element }) =>
+        <Index each={range(0, props.count)}>{(index) => props.children(index())}</Index>
 
-export { Clone, Element, Button, Graphic, Variable, column, line }
+export { Button, Clone, Element, Graphic, Variable, column, line }

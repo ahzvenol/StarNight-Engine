@@ -1,7 +1,5 @@
 export const English = {
-  description: 'English',
-
-  common: {
+common: {
     yes: 'OK',
     no: 'Cancel',
   },

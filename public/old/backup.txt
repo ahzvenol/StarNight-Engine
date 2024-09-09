@@ -1,9 +1,0 @@
-{
-    "type": "element",
-    "name": "start",
-    "tags": [{
-        "type:": "tag",
-        "kind": "js",
-        "exe": "omMounted",
-        "do": "document.title ='start'"
-    }

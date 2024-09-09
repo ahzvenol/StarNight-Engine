@@ -1,7 +1,7 @@
-import { merge } from "es-toolkit"
+import { debounce, merge } from "es-toolkit"
 import localforage from "localforage"
 import { useReactive } from "micro-reactive"
-import { createEffect, createResource, type Resource } from "solid-js"
+import { createEffect, createResource, on, type Resource } from "solid-js"
 
 import logger from "@/utils/Logger"
 import systemDefaultStore, { Store } from "./default"
@@ -35,20 +35,18 @@ const createStore = async () => {
         user: userDefaultStore.user
     })
 
-    Object.keys(store()).forEach(key => createEffect(() => { localforage.setItem(key, store[key as keyof Store]()) }))
+    // createEffect(() => { localforage.setItem('store', store()) })
 
-    // 绑定对应的audio
-    // createEffect(on(store.config["GolbalVolume"], () => GolbalVolume(store.config["GolbalVolume"]())))
-    // createEffect(on(store.config["BGMVolume"], () => BGMConfigVolumeController(store.config["BGMVolume"]())))
-    // createEffect(on(store.config["SEVolume"], () => SEConfigVolumeController(store.config["SEVolume"]())))
-    // createEffect(on(store.config["ClipVolume"], () => ClipConfigVolumeController(store.config["ClipVolume"]())))
-
-    // 绑定语言
-    // tag:这里好像控制流向出现了问题
-    // createEffect(on(lang, () => store.config["language"](lang())))
-
-    // 应用其他设置
-    // createEffect(() => { })
+    Object.keys(store()).forEach(key => {
+        createEffect(
+            on(store[key as keyof Store],
+                debounce(() => {
+                    localforage.setItem(key, store[key as keyof Store]())
+                    logger.info(`写入本地存储:${key}`)
+                }, 100)
+            )
+        )
+    })
 
     logger.info("Store初始化完毕:", store())
 
@@ -61,14 +59,14 @@ const storePackage = createStore()
 const storePromise = storePackage.then(({ store }) => store)
 
 // 重置三件套
-const clean = () => storePackage.then(({ userDefaultStore, store }) => localforage.clear().then(() => store(userDefaultStore)))
+const clearStorage = () => storePackage.then(({ userDefaultStore, store }) => localforage.clear().then(() => store(userDefaultStore)))
 const resetConfig = () => storePackage.then(({ userDefaultStore, store }) => store.config(userDefaultStore.config))
-const cleanSave = () => storePackage.then(({ userDefaultStore, store }) => store.save(userDefaultStore.save))
+const clearSave = () => storePackage.then(({ userDefaultStore, store }) => store.save(userDefaultStore.save))
 
 const [store] = createResource(async () => await storePromise)
 
 export default store as Resource<Store>
 
-export { clean, cleanSave, resetConfig, storePromise }
+export { clearSave, clearStorage, resetConfig, storePromise }
 
 

@@ -1,26 +1,26 @@
-import { useReactive } from 'micro-reactive'
-import { Button, Clone } from '../Elements'
-import { translation } from '../../translations'
-import styles from './config.module.scss'
-import { Component, Match, Switch, createEffect, getOwner, onMount } from 'solid-js'
-import Menu from '../Menu/Menu'
 import logger from '@/utils/Logger'
+import { useReactive } from 'micro-reactive'
+import { Component, Match, Switch, createEffect } from 'solid-js'
+import { translation } from '../../translations'
+import { Button, Clone } from '../Elements'
+import Menu from '../Menu/Menu'
+import Sound from './Sound/Sound'
 import System from './System/System'
-import { useStore } from '@/store/context'
+import styles from './config.module.scss'
+import Display from './Display/Display'
 
 enum Page {
-  'System',
-  'Display',
-  'Sound',
+  'System' = 'System',
+  'Display' = 'Display',
+  'Sound' = 'Sound',
 }
 
-export const Config: Component = () => {
+const Config: Component = () => {
   const currentPage = useReactive(Page.System)
   const t = translation.menu.options
 
-  createEffect(() => logger.info(`Config-当前页面:${currentPage()}`))
+  createEffect(() => logger.info(`Config:当前页面 ${currentPage()}`))
   return (
-    <Menu>
       <div class={styles.Options_main}>
         <div class={styles.Options_top}>
           <div class={styles.Options_title}>
@@ -38,9 +38,7 @@ export const Config: Component = () => {
                   }}
                   onclick={() => currentPage([Page.System, Page.Display, Page.Sound][i])}
                 >
-                  { // @ts-ignore
-                    t.pages[['system', 'display', 'sound'][i]].title()
-                  }
+                  {t.pages[(['system', 'display', 'sound'] as const)[i]].title()}
                 </Button>
             }
             </Clone>
@@ -51,16 +49,15 @@ export const Config: Component = () => {
                 <System></System>
               </Match>
               <Match when={currentPage() === Page.Display}>
-                <></>
+                <Display></Display>
               </Match>
               <Match when={currentPage() === Page.Sound}>
-                <></>
+                <Sound></Sound>
               </Match>
             </Switch>
           </div>
         </div>
       </div>
-    </Menu>
   )
 }
 

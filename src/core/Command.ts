@@ -1,0 +1,7 @@
+class ActScopedCommand{
+
+}
+
+class GameScopedCommand {
+
+}

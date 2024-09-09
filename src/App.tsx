@@ -1,10 +1,12 @@
-import type { Component } from 'solid-js'
-import { Switch, Match } from 'solid-js'
 import createjs from 'createjs-npm'
+import type { Component } from 'solid-js'
+import { Match, Switch } from 'solid-js'
 
 import './utils/implicit'
 import UI from './ui'
 import store from './store'
+import '@/store/audioManager'
+import logger from './utils/Logger'
 
 if (import.meta.env.DEV) { }
 
@@ -13,6 +15,16 @@ document.oncontextmenu = document.onmousedown = () => false
 
 createjs.Ticker.framerate = 60
 createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+        .then((registration) => {
+            logger.info('ServiceWorker registration successful with scope: ' + registration.scope)
+        })
+        .catch((error) => {
+            logger.error('ServiceWorker registration failed: ' + error)
+        })
+}
 
 // 整个配置文件在这里分发
 const App: Component = () =>

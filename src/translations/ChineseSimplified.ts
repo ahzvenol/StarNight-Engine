@@ -1,7 +1,5 @@
 export const ChineseSimplified = {
-    description: '中文',
-
-    common: {
+ common: {
         yes: '是',
         no: '否',
     },

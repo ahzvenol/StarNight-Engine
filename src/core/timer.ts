@@ -75,13 +75,45 @@ class Timer {
     }
 }
 
-class CountTimer extends Timer {
-    public timeoutPromiseList: Promise<void>[] = []
+class TrackableTimer extends Timer {
+    public promiseList: Promise<void>[] = []
+    public startList: Function0<void>[] = []
+    public pauseList: Function0<void>[] = []
+    public resolveList: Function0<void>[] = []
+    // 对原Timer的setTimeout包装一层promise
     public setTimeout(callback: Function0<void>, ms: number): void {
         if (this.isImmediate) callback()
-        else this.timeoutPromiseList.push(new Promise(res => super.setTimeout(() => { res(); callback() }, ms)))
+        else this.promiseList.push(new Promise(res => super.setTimeout(() => { res(); callback() }, ms)))
+    }
+    // 添加外部不可控第三方库的结束回调Promise,将其纳入timer时间统计的方法(无法控制)
+    public addTrackedPromise(promise: Promise<void>): void {
+        // 在toImmediate()后,TrackableTimer应返回resolve状态的promise序列,包括外部promise也是如此
+        const promiseForimmediate = new Promise<void>((res) => this.resolveList.push(res))
+        this.promiseList.push(Promise.race([promise, promiseForimmediate]).catch())
+    }
+    // 为外部不可控第三方库的操作添加结束方法,比如tween.setPosition(tween.duration)
+    public addManualResult(fn: Function0<void>): void {
+        this.resolveList.push(fn)
+    }
+    public addStartMethod(fn: Function0<void>): void {
+        this.startList.push(fn)
+    }
+    public addPauseMethod(fn: Function0<void>): void {
+        this.pauseList.push(fn)
+    }
+    public start() {
+        this.startList.forEach(e => e())
+        super.start()
+    }
+    public pause() {
+        this.pauseList.forEach(e => e())
+        super.pause()
+    }
+    public toImmediate() {
+        this.resolveList.forEach(e => e())
+        super.toImmediate()
     }
 }
 
-// 这样方便代码提示一点
-export { CountTimer as Timer }
+// export方便代码提示一点
+export { TrackableTimer as Timer }
