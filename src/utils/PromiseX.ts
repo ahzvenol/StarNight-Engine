@@ -1,7 +1,7 @@
 class PromiseX<T> {
     private _resolve!: (value: T | PromiseLike<T>) => void
     private _reject!: (reason?: any) => void
-    public promise = new Promise<T>((resolve, reject) => {
+    private promise = new Promise<T>((resolve, reject) => {
         this._resolve = resolve
         this._reject = reject
     })
@@ -12,6 +12,9 @@ class PromiseX<T> {
     public reject = (reason?: any) => {
         this._reject(reason)
     }
+    public then = this.promise.then
+    public catch = this.promise.catch
+    public finally = this.promise.finally
 }
 
 export default PromiseX

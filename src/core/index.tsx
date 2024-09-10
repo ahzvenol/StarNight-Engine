@@ -31,7 +31,6 @@ enum State {
 const Core: Component<{ propIndex: number, children: GameUIElement }> =
     ({ propIndex, children }) => {
         const actIndex = useReactive(propIndex)
-        const state = useReactive(State.Init)
         const clickLock = useReactive(false)
 
         createEffect(on(actIndex, () => {
@@ -42,21 +41,19 @@ const Core: Component<{ propIndex: number, children: GameUIElement }> =
         const gameClickEvent = new EventDispatcher<void>()
         const fastButtonClickEvent = new EventDispatcher<void>()
         const autoButtonClickEvent = new EventDispatcher<void>()
-        // fastButtonClickEvent.subscribe(gameClickEvent.publish)
-        fastButtonClickEvent.subscribe(() => state(state() === State.Fast ? State.Normal : State.Fast))
-        autoButtonClickEvent.subscribe(() => state(state() === State.Auto ? State.Normal : State.Auto))
+
 
         onMount(() => {
             // clickLock(true)
             BGM.src = ''
             const timer = new Timer()
             timer.toImmediate()
+            const context = { timer, state: State.Init }
             range(0, propIndex).forEach(i => book[i].forEach(i => commands[i['@']]?.(context)(i)))
             // todo:对副作用初始化
-            state(State.Normal)
             mapValues(commands, command => command?.afterInit())
             // 幕循环的第一次运行没有任何条件,所以不需要推动
-            runActLoop()
+            runActLoop(gameClickEvent, fastButtonClickEvent, autoButtonClickEvent, actIndex)
             // clickLock(false)
         })
 
