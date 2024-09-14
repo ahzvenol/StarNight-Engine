@@ -1,4 +1,4 @@
-import { Reactive, useReactive } from "micro-reactive"
+import { Reactive, Signal, useReactive } from "micro-reactive"
 import { JSX, Component, createEffect, on, onMount } from "solid-js"
 import { Timer } from "./Timer"
 import createjs from "createjs-npm"
@@ -53,7 +53,7 @@ const Core: Component<{ propIndex: number, children: GameUIElement }> =
             // todo:对副作用初始化
             mapValues(commands, command => command?.afterInit())
             // 幕循环的第一次运行没有任何条件,所以不需要推动
-            runActLoop(gameClickEvent, fastButtonClickEvent, autoButtonClickEvent, actIndex)
+            runActLoop(actIndex, gameClickEvent, fastButtonClickEvent, autoButtonClickEvent)
             // clickLock(false)
         })
 

@@ -1,5 +1,5 @@
-import { Reactive, useMemo, useReactive } from "micro-reactive"
-import { createEffect } from "solid-js"
+import { Reactive, useReactive } from "micro-reactive"
+import { createEffect, createMemo } from "solid-js"
 import { storePromise } from "."
 import { titleComponentMountEvent } from "@/ui/Title/Title"
 import logger from "@/utils/Logger"
@@ -23,7 +23,7 @@ function createAudioTrack(
     // 为audio绑定响应式音量控制,音量=全局音量*设置音量*命令音量(用于淡入淡出等效果)
     configVolumeControllerMapPromise.then((map) => {
         const controller = [map['Golbal'], map[type], userVolumeController]
-        const volume = useMemo(() => controller.map(n => n()).reduce((n1, n2) => n1 * n2, 1))
+        const volume = createMemo(() => controller.map(n => n()).reduce((n1, n2) => n1 * n2, 1))
         createEffect(() => audio.volume = volume())
     })
 
