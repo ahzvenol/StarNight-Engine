@@ -1,3 +1,5 @@
+import PromiseX from "@/utils/PromiseX"
+
 // 对回调进行包装,实现了暂停,恢复,立即执行和取消执行的功能
 class TimeoutController {
     private executeOnceCallback: () => void
@@ -11,6 +13,7 @@ class TimeoutController {
     }
     constructor(callback: () => void, delay: number) {
         this.executeOnceCallback = () => {
+            if (this._isExecuted) return
             this._isExecuted = true
             callback()
         }
@@ -19,101 +22,95 @@ class TimeoutController {
     }
 
     public start() {
-        if (this._isStarted) return
+        if (this._isStarted || this._isExecuted) return
         this._isStarted = true
         this.startTime = Date.now()
         this.timerId = window.setTimeout(this.executeOnceCallback, this.remainingTime)
     }
     public pause() {
-        if (!this._isStarted) return
+        if (!this._isStarted || this._isExecuted) return
         this._isStarted = false
         window.clearTimeout(this.timerId)
         this.remainingTime = this.remainingTime - (Date.now() - this.startTime)
     }
     public immediateExecution() {
+        if (this._isExecuted) return
         window.clearTimeout(this.timerId)
         this.executeOnceCallback()
     }
     public cancel() {
-        this._isExecuted = true
+        if (this._isExecuted) return
+        window.clearTimeout(this.timerId)
     }
 }
 
 
 // Timer假设在最后一个延时回调完成之后不会再有新的新的延时回调被注册,否则永远无法确定执行是否结束
-class Timer {
+class TimerX {
     private _isImmediate = false;
     public get isImmediate(): boolean {
         return this._isImmediate
     }
-    private timeoutControllerList: TimeoutController[] = [];
-    // tag:目前在原则上不允许嵌套调用,之后考虑代码限制
-    public setTimeout(callback: Function0<void>, ms: number) {
-        if (this._isImmediate) callback()
-        else this.timeoutControllerList.push(new TimeoutController(callback, ms))
-    }
-    // 立即执行时,会导致死循环,暂时放弃这个功能
-    // public setInterval(callback: Function0<void>, ms: number) {
-    public delay(wait: number) {
-        if (this._isImmediate) return Promise.resolve()
-        else return new Promise<void>((resolve) => {
-            this.timeoutControllerList.unshift(new TimeoutController(resolve, wait))
-        })
-    }
-    public start() {
-        this.timeoutControllerList.forEach(e => e.start())
-    }
-    public pause() {
-        this.timeoutControllerList.forEach(e => e.pause())
-    }
-    public toImmediate() {
-        this._isImmediate = true
-        this.timeoutControllerList.forEach(e => e.immediateExecution())
-    }
-    public cancel() {
-        this.timeoutControllerList.forEach(e => e.cancel())
-    }
-}
-
-class TrackableTimer extends Timer {
     public promiseList: Promise<void>[] = []
     public startList: Function0<void>[] = []
     public pauseList: Function0<void>[] = []
     public resolveList: Function0<void>[] = []
-    // 对原Timer的setTimeout包装一层promise
+    // 利用几个更高抽象层级的方法重新实现setTimeout和delay
     public setTimeout(callback: Function0<void>, ms: number): void {
         if (this.isImmediate) callback()
-        else this.promiseList.push(new Promise(res => super.setTimeout(() => { res(); callback() }, ms)))
+        else this.delay(ms).then(callback)
+    }
+    public delay(wait: number) {
+        if (this.isImmediate) {
+            return Promise.resolve()
+        }
+        else {
+            const promise = new Promise<void>(res => {
+                const controller = new TimeoutController(res, wait)
+                this.addStartMethod(controller.start)
+                this.addPauseMethod(controller.pause)
+                this.addFinalizeMethod(controller.immediateExecution)
+            })
+            this.addTrackedPromise(promise)
+            return promise
+        }
     }
     // 添加外部不可控第三方库的结束回调Promise,将其纳入timer时间统计的方法(无法控制)
     public addTrackedPromise(promise: Promise<void>): void {
+        if (this.isImmediate) return
         // 在toImmediate()后,TrackableTimer应返回resolve状态的promise序列,包括外部promise也是如此
         const promiseForimmediate = new Promise<void>((res) => this.resolveList.push(res))
         this.promiseList.push(Promise.race([promise, promiseForimmediate]).catch())
     }
-    // 为外部不可控第三方库的操作添加结束方法,比如tween.setPosition(tween.duration)
-    public addManualResult(fn: Function0<void>): void {
-        this.resolveList.push(fn)
-    }
+    // 为外部不可控第三方库添加暂停和取消暂停方法,比如createjs.Ticker.paused = true
+    // timer不会在添加时自动调用start
     public addStartMethod(fn: Function0<void>): void {
+        if (this.isImmediate) return
         this.startList.push(fn)
     }
     public addPauseMethod(fn: Function0<void>): void {
+        if (this.isImmediate) return
         this.pauseList.push(fn)
     }
+    // 为外部不可控第三方库的操作添加结束方法,比如tween.setPosition(tween.duration)
+    public addFinalizeMethod(fn: Function0<void>): void {
+        if (this.isImmediate) fn()
+        else this.resolveList.push(fn)
+    }
     public start() {
+        if (this.isImmediate) return
         this.startList.forEach(e => e())
-        super.start()
     }
     public pause() {
+        if (this.isImmediate) return
         this.pauseList.forEach(e => e())
-        super.pause()
     }
     public toImmediate() {
+        this._isImmediate = true
+        if (this.isImmediate) return
         this.resolveList.forEach(e => e())
-        super.toImmediate()
     }
 }
 
 // export方便代码提示一点
-export { TrackableTimer as Timer }
+export { TimerX as Timer }

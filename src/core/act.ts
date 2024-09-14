@@ -70,10 +70,10 @@ function runAct(
 
 // tag:State需要传递一个指针而不是一个值，暂时使用这种形式
 function runActLoop(
+    actIndex: Reactive<number>,
     clickEvent: EventDispatcher<void>,
     fastEvent: EventDispatcher<void>,
-    autoEvent: EventDispatcher<void>,
-    actIndex: Reactive<number>
+    autoEvent: EventDispatcher<void>
 ) {
     const onClick = on(clickEvent)
     const onFast = on(fastEvent)
@@ -95,21 +95,6 @@ function runActLoop(
                         ? Promise.resolve()
                         : Promise.race([onClick(), onAuto(), onFast()])
                 )
-                // .then(() => Promise.race([
-                //     new Promise<State>((res) => {
-                //         if (state === State.Auto || state === State.Fast) res(state)
-                //     }),
-                //     Promise.race([
-                //         onClick().then(() => State.Normal),
-                //         onAuto().then(() => State.Auto),
-                //         onFast().then(() => State.Fast)
-                //     ])
-                // ]))
-                // .then(state =>
-                //     state === State.Fast
-                //         ? delay(100)
-                //         : Promise.resolve()
-                // )
                 .then(() => loop(actIndex))
 
     loop(actIndex)

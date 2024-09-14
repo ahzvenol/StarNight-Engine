@@ -35,8 +35,6 @@ const createStore = async () => {
         user: userDefaultStore.user
     })
 
-    // createEffect(() => { localforage.setItem('store', store()) })
-
     Object.keys(store()).forEach(key => {
         createEffect(
             on(store[key as keyof Store],
