@@ -1,6 +1,6 @@
 import { parse } from "js-ini"
 import { IniKV } from "./default"
-import logger from "@/utils/Logger"
+import { logger } from "@/utils/Logger"
 
 const iniDemo = `
 ; 系统通用配置

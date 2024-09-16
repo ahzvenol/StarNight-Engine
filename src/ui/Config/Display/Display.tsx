@@ -1,18 +1,18 @@
 import { translation } from '@/translations'
 import { Clone, Variable } from '@/ui/Elements'
-import { useReactive } from 'micro-reactive'
 import { Component } from 'solid-js'
 import Button from '../Button'
 import Cell from '../Cell'
 import Slider from '../Slider'
 import styles from '../config.module.scss'
+import { useSignal } from '@/utils/Reactive'
 
 const Display: Component = () => {
   const t = translation.menu.options.pages.display.options
   return (
     <div class={styles.Options_main_content_half}>
       <Cell title={t.fullScreen.title}>
-        <Variable value={useReactive(0)}>{
+        <Variable value={useSignal(0)}>{
           (val) =>
             <Clone count={2}>
               {(i) =>
@@ -26,7 +26,7 @@ const Display: Component = () => {
         </Variable>
       </Cell>
       <Cell title={t.textSpeed.title}>
-        <Variable value={useReactive(0)}>{
+        <Variable value={useSignal(0)}>{
           (val) =>
             <Clone count={3}>
               {(i) =>
@@ -40,7 +40,7 @@ const Display: Component = () => {
         </Variable>
       </Cell>
       <Cell title={t.textSize.title}>
-        <Variable value={useReactive(0)}>{
+        <Variable value={useSignal(0)}>{
           (val) =>
             <Clone count={3}>
               {(i) =>
@@ -54,7 +54,7 @@ const Display: Component = () => {
         </Variable>
       </Cell>
       <Cell title={t.textFont.title}>
-        <Variable value={useReactive(0)}>{
+        <Variable value={useSignal(0)}>{
           (val) =>
             <Clone count={3}>
               {(i) =>
@@ -68,7 +68,7 @@ const Display: Component = () => {
         </Variable>
       </Cell>
       <Cell title={t.textboxOpacity.title}>
-        <Slider signal={useReactive(1)} />
+        <Slider signal={useSignal(1)} />
       </Cell>
       {/* <Cell title={t.textPreview.title}> */}
       {/* 这是一个临时的组件，用于模拟文本预览的效果 */}

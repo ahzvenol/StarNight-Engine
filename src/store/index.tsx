@@ -3,7 +3,7 @@ import localforage from "localforage"
 import { useReactive } from "micro-reactive"
 import { createEffect, createResource, on, type Resource } from "solid-js"
 
-import logger from "@/utils/Logger"
+import { logger } from "@/utils/Logger"
 import systemDefaultStore, { Store } from "./default"
 import { getUserIni } from "./ini"
 

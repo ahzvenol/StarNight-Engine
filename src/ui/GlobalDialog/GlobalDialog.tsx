@@ -13,7 +13,7 @@ interface IShowGlobalDialogProps {
   rightFunc?: Function
 }
 
-const DialogContent = useReactive(null) as Reactive<IShowGlobalDialogProps | null>
+const DialogContent = useReactive<IShowGlobalDialogProps | null>(null)
 
 const useDialog = (props: IShowGlobalDialogProps) => DialogContent(props)
 

@@ -1,7 +1,7 @@
 import { useStore } from '@/store/context'
 import { translation } from '@/translations'
 import { Clone, Variable } from '@/ui/Elements'
-import { useReactive } from 'micro-reactive'
+import { useSignal } from '@/utils/Reactive'
 import { Component } from 'solid-js'
 import Button from '../Button'
 import Cell from '../Cell'
@@ -31,7 +31,7 @@ const Sound: Component = () => {
         <Slider signal={config.UISEVolume} />
       </Cell>
       <Cell title={t.voiceOption.title}>
-        <Variable value={useReactive(0)}>{
+        <Variable value={useSignal(0)}>{
           (val) =>
             <Clone count={2}>
               {(i) =>

@@ -1,5 +1,3 @@
-import PromiseX from "@/utils/PromiseX"
-
 // 对回调进行包装,实现了暂停,恢复,立即执行和取消执行的功能
 class TimeoutController {
     private executeOnceCallback: () => void
@@ -76,7 +74,7 @@ class TimerX {
         }
     }
     // 添加外部不可控第三方库的结束回调Promise,将其纳入timer时间统计的方法(无法控制)
-    public addTrackedPromise(promise: Promise<void>): void {
+    public addTrackedPromise(promise: Promise<void | any>): void {
         if (this.isImmediate) return
         // 在toImmediate()后,TrackableTimer应返回resolve状态的promise序列,包括外部promise也是如此
         const promiseForimmediate = new Promise<void>((res) => this.resolveList.push(res))
@@ -106,8 +104,8 @@ class TimerX {
         this.pauseList.forEach(e => e())
     }
     public toImmediate() {
-        this._isImmediate = true
         if (this.isImmediate) return
+        this._isImmediate = true
         this.resolveList.forEach(e => e())
     }
 }

@@ -1,12 +1,12 @@
 import { useStore } from "@/store/context"
 import { translation } from "@/translations"
-import { useReactive } from "micro-reactive"
+import { useSignal } from "@/utils/Reactive"
 import { Component, Show } from "solid-js"
 import { Button, Clone } from "../Elements"
 import styles from './SaveAndLoad.module.scss'
 
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
-    const currentPage = useReactive(0)
+    const currentPage = useSignal(0)
     const t = translation.menu
 
     const save = useStore().save.individual

@@ -6,7 +6,7 @@ import './utils/implicit'
 import UI from './ui'
 import store from './store'
 import '@/store/audioManager'
-import logger from './utils/Logger'
+import { logger } from './utils/Logger'
 
 if (import.meta.env.DEV) { }
 

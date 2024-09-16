@@ -1,9 +1,9 @@
-import logger from "@/utils/Logger"
+import { logger } from "@/utils/Logger"
+import { useSignal } from "@/utils/Reactive"
 import { isFunction, isString } from "es-toolkit"
-import { useReactive } from "micro-reactive"
-import { Component, JSX, ParentProps, Show, createEffect } from "solid-js"
+import { JSX, ParentProps, Show, createEffect } from "solid-js"
 
-const active = useReactive("")
+const active = useSignal("")
 
 createEffect(() => logger.info(`页面跳转:${active()}`))
 
@@ -21,4 +21,4 @@ function Route(props: any): JSX.Element {
 }
 
 const router = { active, history, navigate, back }
-export { router, Route, }
+export { Route, router }
