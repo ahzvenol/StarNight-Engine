@@ -1,5 +1,5 @@
 type Level = "DEBUG" | "INFO" | "WARN" | "ERROR"
-type InfoTypes = string | number | boolean | null | undefined | bigint
+type InfoTypes = string | number | boolean | bigint | null | undefined
 type ExtraTypes = Object | Function | Array<unknown> | symbol
 class Logger {
     static dic = { DEBUG: '#7799BB', INFO: '#009966', WARN: '#DD5544', ERROR: '#CC2233' }
@@ -33,4 +33,4 @@ class Logger {
 // 不全改成静态函数是因为代码提示问题
 const logger = new Logger()
 
-export default logger
+export { logger }

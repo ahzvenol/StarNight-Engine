@@ -1,8 +1,9 @@
-import { Reactive, useReactive } from "micro-reactive"
+import { titleComponentMountEvent } from "@/ui/Title/Title"
+import { logger } from "@/utils/Logger"
+import { useSignal } from "@/utils/Reactive"
+import { Reactive } from "micro-reactive"
 import { createEffect, createMemo } from "solid-js"
 import { storePromise } from "."
-import { titleComponentMountEvent } from "@/ui/Title/Title"
-import logger from "@/utils/Logger"
 
 const configVolumeControllerMapPromise =
     storePromise.then((store) => ({
@@ -43,7 +44,7 @@ function createAudioTrack(
     })
 
     // 重复赋值相同的src也会导致audio从头开始播放,在这种情况下跳过赋值
-    let currentSrc = '';
+    let currentSrc = ''
     Object.defineProperty(audio, 'src', {
         get() {
             return currentSrc
@@ -53,17 +54,17 @@ function createAudioTrack(
             currentSrc = value
             audio.setAttribute('src', value)
         }
-    });
+    })
 
     return audio
 }
 
 // 全局音量
-const GolbalVolume = useReactive(1)
+const GolbalVolume = useSignal(1)
 
-const BGMUserVolumeController = useReactive(1)
-const SEUserVolumeController = useReactive(1)
-const ClipUserVolumeController = useReactive(1)
+const BGMUserVolumeController = useSignal(1)
+const SEUserVolumeController = useSignal(1)
+const ClipUserVolumeController = useSignal(1)
 
 // 背景音乐
 const BGM = createAudioTrack('BGM', BGMUserVolumeController)
@@ -87,10 +88,11 @@ const hoverSoundEffect = () => HSE.cloneNode().play()
 
 
 export {
-    GolbalVolume, BGM, SE, Clip,
-    BGMUserVolumeController,
-    ClipUserVolumeController,
-    SEUserVolumeController,
+    GolbalVolume,
+    BGM, BGMUserVolumeController,
+    Clip, ClipUserVolumeController,
+    SE, SEUserVolumeController,
     clickSoundEffect,
     hoverSoundEffect
 }
+

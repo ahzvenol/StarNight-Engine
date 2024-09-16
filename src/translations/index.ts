@@ -1,5 +1,5 @@
 import { storePromise } from "@/store"
-import logger from "@/utils/Logger"
+import { logger } from "@/utils/Logger"
 import { toMerged } from "es-toolkit"
 import { Reactive, ReactiveType, useReactive } from "micro-reactive"
 import { Accessor, createEffect, on } from "solid-js"
