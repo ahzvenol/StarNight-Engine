@@ -1,10 +1,9 @@
 import { clickSoundEffect, hoverSoundEffect } from '@/store/audioManager'
 import { Store } from '@/store/default'
 import { ObjectUtils } from "@/utils/ObjectUtils"
-import { range } from 'es-toolkit'
+import { omitBy, range } from 'es-toolkit'
 import type { Component } from 'solid-js'
 import { Index, JSX, splitProps } from 'solid-js'
-import { getUuid } from "../utils"
 import Scale from "./Scale"
 
 //横行竖列
@@ -15,9 +14,9 @@ const column = (x: number) => (index: number) => Math.ceil((index + 1) / x)
 
 const Element: Component<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
     if (props.style && ObjectUtils.isObject(props.style)) {
-        const pseudoClassesStyleObject = ObjectUtils.fitter(props.style)(([_, v]) => ObjectUtils.isObject(v))
+        const pseudoClassesStyleObject = omitBy(props.style, (value) => ObjectUtils.isObject(value))
         if (ObjectUtils.isNotEmpty(pseudoClassesStyleObject)) {
-            const uuid = getUuid().replace(/^[^a-zA-Z]*/, '')
+            const uuid = crypto.randomUUID().replace(/^[^a-zA-Z]*/, '')
             const pseudoClassesStyleString =
                 Object.entries(pseudoClassesStyleObject)
                     .map(([key, value]) =>
@@ -75,3 +74,4 @@ const Clone =
         <Index each={range(0, props.count)}>{(index) => props.children(index())}</Index>
 
 export { Button, Clone, Element, Graphic, Variable, column, line }
+

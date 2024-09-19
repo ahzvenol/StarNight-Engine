@@ -1,12 +1,17 @@
-import { tryFn } from "@/utils"
+function tryFn(fn: () => void) {
+    try {
+        fn()
+    } catch (e) {
+        console.error(e)
+    }
+}
 
 type EventHandler<T> = Function1<T, void>
 class EventDispatcher<T> {
     private callbacks: Record<symbol, EventHandler<T>> = {};
 
     public publish = (e: T) => {
-        // @ts-ignore
-        Reflect.ownKeys(this.callbacks).forEach(key => tryFn(() => this.callbacks[key](e)))
+        Reflect.ownKeys(this.callbacks).forEach(key => tryFn(() => this.callbacks[key as symbol](e)))
     }
     public subscribe = (callback: EventHandler<T>) => {
         const uuid = Symbol()

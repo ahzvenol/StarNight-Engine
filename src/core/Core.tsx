@@ -8,7 +8,7 @@ import { State, commands } from "./Command"
 import { EventDispatcher, on } from "./EventDispatcher"
 import { Timer } from "./Timer"
 import { runAct } from "./act"
-import { onContinue } from "./commands/scripts/continue"
+import { match } from 'ts-pattern'
 
 type GameUIElement = Function2<HTMLCanvasElement, Reactive<Dictionary<string>>, JSX.Element>
 
@@ -39,18 +39,22 @@ const Core: Component<{ startAt: number, children: GameUIElement }> =
         const loop: Function0<Promise<void>> =
             () =>
                 runAct(row(), state(), onClick, onFast)
-                    .then(() => state() === State.Fast
-                        ? delay(100)
-                        : state() === State.Auto
+                    .then(res =>
+                        (res['continue'] === true
                             ? Promise.resolve()
-                            : Promise.race([
-                                onClick(),
-                                onAuto(),
-                                onFast(),
-                                onContinue()
-                            ])
+                            : match(state())
+                                .with(State.Fast, () => delay(100))
+                                .with(State.Auto, () => Promise.resolve())
+                                .otherwise(() => Promise.race([
+                                    onClick(),
+                                    onAuto(),
+                                    onFast(),
+                                ]))
+                        ).then(() =>
+                            res['jump'] !== undefined
+                                ? row(res['jump'])
+                                : row(row() + 1))
                     )
-                    .then(() => row(row() + 1))
                     .then(loop)
 
         onMount(() => {
@@ -59,7 +63,7 @@ const Core: Component<{ startAt: number, children: GameUIElement }> =
             const timer = new Timer()
             timer.toImmediate()
             const context = { timer, state: State.Init }
-            book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
+            // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
             range(0, startAt).forEach(row => book[row].forEach(i => commands[i['@']]?.run({ row, ...context })(i)))
             // todo:对副作用初始化
             // @ts-expect-error

@@ -23,19 +23,23 @@ export type GameContext = {
 
 export declare const commands: Dictionary<Command | ActScopedCommand | GameScopedCommand>
 
-type ArgsType = {
+export type Args = {
     name: string,
     target: string,
+    file: string
     duration: number,
-    transition: string
+    transition: string,
+    text: string,
+    number: number,
+    bool: boolean
 }
 
 // tag:要实现代码提示,但是实际上又不一定存在这个参数,为了避免代码里到处都是!,暂时先把类型写怪一点
 export type CommandRunFunction = Function1<
     GameContext,
     Function1<
-        Dictionary & Partial<ArgsType> & ArgsType,
-        Promise<void | any> | void
+        Dictionary & Partial<Args> & Args,
+        Promise<void | Dictionary> | void
     >
 >
 

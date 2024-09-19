@@ -2,10 +2,11 @@ import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import importToCDN from 'vite-plugin-cdn-import'
 import solidPlugin from 'vite-plugin-solid'
+import pattycake from 'pattycake'
 import TrackEffect from './plugins/vite-plugin-track-effect'
 
 export default defineConfig(({ command }) => ({
-  plugins: [solidPlugin(), TrackEffect(),
+  plugins: [solidPlugin(), pattycake.vite({ disableOptionalChaining: false }), TrackEffect(),
   importToCDN({
     modules: [
       {

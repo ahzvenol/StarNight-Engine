@@ -1,20 +1,17 @@
 import { ActScopedCommand, CommandRunFunction, State } from "@/core/Command"
-import { Continue } from "./continue"
+import { Continue } from "./!continue"
 
-let flag = false
+export let flag = false
 
-let num = 0
+export let num = 0
 
 const onActStart = () => flag = false
 
-const jump: CommandRunFunction = ({ state, row, save: { individual } }) => async ({ target }) => {
+const jump: CommandRunFunction = ({ state }) => ({ number }) => {
     flag = true
-    Continue.run()()
-    if (state === State.Init) {
-        if (row in individual.jumpMap) num = individual.jumpMap[row]
-    } else {
-
-    }
+    num = number
+    // @ts-expect-error
+    Continue.run({ state })()
 }
 
 export const Jump: ActScopedCommand = { onActStart, run: jump }

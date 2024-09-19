@@ -1,5 +1,5 @@
 import { Reactive } from 'micro-reactive'
-import { splitProps } from 'solid-js'
+import { createSelector, splitProps } from 'solid-js'
 import { Button as BaseButton } from '../Elements'
 import styles from './button.module.scss'
 
@@ -7,12 +7,13 @@ import styles from './button.module.scss'
 // flex样式不好操作,暂时先还原UI,不做更多额外工作
 function Button<T>(props: { key: T, signal: Reactive<T> } & Parameters<typeof BaseButton>[0]) {
   const [local, others] = splitProps(props, ["key", "signal", "classList", "onclick"])
+  const isSelected = createSelector<T>(local.signal)
   return (
     <BaseButton
       classList={{
         ...local.classList,
         [styles.NormalButton]: true,
-        [styles.NormalButtonChecked]: local.signal() === local.key
+        [styles.NormalButtonChecked]: isSelected(local.key)
       }}
       onclick={() => {
         local.signal(local.key)
