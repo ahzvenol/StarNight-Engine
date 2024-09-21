@@ -3,12 +3,12 @@ import type { Component } from 'solid-js'
 import { Match, Switch } from 'solid-js'
 
 import './utils/implicit'
-import UI from './ui'
+import UI from './ui/WebGal'
 import store from './store'
 import '@/store/audioManager'
 import { logger } from './utils/Logger'
 
-if (import.meta.env.DEV) { }
+if (import.meta.env.DEV === true) { }
 
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false

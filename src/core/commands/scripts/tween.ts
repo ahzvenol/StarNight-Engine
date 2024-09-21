@@ -1,4 +1,4 @@
-import { ActScopedCommand, CommandRunFunction } from "@/core/Command"
+import { CommandRunFunction } from "@/core/Command"
 import { omit } from "es-toolkit"
 
 const EASE_KEYS = [
@@ -24,4 +24,4 @@ const tween: CommandRunFunction = ({ timer }) => ({ target, duration, transition
     timer.addFinalizeMethod(() => tween.setPosition(tween.duration))
 }
 
-const Tween: ActScopedCommand = { onActStart, run: tween }
+const Tween = { onActStart, init: tween, run: tween }

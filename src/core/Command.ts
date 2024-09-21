@@ -1,6 +1,7 @@
 import { IndividualSaveData } from "@/store/default"
 import { Reactive } from "micro-reactive"
 import { Timer } from "./Timer"
+import { Variables } from "./Core"
 
 export enum State {
     Init,
@@ -10,47 +11,50 @@ export enum State {
 }
 
 export type GameContext = {
-    timer: Timer,
-    state: State,
-    row: number,
     stage: createjs.Stage
-    variables: Reactive<Dictionary>,
+    variables: Variables,
     save: {
-        global: Reactive<Dictionary>,
+        global: Reactive<Record<string, any>>,
         individual: IndividualSaveData
     }
 }
 
-export declare const commands: Dictionary<Command | ActScopedCommand | GameScopedCommand>
+export type GameRuntimeContext = {
+    timer: Timer,
+    state: State,
+    row: number,
+} & GameContext
+
+export declare const commands: Record<string, Command>
 
 export type Args = {
     name: string,
-    target: string,
+    target: string | number,
     file: string
     duration: number,
     transition: string,
     text: string,
     number: number,
     bool: boolean
+    value: string | number | boolean
 }
 
-// tag:要实现代码提示,但是实际上又不一定存在这个参数,为了避免代码里到处都是!,暂时先把类型写怪一点
-export type CommandRunFunction = Function1<
-    GameContext,
+type CommandOutput = void | (Record<string, any> & Partial<{ 'continue': boolean, 'jump': number, 'end': boolean }>)
+
+export type CommandRunFunction<T = any> = Function1<
+    GameRuntimeContext,
     Function1<
-        Dictionary & Partial<Args> & Args,
-        Promise<void | Dictionary> | void
+        T,
+        Promise<CommandOutput> | CommandOutput
     >
 >
 
+export type CommandLifeCycleFunction = Function1<GameContext, void>
+
 export interface Command {
-    run: CommandRunFunction
-}
-
-export interface ActScopedCommand extends Command {
-    onActStart: Function0<void>
-}
-
-export interface GameScopedCommand extends Command {
-    afterInit: Function0<void>
+    run: CommandRunFunction,
+    init?: CommandRunFunction,
+    beforeInit?: CommandLifeCycleFunction
+    afterInit?: CommandLifeCycleFunction
+    onActStart?: CommandLifeCycleFunction
 }

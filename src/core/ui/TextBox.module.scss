@@ -1,0 +1,55 @@
+$height: 330px;
+
+.TextBox_Container {
+  position: absolute;
+  z-index: 6;
+  bottom: 0;
+  width: 100%;
+  animation: showSoftly 0.7s ease-out forwards;
+}
+
+.TextBox_main {
+  z-index: 3;
+  position: absolute;
+  right: 25px;
+  min-height: $height;
+  max-height: $height;
+  background-blend-mode: darken;
+  border-radius: calc($height / 2) 20px 20px calc($height / 2);
+  bottom: 20px;
+  left: 275px;
+  font-weight: bold;
+  color: white;
+  padding: 1em 50px 70px 200px;
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  letter-spacing: 0.2em;
+  transition: left 0.33s;
+}
+
+.TextBox_Background {
+  z-index: 2;
+  background: linear-gradient(rgba(245, 247, 250, 1) 0%, rgba(189, 198, 222, 1) 100%);
+}
+
+.TextBox_Name {
+  font-size: 85%;
+  padding: 0 2em 0 2em;
+  position: absolute;
+  left: 150px;
+  top: -68px;
+  height: 80px;
+  line-height: 68px;
+  border-radius: 40px;
+  z-index: 3;
+  border: 4px solid rgba(255, 255, 255, 0);
+}
+
+.TextBox_Name_Background {
+  z-index: 2;
+  background: rgba(11, 52, 110, 1);
+  border: 4px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 3px 3px 10px rgba(100, 100, 100, 0.5);
+}

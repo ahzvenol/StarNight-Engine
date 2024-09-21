@@ -9,8 +9,8 @@ name=demo
 version=StarNight Engine 3 Years
 
 [graphic]
-width=2560
-height=1440
+width=1280
+height=720
 mode=auto
 
 [config]
