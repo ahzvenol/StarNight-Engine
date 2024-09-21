@@ -1,9 +1,9 @@
 import { EventDispatcher } from "@/core/EventDispatcher"
 import { Component, onMount } from "solid-js"
-import { router } from "../../router"
-import { translation } from "../../translations"
-import { Button, Clone } from "../Elements"
-import styles from "./title.module.scss"
+import { router } from "../../../router"
+import { translation } from "../../../translations"
+import { Button, Clone } from "../../Elements"
+import styles from "./Title.module.scss"
 
 const titleComponentMountEvent = new EventDispatcher<void>()
 /**
@@ -18,7 +18,7 @@ const Title: Component = () => {
       <div
         class={styles.Title_main}
         style={{
-          'background-image': 'url(./title_bg.png)',
+          'background-image': 'url(./Texture2D/title_bg.png)',
           'background-size': 'cover',
         }}
       >

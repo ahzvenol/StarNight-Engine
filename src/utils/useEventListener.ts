@@ -1,3 +1,5 @@
+import { onCleanup } from "solid-js"
+
 export type UseEventListenerOptions = {
     target?: EventTarget
     capture?: boolean
@@ -31,10 +33,14 @@ export function useEventListener(
         attached = true
     }
 
-    return () => {
+    const move = () => {
         if (target && attached) {
             target.removeEventListener(type, listener, capture)
             attached = false
         }
     }
+
+    onCleanup(move)
+
+    return move
 }

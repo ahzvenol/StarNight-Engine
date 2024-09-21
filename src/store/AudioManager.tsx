@@ -1,4 +1,4 @@
-import { titleComponentMountEvent } from "@/ui/Title/Title"
+import { titleComponentMountEvent } from "@/ui/WebGal/Title/Title"
 import { logger } from "@/utils/Logger"
 import { useSignal } from "@/utils/Reactive"
 import { Reactive } from "micro-reactive"
