@@ -1,6 +1,6 @@
-import { parse } from "js-ini"
-import { IniKV } from "./default"
-import { logger } from "@/utils/Logger"
+import { parse } from 'js-ini'
+import { IniKV } from './default'
+import { logger } from '@/utils/Logger'
 
 const iniDemo = `
 ; 系统通用配置
@@ -36,7 +36,7 @@ export const getUserIni = async () => {
 
     const system = { ...info, ...graphic }
 
-    logger.info("配置文件解析完毕:", ini)
+    logger.info('配置文件解析完毕:', ini)
 
     const iniObj = { system, config, user }
 

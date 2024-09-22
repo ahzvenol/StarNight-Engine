@@ -1,7 +1,7 @@
 export const ChineseSimplified = {
- common: {
+    common: {
         yes: '是',
-        no: '否',
+        no: '否'
     },
 
     menu: {
@@ -16,38 +16,38 @@ export const ChineseSimplified = {
                             options: {
                                 slow: '慢',
                                 medium: '中',
-                                fast: '快',
-                            },
+                                fast: '快'
+                            }
                         },
                         language: {
-                            title: '语言',
+                            title: '语言'
                         },
                         resetData: {
                             title: '清除或还原数据',
                             options: {
                                 clearGameSave: '清除所有存档',
                                 resetSettings: '还原默认设置',
-                                clearAll: '清除所有数据',
+                                clearAll: '清除所有数据'
                             },
                             dialogs: {
                                 clearGameSave: '确定要清除存档吗',
                                 resetSettings: '确定要还原默认设置吗',
-                                clearAll: '确定要清除所有数据吗',
-                            },
+                                clearAll: '确定要清除所有数据吗'
+                            }
                         },
                         gameSave: {
                             title: '导入或导出存档与选项',
                             options: {
                                 export: '导出存档与选项',
-                                import: '导入存档与选项',
+                                import: '导入存档与选项'
                             },
                             dialogs: {
                                 import: {
                                     title: '确定要导入存档与选项吗',
                                     tip: '导入存档',
-                                    error: '存档解析失败',
-                                },
-                            },
+                                    error: '存档解析失败'
+                                }
+                            }
                         },
                         about: {
                             title: '关于 WebGAL',
@@ -55,9 +55,9 @@ export const ChineseSimplified = {
                             version: '版本号',
                             source: '源代码仓库',
                             contributors: '贡献者',
-                            website: '网站',
-                        },
-                    },
+                            website: '网站'
+                        }
+                    }
                 },
                 display: {
                     title: '显示',
@@ -66,41 +66,41 @@ export const ChineseSimplified = {
                             title: '全屏模式',
                             options: {
                                 on: '开启',
-                                off: '关闭',
-                            },
+                                off: '关闭'
+                            }
                         },
                         textSpeed: {
                             title: '文字显示速度',
                             options: {
                                 slow: '慢',
                                 medium: '中',
-                                fast: '快',
-                            },
+                                fast: '快'
+                            }
                         },
                         textSize: {
                             title: '文本大小',
                             options: {
                                 small: '小',
                                 medium: '中',
-                                large: '大',
-                            },
+                                large: '大'
+                            }
                         },
                         textFont: {
                             title: '文本字体',
                             options: {
                                 siYuanSimSun: '思源宋体',
                                 SimHei: '黑体',
-                                lxgw: '霞鹜文楷',
-                            },
+                                lxgw: '霞鹜文楷'
+                            }
                         },
                         textboxOpacity: {
-                            title: '文本框不透明度',
+                            title: '文本框不透明度'
                         },
                         textPreview: {
                             title: '文本显示预览',
-                            text: '现在预览的是文本框字体大小和播放速度的情况，您可以根据您的观感调整上面的选项。',
-                        },
-                    },
+                            text: '现在预览的是文本框字体大小和播放速度的情况，您可以根据您的观感调整上面的选项。'
+                        }
+                    }
                 },
                 sound: {
                     title: '音频',
@@ -112,51 +112,51 @@ export const ChineseSimplified = {
                         uiSeVolume: { title: '用户界面音效音量' },
                         voiceOption: { title: '是否中断语音' },
                         voiceStop: { title: '停止语音' },
-                        voiceContinue: { title: '继续语音' },
-                    },
-                },
-            },
+                        voiceContinue: { title: '继续语音' }
+                    }
+                }
+            }
         },
         saving: {
             title: '存档',
-            isOverwrite: '是否覆盖存档？',
+            isOverwrite: '是否覆盖存档？'
         },
         loadSaving: {
-            title: '读档',
+            title: '读档'
         },
         title: {
             title: '标题',
             options: {
                 load: '',
-                extra: '鉴赏模式',
-            },
+                extra: '鉴赏模式'
+            }
         },
         exit: {
-            title: '返回',
-        },
+            title: '返回'
+        }
     },
 
     title: {
         start: {
             title: '开始游戏',
-            subtitle: 'START',
+            subtitle: 'START'
         },
         continue: {
             title: '继续游戏',
-            subtitle: 'CONTINUE',
+            subtitle: 'CONTINUE'
         },
         options: {
             title: '游戏选项',
-            subtitle: 'OPTIONS',
+            subtitle: 'OPTIONS'
         },
         load: {
             title: '读取存档',
-            subtitle: 'LOAD',
+            subtitle: 'LOAD'
         },
         extra: {
             title: '鉴赏模式',
-            subtitle: 'EXTRA',
-        },
+            subtitle: 'EXTRA'
+        }
     },
 
     gaming: {
@@ -174,11 +174,11 @@ export const ChineseSimplified = {
             load: '读档',
             options: '选项',
             title: '标题',
-            titleTips: '确认返回到标题界面吗',
-        },
+            titleTips: '确认返回到标题界面吗'
+        }
     },
 
     extra: {
-        title: '鉴赏模式',
-    },
+        title: '鉴赏模式'
+    }
 }

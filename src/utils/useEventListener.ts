@@ -1,4 +1,4 @@
-import { onCleanup } from "solid-js"
+import { onCleanup } from 'solid-js'
 
 export type UseEventListenerOptions = {
     target?: EventTarget
@@ -9,18 +9,10 @@ export type UseEventListenerOptions = {
 export function useEventListener<K extends keyof DocumentEventMap>(
     type: K,
     listener: (event: DocumentEventMap[K]) => void,
-    options?: UseEventListenerOptions,
+    options?: UseEventListenerOptions
 ): () => void
-export function useEventListener(
-    type: string,
-    listener: EventListener,
-    options?: UseEventListenerOptions,
-): () => void
-export function useEventListener(
-    type: string,
-    listener: EventListener,
-    options: UseEventListenerOptions = {},
-) {
+export function useEventListener(type: string, listener: EventListener, options?: UseEventListenerOptions): () => void
+export function useEventListener(type: string, listener: EventListener, options: UseEventListenerOptions = {}) {
     let attached: boolean | undefined
 
     const { target = window, passive = false, capture = false } = options
@@ -28,7 +20,7 @@ export function useEventListener(
     if (target && !attached) {
         target.addEventListener(type, listener, {
             capture,
-            passive,
+            passive
         })
         attached = true
     }

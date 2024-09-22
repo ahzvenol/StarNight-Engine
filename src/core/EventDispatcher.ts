@@ -8,10 +8,10 @@ function tryFn(fn: () => void) {
 
 type EventHandler<T> = Function1<T, void>
 class EventDispatcher<T> {
-    private callbacks: Record<symbol, EventHandler<T>> = {};
+    private callbacks: Record<symbol, EventHandler<T>> = {}
 
     public publish = (e: T) => {
-        Reflect.ownKeys(this.callbacks).forEach(key => tryFn(() => this.callbacks[key as symbol](e)))
+        Reflect.ownKeys(this.callbacks).forEach((key) => tryFn(() => this.callbacks[key as symbol](e)))
     }
     public subscribe = (callback: EventHandler<T>) => {
         const uuid = Symbol()
@@ -25,8 +25,10 @@ class EventDispatcher<T> {
             callback(e)
         }
     }
-
 }
-const on = <T>(event: EventDispatcher<T>) => () => new Promise<T>(event.once)
+const on =
+    <T>(event: EventDispatcher<T>) =>
+    () =>
+        new Promise<T>(event.once)
 
 export { EventDispatcher, on }

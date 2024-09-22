@@ -1,11 +1,11 @@
 // 对回调进行包装,实现了暂停,恢复,立即执行和取消执行的功能
 class TimeoutController {
     private executeOnceCallback: () => void
-    private timerId: number | undefined = undefined;
-    private startTime: number = 0;
+    private timerId: number | undefined = undefined
+    private startTime: number = 0
     private remainingTime: number
-    private _isExecuted: boolean = false;
-    private _isStarted: boolean = true;
+    private _isExecuted: boolean = false
+    private _isStarted: boolean = true
     public get isExecuted(): boolean {
         return this._isExecuted
     }
@@ -42,10 +42,9 @@ class TimeoutController {
     }
 }
 
-
 // Timer假设在最后一个延时回调完成之后不会再有新的新的延时回调被注册,否则永远无法确定执行是否结束
 class TimerX {
-    private _isImmediate = false;
+    private _isImmediate = false
     public get isImmediate(): boolean {
         return this._isImmediate
     }
@@ -61,9 +60,8 @@ class TimerX {
     public delay(wait: number) {
         if (this.isImmediate) {
             return Promise.resolve()
-        }
-        else {
-            const promise = new Promise<void>(res => {
+        } else {
+            const promise = new Promise<void>((res) => {
                 const controller = new TimeoutController(res, wait)
                 this.addStartMethod(controller.start)
                 this.addPauseMethod(controller.pause)
@@ -97,16 +95,16 @@ class TimerX {
     }
     public start() {
         if (this.isImmediate) return
-        this.startList.forEach(e => e())
+        this.startList.forEach((e) => e())
     }
     public pause() {
         if (this.isImmediate) return
-        this.pauseList.forEach(e => e())
+        this.pauseList.forEach((e) => e())
     }
     public toImmediate() {
         if (this.isImmediate) return
         this._isImmediate = true
-        this.resolveList.forEach(e => e())
+        this.resolveList.forEach((e) => e())
     }
 }
 

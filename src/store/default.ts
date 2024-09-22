@@ -1,14 +1,14 @@
-import { language } from "@/translations"
-import { Reactive } from "micro-reactive"
+import { language } from '@/translations'
+import { Reactive } from 'micro-reactive'
 
 // 确保程序运行所需的键值,如新增依赖变量,需要在这里添加默认值
 const systemDefaultStore = {
     system: {
-        name: "default",
-        version: "1",
+        name: 'default',
+        version: '1',
         width: 2560,
         height: 1440,
-        mode: "auto" as "auto" | "full",
+        mode: 'auto' as 'auto' | 'full'
     },
     config: {
         GolbalVolume: 1,
@@ -19,12 +19,10 @@ const systemDefaultStore = {
         language: 'zh-CN' as keyof typeof language
     },
     save: {
-        global: {} as Record<string, any>,
+        global: {} as Record<string, unknown>,
         individual: {} as Record<number, IndividualSaveData>
     },
-    user: {
-
-    }
+    user: {}
 }
 
 // tag:考虑global放info,graphic,variable这些,archive放list,variable,readed(这词拼写错误但是意思到了)
@@ -32,7 +30,7 @@ const systemDefaultStore = {
 // archive中应包含内容按照之前有 previewpic index text 具体名称修改待考虑
 
 type IniKV = Record<string, string | number | boolean>
-type IndividualSaveData = Record<string, any>
+type IndividualSaveData = Record<string, unknown>
 
 // & IniKV会丢失类型检查,所以不在类型上书写它
 // type Store = Reactive<{

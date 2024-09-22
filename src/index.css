@@ -1,6 +1,6 @@
 @import url(assets/reset.css);
 
 * {
-  user-select: none;
-  -webkit-text-size-adjust: 100%;
+    user-select: none;
+    -webkit-text-size-adjust: 100%;
 }

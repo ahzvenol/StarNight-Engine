@@ -1,10 +1,13 @@
-import { Command } from "../Command"
-import { Continue, End, Jump } from "./scripts/!"
+import { Command } from '../Command'
+import { Continue, End, Jump } from './scripts/!'
+import { Name, Text } from './scripts/textbox'
 
 export const commands: Record<string, Command> = {
     continue: Continue,
     jump: Jump,
-    end: End
+    end: End,
+    name: Name,
+    text: Text
 }
 
 // 文本:text

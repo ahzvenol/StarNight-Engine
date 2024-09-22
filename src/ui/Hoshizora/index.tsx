@@ -2,44 +2,46 @@ import { Context } from '@/store/context'
 import { Store } from '@/store/default'
 import { Component } from 'solid-js'
 import { Route, router } from '../../router'
-import Config from './Config/Config'
 import { Graphic } from '../Elements'
-import Gallery from './Gallery/Gallery'
+// import Config from './Config/Config'
+// import Gallery from './Gallery/Gallery'
 import SaveLoad from './SaveAndLoad/SaveLoad'
 import Title from './Title/Title'
 import Game from '@/core/Game'
+import Back from './Back/Back'
+import jcyt500W from '@/assets/jcyt500W.ttf'
 
 const UI: Component<{ environment: Store }> = ({ environment }) => (
     <Context environment={environment}>
         <Graphic config={environment.system}>
             <Route path="">
-                <Title></Title>
+                <Title />
             </Route>
             <Route path="Game">
-                <Game></Game>
+                <Game />
             </Route>
-            <div onContextMenu={router.back}>
-                <Route when={(path) => path === 'Config' || path === 'Load' || path === 'Save'}>
-                    <Route path="Config">
-                        <Config></Config>
-                    </Route>
+            <Route when={(path) => path === 'Config' || path === 'Load' || path === 'Save' || path === 'Gallery'}>
+                <div onContextMenu={router.back} style={{ width: '100%', height: '100%' }}>
+                    <Route path="Config">{/* <Config></Config> */}</Route>
                     <Route path="Load">
-                        <SaveLoad mode="Load"></SaveLoad>
+                        <SaveLoad mode="Load" />
                     </Route>
                     <Route path="Save">
-                        <SaveLoad mode="Save"></SaveLoad>
+                        <SaveLoad mode="Save" />
                     </Route>
-                </Route>
-                <Route path="Gallery">
-                    <Gallery></Gallery>
-                </Route>
-            </div>
+                    <Route path="Gallery">{/* <Gallery></Gallery> */}</Route>
+                    <Back />
+                </div>
+            </Route>
             <style jsx global>
                 {`
                     @font-face {
                         font-family: 'jcyt';
-                        src: url('assets/jcyt500W.ttf');
+                        src: url(${jcyt500W});
                         font-weight: normal;
+                    }
+                    * {
+                        position: absolute;
                     }
                 `}
             </style>

@@ -1,4 +1,4 @@
-import { CommandRunFunction } from "@/core/Command"
+import { CommandRunFunction } from '@/core/Command'
 
 // 跨幕环境变量name,无副作用
 // 存在依赖变量的"文字播放速度"
@@ -9,14 +9,19 @@ import { CommandRunFunction } from "@/core/Command"
 // name参数是可选的
 
 const text: CommandRunFunction =
-    ({ timer, variables }) => ({ text }) => {
+    ({ timer, variables }) =>
+    ({ text }) => {
         variables.reactive.textView(text)
     }
 
+export const Text = { run: text }
+
 const name: CommandRunFunction =
-    ({ variables }) => ({ name }) => {
+    ({ variables }) =>
+    ({ name }) => {
         if (name !== undefined) {
             variables.reactive.nameView(name)
         }
     }
 
+export const Name = { run: name }

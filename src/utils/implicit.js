@@ -6,34 +6,25 @@
 // 例子：
 // (new Date()).Format("yyyy-MM-dd HH:mm:ss.S") ==> 2006-07-02 08:09:04.423
 // (new Date()).Format("yyyy-M-d H:m:s.S")      ==> 2006-7-2 8:9:4.18
-Date.prototype.format = function(fmt) {
+Date.prototype.format = function (fmt) {
     let o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        S: this.getMilliseconds(), //毫秒
-    };
-    if (/(y+)/.test(fmt))
-        fmt = fmt.replace(
-            RegExp.$1,
-            (this.getFullYear() + "").substr(4 - RegExp.$1.length)
-        );
+        'M+': this.getMonth() + 1, //月份
+        'd+': this.getDate(), //日
+        'h+': this.getHours(), //小时
+        'm+': this.getMinutes(), //分
+        's+': this.getSeconds(), //秒
+        'q+': Math.floor((this.getMonth() + 3) / 3), //季度
+        S: this.getMilliseconds() //毫秒
+    }
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length))
     for (let k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-            fmt = fmt.replace(
-                RegExp.$1,
-                RegExp.$1.length == 1 ?
-                o[k] :
-                ("00" + o[k]).substr(("" + o[k]).length)
-            );
-    return fmt;
-};
-
-Array.prototype.clear = function() {
-    this.splice(0, this.length);
+        if (new RegExp('(' + k + ')').test(fmt))
+            fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length))
+    return fmt
 }
 
-window.require = str => new URL(str, import.meta.url).href
+Array.prototype.clear = function () {
+    this.splice(0, this.length)
+}
+
+// window.require = (str) => new URL(str, import.meta.url).href

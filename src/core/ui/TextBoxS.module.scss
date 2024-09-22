@@ -1,75 +1,73 @@
 .text_container {
-  z-index: 66;
-  bottom: 0;
-  height: 28.47%;
-  width: 100%;
+    width: 1280px;
+    height: 200px;
+    bottom: 0;
 }
 
 .text_pic {
-  background-image: url(http://imgsrc.baidu.com/super/pic/item/c8ea15ce36d3d5393c76b1197f87e950342ab0a5.jpg);
-  background-repeat: no-repeat;
-  background-size: cover;
+    width: 100%;
+    height: 100%;
+    background-image: url(./static/Texture2D/window_message.png);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .text {
-  word-break: break-all;
-  /* 处理换行 */
-  white-space: pre;
-  /* 懵逼,rem怎么又好用了? */
-  top: 0.09026rem;
-  /* 写right的话整个块都会在定位右边,没法动态生成 */
-  /* bottom同理 */
-  left: 20.3135%;
-  height: auto;
-  width: auto;
-  font-size: 4%;
-  -webkit-text-stroke: 0.001rem black;
+    word-break: break-all;
+    /* 处理换行 */
+    white-space: pre;
+    top: 0.09026rem;
+    left: 20.3135%;
+    height: auto;
+    width: auto;
+    font-size: 4%;
+    -webkit-text-stroke: 0.001rem black;
 }
 
 .name {
-  z-index: 77;
-  box-sizing: border-box;
-  height: 5.4166%;
-  width: 19.296%;
-  bottom: 22.9166%;
-  right: 65.234%;
-  padding-left: 2.343%;
-  padding-top: 0.6%;
-  font-size: 3.5%;
-  color: .94c6ec;
+    z-index: 77;
+    box-sizing: border-box;
+    height: 5.4166%;
+    width: 19.296%;
+    bottom: 22.9166%;
+    right: 65.234%;
+    padding-left: 2.343%;
+    padding-top: 0.6%;
+    font-size: 3.5%;
+    color: 0.94c6ec;
 }
 
 .name_pic {
-  background-image: url(http://imgsrc.baidu.com/super/pic/item/f11f3a292df5e0fe514337db196034a85fdf7295.jpg);
-  background-repeat: no-repeat;
-  background-size: contain;
-  z-index: 75;
-  box-sizing: border-box;
-  height: 5.4166%;
-  width: 19.296%;
-  bottom: 22.9166%;
-  right: 65.234%;
-  padding-left: 2.343%;
-  padding-top: 0.6%;
-  opacity: 0.7;
+    background-image: url(http://imgsrc.baidu.com/super/pic/item/f11f3a292df5e0fe514337db196034a85fdf7295.jpg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    z-index: 75;
+    box-sizing: border-box;
+    height: 5.4166%;
+    width: 19.296%;
+    bottom: 22.9166%;
+    right: 65.234%;
+    padding-left: 2.343%;
+    padding-top: 0.6%;
+    opacity: 0.7;
 }
 
 .star_container {
-  position: relative;
+    position: relative;
 }
 
 /* 很多样式需要单独加 */
 .star {
-  position: absolute;
-  display: inline-block;
-  right: -0.044rem;
-  bottom: -0.022rem;
-  height: 0.0444445rem;
-  width: 0.0444445rem;
-  background-image: url(http://imgsrc.baidu.com/super/pic/item/c9fcc3cec3fdfc036e235d62913f8794a5c22695.jpg);
-  background-repeat: no-repeat;
-  background-size: contain;
-  transform: rotate(180deg);
-  /* 这里到底是在keyframe里定义101好呢,还是在animation里写alternate好呢,不得而知 */
-  animation: flash 0.5s infinite alternate;
+    position: absolute;
+    display: inline-block;
+    right: -0.044rem;
+    bottom: -0.022rem;
+    height: 0.0444445rem;
+    width: 0.0444445rem;
+    background-image: url(http://imgsrc.baidu.com/super/pic/item/c9fcc3cec3fdfc036e235d62913f8794a5c22695.jpg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    transform: rotate(180deg);
+    /* 这里到底是在keyframe里定义101好呢,还是在animation里写alternate好呢,不得而知 */
+    animation: flash 0.5s infinite alternate;
 }
