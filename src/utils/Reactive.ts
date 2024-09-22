@@ -1,4 +1,14 @@
-import { Accessor, EffectFunction, EffectOptions, Setter, SignalOptions, createEffect, createRoot, createSignal, onCleanup } from "solid-js"
+import {
+    Accessor,
+    EffectFunction,
+    EffectOptions,
+    Setter,
+    SignalOptions,
+    createEffect,
+    createRoot,
+    createSignal,
+    onCleanup
+} from 'solid-js'
 
 // tag:micro-reactive的effect是不受solidjs控制的
 // 如果在局部组件createEffect全局变量,由于组件可能重新渲染,createEffect会被重复记录和执行
@@ -23,9 +33,7 @@ function useSignal<T>(value: T, options?: SignalOptions<T>): Accessor<T> & Sette
 }
 
 // 可以主动解除监听的createEffect,解除操作对micro-reactive创建的变量无效
-function useEffect<Next>(
-    fn: EffectFunction<undefined | NoInfer<Next>, Next>
-): () => void
+function useEffect<Next>(fn: EffectFunction<undefined | NoInfer<Next>, Next>): () => void
 function useEffect<Next, Init = Next>(
     fn: EffectFunction<Init | Next, Next>,
     value: Init,
@@ -33,7 +41,13 @@ function useEffect<Next, Init = Next>(
         render?: boolean
     }
 ): () => void
-function useEffect(fn: any, value?: any, options?: any) {
+function useEffect(
+    fn: EffectFunction<unknown, unknown>,
+    value?: unknown,
+    options?: EffectOptions & {
+        render?: boolean
+    }
+) {
     const dispose = createRoot((dispose) => {
         createEffect(fn, value, options)
         return dispose
@@ -43,4 +57,4 @@ function useEffect(fn: any, value?: any, options?: any) {
     return dispose
 }
 
-export { useSignal, useEffect } 
+export { useSignal, useEffect }

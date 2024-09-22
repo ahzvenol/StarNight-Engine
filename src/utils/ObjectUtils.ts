@@ -1,6 +1,6 @@
 class ObjectUtils {
     static isObject(value: unknown): value is Record<any, any> {
-        return Object.prototype.toString.call(value) === "[object Object]"
+        return Object.prototype.toString.call(value) === '[object Object]'
     }
     static isArray(value: unknown): value is Array<unknown> {
         return Object.prototype.toString.call(value) === '[object Array]'
@@ -9,10 +9,10 @@ class ObjectUtils {
         return Object.prototype.toString.call(value) === '[object String]'
     }
     static isEmpty(object: Object): boolean {
-        return JSON.stringify(object) === "{}"
+        return JSON.stringify(object) === '{}'
     }
     static isNotEmpty(object: Object): boolean {
-        return JSON.stringify(object) !== "{}"
+        return JSON.stringify(object) !== '{}'
     }
     static forEach<K extends string | number | symbol, V>(object: Partial<Record<K, V>>) {
         return function (callback: (entry: [K, V]) => void) {

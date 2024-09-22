@@ -1,50 +1,43 @@
-import { EventDispatcher } from "@/core/EventDispatcher"
-import { Component, onMount } from "solid-js"
-import { router } from "../../../router"
-import { translation } from "../../../translations"
-import { Button, Clone } from "../../Elements"
-import styles from "./Title.module.scss"
+import { Component, onMount } from 'solid-js'
+import { router } from '../../../router'
+import { Button, Clone, Element, Variable, line } from '../../Elements'
+import { titleComponentMountEvent } from '@/store/event'
+import styles from './Title.module.scss'
 
-const titleComponentMountEvent = new EventDispatcher<void>()
-/**
- * 标题页
- */
 const Title: Component = () => {
-  const t = translation.title
-  onMount(titleComponentMountEvent.publish)
-  return (
-    <>
-      <div class={styles.Title_backup_background} />
-      <div
-        class={styles.Title_main}
-        style={{
-          'background-image': 'url(./Texture2D/title_bg.png)',
-          'background-size': 'cover',
-        }}
-      >
-        <div class={styles.Title_buttonList}>
-          <Clone count={5}>{
-            (i) =>
-              <Button
-                class={styles.Title_button}
-                onClick={[
-                  () => { },
-                  () => { },
-                  () => router.navigate("Config"),
-                  () => router.navigate("Load"),
-                  () => router.navigate("Gallery")]
-                [i]}
-              >
-                <div class={styles.Title_button_text}>
-                  {t[(["start", "continue", "options", "load", "extra"] as const)[i]].title()}
-                </div>
-              </Button>
-          }
-          </Clone>
-        </div>
-      </div>
-    </>
-  )
+    onMount(titleComponentMountEvent.publish)
+    return (
+        <Element class={styles.Title_container}>
+            <Clone count={4}>
+                {(index) => (
+                    <Variable value={['01start', '02load', '03config', '04gallery'][index]}>
+                        {(imageId) => (
+                            <>
+                                <Button
+                                    class={`Title_button_${index}`}
+                                    style={{
+                                        width: `121px`,
+                                        height: `26px`,
+                                        right: `570px`,
+                                        bottom: `${55 + 41 * (4 - line(4)(index))}px`,
+                                        'background-image': `url('./static/Texture2D/title_${imageId}.png')`
+                                    }}
+                                    onClick={() => router.navigate(['Game', 'Load', 'Config', 'Gallery'][index])}
+                                />
+                                <style jsx>
+                                    {`
+                                        .Title_button_${index}:hover {
+                                            background-image: url('./static/Texture2D/title_${imageId}_on.png') !important;
+                                        }
+                                    `}
+                                </style>
+                            </>
+                        )}
+                    </Variable>
+                )}
+            </Clone>
+        </Element>
+    )
 }
 
 export { titleComponentMountEvent }
