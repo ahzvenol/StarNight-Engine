@@ -24,12 +24,12 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                 class={styles.Save_Load_top_arrow + ' ' + styles.Save_Load_top_arrow_left}
                 onClick={() => (currentPage() > 0 ? currentPage((i) => i - 1) : currentPage(9))}
             />
-            <p class="shift-arrow" id="left-mask" />
+            <p class={styles.Save_Load_top_arrow_mask + ' ' + styles.Save_Load_top_arrow_mask_left} />
             <p
                 class={styles.Save_Load_top_arrow + ' ' + styles.Save_Load_top_arrow_right}
                 onClick={() => (currentPage() < 9 ? currentPage((i) => i + 1) : currentPage(0))}
             />
-            <p class="shift-arrow" id="right-mask" />
+            <p class={styles.Save_Load_top_arrow_mask + ' ' + styles.Save_Load_top_arrow_mask_right} />
             <div class={styles.Save_Load_top_buttonList}>
                 <Clone count={10}>
                     {(i) => (

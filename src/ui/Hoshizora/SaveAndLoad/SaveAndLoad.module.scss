@@ -5,10 +5,10 @@
 }
 
 .Save_Load_title {
-    width: 100px;
-    height: 50px;
-    left: 108px;
-    top: 50px;
+    width: 88px;
+    height: 39px;
+    left: 114px;
+    top: 60px;
 }
 
 .Save_Load_top_buttonList {
@@ -18,6 +18,7 @@
     right: 123px;
     display: flex;
     justify-content: space-between;
+    z-index: 3;
 }
 
 .Save_Load_top_button {
@@ -31,31 +32,51 @@
     width: 18px;
     height: 30px;
     top: 145px;
-    transition: 0.15s;
     background-image: url(./static/Texture2D/ShiftArrow.png);
+    z-index: 1;
+    &:hover {
+        scale: 1.01;
+        filter: drop-shadow(1px 0px #909090);
+    }
+
+    &:hover::before {
+        content: '';
+        position: absolute;
+    }
 }
 
-.Save_Load_top_arrow:hover {
-    opacity: 0;
-    scale: 1.01;
-    filter: drop-shadow(0.052em 0px #909090);
+.Save_Load_top_arrow_mask {
+    z-index: 0;
+    transition: 0.15s;
 }
 
-.Save_Load_top_arrow:hover::before {
-    content: '';
-    width: 18px;
-    height: 30px;
-    position: absolute;
-    border-left: 30px solid transparent;
-}
-
-.Save_Load_top_arrow_left {
+.Save_Load_top_arrow_left,
+.Save_Load_top_arrow_mask_left {
     left: 690px;
     transform: rotate(180deg);
 }
+.Save_Load_top_arrow_left:hover {
+    margin-left: 32px;
+    &::before {
+        border-right: 32px solid transparent;
+    }
+    + .Save_Load_top_arrow_mask_left {
+        opacity: 0;
+    }
+}
 
-.Save_Load_top_arrow_right {
+.Save_Load_top_arrow_right,
+.Save_Load_top_arrow_mask_left {
     right: 90px;
+}
+.Save_Load_top_arrow_right:hover {
+    margin-right: 32px;
+    &::before {
+        border-left: 1px solid transparent;
+    }
+    + .Save_Load_top_arrow_mask_right {
+        opacity: 0;
+    }
 }
 
 .Save_Load_content {

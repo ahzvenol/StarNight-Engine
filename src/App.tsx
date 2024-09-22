@@ -8,23 +8,23 @@ import store from './store/store'
 import '@/store/audioManager'
 import { logger } from './utils/Logger'
 
-// if (import.meta.env.DEV === true) {}
-
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false
 
 createjs.Ticker.framerate = 60
 createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED
 
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-        .register('/service-worker.js')
-        .then((registration) => {
-            logger.info('ServiceWorker registration successful with scope: ' + registration.scope)
-        })
-        .catch((error) => {
-            logger.error('ServiceWorker registration failed: ' + error)
-        })
+if (import.meta.env.DEV !== true) {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+            .register('/service-worker.js')
+            .then((registration) => {
+                logger.info('ServiceWorker registration successful with scope: ' + registration.scope)
+            })
+            .catch((error) => {
+                logger.error('ServiceWorker registration failed: ' + error)
+            })
+    }
 }
 
 // 整个配置文件在这里分发
