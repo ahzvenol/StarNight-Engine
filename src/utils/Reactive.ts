@@ -18,18 +18,19 @@ import {
 // type Primitive = string | number | boolean | symbol | bigint | null | undefined
 // T extends Primitive useSignal(0) 这样会把T约束到0而不是number,不知道如何处理
 
-function useSignal(value: string, options?: SignalOptions<string>): Accessor<string> & Setter<string>
-function useSignal(value: number, options?: SignalOptions<number>): Accessor<number> & Setter<number>
-function useSignal(value: boolean, options?: SignalOptions<boolean>): Accessor<boolean> & Setter<boolean>
-function useSignal(value: symbol, options?: SignalOptions<symbol>): Accessor<symbol> & Setter<symbol>
-function useSignal(value: bigint, options?: SignalOptions<bigint>): Accessor<bigint> & Setter<bigint>
-function useSignal<T>(value: T, options?: SignalOptions<T>): Accessor<T> & Setter<T> {
+type Signal<T> = Accessor<T> & Setter<T>
+// function useSignal(value: string, options?: SignalOptions<string>): Accessor<string> & Setter<string>
+// function useSignal(value: number, options?: SignalOptions<number>): Accessor<number> & Setter<number>
+// function useSignal(value: boolean, options?: SignalOptions<boolean>): Accessor<boolean> & Setter<boolean>
+// function useSignal(value: symbol, options?: SignalOptions<symbol>): Accessor<symbol> & Setter<symbol>
+// function useSignal(value: bigint, options?: SignalOptions<bigint>): Accessor<bigint> & Setter<bigint>
+function useSignal<T>(value: T, options?: SignalOptions<T>): Signal<T> {
     const [get, set] = createSignal(value, options)
 
     return ((value) => {
         if (value === undefined) return get()
         else return set(value)
-    }) as Accessor<T> & Setter<T>
+    }) as Signal<T>
 }
 
 // 可以主动解除监听的createEffect,解除操作对micro-reactive创建的变量无效
@@ -57,4 +58,4 @@ function useEffect(
     return dispose
 }
 
-export { useSignal, useEffect }
+export { type Signal, useSignal, useEffect }
