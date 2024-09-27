@@ -1,7 +1,7 @@
-import { translation } from '@/translations'
+import { translation } from '@/store/effect/translations'
 import styles from './Gallery.module.scss'
 import { router } from '@/router'
-import { Button } from '../../Elements'
+import { Button } from '@/ui/Elements'
 import { Component } from 'solid-js'
 
 const CloseSmall: Component = () => (

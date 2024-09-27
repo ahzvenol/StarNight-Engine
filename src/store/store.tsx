@@ -1,14 +1,15 @@
-import { debounce, merge } from 'es-toolkit'
+import { debounce, toMerged, cloneDeep } from 'es-toolkit'
 import localforage from 'localforage'
 import { useReactive } from 'micro-reactive'
 import { createEffect, createResource, on, type Resource } from 'solid-js'
 
 import { logger } from '@/utils/Logger'
 import systemDefaultStore, { Store } from './default'
-import { getUserIni } from './ini'
+import { getUserConfig } from './user'
 
+// 响应式变量会修改原始对象,需要处处clone避免默认数据被修改
 const createStore = async () => {
-    const userDefaultStore = merge(systemDefaultStore, await getUserIni())
+    const userDefaultStore = toMerged(systemDefaultStore, await getUserConfig())
 
     localforage.config({ name: userDefaultStore.system.name })
 
@@ -29,8 +30,8 @@ const createStore = async () => {
 
     // 这里是默认配置与storage配置之间的关系逻辑
     const store = useReactive({
-        system: merge(system, userDefaultStore.system),
-        config: merge(userDefaultStore.config, config),
+        system: toMerged(system, userDefaultStore.system),
+        config: toMerged(userDefaultStore.config, config),
         save: save || userDefaultStore.save,
         user: userDefaultStore.user
     })
@@ -49,7 +50,7 @@ const createStore = async () => {
 
     logger.info('Store初始化完毕:', store())
 
-    return { userDefaultStore, store }
+    return { userDefaultStore: () => cloneDeep(userDefaultStore), store }
 }
 
 const storePackage = createStore()
@@ -59,9 +60,9 @@ const storePromise = storePackage.then(({ store }) => store)
 
 // 重置三件套
 const clearStorage = () =>
-    storePackage.then(({ userDefaultStore, store }) => localforage.clear().then(() => store(userDefaultStore)))
-const resetConfig = () => storePackage.then(({ userDefaultStore, store }) => store.config(userDefaultStore.config))
-const clearSave = () => storePackage.then(({ userDefaultStore, store }) => store.save(userDefaultStore.save))
+    storePackage.then(({ userDefaultStore, store }) => localforage.clear().then(() => store(userDefaultStore())))
+const resetConfig = () => storePackage.then(({ userDefaultStore, store }) => store.config(userDefaultStore().config))
+const clearSave = () => storePackage.then(({ userDefaultStore, store }) => store.save(userDefaultStore().save))
 
 const [store] = createResource(async () => await storePromise)
 

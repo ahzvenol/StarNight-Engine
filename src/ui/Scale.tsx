@@ -1,8 +1,6 @@
 import type { Component, ParentProps } from 'solid-js'
 import { onCleanup, children } from 'solid-js'
 
-const getLength = (element: HTMLElement, attr: string) => parseInt(getComputedStyle(element).getPropertyValue(attr))
-
 const Scale: Component<ParentProps<{ width: number; height: number; mode: 'auto' | 'full' | unknown }>> = (props) => {
     let intervalId!: NodeJS.Timer
     const resolved = children(() => props.children)
@@ -15,8 +13,8 @@ const Scale: Component<ParentProps<{ width: number; height: number; mode: 'auto'
         slot.style.height = props.height + 'px'
         slot.style.position = 'absolute'
         const resize = () => {
-            const width = getLength(el, 'width')
-            const height = getLength(el, 'height')
+            const width = parseInt(getComputedStyle(el).getPropertyValue('width'))
+            const height = parseInt(getComputedStyle(el).getPropertyValue('height'))
             if (props.mode == 'auto') {
                 if (width / height >= props.width / props.height) {
                     const scale = height / props.height

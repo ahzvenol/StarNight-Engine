@@ -1,8 +1,8 @@
 import { useStore } from '@/store/context'
-import { translation } from '@/translations'
+import { translation } from '@/store/effect/translations'
 import { useSignal } from '@/utils/Reactive'
 import { Component, Show } from 'solid-js'
-import { Button, Clone } from '../../Elements'
+import { Button, Clone } from '@/ui/Elements'
 import styles from './SaveAndLoad.module.scss'
 
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {

@@ -1,5 +1,5 @@
 import { Component, Show } from 'solid-js'
-import { Variables } from '../Core'
+import { Variables } from '../../../core/Core'
 import styles from './TextBox.module.scss'
 
 export const TextBox: Component<{ variables: Variables }> = ({ variables }) => {

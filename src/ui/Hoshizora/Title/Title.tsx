@@ -1,13 +1,13 @@
 import { Component, onMount } from 'solid-js'
-import { router } from '../../../router'
-import { Button, Clone, Element, Variable, line } from '../../Elements'
-import { titleComponentMountEvent } from '@/store/event'
+import { router } from '@/router'
+import { Button, Clone, Variable, line } from '@/ui/Elements'
+import { titleComponentMountEvent } from '@/store/effect/event'
 import styles from './Title.module.scss'
 
 const Title: Component = () => {
     onMount(titleComponentMountEvent.publish)
     return (
-        <Element class={styles.Title_container}>
+        <div class={'Page' + ' ' + styles.Title_container}>
             <Clone count={4}>
                 {(index) => (
                     <Variable value={['01start', '02load', '03config', '04gallery'][index]}>
@@ -36,10 +36,8 @@ const Title: Component = () => {
                     </Variable>
                 )}
             </Clone>
-        </Element>
+        </div>
     )
 }
-
-export { titleComponentMountEvent }
 
 export default Title

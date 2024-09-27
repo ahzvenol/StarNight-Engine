@@ -1,6 +1,6 @@
 import { logger } from '@/utils/Logger'
 import { PromiseX, questionOp } from '@/utils/PromiseX'
-import { delay, mapValues, merge } from 'es-toolkit'
+import { delay, mapValues, toMerged } from 'es-toolkit'
 import { Reactive } from 'micro-reactive'
 import Mustache from 'mustache'
 import { match } from 'ts-pattern'
@@ -45,7 +45,7 @@ async function runAct(row: number, state: State, onClick: Promise<void>, onFast:
     // 除了主动中断之外,不应该打断它
     const commandOutput = await book[row]
         .map((i) => mapValues(i, (value) => Mustache.render(value, context)))
-        .map((i) => async () => commands[i['@']].run(context)(i))
+        .map((i) => async () => commands?.[i['@']].run(context)(i))
         .reduce(
             (p, e) =>
                 p.then(
@@ -54,7 +54,7 @@ async function runAct(row: number, state: State, onClick: Promise<void>, onFast:
                             ;(async () => {
                                 const [res, err] = await questionOp(e())
                                 if (err !== null) reject(all)
-                                else resolve(merge(all, res))
+                                else resolve(toMerged(all, res))
                             })()
                         })
                 ),
@@ -104,7 +104,8 @@ function runLoop(
         }
         // 调用jump命令修改接下来一幕的行号
         const jumpTarget = res['jump']
-        isFinite(jumpTarget) ? row(jumpTarget) : row(row() + 1)
+        if (Number.isFinite(jumpTarget)) row(jumpTarget as number)
+        else row(row() + 1)
         // 调用end命令结束幕循环
         if (res['end'] === true) return Promise.resolve()
         // 当行号超出时,自动退出

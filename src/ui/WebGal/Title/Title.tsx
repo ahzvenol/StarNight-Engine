@@ -1,9 +1,9 @@
 import { Component, onMount } from 'solid-js'
 import { router } from '../../../router'
-import { translation } from '../../../translations'
-import { Button, Clone } from '../../Elements'
+import { translation } from '@/store/effect/translations'
+import { Button, Clone } from '@/ui/Elements'
 import styles from './Title.module.scss'
-import { titleComponentMountEvent } from '@/store/event'
+import { titleComponentMountEvent } from '@/store/effect/event'
 
 /**
  * 标题页

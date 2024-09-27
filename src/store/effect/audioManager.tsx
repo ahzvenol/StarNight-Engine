@@ -2,11 +2,11 @@ import { logger } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { Reactive } from 'micro-reactive'
 import { createEffect, createMemo } from 'solid-js'
-import bgm01 from '../assets/bgm01.wav'
-import click from '../assets/click.mp3'
-import hover from '../assets/hover.mp3'
+import bgm01 from '@/assets/bgm01.wav'
+import click from '@/assets/mouse_click_1.wav'
+import hover from '@/assets/mouse_hover_1.wav'
 import { titleComponentMountEvent } from './event'
-import { storePromise } from './store'
+import { storePromise } from '../store'
 
 const configVolumeControllerMapPromise = storePromise.then((store) => ({
     Golbal: store.config.GolbalVolume,

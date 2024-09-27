@@ -3,10 +3,12 @@ import type { Component } from 'solid-js'
 import { Match, Switch } from 'solid-js'
 
 import './utils/implicit'
+import '@/store/effect/index'
 import UI from './ui/Hoshizora'
 import store from './store/store'
-import '@/store/audioManager'
 import { logger } from './utils/Logger'
+import { Context } from './store/context'
+import { Graphic } from './ui/Elements'
 
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false
@@ -34,7 +36,11 @@ const App: Component = () => (
             <></>
         </Match>
         <Match when={store.state === 'ready'}>
-            <UI environment={store()!} />
+            <Context environment={store()!}>
+                <Graphic config={store()!.system}>
+                    <UI />
+                </Graphic>
+            </Context>
         </Match>
         <Match when={store.state === 'errored'}>
             <div>{store.error}</div>

@@ -1,139 +1,84 @@
-.Options_main {
-    position: absolute;
-    cursor: default;
-    height: 90%;
-    width: 100%;
-    //background: rgba(255, 255, 255, 0.65);
+.Config_container {
+    background-image: url(./static/Texture2D/config_BG.png);
 }
 
-.Options_top {
-    height: 15%;
-    width: 100%;
-    display: flex;
-    align-items: flex-start;
+.Config_cell {
+    width: 320px;
+    height: 30px;
 }
 
-.Options_title {
-    font-family: '思源宋体', serif;
-    letter-spacing: 0.1em;
-    font-size: 225%;
-    margin: 0.5em 0 0.5em 0;
-    padding: 0.2em 2em 0.2em 1.1em;
-    box-sizing: border-box;
-    //background-color: rgba(255, 255, 255, 0.99);
-    //border-right: .2em solid rgba(81, 110, 65, 0.9);
-    //box-shadow: .1em .1em .8em .2em rgba(0, 0, 0, 0.07);
+.Config_cell_text {
+    left: -12px;
+    top: -80%;
+    color: #344460;
 }
 
-.Option_title_text {
-    font-size: 165%;
-    font-weight: bold;
-    color: transparent;
-    background: linear-gradient(to left, #227d51, rgba(81, 110, 65, 1));
-    -webkit-background-clip: text;
-    animation: Elements_in ease-out 0.7s forwards;
+.Config_cell_right {
+    right: 280px;
 }
 
-.Option_title_text_shadow {
-    position: absolute;
-    color: rgba(0, 0, 0, 0);
-    -webkit-text-stroke: 3px rgba(0, 0, 0, 1);
-    z-index: -1;
+.Config_cell_left {
+    left: 280px;
 }
 
-.Option_title_text_ts {
-    position: absolute;
-    color: rgba(0, 0, 0, 0);
-    text-shadow:
-        0.04em 0.04em rgba(81, 110, 65, 0.9),
-        0.05em 0.05em rgba(81, 110, 65, 0.9),
-        0.06em 0.06em rgba(81, 110, 65, 0.9),
-        0.07em 0.07em rgba(81, 110, 65, 0.9);
-    //0.08em 0.08em rgba(81, 110, 65, 0.9),
-    //0.09em 0.09em rgba(81, 110, 65, 0.9),
-    //0.10em 0.10em rgba(81, 110, 65, 0.9),
-    //0.11em 0.11em rgba(81, 110, 65, 0.9),
-    //0.12em 0.12em rgba(81, 110, 65, 0.9);
-    z-index: -1;
+.Config_button_full_screen {
+    width: 320px;
+    height: 30px;
+}
+.Config_button_full_screen_off {
+    background-image: url(./static/Texture2D/config_window.png);
+}
+.Config_button_full_screen_on {
+    background-image: url(./static/Texture2D/config_full.png);
 }
 
-.Options_main_content {
-    display: flex;
-    flex: 1;
-    padding: 0 0 0 3em;
-    overflow: auto;
+.Config_button {
+    width: 160px;
+    height: 30px;
 }
 
-.Options_main_content_half {
-    width: 95%;
-    display: flex;
-    flex-flow: row;
-    align-items: flex-start;
-    align-content: flex-start;
-    flex-wrap: wrap;
-    padding: 0 1em 0 1em;
+.Config_button_off {
+    left: 160px;
 }
 
-.About_title_text {
-    margin: 0.2em 1em 0.2em 1em;
-    padding: 0.2em 0.2em 0.2em 0.2em;
-    width: 100%;
-    animation: Elements_in ease-out 0.7s forwards;
-    cursor: pointer;
+.Config_button_off_on,
+.Config_button_on_on,
+.Config_button_full_screen_on {
+    transition: 0.18s;
 }
 
-.About_text {
-    font-weight: bold;
-    color: transparent;
-    background: linear-gradient(to left, rgba(34, 125, 81, 0.65), rgba(81, 110, 65, 0.65));
-    -webkit-background-clip: text;
-    font-size: 135%;
-    text-decoration: underline;
+.Config_button_off_off {
+    background-image: url(./static/Texture2D/config_button_off.png);
+}
+.Config_button_off_on {
+    background-image: url(./static/Texture2D/config_button_off_ov.png);
+}
+.Config_button_on_off {
+    background-image: url(./static/Texture2D/config_button_on.png);
+}
+.Config_button_on_on {
+    background-image: url(./static/Texture2D/config_button_on_ov.png);
 }
 
-@keyframes Elements_in {
-    0% {
-        opacity: 0;
-        transform: scale(1.03, 1.03) translate(-25px, -20px);
-    }
+.Config_bottom_back_title,
+.Config_bottom_reset {
+    width: 88px;
+    height: 23px;
+    bottom: 25px;
+}
 
-    100% {
-        opacity: 1;
-        transform: scale(1, 1) translate(0, 0);
+.Config_bottom_back_title {
+    right: 148px;
+    background-image: url(./static/Texture2D/config_backtitle.png);
+    &:hover {
+        background-image: url(./static/Texture2D/config_backtitle_ov.png);
     }
 }
 
-.Options_page_container {
-    height: 85%;
-    display: flex;
-    padding: 1em 3.75em 1em 3.75em;
-}
-
-.Options_button_list {
-    animation: Elements_in ease-out 0.7s forwards;
-}
-
-.Options_page_button {
-    font-family: '思源宋体', serif;
-    font-size: 300%;
-    font-weight: bold;
-    color: transparent;
-    background: linear-gradient(to left, #227d51, rgba(81, 110, 65, 1));
-    opacity: 0.35;
-    -webkit-background-clip: text;
-    transition:
-        color 0.33s,
-        background-image 0.33s,
-        opacity 0.33s;
-    cursor: pointer;
-}
-
-.Options_page_button_active {
-    background-image: linear-gradient(to left, #227d51, rgba(81, 110, 65, 1));
-    -webkit-background-clip: text;
-    opacity: 1;
-}
-
-.Options_page_button:hover {
-    opacity: 1;
+.Config_bottom_reset {
+    right: 248px;
+    background-image: url(./static/Texture2D/config_reset.png);
+    &:hover {
+        background-image: url(./static/Texture2D/config_reset_ov.png);
+    }
 }

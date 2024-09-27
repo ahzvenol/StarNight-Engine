@@ -1,6 +1,6 @@
 import { Command } from '../Command'
-import { Continue, End, Jump } from './scripts/!'
-import { Name, Text } from './scripts/textbox'
+import { Continue, End, Jump } from './script/!'
+import { Name, Text } from './script/textbox'
 
 export const commands: Record<string, Command> = {
     continue: Continue,

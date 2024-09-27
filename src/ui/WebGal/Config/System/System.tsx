@@ -1,13 +1,13 @@
 import { clearSave, clearStorage, resetConfig } from '@/store/store'
 import { useStore } from '@/store/context'
-import { description, language, translation } from '@/translations'
+import { description, language, translation } from '@/store/effect/translations'
 import { Clone, Variable } from '@/ui/Elements'
 import { useDialog } from '@/ui/GlobalDialog/GlobalDialog'
 import { useSignal } from '@/utils/Reactive'
 import { Component, For } from 'solid-js'
 import Button from '../Button'
 import Cell from '../Cell'
-import styles from '../config.module.scss'
+import styles from '../Config.module.scss'
 
 const System: Component = () => {
     const t = translation.menu.options.pages.system.options

@@ -1,4 +1,4 @@
-import { BGM } from '@/store/audioManager'
+import { BGM } from '@/store/effect/audioManager'
 import { useSignal } from '@/utils/Reactive'
 import { useEventListener } from '@/utils/useEventListener'
 import { mapValues, throttle } from 'es-toolkit'

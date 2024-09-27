@@ -48,7 +48,7 @@ class TimerX {
     public get isImmediate(): boolean {
         return this._isImmediate
     }
-    public promiseList: Promise<void>[] = []
+    public promiseList: Promise<unknown>[] = []
     public startList: Function0<void>[] = []
     public pauseList: Function0<void>[] = []
     public resolveList: Function0<void>[] = []
@@ -72,7 +72,7 @@ class TimerX {
         }
     }
     // 添加外部不可控第三方库的结束回调Promise,将其纳入timer时间统计的方法(无法控制)
-    public addTrackedPromise(promise: Promise<void | any>): void {
+    public addTrackedPromise(promise: Promise<unknown>): void {
         if (this.isImmediate) return
         // 在toImmediate()后,TrackableTimer应返回resolve状态的promise序列,包括外部promise也是如此
         const promiseForimmediate = new Promise<void>((res) => this.resolveList.push(res))

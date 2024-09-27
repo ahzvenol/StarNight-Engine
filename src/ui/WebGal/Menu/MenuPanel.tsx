@@ -1,9 +1,9 @@
 import { router } from '@/router'
-import { translation } from '@/translations'
+import { translation } from '@/store/effect/translations'
 import { Button } from '@/ui/Elements'
 import { FolderOpen, Home, Logout, Save, Setting } from './MenuIcon'
 import styles from './MenuPanel.module.scss'
-import { useDialog } from '@/ui/GlobalDialog/GlobalDialog'
+import { useDialog } from '../GlobalDialog/GlobalDialog'
 
 /**
  * Menu页的底栏

@@ -1,4 +1,4 @@
-import { language } from '@/translations'
+import { language } from '@/store/effect/translations'
 import { Reactive } from 'micro-reactive'
 
 // 确保程序运行所需的键值,如新增依赖变量,需要在这里添加默认值
@@ -11,12 +11,19 @@ const systemDefaultStore = {
         mode: 'auto' as 'auto' | 'full'
     },
     config: {
+        FullScreen: false,
+        InterruptClip: true,
+        FastForwardUnread: false,
+        StopFastOnSelection: true,
         GolbalVolume: 1,
         BGMVolume: 1,
         SEVolume: 1,
         ClipVolume: 1,
         UISEVolume: 1,
-        language: 'zh-CN' as keyof typeof language
+        TextSpeed: 1,
+        AutoReadSpeed: 1,
+        TextBoxOpacity: 1,
+        Language: 'zh-CN' as keyof typeof language
     },
     save: {
         global: {} as Record<string, unknown>,
@@ -30,7 +37,7 @@ const systemDefaultStore = {
 // archive中应包含内容按照之前有 previewpic index text 具体名称修改待考虑
 
 type IniKV = Record<string, string | number | boolean>
-type IndividualSaveData = Record<string, unknown>
+type IndividualSaveData = Record<string, any>
 
 // & IniKV会丢失类型检查,所以不在类型上书写它
 // type Store = Reactive<{

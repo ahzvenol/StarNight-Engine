@@ -4,8 +4,8 @@
     right: 48px;
     bottom: 25px;
     background-image: url('./static//Texture2D/backlog_back.png');
-}
 
-.Back_style:hover {
-    background-image: url('./static//Texture2D/backlog_back_ov.png');
+    &:hover {
+        background-image: url('./static//Texture2D/backlog_back_ov.png');
+    }
 }

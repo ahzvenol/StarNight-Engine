@@ -4,7 +4,7 @@ import { Command, CommandRunFunction } from '@/core/Command'
 // wait引用系统sleep实现
 const wait: CommandRunFunction =
     ({ timer }) =>
-    async ({ duration }) =>
+    ({ duration }) =>
         timer.delay(duration)
 
-const Wait: Command = { run: wait }
+export const Wait: Command = { run: wait }
