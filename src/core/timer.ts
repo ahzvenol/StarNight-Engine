@@ -48,10 +48,10 @@ class TimerX {
     public get isImmediate(): boolean {
         return this._isImmediate
     }
-    public promiseList: Promise<unknown>[] = []
-    public startList: Function0<void>[] = []
-    public pauseList: Function0<void>[] = []
-    public resolveList: Function0<void>[] = []
+    public promiseList: Array<Promise<unknown>> = []
+    public startList: Array<Function0<void>> = []
+    public pauseList: Array<Function0<void>> = []
+    public resolveList: Array<Function0<void>> = []
     // 利用几个更高抽象层级的方法重新实现setTimeout和delay
     public setTimeout(callback: Function0<void>, ms: number): void {
         if (this.isImmediate) callback()

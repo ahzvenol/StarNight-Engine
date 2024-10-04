@@ -37,11 +37,11 @@ export type Args = {
     value: string | number | boolean
 }
 
-type CommandOutput = void | (Record<string, any> & Partial<{ continue: boolean; jump: number; end: boolean }>)
+type CommandOutput = void | (Record<string, unknown> & Partial<{ continue: boolean; jump: number; end: boolean }>)
 
-export type CommandRunFunction<T = any> = Function1<
+export type CommandRunFunction = Function1<
     GameRuntimeContext,
-    Function1<T, Promise<CommandOutput> | CommandOutput>
+    Function1<Partial<Args>, Promise<CommandOutput> | CommandOutput>
 >
 
 export type CommandLifeCycleFunction = Function1<GameContext, void>

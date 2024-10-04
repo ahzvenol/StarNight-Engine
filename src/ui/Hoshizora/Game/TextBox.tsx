@@ -1,8 +1,9 @@
-import { Variables } from '@/core/Core'
+import { useVariables } from '@/core/Core'
 import { Component, Show } from 'solid-js'
 import styles from './TextBox.module.scss'
 
-export const TextBox: Component<{ variables: Variables }> = ({ variables }) => {
+export const TextBox: Component = () => {
+    const reactive = useVariables().reactive
     return (
         <>
             <div class={styles.Game_TextBox_container}>
@@ -10,8 +11,7 @@ export const TextBox: Component<{ variables: Variables }> = ({ variables }) => {
                 <div class={styles.Game_TextBox_background} />
                 <div class={styles.Game_TextBox_text}>
                     <span>
-                        {/* eslint-disable-next-line solid/no-innerhtml */}
-                        <span innerHTML={variables.reactive.textView()?.trim()} />
+                        <span innerHTML={reactive.textView()?.trim()} />
                         <span class={styles.Game_TextBox_star_container}>
                             {/* todo:当本条文本完整显示,展示star */}
                             <div class={styles.Game_TextBox_star} />
@@ -19,9 +19,9 @@ export const TextBox: Component<{ variables: Variables }> = ({ variables }) => {
                     </span>
                 </div>
             </div>
-            <Show when={variables.reactive.nameView() !== undefined}>
+            <Show when={reactive.nameView() !== undefined}>
                 <div class={styles.Game_TextBox_name_background} />
-                <div class={styles.Game_TextBox_name}>{variables.reactive.nameView()}</div>
+                <div class={styles.Game_TextBox_name}>{reactive.nameView()}</div>
             </Show>
         </>
     )

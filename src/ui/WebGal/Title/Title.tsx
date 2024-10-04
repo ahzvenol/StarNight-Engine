@@ -1,16 +1,14 @@
-import { Component, onMount } from 'solid-js'
+import { Component } from 'solid-js'
 import { router } from '../../../router'
 import { translation } from '@/store/effect/translations'
 import { Button, Clone } from '@/ui/Elements'
 import styles from './Title.module.scss'
-import { titleComponentMountEvent } from '@/store/effect/event'
 
 /**
  * 标题页
  */
 const Title: Component = () => {
     const t = translation.title
-    onMount(titleComponentMountEvent.publish)
     return (
         <>
             <div class={styles.Title_backup_background} />

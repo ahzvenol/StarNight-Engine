@@ -3,36 +3,38 @@ import { Route, router } from '../../router'
 import Config from './Config/Config'
 import Gallery from './Gallery/Gallery'
 import SaveLoad from './SaveAndLoad/SaveLoad'
-import Title from './Title/Title'
-import Game from './Game/Game'
+import TitleImpl from './Title/Title'
+import GameImpl from './Game/Game'
 import Back from './Back/Back'
 import jcyt500W from '@/assets/jcyt500W.ttf'
+import bgm01 from '@/assets/bgm01.wav'
+import { Game, Title } from '../Pages'
 
 const UI: Component = () => (
     <>
-        <Route path="">
-            <Title />
-        </Route>
-        <Route path="Game">
-            <Game />
-        </Route>
-        <Route when={(path) => path === 'Config' || path === 'Load' || path === 'Save' || path === 'Gallery'}>
-            <div onContextMenu={router.back} style={{ display: 'contents' }}>
-                <Route path="Config">
-                    <Config />
-                </Route>
-                <Route path="Load">
-                    <SaveLoad mode="Load" />
-                </Route>
-                <Route path="Save">
-                    <SaveLoad mode="Save" />
-                </Route>
-                <Route path="Gallery">
-                    <Gallery />
-                </Route>
+        <Title bgm={bgm01}>
+            <TitleImpl />
+        </Title>
+        <Game>
+            <GameImpl />
+        </Game>
+        <div onContextMenu={router.back} style={{ display: 'contents' }}>
+            <Route path="Config">
+                <Config />
+            </Route>
+            <Route path="Load">
+                <SaveLoad mode="Load" />
+            </Route>
+            <Route path="Save">
+                <SaveLoad mode="Save" />
+            </Route>
+            <Route path="Gallery">
+                <Gallery />
+            </Route>
+            <Route when={(path) => path === 'Config' || path === 'Load' || path === 'Save' || path === 'Gallery'}>
                 <Back onClick={router.back} />
-            </div>
-        </Route>
+            </Route>
+        </div>
         <style jsx global>
             {`
                 @font-face {

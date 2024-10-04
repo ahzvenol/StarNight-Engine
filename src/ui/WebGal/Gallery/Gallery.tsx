@@ -11,7 +11,7 @@ const CloseSmall: Component = () => (
     </svg>
 )
 
-const Extra: Component = () => {
+const Gallery: Component = () => {
     const t = translation.extra
 
     return (
@@ -30,4 +30,4 @@ const Extra: Component = () => {
     )
 }
 
-export default Extra
+export default Gallery

@@ -1,9 +1,11 @@
-import { clickSoundEffect, hoverSoundEffect } from '@/store/effect/audioManager'
+import { createAudioTrack } from '@/store/effect/audioManager'
 import { Store } from '@/store/default'
 import { range } from 'es-toolkit'
 import type { Component } from 'solid-js'
 import { For, JSX, splitProps } from 'solid-js'
 import Scale from './Scale'
+import click from '@/assets/mouse_click_1.wav'
+import hover from '@/assets/mouse_hover_1.wav'
 
 //横行竖列
 //给出总行数，返回每个index对应的行数
@@ -47,6 +49,13 @@ const Graphic = (props: { config: Store['system']; children: JSX.Element }) => (
         </Scale>
     </div>
 )
+
+const CSE = createAudioTrack('UISE')
+CSE.src = click
+const HSE = createAudioTrack('UISE')
+HSE.src = hover
+const clickSoundEffect = () => CSE.cloneNode().play()
+const hoverSoundEffect = () => HSE.cloneNode().play()
 
 const Button: Component<
     JSX.HTMLAttributes<HTMLDivElement> & {

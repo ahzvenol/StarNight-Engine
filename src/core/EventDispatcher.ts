@@ -8,22 +8,21 @@ function tryFn(fn: () => void) {
 
 type EventHandler<T> = Function1<T, void>
 class EventDispatcher<T> {
-    private callbacks: Record<symbol, EventHandler<T>> = {}
+    private callbacks: Map<symbol, EventHandler<T>> = new Map()
 
     public publish = (e: T) => {
-        Reflect.ownKeys(this.callbacks).forEach((key) => tryFn(() => this.callbacks[key as symbol](e)))
+        this.callbacks.forEach((fn) => tryFn(() => fn(e)))
     }
     public subscribe = (callback: EventHandler<T>) => {
-        const uuid = Symbol()
-        this.callbacks[uuid] = callback
+        this.callbacks.set(Symbol(), callback)
     }
 
     public once = (callback: EventHandler<T>) => {
         const uuid = Symbol()
-        this.callbacks[uuid] = (e) => {
-            delete this.callbacks[uuid]
+        this.callbacks.set(uuid, (e) => {
+            this.callbacks.delete(uuid)
             callback(e)
-        }
+        })
     }
 }
 const on =

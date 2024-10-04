@@ -1,32 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="referrer" content="never" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" type="image/ico" href="/src/assets/favicon.ico" />
+        <title>Solid App</title>
+    </head>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="referrer" content="never">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="shortcut icon" type="image/ico" href="/src/assets/favicon.ico" />
-  <title>Solid App</title>
-</head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
 
-<body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
+        <div
+            id="edge-fill"
+            style="
+                height: 100vh;
+                width: 100vw;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 1;
+                background-image: url(./title_bg.png);
+                filter: blur(50px);
+                background-position: center;
+                background-size: cover;
+            " />
 
-  <div id="edge-fill" style="
-    height: 100vh; 
-    width: 100vw; 
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    background-image: url(./title_bg.png);   
-    filter: blur(50px);
-    background-position: center;
-    background-size: cover;
-    " />
-
-  <script src="/src/index.tsx" type="module"></script>
-</body>
-
+        <script src="/src/index.tsx" type="module"></script>
+    </body>
 </html>

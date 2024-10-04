@@ -1,23 +1,21 @@
 import { logger } from '@/utils/Logger'
-import { PromiseX, questionOp } from '@/utils/PromiseX'
-import { delay, mapValues, toMerged } from 'es-toolkit'
-import { Reactive } from 'micro-reactive'
+import { PromiseX } from '@/utils/PromiseX'
+import { delay, mapValues, merge } from 'es-toolkit'
 import Mustache from 'mustache'
-import { match } from 'ts-pattern'
+import { match, P } from 'ts-pattern'
 import book from '../assets/book.json'
 import { GameRuntimeContext, State } from './Command'
 import { EventDispatcher } from './EventDispatcher'
 import { Timer } from './Timer'
 import { commands } from './commands'
+import { Signal } from '@/utils/Reactive'
 
-// 放在外部不好清理内存,干脆都写到一起
-// tag:待考虑GC问题
 const actStartEvent = new EventDispatcher<GameRuntimeContext>()
 const actEndEvent = new EventDispatcher<GameRuntimeContext>()
 const actSecondClickEvent = new EventDispatcher<GameRuntimeContext>()
 actStartEvent.subscribe((context) => logger.info(`开始执行第${context.row}幕...`))
-actEndEvent.subscribe((_) => logger.info('执行结束'))
-actSecondClickEvent.subscribe((_) => logger.info('一幕内第二次点击,立即执行'))
+actEndEvent.subscribe((context) => logger.info(`第${context.row}幕执行结束`))
+actSecondClickEvent.subscribe(() => logger.info('一幕内第二次点击,立即执行'))
 
 // 给予全部命令操作actindex的能力是危险的,有几个特殊的命令会影响主循环,可以单独提出
 async function runAct(row: number, state: State, onClick: Promise<void>, onFast: Promise<void>) {
@@ -35,28 +33,37 @@ async function runAct(row: number, state: State, onClick: Promise<void>, onFast:
         .then(() => actSecondClickEvent.publish(context))
         .then(timer.toImmediate)
         // reject()会报一个错误,忽略它
-        .catch((_) => {})
+        .catch(() => {})
     Promise.race([onClick, onFast]).then(immPromise.resolve)
     // act start
     actStartEvent.publish(context)
-    mapValues(commands, (command) => command.onActStart?.())
+    mapValues(commands, (command) => command?.onActStart?.())
     // 实现了命令内部的幕级中断,只需要返回一个Promise.reject()即可
     // 同时,收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
     // 除了主动中断之外,不应该打断它
     const commandOutput = await book[row]
-        .map((i) => mapValues(i, (value) => Mustache.render(value, context)))
-        .map((i) => async () => commands?.[i['@']].run(context)(i))
+        .map((i) =>
+            mapValues(i, (value) =>
+                match(value)
+                    .with(P.string, () => Mustache.render(value, context))
+                    .otherwise((value) => value)
+            )
+        )
+        .map((i) => async () => commands?.[i['@']]?.run(context)(i) || {})
         .reduce(
             (p, e) =>
                 p.then(
                     (all) =>
-                        new Promise((resolve, reject) => {
-                            ;(async () => {
-                                const [res, err] = await questionOp(e())
-                                if (err !== null) reject(all)
-                                else resolve(toMerged(all, res))
-                            })()
-                        })
+                        new Promise((resolve, reject) =>
+                            e()
+                                .then((result) => resolve(merge(all, result)))
+                                .catch((error) => {
+                                    match(error)
+                                        .with(P.instanceOf(Error), (error) => logger.error('命令运行出错:', error))
+                                        .otherwise((info) => logger.warn('命令主动中断本幕运行', info))
+                                    reject(all)
+                                })
+                        )
                 ),
             Promise.resolve<Record<string, unknown>>({})
         )
@@ -87,8 +94,8 @@ async function waitPoll(
 }
 
 function runLoop(
-    row: Reactive<number>,
-    state: Reactive<State>,
+    row: Signal<number>,
+    state: Signal<State>,
     onClick: () => Promise<void>,
     onAuto: () => Promise<void>,
     onFast: () => Promise<void>
@@ -105,11 +112,11 @@ function runLoop(
         // 调用jump命令修改接下来一幕的行号
         const jumpTarget = res['jump']
         if (Number.isFinite(jumpTarget)) row(jumpTarget as number)
-        else row(row() + 1)
+        else row((i) => i + 1)
         // 调用end命令结束幕循环
         if (res['end'] === true) return Promise.resolve()
         // 当行号超出时,自动退出
-        if (book.length < row()) return loop()
+        if (row() < book.length) return loop()
         else return Promise.resolve()
     }
     return loop()

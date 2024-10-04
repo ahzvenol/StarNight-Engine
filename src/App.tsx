@@ -2,7 +2,6 @@ import createjs from 'createjs-npm'
 import type { Component } from 'solid-js'
 import { Match, Switch } from 'solid-js'
 
-import './utils/implicit'
 import '@/store/effect/index'
 import UI from './ui/Hoshizora'
 import store from './store/store'

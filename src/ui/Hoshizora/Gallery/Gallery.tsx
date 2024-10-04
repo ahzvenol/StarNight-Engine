@@ -1,8 +1,8 @@
-import styles from './Gallery.module.scss'
 import { Clone, Variable } from '@/ui/Elements'
 import { useSignal } from '@/utils/Reactive'
 import { Component, Show } from 'solid-js'
-import { Portal } from 'solid-js/web'
+import { CGElement } from './CGElement'
+import styles from './Gallery.module.scss'
 
 const CG = [
     ['evcg01', 'a', 'b', 'c', 'c2', 'd', 'e'],
@@ -61,34 +61,7 @@ const Gallery: Component = () => {
                                     class={styles.Gallery_content_element + ' ' + styles.Gallery_content_element_empty}
                                 />
                             }>
-                            <Variable value={[() => CG[index + (currentPage() - 1) * 16], useSignal(-1)] as const}>
-                                {([cg, pointer]) => (
-                                    <>
-                                        <div
-                                            class={styles.Gallery_content_element}
-                                            style={{
-                                                'background-image': `url(./static/ImageAsset/${cg()[0] + cg()[1]}.png)`
-                                            }}
-                                            onClick={() => pointer(1)}
-                                        />
-                                        <Show when={pointer() > 0}>
-                                            <Portal mount={document.getElementById(styles.Gallery_CG_container)!}>
-                                                <div
-                                                    class={styles.Gallery_CG_view}
-                                                    style={{
-                                                        'background-image':
-                                                            `url(./static/ImageAsset/${cg()[0] + cg()[pointer()]}.png),` +
-                                                            // 预加载下一张cg,避免闪烁的情况
-                                                            `url(./static/ImageAsset/${cg()[0] + cg()[pointer() + 1]}.png)`
-                                                    }}
-                                                    onContextMenu={(event) => (event.stopPropagation(), pointer(-1))}
-                                                    onClick={() => pointer((i) => (i >= cg().length - 1 ? -1 : i + 1))}
-                                                />
-                                            </Portal>
-                                        </Show>
-                                    </>
-                                )}
-                            </Variable>
+                            <Variable value={() => CG[index + (currentPage() - 1) * 16]}>{CGElement}</Variable>
                         </Show>
                     )}
                 </Clone>
