@@ -1,11 +1,9 @@
 import { Component, onMount } from 'solid-js'
 import { router } from '@/router'
 import { Button, Clone, Variable, line } from '@/ui/Elements'
-import { titleComponentMountEvent } from '@/store/effect/event'
 import styles from './Title.module.scss'
 
 const Title: Component = () => {
-    onMount(titleComponentMountEvent.publish)
     return (
         <div class={'Page' + ' ' + styles.Title_container}>
             <Clone count={4}>

@@ -12,7 +12,7 @@ const set: CommandRunFunction =
             global: { cg }
         }
     }) =>
-    ({ name, file, x, y, z, w, h }) => {
+    ({ name, file, x = 0, y = 0, z, w, h }) => {
         if (!cg().includes(file)) cg().push(file)
         const container = new createjs.Container()
         if (state === State.Init) {

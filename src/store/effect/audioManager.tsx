@@ -1,11 +1,6 @@
-import { logger } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { Reactive } from 'micro-reactive'
 import { createEffect, createMemo } from 'solid-js'
-import bgm01 from '@/assets/bgm01.wav'
-import click from '@/assets/mouse_click_1.wav'
-import hover from '@/assets/mouse_hover_1.wav'
-import { titleComponentMountEvent } from './event'
 import { storePromise } from '../store'
 
 const configVolumeControllerMapPromise = storePromise.then((store) => ({
@@ -67,31 +62,19 @@ const ClipUserVolumeController = useSignal(1)
 // 背景音乐
 const BGM = createAudioTrack('BGM', BGMUserVolumeController)
 BGM.loop = true
-titleComponentMountEvent.subscribe(() => logger.info('播放主背景音乐'))
-titleComponentMountEvent.subscribe(() => ((BGM.src = bgm01), BGM.play()))
 // 音效
 const SE = createAudioTrack('SE', SEUserVolumeController)
-titleComponentMountEvent.subscribe(() => (SE.src = ''))
 // 人物语音
 const Clip = createAudioTrack('Clip', ClipUserVolumeController)
-titleComponentMountEvent.subscribe(() => (Clip.src = ''))
 // 按钮音效
-const CSE = createAudioTrack('UISE')
-CSE.src = click
-const HSE = createAudioTrack('UISE')
-HSE.src = hover
-
-const clickSoundEffect = () => CSE.cloneNode().play()
-const hoverSoundEffect = () => HSE.cloneNode().play()
 
 export {
+    GolbalVolume,
     BGM,
     BGMUserVolumeController,
-    clickSoundEffect,
     Clip,
     ClipUserVolumeController,
-    GolbalVolume,
-    hoverSoundEffect,
     SE,
-    SEUserVolumeController
+    SEUserVolumeController,
+    createAudioTrack
 }

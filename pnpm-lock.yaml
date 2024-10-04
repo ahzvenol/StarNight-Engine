@@ -20,12 +20,15 @@ dependencies:
   createjs-npm:
     specifier: ^0.2.0
     version: registry.npmmirror.com/createjs-npm@0.2.0
+  date-fns:
+    specifier: ^4.1.0
+    version: 4.1.0
   devtools-detector:
     specifier: ^2.0.14
     version: registry.npmmirror.com/devtools-detector@2.0.14
   es-toolkit:
-    specifier: ^1.20.0
-    version: 1.20.0
+    specifier: ^1.22.0
+    version: 1.22.0
   js-ini:
     specifier: ^1.6.0
     version: 1.6.0
@@ -926,6 +929,10 @@ packages:
     resolution: {integrity: sha512-uX1KG+x9h5hIJsaKR9xHUeUraxf8IODOwq9JLNPq6BwB04a/xgpq3rcx47l5BZu5zBPlgD342tdke3Hom/nJRA==}
     dev: false
 
+  /date-fns@4.1.0:
+    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
+    dev: false
+
   /debug@4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
     engines: {node: '>=6.0'}
@@ -983,8 +990,8 @@ packages:
     dev: true
     optional: true
 
-  /es-toolkit@1.20.0:
-    resolution: {integrity: sha512-dRaoLJVlrQEHGTwSLHcozC/371qY+5QYRsm9JZncos35zcGHyS00ogRTghzRyJLOTrOTWg/8qj+ckvLWPnYP7g==}
+  /es-toolkit@1.22.0:
+    resolution: {integrity: sha512-0mvZ7as1Irwi+i5BNTM4Lrt5NnZGz4TcMIG8FTUuqI6GswziFGPHrmVlK+kkafSqhofKKVs6gn0GSGZiWVxAHw==}
     dev: false
 
   /esbuild-android-64@0.14.54:
