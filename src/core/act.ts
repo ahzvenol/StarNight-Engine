@@ -38,36 +38,46 @@ async function runAct(row: number, state: State, onClick: Promise<void>, onFast:
     // act start
     actStartEvent.publish(context)
     mapValues(commands, (command) => command?.onActStart?.())
-    // 实现了命令内部的幕级中断,只需要返回一个Promise.reject()即可
-    // 同时,收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-    // 除了主动中断之外,不应该打断它
-    const commandOutput = await book[row]
-        .map((i) =>
-            mapValues(i, (value) =>
+    // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
+    // const commandOutput =
+    await book[row]
+        .map((args) =>
+            mapValues(args, (value) =>
                 match(value)
                     .with(P.string, () => Mustache.render(value, context))
                     .otherwise((value) => value)
             )
         )
-        .map((i) => async () => commands?.[i['@']]?.run(context)(i) || {})
-        .reduce(
-            (p, e) =>
-                p.then(
-                    (all) =>
-                        new Promise((resolve, reject) =>
-                            e()
-                                .then((result) => resolve(merge(all, result)))
-                                .catch((error) => {
-                                    match(error)
-                                        .with(P.instanceOf(Error), (error) => logger.error('命令运行出错:', error))
-                                        .otherwise((info) => logger.warn('命令主动中断本幕运行', info))
-                                    reject(all)
-                                })
-                        )
-                ),
-            Promise.resolve<Record<string, unknown>>({})
+        .map(
+            (args) => async () =>
+                match(args['@'] in commands)
+                    .with(true, () => commands[args['@']].run(context)(args))
+                    .otherwise(() => logger.error(`找不到命令:${args['@']}`))
         )
-        .catch<Record<string, unknown>>((e) => e)
+        .map(
+            (cmd) => () =>
+                cmd()
+                    .catch((error) => logger.error('命令运行出错:', error))
+                    .then((result) => result ?? {})
+        )
+    // .reduce(
+    //     (p, e) =>
+    //         p.then(
+    //             (all) =>
+    //                 new Promise((resolve, reject) =>
+    //                     e()
+    //                         .then((result) => resolve(merge(all, result)))
+    //                         .catch((error) => {
+    //                             match(error)
+    //                                 .with(P.instanceOf(Error), (error) => logger.error('命令运行出错:', error))
+    //                                 .otherwise((info) => logger.warn('命令主动中断本幕运行', info))
+    //                             reject(all)
+    //                         })
+    //                 )
+    //         ),
+    //     Promise.resolve<Record<string, unknown>>({})
+    // )
+    // .catch<Record<string, unknown>>((e) => e)
     // 最后需要对提交的setTimeouts进行检查,确定本幕是否彻底完成
     // 如果此时已经发生第二次点击,这里不应该产生阻塞
     await Promise.all(timer.promiseList)

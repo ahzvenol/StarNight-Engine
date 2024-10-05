@@ -71,7 +71,7 @@ class TimerX {
             return promise
         }
     }
-    // 添加外部不可控第三方库的结束回调Promise,将其纳入timer时间统计的方法(无法控制)
+    // // 添加外部不可控第三方库的结束回调Promise,将其纳入timer时间统计的方法(无法控制)
     public addTrackedPromise(promise: Promise<unknown>): void {
         if (this.isImmediate) return
         // 在toImmediate()后,TrackableTimer应返回resolve状态的promise序列,包括外部promise也是如此
@@ -93,6 +93,7 @@ class TimerX {
         if (this.isImmediate) fn()
         else this.resolveList.push(fn)
     }
+
     public start() {
         if (this.isImmediate) return
         this.startList.forEach((e) => e())
