@@ -1,6 +1,6 @@
 import { logger } from '@/utils/Logger'
 import { PromiseX } from '@/utils/PromiseX'
-import { delay, mapValues, merge } from 'es-toolkit'
+import { delay, mapValues } from 'es-toolkit'
 import Mustache from 'mustache'
 import { match, P } from 'ts-pattern'
 import book from '../assets/book.json'
@@ -44,7 +44,7 @@ async function runAct(row: number, state: State, onClick: Promise<void>, onFast:
         .map((args) =>
             mapValues(args, (value) =>
                 match(value)
-                    .with(P.string, () => Mustache.render(value, context))
+                    .with(P.string, (value) => Mustache.render(value, context))
                     .otherwise((value) => value)
             )
         )
@@ -80,7 +80,7 @@ async function runAct(row: number, state: State, onClick: Promise<void>, onFast:
     // .catch<Record<string, unknown>>((e) => e)
     // 最后需要对提交的setTimeouts进行检查,确定本幕是否彻底完成
     // 如果此时已经发生第二次点击,这里不应该产生阻塞
-    await Promise.all(timer.promiseList)
+    // await Promise.all(timer.promiseList)
     // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
     immPromise.reject()
     actEndEvent.publish(context)
@@ -110,6 +110,29 @@ function runLoop(
     onAuto: () => Promise<void>,
     onFast: () => Promise<void>
 ) {
+    // const Y: <T>(func: Function1<Function1<T, T>, Function1<T, T>>) => Function1<T, T> = (func) => (value) =>
+    //     func(Y(func))(value)
+
+    // Y<void>((rec) => async () => {
+    //     // 幕运行过程中不会操作任何状态
+    //     const res = await runAct(row(), state(), onClick(), onFast())
+    //     // 等待过程受continue命令影响
+    //     if (res['continue'] !== true) {
+    //         // 等待过程中的onClick, onAuto, onFast是有条件的使用的,所以不传值
+    //         await waitPoll(state(), onClick, onAuto, onFast)
+    //         logger.info('已受到推动并结束等待')
+    //     }
+    //     // 调用jump命令修改接下来一幕的行号
+    //     const jumpTarget = res['jump']
+    //     if (Number.isFinite(jumpTarget)) row(jumpTarget as number)
+    //     else row((i) => i + 1)
+    //     // 调用end命令结束幕循环
+    //     if (res['end'] === true) return Promise.resolve()
+    //     // 当行号超出时,自动退出
+    //     if (row() < book.length) return rec()
+    //     else return Promise.resolve()
+    // })()
+
     async function loop() {
         // 幕运行过程中不会操作任何状态
         const res = await runAct(row(), state(), onClick(), onFast())

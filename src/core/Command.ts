@@ -25,30 +25,31 @@ export type GameRuntimeContext = {
     row: number
 } & GameContext
 
-export type Args = {
-    name: string
-    target: string | number
-    file: string
-    duration: number
-    transition: string
-    text: string
-    number: number
-    bool: boolean
-    value: string | number | boolean
-}
+// export type Args = {
+//     name: string
+//     target: string | number
+//     file: string
+//     duration: number
+//     transition: string
+//     text: string
+//     number: number
+//     bool: boolean
+//     value: string | number | boolean
+// }F
 
 export type CommandOutput = Record<string, unknown> & Partial<{ continue: boolean; jump: number; end: boolean }>
 
-export type CommandRunFunction = Function1<
+export type CommandRunFunction<T> = Function1<
     GameRuntimeContext,
-    Function1<Partial<Args>, Promise<CommandOutput | void> | CommandOutput | void>
+    Function1<T, Promise<CommandOutput | void> | CommandOutput | void>
 >
 
 export type CommandLifeCycleFunction = Function1<GameContext, void>
 
-export interface Command {
-    run: CommandRunFunction
-    init?: CommandRunFunction
+export interface Command<T extends Record<string, unknown>> {
+    verify?: (arg0: Record<string, unknown>) => arg0 is T
+    run: CommandRunFunction<T>
+    init?: CommandRunFunction<T>
     beforeInit?: CommandLifeCycleFunction
     afterInit?: CommandLifeCycleFunction
     onActStart?: CommandLifeCycleFunction

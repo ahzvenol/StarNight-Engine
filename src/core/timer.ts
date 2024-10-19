@@ -48,14 +48,13 @@ class TimerX {
     public get isImmediate(): boolean {
         return this._isImmediate
     }
-    public promiseList: Array<Promise<unknown>> = []
+    // public promiseList: Array<Promise<unknown>> = []
     public startList: Array<Function0<void>> = []
     public pauseList: Array<Function0<void>> = []
     public resolveList: Array<Function0<void>> = []
     // 利用几个更高抽象层级的方法重新实现setTimeout和delay
-    public setTimeout(callback: Function0<void>, ms: number): void {
-        if (this.isImmediate) callback()
-        else this.delay(ms).then(callback)
+    public setTimeout(callback: Function0<void>, ms: number) {
+        return this.delay(ms).then(callback)
     }
     public delay(wait: number) {
         if (this.isImmediate) {
@@ -67,17 +66,17 @@ class TimerX {
                 this.addPauseMethod(controller.pause)
                 this.addFinalizeMethod(controller.immediateExecution)
             })
-            this.addTrackedPromise(promise)
+            // this.addTrackedPromise(promise)
             return promise
         }
     }
-    // // 添加外部不可控第三方库的结束回调Promise,将其纳入timer时间统计的方法(无法控制)
-    public addTrackedPromise(promise: Promise<unknown>): void {
-        if (this.isImmediate) return
-        // 在toImmediate()后,TrackableTimer应返回resolve状态的promise序列,包括外部promise也是如此
-        const promiseForimmediate = new Promise<void>((res) => this.resolveList.push(res))
-        this.promiseList.push(Promise.race([promise, promiseForimmediate]).catch())
-    }
+    // 添加外部不可控第三方库的结束回调Promise,将其纳入timer时间统计的方法(无法控制)
+    // public addTrackedPromise(promise: Promise<unknown>): void {
+    //     if (this.isImmediate) return
+    //     // 在toImmediate()后,TrackableTimer应返回resolve状态的promise序列,包括外部promise也是如此
+    //     const promiseForimmediate = new Promise<void>((res) => this.resolveList.push(res))
+    //     this.promiseList.push(Promise.race([promise, promiseForimmediate]).catch())
+    // }
     // 为外部不可控第三方库添加暂停和取消暂停方法,比如createjs.Ticker.paused = true
     // timer不会在添加时自动调用start
     public addStartMethod(fn: Function0<void>): void {
