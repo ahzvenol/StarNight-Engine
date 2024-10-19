@@ -1,9 +1,8 @@
-/* eslint-disable prettier/prettier */
 module.exports = {
     env: {
         browser: true,
         es2021: true,
-        node: true // 解决 'module' is not defined报错。
+        node: true
     },
     extends: [
         'eslint:recommended',
@@ -11,15 +10,17 @@ module.exports = {
         'plugin:solid/recommended',
         'plugin:prettier/recommended'
     ],
-    overrides: [{
-        env: {
-            node: true
-        },
-        files: ['.eslintrc.{js,cjs}'],
-        parserOptions: {
-            sourceType: 'script'
+    overrides: [
+        {
+            env: {
+                node: true
+            },
+            files: ['.eslintrc.{js,cjs}'],
+            parserOptions: {
+                sourceType: 'script'
+            }
         }
-    }],
+    ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 'latest',
