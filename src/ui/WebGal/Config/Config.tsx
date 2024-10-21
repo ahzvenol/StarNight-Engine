@@ -1,4 +1,4 @@
-import { logger } from '@/utils/Logger'
+import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { Component, Match, Switch, createEffect } from 'solid-js'
 import { translation } from '@/store/effect/translations'
@@ -18,7 +18,7 @@ const Config: Component = () => {
     const currentPage = useSignal(Page.System)
     const t = translation.menu.options
 
-    createEffect(() => logger.info(`Config:当前页面 ${currentPage()}`))
+    createEffect(() => log.info(`Config:当前页面 ${currentPage()}`))
     return (
         <div class={styles.Options_main}>
             <div class={styles.Options_top}>

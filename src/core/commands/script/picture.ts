@@ -1,7 +1,19 @@
-import { CommandRunFunction, State } from '@/core/Command'
+import { CommandLifeCycleFunction, CommandRunFunction, State } from '@/core/Command'
+import { Y } from '@/utils/Y'
+import { match, P } from 'ts-pattern'
 // 跨幕环境变量file,需要收集副作用
 
-const afterInit = () => {}
+const afterInit: CommandLifeCycleFunction = ({ stage }) =>
+    Y<createjs.DisplayObject, void>(
+        (rec) => (displayObject) =>
+            match(displayObject)
+                .with(P.instanceOf(createjs.Container), (container) => rec(container))
+                .with(P.instanceOf(createjs.Bitmap), (bitmap) =>
+                    match(bitmap.image)
+                        .with(P.instanceOf(Image), (image) => (image.src = image.alt))
+                        .otherwise(() => {})
+                )
+    )(stage)
 
 // z,w,h可选,若不设定则默认在最上层,保持图片原宽高
 const set: CommandRunFunction =
@@ -17,7 +29,7 @@ const set: CommandRunFunction =
         const container = new createjs.Container()
         if (state === State.Init) {
             const image = new Image()
-            image.id = file
+            image.alt = file
             const bitmap = new createjs.Bitmap(image)
             container.addChild(bitmap)
         } else {

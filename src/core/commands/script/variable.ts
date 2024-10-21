@@ -1,9 +1,7 @@
-import { CommandLifeCycleFunction, CommandRunFunction } from '@/core/Command'
-
-const beforeInit: CommandLifeCycleFunction = ({ variables }) => (variables['userData'] = {})
+import { CommandRunFunction } from '@/core/Command'
 
 const variable: CommandRunFunction =
     ({ variables }) =>
     ({ name, value }) => {
-        variables.userData[name] = value
+        variables[name] = value
     }

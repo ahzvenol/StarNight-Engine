@@ -1,7 +1,8 @@
-import { IndividualSaveData } from '@/store/default'
-import { Reactive } from 'micro-reactive'
+import { IndividualSaveData, Store } from '@/store/default'
+import { Reactive, ReactiveType } from 'micro-reactive'
 import { Timer } from './Timer'
 import { Variables } from './Core'
+import { Command } from '@/core/Command'
 
 export enum State {
     Init,
@@ -13,8 +14,9 @@ export enum State {
 export type GameContext = {
     stage: createjs.Stage
     variables: Variables
+    store: ReactiveType<Store>
     save: {
-        global: Reactive<Record<string, any>>
+        global: Reactive<Record<string, unknown>>
         individual: IndividualSaveData
     }
 }
@@ -35,18 +37,20 @@ export type GameRuntimeContext = {
 //     number: number
 //     bool: boolean
 //     value: string | number | boolean
-// }F
+// }
+
+export type CommandArgs = Record<string, string | number | boolean>
 
 export type CommandOutput = Record<string, unknown> & Partial<{ continue: boolean; jump: number; end: boolean }>
 
-export type CommandRunFunction<T> = Function1<
+export type CommandRunFunction<T extends CommandArgs> = Function1<
     GameRuntimeContext,
     Function1<T, Promise<CommandOutput | void> | CommandOutput | void>
 >
 
 export type CommandLifeCycleFunction = Function1<GameContext, void>
 
-export interface Command<T extends Record<string, unknown>> {
+export interface Command<T extends CommandArgs> {
     verify?: (arg0: Record<string, unknown>) => arg0 is T
     run: CommandRunFunction<T>
     init?: CommandRunFunction<T>

@@ -15,7 +15,7 @@ function createAudioTrack(type: 'BGM' | 'SE' | 'Clip' | 'UISE', userVolumeContro
     const audio = new Audio()
     audio.autoplay = type === 'UISE' ? false : true
 
-    // 为audio绑定响应式音量控制,音量=全局音量*设置音量*命令音量(用于淡入淡出等效果)
+    // 为audio绑定响应式音量控制,音量=全局音量*设置音量*(命令音量(用于淡入淡出等效果))
     configVolumeControllerMapPromise.then((map) => {
         const controller = [map['Golbal'], map[type], userVolumeController]
         const volume = createMemo(() => controller.map((n) => n()).reduce((n1, n2) => n1 * n2, 1))

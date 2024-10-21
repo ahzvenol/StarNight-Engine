@@ -3,7 +3,7 @@ import localforage from 'localforage'
 import { useReactive } from 'micro-reactive'
 import { createEffect, createResource, on, type Resource } from 'solid-js'
 
-import { logger } from '@/utils/Logger'
+import { log } from '@/utils/Logger'
 import systemDefaultStore, { Store } from './default'
 import { getUserConfig } from './user'
 
@@ -42,13 +42,13 @@ const createStore = async () => {
                 store[key as keyof Store],
                 debounce(() => {
                     localforage.setItem(key, store[key as keyof Store]())
-                    logger.info(`写入本地存储:${key}`)
+                    log.info(`写入本地存储:${key}`)
                 }, 100)
             )
         )
     })
 
-    logger.info('Store初始化完毕:', store())
+    log.info('Store初始化完毕:', store())
 
     return { userDefaultStore: () => cloneDeep(userDefaultStore), store }
 }

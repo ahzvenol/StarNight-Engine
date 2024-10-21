@@ -37,7 +37,7 @@ const systemDefaultStore = {
 // archive中应包含内容按照之前有 previewpic index text 具体名称修改待考虑
 
 type IniKV = Record<string, string | number | boolean>
-type IndividualSaveData = Record<string, any>
+type IndividualSaveData = Record<string, unknown>
 
 // & IniKV会丢失类型检查,所以不在类型上书写它
 // type Store = Reactive<{

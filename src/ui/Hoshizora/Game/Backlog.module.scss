@@ -18,6 +18,7 @@
 
     > * {
         display: flex;
+        min-height: 100%;
         flex-direction: column-reverse;
     }
 
@@ -42,6 +43,7 @@
 }
 
 .Game_Backlog_element_name {
+    z-index: 6;
     box-sizing: border-box;
     width: 249px;
     height: 39px;
@@ -55,6 +57,7 @@
 }
 
 .Game_Backlog_element_text {
+    z-index: 5;
     box-sizing: border-box;
     width: 900px;
     height: 125px;
@@ -63,7 +66,6 @@
     left: 45px;
     font-size: 20px;
     background-image: url(./static/Texture2D/backlog_window.png);
-    background-size: fill;
 }
 
 .Game_Backlog_Scrollbar_track {

@@ -5,7 +5,7 @@ import { Match, Switch } from 'solid-js'
 import '@/store/effect/index'
 import UI from './ui/Hoshizora'
 import store from './store/store'
-import { logger } from './utils/Logger'
+import { log } from './utils/Logger'
 import { Context } from './store/context'
 import { Graphic } from './ui/Elements'
 
@@ -20,10 +20,10 @@ if (import.meta.env.DEV !== true) {
         navigator.serviceWorker
             .register('/service-worker.js')
             .then((registration) => {
-                logger.info('ServiceWorker registration successful with scope: ' + registration.scope)
+                log.info('ServiceWorker registration successful with scope: ' + registration.scope)
             })
             .catch((error) => {
-                logger.error('ServiceWorker registration failed: ' + error)
+                log.error('ServiceWorker registration failed: ' + error)
             })
     }
 }

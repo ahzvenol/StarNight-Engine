@@ -1,13 +1,16 @@
 import { Command } from '../Command'
+import { Say } from './hoshizora/say'
 import { Continue, End, Jump } from './script/!'
 import { Name, Text } from './script/textbox'
 
-export const commands: Record<string, Command> = {
-    continue: Continue,
-    jump: Jump,
-    end: End,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const commands: Record<string, Command<any>> = {
+    // continue: Continue,
+    // jump: Jump,
+    // end: End,
     name: Name,
-    text: Text
+    text: Text,
+    say: Say
 }
 
 // 文本:text

@@ -21,18 +21,18 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                 }}
             />
             {/* tag:魔法方案的闪烁问题非常严重并且影响操作,暂时放弃对transition: 0.15s的支持 */}
-            <p
+            <div
                 class={styles.Save_Load_top_arrow + ' ' + styles.Save_Load_top_arrow_left}
                 onClick={() => (currentPage() > 0 ? currentPage((i) => i - 1) : currentPage(9))}
             />
-            <p
+            <div
                 class={styles.Save_Load_top_arrow + ' ' + styles.Save_Load_top_arrow_right}
                 onClick={() => (currentPage() < 9 ? currentPage((i) => i + 1) : currentPage(0))}
             />
             <div class={styles.Save_Load_top_buttonList}>
                 <Clone count={10}>
                     {(i) => (
-                        <Button
+                        <div
                             class={styles.Save_Load_top_button}
                             onClick={() => currentPage(i)}
                             style={{ 'background-color': currentPage() === i ? 'white' : '#909090' }}

@@ -1,6 +1,6 @@
 import { parse } from 'js-ini'
 import { IniKV } from './default'
-import { logger } from '@/utils/Logger'
+import { log } from '@/utils/Logger'
 
 // 如果用户输入了错误的配置数据,目前不做处理
 export const getUserConfig = async () => {
@@ -12,7 +12,7 @@ export const getUserConfig = async () => {
 
     const system = { ...info, ...graphic }
 
-    logger.info('配置文件解析完毕:', ini)
+    log.info('配置文件解析完毕:', ini)
 
     const iniObj = { system, config, user }
 
