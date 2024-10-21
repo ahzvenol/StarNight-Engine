@@ -1,11 +1,11 @@
-import { logger } from '@/utils/Logger'
+import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { isFunction, isString } from 'es-toolkit'
 import { JSX, ParentProps, Show, createEffect } from 'solid-js'
 
 const active = useSignal('')
 
-createEffect(() => logger.info(`页面跳转:${active()}`))
+createEffect(() => log.info(`页面跳转:${active()}`))
 
 const history = ['']
 

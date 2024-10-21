@@ -2,6 +2,7 @@ import { Component, onMount } from 'solid-js'
 import { router } from '@/router'
 import { Button, Clone, Variable, line } from '@/ui/Elements'
 import styles from './Title.module.scss'
+import { Pages } from '@/ui/Pages'
 
 const Title: Component = () => {
     return (
@@ -20,7 +21,9 @@ const Title: Component = () => {
                                         bottom: `${55 + 41 * (4 - line(4)(index))}px`,
                                         'background-image': `url('./static/Texture2D/title_${imageId}.png')`
                                     }}
-                                    onClick={() => router.navigate(['Game', 'Load', 'Config', 'Gallery'][index])}
+                                    onClick={() =>
+                                        router.navigate([Pages.Game, Pages.Load, Pages.Config, Pages.Gallery][index])
+                                    }
                                 />
                                 <style jsx>
                                     {`

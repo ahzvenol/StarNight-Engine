@@ -1,6 +1,7 @@
 import { Route, router } from '@/router'
 import { BGM, Clip, SE } from '@/store/effect/audioManager'
-import { logger } from '@/utils/Logger'
+import { play } from '@/utils/AudioUtils'
+import { log } from '@/utils/Logger'
 import { Component, createEffect, on, ParentProps } from 'solid-js'
 
 enum Pages {
@@ -17,11 +18,10 @@ const Title: Component<ParentProps<{ bgm: string }>> = (props) => {
         on(router.active, () => {
             if (router.active() === Pages.Title) {
                 // tag:如果允许自定义轨道的话,这里也要对应的清理轨道
-                BGM.src = props.bgm
-                BGM.play()
+                play(BGM)(props.bgm)
                 SE.src = ''
                 Clip.src = ''
-                logger.info('播放主背景音乐')
+                log.info('播放主背景音乐')
             }
         })
     )
@@ -29,6 +29,15 @@ const Title: Component<ParentProps<{ bgm: string }>> = (props) => {
 }
 
 const Game: Component<ParentProps> = (props) => {
+    createEffect(
+        on(router.active, () => {
+            if (router.active() === Pages.Game) {
+                BGM.src = ''
+                SE.src = ''
+                Clip.src = ''
+            }
+        })
+    )
     return <Route path={Pages.Game}>{props.children}</Route>
 }
 

@@ -1,5 +1,5 @@
 import { storePromise } from '@/store/store'
-import { logger } from '@/utils/Logger'
+import { log } from '@/utils/Logger'
 import { toMerged } from 'es-toolkit'
 import { Reactive, ReactiveType, useReactive } from 'micro-reactive'
 import { Accessor, createEffect, on } from 'solid-js'
@@ -34,7 +34,7 @@ storePromise.then((store) => {
         on(lang as Accessor<ReactiveType<typeof lang>>, (now, prev) => {
             if (now !== prev) {
                 translation(toMerged(language[defaultLang], language[lang()]))
-                logger.info('当前语言:' + description[lang()])
+                log.info('当前语言:' + description[lang()])
             }
         })
     )
