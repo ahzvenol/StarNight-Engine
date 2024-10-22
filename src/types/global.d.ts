@@ -10,3 +10,7 @@ type Function3<T1, T2, T3, R> = (arg0: T1, arg1: T2, arg2: T3) => R
 interface HTMLAudioElement {
     cloneNode(): HTMLAudioElement
 }
+
+interface NumberConstructor {
+    isFinite(number: unknown): number is number
+}

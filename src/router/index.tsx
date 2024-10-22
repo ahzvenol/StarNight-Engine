@@ -16,7 +16,7 @@ const navigate = (to: string, replace?: boolean) => {
 
 const back = () => {
     history.pop()
-    active(history.pop() ?? '')
+    active(history[history.length - 1])
 }
 
 function Route(props: ParentProps<{ path: string }>): JSX.Element
