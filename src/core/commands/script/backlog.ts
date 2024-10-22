@@ -9,7 +9,7 @@ const backlog: CommandRunFunction<BacklogRow> =
     () =>
     ({ text, name, file }) => {
         backlogView().unshift({ text, name, file })
-        if (backlogView().length > 20) backlogView().pop()
+        if (backlogView().length > 50) backlogView().pop()
     }
 
 export const Backlog = { beforeInit: () => backlogView([]), run: backlog }

@@ -12,15 +12,15 @@ const GameUI: GameUIElement = (canvans) => {
         <>
             <div style={{ display: 'contents' }} onClick={click}>
                 {canvans}
+                {/* <div style={{ width: '100%', height: '100%', 'background-color': 'white' }} /> */}
+                <Show when={!showBacklog()}>
+                    <TextBox />
+                    <ControlPanel showBacklog={showBacklog} />
+                </Show>
+                <Show when={showBacklog()}>
+                    <Backlog showBacklog={showBacklog} />
+                </Show>
             </div>
-            {/* <div style={{ width: '100%', height: '100%', 'background-color': 'white' }} /> */}
-            <Show when={!showBacklog()}>
-                <TextBox />
-                <ControlPanel showBacklog={showBacklog} />
-            </Show>
-            <Show when={showBacklog()}>
-                <Backlog showBacklog={showBacklog} />
-            </Show>
         </>
     )
 }

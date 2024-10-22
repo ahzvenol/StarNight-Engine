@@ -67,7 +67,8 @@ const Button: Component<
     return (
         <div
             classList={{ ...local.classList }}
-            onClick={() => {
+            onClick={(e) => {
+                e.stopPropagation()
                 clickSoundEffect()
                 local.onClick?.()
             }}
