@@ -6,7 +6,7 @@ import Back from '../Back/Back'
 import styles from './Backlog.module.scss'
 import { backlogView } from '@/core/commands/script/backlog'
 import { createAudioTrack } from '@/store/effect/audioManager'
-import { play } from '@/utils/AudioUtils'
+import { play } from '@/utils/AudioUtil'
 
 export const Backlog: Component<{ showBacklog: Signal<boolean> }> = ({ showBacklog }) => {
     createEffect(() => {

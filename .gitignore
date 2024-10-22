@@ -915,3 +915,5 @@ MigrationBackup/
 # End of https://www.gitignore.io/api/vim,node,xcode,linux,macos,windows,eclipse,webstorm,notepadpp,visualstudio,jetbrains+all,androidstudio,visualstudiocode
 
 public/static/
+
+public/static/

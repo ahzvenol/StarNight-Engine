@@ -1,11 +1,11 @@
 import { CommandRunFunction } from '@/core/Command'
 import { useSignal } from '@/utils/Reactive'
 
-type BacklogRow = { text: string; name?: string; file?: string }
+type BacklogCommandArgs = { text: string; name?: string; file?: string }
 
-export const backlogView = useSignal<Array<BacklogRow>>([])
+export const backlogView = useSignal<Array<BacklogCommandArgs>>([])
 
-const backlog: CommandRunFunction<BacklogRow> =
+const backlog: CommandRunFunction<BacklogCommandArgs> =
     () =>
     ({ text, name, file }) => {
         backlogView().unshift({ text, name, file })

@@ -1,7 +1,7 @@
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { useEventListener } from '@/utils/useEventListener'
-import { mapValues, throttle } from 'es-toolkit'
+import { mapValues, once, throttle } from 'es-toolkit'
 import { Component, createContext, JSX, onMount, useContext } from 'solid-js'
 import { GameContext, State } from './Command'
 import { EventDispatcher, on } from './EventDispatcher'
@@ -76,7 +76,7 @@ export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ 
 
     const canvans = (<canvas id="canvas" width="1280" height="720" />) as HTMLCanvasElement
 
-    onMount(() => {
+    const mount = once(() => {
         const stage = new createjs.Stage(canvans)
         const context: GameContext = { stage, variables }
         // clickLock(true)
@@ -92,6 +92,10 @@ export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ 
         runLoop(row, state, store, onClick, onAuto, onFast)
         // clickLock(false)
     })
+
+    // solid-keep-alive + micro-reactive
+    // 在设置页修改reactive变量之后会导致mount重复触发,所以务必用once包裹
+    onMount(mount)
 
     return (
         <EventsContext.Provider value={events}>

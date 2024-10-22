@@ -1,4 +1,4 @@
-import { CommandOutput, RuntimeCommandOutput } from '@/core/Command'
+import { Command, CommandArgs, CommandOutput, RuntimeCommandOutput } from '@/core/Command'
 import { log } from '@/utils/Logger'
 import { merge } from 'es-toolkit'
 import { match, P } from 'ts-pattern'
@@ -96,3 +96,13 @@ export const chain: Function1<Array<MixResolvedCommand>, NonNullResolvedCommand>
     _chain(array.map(normalize))
 
 export const fork: Function1<Array<MixResolvedCommand>, NonNullResolvedCommand> = (array) => _fork(array.map(normalize))
+
+export function warp<T extends CommandArgs>(raw: Command<T>): Function1<Function1<T, T>, Command<T>> {
+    return (warp) => ({
+        run: (context) => (args) => raw.run(context)(warp(args)),
+        init: (context) => (args) => raw.init?.(context)(warp(args)),
+        beforeInit: raw.beforeInit,
+        afterInit: raw.afterInit,
+        onActStart: raw.onActStart
+    })
+}

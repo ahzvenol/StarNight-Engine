@@ -1,8 +1,8 @@
-import { Component, onMount } from 'solid-js'
 import { router } from '@/router'
 import { Button, Clone, Variable, line } from '@/ui/Elements'
+import { Pages, restartGame } from '@/ui/Pages'
+import { Component } from 'solid-js'
 import styles from './Title.module.scss'
-import { Pages } from '@/ui/Pages'
 
 const Title: Component = () => {
     return (
@@ -21,9 +21,10 @@ const Title: Component = () => {
                                         bottom: `${55 + 41 * (4 - line(4)(index))}px`,
                                         'background-image': `url('./static/Texture2D/title_${imageId}.png')`
                                     }}
-                                    onClick={() =>
+                                    onClick={() => {
+                                        if (index === 0) restartGame()
                                         router.navigate([Pages.Game, Pages.Load, Pages.Config, Pages.Gallery][index])
-                                    }
+                                    }}
                                 />
                                 <style jsx>
                                     {`

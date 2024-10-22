@@ -14,3 +14,11 @@ interface HTMLAudioElement {
 interface NumberConstructor {
     isFinite(number: unknown): number is number
 }
+
+interface HTMLImageElement {
+    meta: string
+}
+
+interface HTMLAudioElement {
+    meta: string
+}

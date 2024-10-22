@@ -8,6 +8,7 @@ import store from './store/store'
 import { log } from './utils/Logger'
 import { Context } from './store/context'
 import { Graphic } from './ui/Elements'
+import { KeepAliveProvider } from 'solid-keep-alive'
 
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false
@@ -36,9 +37,11 @@ const App: Component = () => (
         </Match>
         <Match when={store.state === 'ready'}>
             <Context environment={store()!}>
-                <Graphic config={store()!.system}>
-                    <UI />
-                </Graphic>
+                <KeepAliveProvider maxElements={1}>
+                    <Graphic config={store()!.system}>
+                        <UI />
+                    </Graphic>
+                </KeepAliveProvider>
             </Context>
         </Match>
         <Match when={store.state === 'errored'}>

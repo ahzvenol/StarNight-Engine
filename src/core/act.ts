@@ -2,7 +2,7 @@ import { Store } from '@/store/default'
 import { log } from '@/utils/Logger'
 import { PromiseX } from '@/utils/PromiseX'
 import { Signal } from '@/utils/Reactive'
-import { Y } from '@/utils/Y'
+import { Y } from '@/utils/FPUtil'
 import { delay, mapValues } from 'es-toolkit'
 import { ReactiveType } from 'micro-reactive'
 import Mustache from 'mustache'
@@ -13,6 +13,7 @@ import { EventDispatcher } from './EventDispatcher'
 import { Timer } from './Timer'
 import { commands } from './commands'
 import { par } from './macro'
+import { tracks } from './commands/script/audio'
 
 const actStartEvent = new EventDispatcher<GameRuntimeContext>()
 const actEndEvent = new EventDispatcher<GameRuntimeContext>()
@@ -30,9 +31,12 @@ async function runAct(
     onFast: Promise<void>
 ) {
     const timer = new Timer()
+    // fix:这些元素比timer活的都长,不合适用timer了
     // createjs库下一切操作的启动和暂停都可以通过以下两个操作管理,预先添加它以避免每个命令重复处理
     timer.addPauseMethod(() => (createjs.Ticker.paused = true))
-    timer.addStartMethod(() => (createjs.Ticker.paused = false))
+    timer.addRestartMethod(() => (createjs.Ticker.paused = false))
+    timer.addPauseMethod(() => mapValues(tracks, (audio) => audio.pause()))
+    timer.addRestartMethod(() => mapValues(tracks, (audio) => audio.play()))
     // 如果现在是快进状态,直接把timer设置到立即执行
     if (state == State.Fast) timer.toImmediate()
     const context = { timer, state, store, row } as GameRuntimeContext
@@ -92,7 +96,7 @@ function runLoop(
             // 像是选项要卡死幕循环的情况,使用不在timer控制范围内的await就可以
             await match(state)
                 .with(State.Fast, () => delay(100))
-                .with(State.Auto, () => Promise.resolve())
+                .with(State.Auto, () => delay(2000 - store.config.AutoReadSpeed() * 2000))
                 .otherwise(() => Promise.race([onClick(), onAuto(), onFast()]))
             log.info('已受到推动并结束等待')
         }

@@ -1,6 +1,6 @@
 import { CommandRunFunction } from '@/core/Command'
 import { useSignal } from '@/utils/Reactive'
-import { Y } from '@/utils/Y'
+import { Y } from '@/utils/FPUtil'
 
 // 跨幕环境变量name,无副作用
 // 存在依赖变量的"文字播放速度"
@@ -15,6 +15,7 @@ export const textView = useSignal('')
 const text: CommandRunFunction<{ text: string }> =
     ({ store, timer }) =>
     ({ text }) => {
+        console.log(text)
         return Y<string, Promise<void>>((rec) => (str) => {
             return Promise.resolve()
                 .then(() => textView((text) => text + str.substring(0, 1)))
@@ -29,10 +30,10 @@ export const Text = { beforeInit: () => textView(''), onActStart: () => textView
 
 export const nameView = useSignal('')
 
-const name: CommandRunFunction<{ name?: string }> =
+const name: CommandRunFunction<{ name: string }> =
     () =>
     ({ name }) => {
-        if (name !== undefined) nameView(name)
+        nameView(name)
     }
 
 export const Name = { beforeInit: () => nameView(''), run: name }
