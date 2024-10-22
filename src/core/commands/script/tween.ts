@@ -24,7 +24,9 @@ const activeTweens = new Map<object, createjs.Tween>()
 
 const onActStart = () => activeTweens.clear()
 
-const tween: CommandRunFunction<TweenCommandArgs & Exclude<Record<string, unknown>, TweenCommandArgs>> =
+const tween: CommandRunFunction<
+    TweenCommandArgs & Exclude<Record<string, string | number | boolean>, TweenCommandArgs>
+> =
     ({ timer }) =>
     ({ target, duration, transition, ...args }) => {
         if (!activeTweens.has(target)) activeTweens.set(target, createjs.Tween.get(target))

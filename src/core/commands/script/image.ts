@@ -1,6 +1,16 @@
 import { CommandLifeCycleFunction, CommandRunFunction, State } from '@/core/Command'
 import { Y } from '@/utils/Y'
 import { match, P } from 'ts-pattern'
+
+type SetImageCommandArgs = {
+    name: string
+    file: string
+    x?: number
+    y?: number
+    z?: number
+    w?: number
+    h?: number
+}
 // 跨幕环境变量file,需要收集副作用
 
 const afterInit: CommandLifeCycleFunction = ({ stage }) =>
@@ -10,13 +20,13 @@ const afterInit: CommandLifeCycleFunction = ({ stage }) =>
                 .with(P.instanceOf(createjs.Container), (container) => rec(container))
                 .with(P.instanceOf(createjs.Bitmap), (bitmap) =>
                     match(bitmap.image)
-                        .with(P.instanceOf(Image), (image) => (image.src = image.alt))
+                        .with(P.instanceOf(Image), (image) => (image.src = image.meta))
                         .otherwise(() => {})
                 )
     )(stage)
 
 // z,w,h可选,若不设定则默认在最上层,保持图片原宽高
-const set: CommandRunFunction =
+const setImage: CommandRunFunction<SetImageCommandArgs> =
     ({
         state,
         stage,
@@ -24,12 +34,12 @@ const set: CommandRunFunction =
             global: { cg }
         }
     }) =>
-    ({ name, file, x = 0, y = 0, z, w, h }) => {
+    ({ name, file, x = 0, y = 0, z = 0, w, h }) => {
         if (!cg().includes(file)) cg().push(file)
         const container = new createjs.Container()
         if (state === State.Init) {
             const image = new Image()
-            image.alt = file
+            image.meta = file
             const bitmap = new createjs.Bitmap(image)
             container.addChild(bitmap)
         } else {
@@ -39,8 +49,10 @@ const set: CommandRunFunction =
         container.name = name
         container.x = x
         container.y = y
-        stage.addChild(container)
+        stage.setChildIndex(container, z)
     }
+
+export const SetImage = { init: setImage, afterInit, run: setImage }
 
 // x, y,w, h,duration,transition可选,若不设定则保持原参数
 const move =
