@@ -14,6 +14,9 @@ dependencies:
   '@types/node':
     specifier: ^18.11.9
     version: registry.npmmirror.com/@types/node@18.11.9
+  animejs:
+    specifier: ^3.2.2
+    version: 3.2.2
   axios:
     specifier: ^1.2.2
     version: registry.npmmirror.com/axios@1.2.2
@@ -61,6 +64,9 @@ dependencies:
     version: registry.npmmirror.com/vite-plugin-solid@2.4.0(solid-js@1.9.2)(vite@3.0.9)
 
 devDependencies:
+  '@types/animejs':
+    specifier: ^3.1.12
+    version: 3.1.12
   '@types/mustache':
     specifier: ^4.2.5
     version: 4.2.5
@@ -489,6 +495,10 @@ packages:
       solid-js: 1.9.2
     dev: false
 
+  /@types/animejs@3.1.12:
+    resolution: {integrity: sha512-fpdH+ZtlO0kqjTOqRaBdsEmvpRNOayI8k4EVkEtitL5l6wducDOXk0rgQgfZqWf/ZX9DzXrHf257S5i9xTcISQ==}
+    dev: true
+
   /@types/css-tree@2.3.2:
     resolution: {integrity: sha512-B5nF6h7xxpMLvZ1pzugAYUGj1aw4KgTpXZzOijkDMRzey4SlFi0jVWb3o0SS1CVSxyBciltVgjt67CwrgjmlWA==}
     dev: false
@@ -725,6 +735,10 @@ packages:
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
     dev: true
+
+  /animejs@3.2.2:
+    resolution: {integrity: sha512-Ao95qWLpDPXXM+WrmwcKbl6uNlC5tjnowlaRYtuVDHHoygjtIPfDUoK9NthrlZsQSKjZXlmji2TrBUAVbiH0LQ==}
+    dev: false
 
   /ansi-regex@2.1.1:
     resolution: {integrity: sha512-TIGnTpdo+E3+pCyAluZvtED5p5wCqLdezCyhPZzKPcxvFplEt4i+W7OONCKgeZFT3+y5NZZfOOS/Bdcanm1MYA==}
