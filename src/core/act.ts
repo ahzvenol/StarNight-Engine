@@ -8,7 +8,7 @@ import { ReactiveType } from 'micro-reactive'
 import Mustache from 'mustache'
 import { match, P } from 'ts-pattern'
 import book from '../assets/book.json'
-import { GameRuntimeContext, State } from './Command'
+import { GameContext, GameRuntimeContext, State } from './Command'
 import { EventDispatcher } from './EventDispatcher'
 import { Timer } from './Timer'
 import { commands } from './commands'
@@ -27,6 +27,7 @@ async function runAct(
     row: number,
     state: State,
     store: ReactiveType<Store>,
+    stage: createjs.Stage,
     onClick: Promise<void>,
     onFast: Promise<void>
 ) {
@@ -39,7 +40,7 @@ async function runAct(
     timer.addRestartMethod(() => mapValues(tracks, (audio) => audio.play()))
     // 如果现在是快进状态,直接把timer设置到立即执行
     if (state == State.Fast) timer.toImmediate()
-    const context = { timer, state, store, row } as GameRuntimeContext
+    const context: GameRuntimeContext = { timer, state, store, stage, row }
     // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕,通过timer立即执行全部效果
     // 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
     const immPromise = new PromiseX()
@@ -77,17 +78,19 @@ async function runAct(
     return commandOutput
 }
 
+// context只作为中间变量向下传输,不使用
 function runLoop(
     row: Signal<number>,
     state: Signal<State>,
     store: Store,
+    stage: createjs.Stage,
     onClick: () => Promise<void>,
     onAuto: () => Promise<void>,
     onFast: () => Promise<void>
 ) {
     return Y<void, Promise<void>>((rec) => async () => {
         // 幕运行过程中不会操作任何状态
-        const res = await runAct(row(), state(), store(), onClick(), onFast())
+        const res = await runAct(row(), state(), store(), stage, onClick(), onFast())
         // 等待过程受continue命令影响
         if (res['continue'] !== true) {
             // 只有两个地方会有阻塞:正在运行一幕,等待点击事件

@@ -29,7 +29,7 @@ const CG = [
 ]
 
 const Gallery: Component = () => {
-    const currentPage = useSignal<1 | 2>(1)
+    const currentPage = useSignal<0 | 1>(0)
     return (
         <div class={'Page' + ' ' + styles.Gallery_container}>
             <div id={styles.Gallery_CG_container} />
@@ -37,31 +37,31 @@ const Gallery: Component = () => {
                 classList={{
                     [styles.Gallery_switch]: true,
                     [styles.Gallery_switch_1]: true,
-                    [styles.Gallery_switch_hover]: currentPage() !== 1
+                    [styles.Gallery_switch_hover]: currentPage() !== 0
                 }}
-                onClick={() => currentPage(1)}>
+                onClick={() => currentPage(0)}>
                 1
             </div>
             <div
                 classList={{
                     [styles.Gallery_switch]: true,
                     [styles.Gallery_switch_2]: true,
-                    [styles.Gallery_switch_hover]: currentPage() !== 2
+                    [styles.Gallery_switch_hover]: currentPage() !== 1
                 }}
-                onClick={() => currentPage(2)}>
+                onClick={() => currentPage(1)}>
                 2
             </div>
             <div class={styles.Gallery_content}>
                 <Clone count={16}>
                     {(index) => (
                         <Show
-                            when={!(currentPage() === 2 && index + 1 > 5)}
+                            when={!(currentPage() === 1 && index + 1 > 5)}
                             fallback={
                                 <div
                                     class={styles.Gallery_content_element + ' ' + styles.Gallery_content_element_empty}
                                 />
                             }>
-                            <Variable value={() => CG[index + (currentPage() - 1) * 16]}>{CGElement}</Variable>
+                            <Variable value={() => CG[index + currentPage() * 16]}>{CGElement}</Variable>
                         </Show>
                     )}
                 </Clone>

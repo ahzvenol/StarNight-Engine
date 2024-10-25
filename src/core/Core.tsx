@@ -1,7 +1,7 @@
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { useEventListener } from '@/utils/useEventListener'
-import { mapValues, once, throttle } from 'es-toolkit'
+import { mapValues, once, range, throttle } from 'es-toolkit'
 import { Component, createContext, JSX, onMount, useContext } from 'solid-js'
 import { GameContext, State } from './Command'
 import { EventDispatcher, on } from './EventDispatcher'
@@ -24,7 +24,7 @@ export const useVariables = () => useContext(VariablesContext)!
 export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ startAt, children }) => {
     const store = useStore()
 
-    const row = useSignal(startAt)
+    const row = useSignal(14)
     // tag:可能需要一些更复杂的分支预测机制
     // createEffect(() => preLoad(row() + 5))
 
@@ -78,18 +78,22 @@ export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ 
 
     const mount = once(() => {
         const stage = new createjs.Stage(canvans)
-        const context: GameContext = { stage, variables }
+        createjs.Ticker.addEventListener('tick', stage)
+
+        const context: GameContext = { stage, variables, store: store() }
         // clickLock(true)
         const timer = new Timer()
         timer.toImmediate()
         mapValues(commands, (command) => command.beforeInit?.(context))
         // const context = { timer, state: State.Init }
         // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
-        // range(0, startAt).forEach(row => book[row].forEach(i => commands[i['@']]?.run({ row, ...context })(i)))
+        range(0, startAt).forEach((row) =>
+            book[row].forEach((i) => commands[i['@']]?.init?.({ row, timer, ...context })(i))
+        )
         // todo:对副作用初始化
         mapValues(commands, (command) => command.afterInit?.(context))
         // 幕循环的第一次运行没有任何条件,所以不需要推动
-        runLoop(row, state, store, onClick, onAuto, onFast)
+        runLoop(row, state, store, stage, onClick, onAuto, onFast)
         // clickLock(false)
     })
 

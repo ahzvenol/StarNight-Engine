@@ -3,7 +3,6 @@ import { BGM, Clip, SE } from '@/store/effect/audioManager'
 import { play } from '@/utils/AudioUtil'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
-import { set } from 'date-fns'
 import { Component, createEffect, on, ParentProps } from 'solid-js'
 import { KeepAlive, useKeepAlive } from 'solid-keep-alive'
 
@@ -34,6 +33,8 @@ const Title: Component<ParentProps<{ bgm: string }>> = (props) => {
 const key = useSignal(0)
 
 const Game: Component<ParentProps> = (props) => {
+    createjs.Ticker.framerate = 60
+    createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED
     createEffect(
         on(router.active, () => {
             if (router.active() === Pages.Game) {
@@ -53,6 +54,6 @@ const Game: Component<ParentProps> = (props) => {
     )
 }
 
-const restartGame = () => key((i) => i + 1)
+export const restartGame = () => key((i) => i + 1)
 
-export { Pages, Title, Game, restartGame }
+export { Pages, Game, Title }

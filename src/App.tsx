@@ -13,9 +13,6 @@ import { KeepAliveProvider } from 'solid-keep-alive'
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false
 
-createjs.Ticker.framerate = 60
-createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED
-
 if (import.meta.env.DEV !== true) {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker

@@ -1,10 +1,11 @@
 import { Command } from '../Command'
 import { Audio } from './hoshizora/audio'
-import { Audio as OnlyLifeCycle0 } from './script/audio'
 import { Say } from './hoshizora/say'
 import { Continue, End, Jump } from './script/!'
 import { Backlog } from './script/backlog'
+import { SetImage } from './/hoshizora/image'
 import { Name, Text } from './script/textbox'
+import { Tween } from './script/tween'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const commands: Record<string, Command<any>> = {
@@ -16,7 +17,8 @@ export const commands: Record<string, Command<any>> = {
     text: Text,
     say: Say,
     audio: Audio,
-    OnlyLifeCycle0
+    image: SetImage,
+    tween: Tween
 }
 
 // 文本:text

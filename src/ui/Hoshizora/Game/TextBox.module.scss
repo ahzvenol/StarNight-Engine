@@ -17,7 +17,7 @@
     left: 260px;
     font-size: 30px;
     font-weight: bold;
-    color: #96C7EC;
+    color: #96c7ec;
     // tag:描边效果有点烂,还是叠字吧
     -webkit-text-stroke: 0.1px black;
 }
@@ -44,22 +44,19 @@
     background-image: url(./static/Texture2D/window_name.png);
 }
 
-.Game_TextBox_star_container {
-    position: relative;
-}
-
-/* 很多样式需要单独加 */
 .Game_TextBox_star {
-    position: absolute;
     display: inline-block;
-    right: -0.044rem;
-    bottom: -0.022rem;
-    height: 0.0444445rem;
-    width: 0.0444445rem;
-    background-image: url(http://imgsrc.baidu.com/super/pic/item/c9fcc3cec3fdfc036e235d62913f8794a5c22695.jpg);
-    background-repeat: no-repeat;
-    background-size: contain;
+    height: 32px;
+    width: 32px;
+    background-image: url(./static/Texture2D/window_click.png);
     transform: rotate(180deg);
-    /* 这里到底是在keyframe里定义101好呢,还是在animation里写alternate好呢,不得而知 */
     animation: flash 0.5s infinite alternate;
+    @keyframes flash {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
 }

@@ -13,7 +13,7 @@ export const Backlog: Component<{ showBacklog: Signal<boolean> }> = ({ showBackl
         console.log(backlogView())
     })
     return (
-        <>
+        <div style={{ display: 'contents' }} onClick={(event) => event.stopPropagation()}>
             <div class={'Page' + ' ' + styles.Game_Backlog_mask} />
             <div class={'Page' + ' ' + styles.Game_Backlog_container}>
                 <Scrollbar
@@ -40,6 +40,6 @@ export const Backlog: Component<{ showBacklog: Signal<boolean> }> = ({ showBackl
                 />
                 <Back onClick={() => showBacklog(false)} />
             </div>
-        </>
+        </div>
     )
 }

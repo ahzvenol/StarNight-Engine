@@ -10,6 +10,7 @@
     "format": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\""
   },
   "devDependencies": {
+    "@types/animejs": "^3.1.12",
     "@types/mustache": "^4.2.5",
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "eslint": "^8.52.0",
@@ -28,6 +29,7 @@
     "@solidjs/router": "^0.8.3",
     "@types/createjs": "^0.0.29",
     "@types/node": "^18.11.9",
+    "animejs": "^3.2.2",
     "axios": "^1.2.2",
     "createjs-npm": "^0.2.0",
     "date-fns": "^4.1.0",

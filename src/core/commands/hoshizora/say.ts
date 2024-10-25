@@ -16,10 +16,10 @@ const say: CommandRunFunction<SayCommandArgs> =
             return par([
                 () => Text.run(context)({ text }),
                 () => {
-                    if (name !== undefined) Name.run(context)({ name })
+                    if (name !== undefined) return Name.run(context)({ name })
                 },
                 () => {
-                    if (file !== undefined) Audio.run(context)({ target: 'Clip', file })
+                    if (file !== undefined) return Audio.run(context)({ target: 'Clip', file })
                 },
                 () => Backlog.run(context)({ text, name, file })
             ])()

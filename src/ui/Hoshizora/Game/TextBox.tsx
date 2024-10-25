@@ -3,6 +3,8 @@ import styles from './TextBox.module.scss'
 import { nameView, textView } from '@/core/commands/script/textbox'
 import { useStore } from '@/store/context'
 
+export const STAR_MARKER = '<star>'
+
 export const TextBox: Component = () => {
     const config = useStore().config
     return (
@@ -11,14 +13,11 @@ export const TextBox: Component = () => {
                 {/* 因为透明度继承问题,对背景图片进行分离 */}
                 <div class={styles.Game_TextBox_text_background} style={{ opacity: 1 - config.TextBoxOpacity() }} />
                 <div class={styles.Game_TextBox_text}>
-                    <span>
-                        {/* eslint-disable-next-line solid/no-innerhtml */}
-                        <span innerHTML={textView()} />
-                        <span class={styles.Game_TextBox_star_container}>
-                            {/* todo:当本条文本完整显示,展示star */}
-                            <div class={styles.Game_TextBox_star} />
-                        </span>
-                    </span>
+                    {/* tag:有点想用标记实现一些效果,先这样放着 */}
+                    {textView().replace(/<star>$/, '')}
+                    <Show when={textView().endsWith(STAR_MARKER)}>
+                        <span class={styles.Game_TextBox_star} />
+                    </Show>
                 </div>
             </div>
             <Show when={nameView() !== ''}>
