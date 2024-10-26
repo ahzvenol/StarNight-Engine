@@ -3,5 +3,6 @@ import { SetImage as BaseSetImage } from '../script/image'
 
 export const SetImage = warp(BaseSetImage)((args) => {
     args.file = `./static/ImageAsset/${args.file}.png`
+    args.ease = 'easeInQuad'
     return args
 })

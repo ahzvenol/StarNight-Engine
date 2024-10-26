@@ -3,6 +3,7 @@ import { BGM, Clip, SE } from '@/store/effect/audioManager'
 import { play } from '@/utils/AudioUtil'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
+import createjs from 'createjs-npm'
 import { Component, createEffect, on, ParentProps } from 'solid-js'
 import { KeepAlive, useKeepAlive } from 'solid-keep-alive'
 
@@ -56,4 +57,5 @@ const Game: Component<ParentProps> = (props) => {
 
 export const restartGame = () => key((i) => i + 1)
 
-export { Pages, Game, Title }
+export { Game, Pages, Title }
+

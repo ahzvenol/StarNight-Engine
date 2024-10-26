@@ -9,6 +9,7 @@ import { Timer } from './Timer'
 import { runLoop } from './act'
 import { commands } from './commands'
 import { useStore } from '@/store/context'
+import book from '../assets/book.json'
 
 export type Variables = Record<string, unknown>
 
@@ -22,9 +23,11 @@ export const useEvents = () => useContext(EventsContext)!
 export const useVariables = () => useContext(VariablesContext)!
 
 export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ startAt, children }) => {
+    startAt = 15
+
     const store = useStore()
 
-    const row = useSignal(14)
+    const row = useSignal(startAt)
     // tag:可能需要一些更复杂的分支预测机制
     // createEffect(() => preLoad(row() + 5))
 
@@ -88,12 +91,12 @@ export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ 
         // const context = { timer, state: State.Init }
         // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
         range(0, startAt).forEach((row) =>
-            book[row].forEach((i) => commands[i['@']]?.init?.({ row, timer, ...context })(i))
+            book[row].forEach((i) => commands[i['@']]?.init?.({ row, timer, state: State.Init, ...context })(i))
         )
-        // todo:对副作用初始化
-        mapValues(commands, (command) => command.afterInit?.(context))
+        // 初始化过程中有一些使用了Promise包装的命令,先让它们执行完毕再进行接下来的步骤
+        setTimeout(() => mapValues(commands, (command) => command.afterInit?.(context)))
         // 幕循环的第一次运行没有任何条件,所以不需要推动
-        runLoop(row, state, store, stage, onClick, onAuto, onFast)
+        setTimeout(() => runLoop(row, state, store, stage, onClick, onAuto, onFast))
         // clickLock(false)
     })
 

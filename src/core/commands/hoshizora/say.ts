@@ -12,6 +12,7 @@ const say: CommandRunFunction<SayCommandArgs> =
         const file = rawfile ? `./static/AudioClip/${rawfile}.wav` : undefined
         if (context.state === State.Init) {
             if (file !== undefined) Audio.init(context)({ target: 'Clip', file })
+            Backlog.init(context)({ text, name, file })
         } else {
             return par([
                 () => Text.run(context)({ text }),

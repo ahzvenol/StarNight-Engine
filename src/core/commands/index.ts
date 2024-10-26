@@ -3,7 +3,7 @@ import { Audio } from './hoshizora/audio'
 import { Say } from './hoshizora/say'
 import { Continue, End, Jump } from './script/!'
 import { Backlog } from './script/backlog'
-import { SetImage } from './/hoshizora/image'
+import { SetImage } from './hoshizora/image'
 import { Name, Text } from './script/textbox'
 import { Tween } from './script/tween'
 

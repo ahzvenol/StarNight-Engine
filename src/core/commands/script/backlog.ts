@@ -12,4 +12,4 @@ const backlog: CommandRunFunction<BacklogCommandArgs> =
         if (backlogView().length > 50) backlogView().pop()
     }
 
-export const Backlog = { beforeInit: () => backlogView([]), run: backlog }
+export const Backlog = { beforeInit: () => backlogView([]), init: backlog, run: backlog }
