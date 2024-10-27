@@ -1,4 +1,5 @@
 import { CommandRunFunction } from '@/core/Command'
+import { noInit } from '@/core/macro'
 import { STAR_MARKER } from '@/ui/Hoshizora/Game/TextBox'
 import { Y } from '@/utils/FPUtil'
 import { useSignal } from '@/utils/Reactive'
@@ -26,7 +27,9 @@ const text: CommandRunFunction<{ text: string }> =
                 })
         })(text)
 
-export const Text = { beforeInit: () => textView(''), onActStart: () => textView(''), run: text }
+export const Text = noInit(text)
+
+export const TextHooks = { beforeInit: () => textView(''), onActStart: () => textView('') }
 
 export const nameView = useSignal('')
 
@@ -36,4 +39,6 @@ const name: CommandRunFunction<{ name: string }> =
         nameView(name)
     }
 
-export const Name = { beforeInit: () => nameView(''), run: name }
+export const Name = noInit(name)
+
+export const NameHooks = { beforeInit: () => nameView('') }
