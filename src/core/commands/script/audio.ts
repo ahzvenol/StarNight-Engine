@@ -1,4 +1,5 @@
 import { CommandLifeCycleFunction, CommandRunFunction } from '@/core/Command'
+import { toApply } from '@/core/macro'
 import { BGM, SE, Clip } from '@/store/effect/audioManager'
 import { mapValues } from 'es-toolkit'
 
@@ -32,4 +33,6 @@ const set: CommandRunFunction<AudioCommandArgs> =
         else tracks[target as keyof typeof tracks].src = file
     }
 
-export const Audio = { init, afterInit, onActStart, run: set }
+export const Audio = toApply({ init, run: set })
+
+export const AudioHooks = { afterInit, onActStart }

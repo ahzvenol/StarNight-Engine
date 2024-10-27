@@ -1,25 +1,28 @@
-import { Command } from '../Command'
+import { CommandRunFunction, GameHooks } from '../Command'
 import { Audio } from './hoshizora/audio'
+import { SetImage } from './hoshizora/image'
 import { Say } from './hoshizora/say'
 import { Continue, End, Jump } from './script/!'
-import { Backlog } from './script/backlog'
-import { SetImage } from './hoshizora/image'
-import { Name, Text } from './script/textbox'
-import { Tween } from './script/tween'
+import { AudioHooks } from './script/audio'
+import { BacklogHooks } from './script/backlog'
+import { SetImageHooks } from './script/image'
+import { NameHooks, TextHooks } from './script/textbox'
+import { TweenHooks } from './script/tween'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const commands: Record<string, Command<any>> = {
+export const commands: Record<string, CommandRunFunction<any>> = {
     continue: Continue,
     jump: Jump,
     end: End,
-    backlog: Backlog,
-    name: Name,
-    text: Text,
+    // backlog: Backlog,
+    // name: Name,
+    // text: Text,
     say: Say,
     audio: Audio,
-    image: SetImage,
-    tween: Tween
+    image: SetImage
 }
+
+export const hooks: Array<GameHooks> = [TextHooks, NameHooks, AudioHooks, BacklogHooks, SetImageHooks, TweenHooks]
 
 // 文本:text
 // 名称:name

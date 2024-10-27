@@ -11,8 +11,8 @@ import book from '../assets/book.json'
 import { GameRuntimeContext, State } from './Command'
 import { EventDispatcher } from './EventDispatcher'
 import { Timer } from './Timer'
-import { commands } from './commands'
-import { par } from './macro'
+import { commands, hooks } from './commands'
+import { par } from './Flow'
 import { tracks } from './commands/script/audio'
 
 const actStartEvent = new EventDispatcher<GameRuntimeContext>()
@@ -54,7 +54,7 @@ async function runAct(
     Promise.race([onClick, onFast]).then(immPromise.resolve)
     // act start
     actStartEvent.publish(context)
-    mapValues(commands, (command) => command?.onActStart?.(context))
+    hooks.forEach((hook) => hook.onActStart?.(context))
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
     const commandOutput = await par(
         book[row]
@@ -68,7 +68,7 @@ async function runAct(
             .map(
                 (args) => () =>
                     match(args['@'] in commands)
-                        .with(true, () => commands[args['@']].run(context)(args))
+                        .with(true, () => commands[args['@']](context)(args))
                         .otherwise(() => log.error(`找不到命令:${args['@']}`, args))
             )
     )()

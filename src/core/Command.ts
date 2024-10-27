@@ -51,10 +51,7 @@ export type CommandRunFunction<T extends CommandArgs> = Function1<
 
 export type CommandLifeCycleFunction = Function1<GameContext, void>
 
-export interface Command<T extends CommandArgs> {
-    verify?: (arg0: Record<string, unknown>) => arg0 is T
-    run: CommandRunFunction<T>
-    init?: CommandRunFunction<T>
+export type GameHooks = {
     beforeInit?: CommandLifeCycleFunction
     afterInit?: CommandLifeCycleFunction
     onActStart?: CommandLifeCycleFunction

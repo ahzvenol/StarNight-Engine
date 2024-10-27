@@ -31,5 +31,5 @@ const selection: CommandRunFunction =
         }
         return Promise.race(promises)
             .then(() => selection([]))
-            .then((num) => Jump.run()({ target: num }))
+            .then((num) => Jump.apply()({ target: num }))
     }

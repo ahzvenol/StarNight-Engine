@@ -15,19 +15,25 @@ const tween: Function1<
     ({ timer }) =>
     ({ target, ease, duration }) =>
     async (args) => {
-        await activeTweens.get(target)?.finished
-        activeTweens.set(
-            target,
-            anime.timeline({
-                targets: target,
-                easing: ease || 'linear'
-            })
-        )
+        if (!activeTweens.has(target)) {
+            activeTweens.set(
+                target,
+                anime.timeline({
+                    targets: target,
+                    easing: ease || 'linear'
+                })
+            )
+        }
         const tween = activeTweens.get(target)!
+        const currentTime = tween.currentTime
         tween.add({ ...omit(args, ['@']), duration })
+        // 因为调用add后默认重新从头开始
+        tween.seek(currentTime)
         // queueMicrotask是为了正常触发complete事件
         timer.addFinalizeMethod(() => queueMicrotask(() => tween.seek(tween.duration)))
         return tween.finished
     }
 
-export const Tween = { onActStart, init: tween, run: tween }
+export const Tween = tween
+
+export const TweenHooks = { onActStart }

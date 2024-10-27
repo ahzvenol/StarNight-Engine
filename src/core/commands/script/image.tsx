@@ -58,11 +58,13 @@ const setImage: CommandRunFunction<SetImageCommandArgs> =
         container.y = y
         stage.addChild(container)
         stage.setChildIndex(container, z)
-        await Tween.run(context)({ target: container.getChildAt(1), ease, duration })({ alpha: 0 })
+        await Tween(context)({ target: container.getChildAt(1), ease, duration })({ alpha: 0 })
         container.removeChildAt(1)
     }
 
-export const SetImage = { beforeInit, init: setImage, afterInit, run: setImage }
+export const SetImage = setImage
+
+export const SetImageHooks = { beforeInit, afterInit }
 
 // type MoveImageCommandArgs = {
 //     target: string

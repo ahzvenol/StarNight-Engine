@@ -1,15 +1,15 @@
+import { useStore } from '@/store/context'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { useEventListener } from '@/utils/useEventListener'
-import { mapValues, once, range, throttle } from 'es-toolkit'
+import { once, range, throttle } from 'es-toolkit'
 import { Component, createContext, JSX, onMount, useContext } from 'solid-js'
+import book from '../assets/book.json'
 import { GameContext, State } from './Command'
 import { EventDispatcher, on } from './EventDispatcher'
 import { Timer } from './Timer'
 import { runLoop } from './act'
-import { commands } from './commands'
-import { useStore } from '@/store/context'
-import book from '../assets/book.json'
+import { commands, hooks } from './commands'
 
 export type Variables = Record<string, unknown>
 
@@ -23,7 +23,7 @@ export const useEvents = () => useContext(EventsContext)!
 export const useVariables = () => useContext(VariablesContext)!
 
 export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ startAt, children }) => {
-    startAt = 15
+    startAt = 80
 
     const store = useStore()
 
@@ -87,14 +87,14 @@ export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ 
         // clickLock(true)
         const timer = new Timer()
         timer.toImmediate()
-        mapValues(commands, (command) => command.beforeInit?.(context))
+        hooks.forEach((hook) => hook.beforeInit?.(context))
         // const context = { timer, state: State.Init }
         // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
         range(0, startAt).forEach((row) =>
-            book[row].forEach((i) => commands[i['@']]?.init?.({ row, timer, state: State.Init, ...context })(i))
+            book[row].forEach((i) => commands[i['@']]?.({ row, timer, state: State.Init, ...context })(i))
         )
         // 初始化过程中有一些使用了Promise包装的命令,先让它们执行完毕再进行接下来的步骤
-        setTimeout(() => mapValues(commands, (command) => command.afterInit?.(context)))
+        setTimeout(() => hooks.forEach((hook) => hook.afterInit?.(context)))
         // 幕循环的第一次运行没有任何条件,所以不需要推动
         setTimeout(() => runLoop(row, state, store, stage, onClick, onAuto, onFast))
         // clickLock(false)
