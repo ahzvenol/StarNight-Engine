@@ -1,5 +1,6 @@
 import { resolve } from 'path'
-import { defineConfig } from 'vite'
+import { visualizer } from 'rollup-plugin-visualizer'
+import { defineConfig, PluginOption } from 'vite'
 import importToCDN from 'vite-plugin-cdn-import'
 import solidPlugin from 'vite-plugin-solid'
 import TrackEffect from './plugins/vite-plugin-track-effect'
@@ -21,7 +22,11 @@ export default defineConfig(({ command }) => ({
                     path: 'https://cdn.bootcdn.net/ajax/libs/localforage/1.10.0/localforage.min.js'
                 }
             ]
-        })
+        }),
+        visualizer({
+            filename: 'stats.html', // 默认在项目根目录下生成stats.html文件，可自定义
+            open: true //生成后自动打开浏览器查看
+        }) as PluginOption
     ],
     resolve: {
         alias: {
