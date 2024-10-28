@@ -23,7 +23,7 @@ export const useEvents = () => useContext(EventsContext)!
 export const useVariables = () => useContext(VariablesContext)!
 
 export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ startAt, children }) => {
-    startAt = 80
+    startAt = 165
 
     const store = useStore()
 

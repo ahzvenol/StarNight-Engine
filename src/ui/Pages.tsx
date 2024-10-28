@@ -58,4 +58,3 @@ const Game: Component<ParentProps> = (props) => {
 export const restartGame = () => key((i) => i + 1)
 
 export { Game, Pages, Title }
-

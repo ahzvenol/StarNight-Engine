@@ -24,42 +24,50 @@ const beforeInit: CommandLifeCycleFunction = ({ stage }) =>
         .forEach((c) => stage.addChild(c))
 
 const afterInit: CommandLifeCycleFunction = ({ stage }) =>
-    Y<createjs.DisplayObject, void>(
-        (rec) => (displayObject) =>
-            match(displayObject)
-                .with(P.instanceOf(createjs.Bitmap), (bitmap) => {
-                    if (bitmap.image.tagName === 'image') {
-                        const container = bitmap.parent
-                        container.removeChild(bitmap)
-                        container.addChild(new createjs.Bitmap(bitmap.image.getAttribute('meta')!))
-                    }
-                })
-                .otherwise((container) => {
-                    // @ts-expect-error 类型识别异常
-                    if (container.children !== undefined) container.children.forEach(rec)
-                })
-    )(stage)
+    Y<createjs.DisplayObject, void>((rec) => (displayObject) => {
+        if ('children' in displayObject && Array.isArray(displayObject.children)) {
+            displayObject.children.forEach(rec)
+        } else if (displayObject instanceof createjs.Bitmap) {
+            const bitmap = displayObject
+            if (bitmap.image.tagName === 'image') {
+                const container = bitmap.parent
+                container.removeChild(bitmap)
+                container.addChild(new createjs.Bitmap(bitmap.image.getAttribute('meta')!))
+            }
+        }
+    })(stage)
 
 // z,w,h可选,若不设定则默认在最上层,保持图片原宽高
 const setImage: CommandRunFunction<SetImageCommandArgs> =
     (context) =>
-    async ({ name, file, ease, duration, x = 0, y = 0, z = 1, w, h }) => {
+    ({ name, file, ease, duration, x = 0, y = 0, z, w, h }) => {
         const { state, stage, save } = context
         // if (!cg().includes(file)) cg().push(file)
-        const container = (stage.getChildByName(name) as createjs.Container) || new createjs.Container()
-        if (container.name === null) container.name = name
+        const container = match(stage.getChildByName(name))
+            .with(P.nullish, () => {
+                const container = new createjs.Container()
+                container.name = name
+                stage.addChild(container)
+                return container
+            })
+            .otherwise((e) => e as createjs.Container)
         const bitmap = match(state)
             // @ts-expect-error 类型与属性识别异常
             .with(State.Init, () => new createjs.Bitmap(<image attr:meta={file} />))
             .otherwise(() => new createjs.Bitmap(file))
-        container.addChildAt(bitmap, 0)
-        // fix:修改同name下图片时的xy继承与覆盖问题
-        container.x = x
-        container.y = y
-        stage.addChild(container)
-        stage.setChildIndex(container, z)
-        await Tween(context)({ target: container.getChildAt(1), ease, duration })({ alpha: 0 })
-        container.removeChildAt(1)
+        // 由于直接给bitmap更新src不起作用,叠加一层容器用来保存bitmap的属性
+        // 在初始化之后会以移除bitmap再插入新bitmap的方式更新视图
+        const bitmapPlaceholder = new createjs.Container()
+        bitmapPlaceholder.x = x
+        bitmapPlaceholder.y = y
+        bitmapPlaceholder.addChild(bitmap)
+        container.addChildAt(bitmapPlaceholder, 0)
+        stage.setChildIndex(container, z ?? stage.getChildIndex(container) ?? 1)
+        if (container.getChildAt(1)) {
+            Tween(context)({ target: container.getChildAt(1), ease, duration })({ alpha: 0 }).then(() => {
+                container.removeChildAt(1)
+            })
+        }
     }
 
 export const SetImage = setImage

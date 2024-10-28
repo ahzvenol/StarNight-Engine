@@ -8,12 +8,14 @@ import { BacklogHooks } from './script/backlog'
 import { SetImageHooks } from './script/image'
 import { NameHooks, TextHooks } from './script/textbox'
 import { TweenHooks } from './script/tween'
+import { Wait } from './script/wait'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const commands: Record<string, CommandRunFunction<any>> = {
     continue: Continue,
     jump: Jump,
     end: End,
+    wait: Wait,
     // backlog: Backlog,
     // name: Name,
     // text: Text,

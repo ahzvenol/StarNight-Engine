@@ -1,4 +1,4 @@
-import { GameRuntimeContext } from '@/core/Command'
+import { GameRuntimeContext, State } from '@/core/Command'
 import anime from 'animejs/lib/anime.es.js'
 import { omit } from 'es-toolkit'
 
@@ -12,7 +12,7 @@ const tween: Function1<
     GameRuntimeContext,
     Function1<TweenCommandArgs, Function1<Record<string, string | number | boolean>, Promise<void>>>
 > =
-    ({ timer }) =>
+    ({ state, timer }) =>
     ({ target, ease, duration }) =>
     async (args) => {
         if (!activeTweens.has(target)) {
@@ -30,7 +30,8 @@ const tween: Function1<
         // 因为调用add后默认重新从头开始
         tween.seek(currentTime)
         // queueMicrotask是为了正常触发complete事件
-        timer.addFinalizeMethod(() => queueMicrotask(() => tween.seek(tween.duration)))
+        // 立即结束缓动太过突兀,更好的效果是不管它
+        if (state === State.Init) timer.addFinalizeMethod(() => queueMicrotask(() => tween.seek(tween.duration)))
         return tween.finished
     }
 

@@ -1,9 +1,9 @@
 import { useStore } from '@/store/context'
-import { Button, Clone, Variable } from '@/ui/Elements'
+import { Clone, Variable } from '@/ui/Elements'
 import { useSignal } from '@/utils/Reactive'
-import { format } from 'date-fns'
 import { Component } from 'solid-js'
 import styles from './SaveAndLoad.module.scss'
+import dayjs from 'dayjs'
 
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
     const currentPage = useSignal(0)
@@ -53,7 +53,7 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                                         No.&nbsp;&nbsp;&nbsp;{i + 1 + currentPage() * count}
                                     </div>
                                     <div class={styles.Save_Load_content_element_date}>
-                                        {format(new Date(), 'yyyy/MM/dd hh:mm:ss')}
+                                        {dayjs().format('YYYY/MM/DD HH:mm:ss')}
                                     </div>
                                     <Variable value={save()[i + 1 + currentPage() * count]}>
                                         {(save) => (

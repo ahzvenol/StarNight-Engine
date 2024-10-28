@@ -12,12 +12,13 @@ export enum State {
 
 export type GameContext = {
     stage: createjs.Stage
-    variables: Variables
     store: ReactiveType<Store>
-    save: {
-        global: Reactive<Record<string, unknown>>
-        individual: IndividualSaveData
-    }
+    // 临时变量
+    variables: Variables
+    // 全局存档变量
+    global: Reactive<Record<string, unknown>>
+    // 独立存档变量
+    individual: IndividualSaveData
 }
 
 export type GameRuntimeContext = {
@@ -38,7 +39,9 @@ export type GameRuntimeContext = {
 //     value: string | number | boolean
 // }
 
-export type CommandArgs = Record<string, string | number | boolean>
+export type CommandArgTypes = string | number | boolean
+
+export type CommandArgs = Record<string, CommandArgTypes>
 
 export type CommandOutput = Record<string, unknown> & Partial<{ continue: boolean; jump: number; end: boolean }>
 

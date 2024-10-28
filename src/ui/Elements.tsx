@@ -6,6 +6,7 @@ import { For, JSX, splitProps } from 'solid-js'
 import Scale from './Scale'
 import click from '@/assets/mouse_click_1.wav'
 import hover from '@/assets/mouse_hover_1.wav'
+import { clone } from '@/utils/AudioUtil'
 
 //横行竖列
 //给出总行数，返回每个index对应的行数
@@ -54,8 +55,8 @@ const CSE = createAudioTrack('UISE')
 CSE.src = click
 const HSE = createAudioTrack('UISE')
 HSE.src = hover
-const clickSoundEffect = () => CSE.cloneNode().play()
-const hoverSoundEffect = () => HSE.cloneNode().play()
+const clickSoundEffect = () => clone(CSE).play()
+const hoverSoundEffect = () => clone(HSE).play()
 
 const Button: Component<
     JSX.HTMLAttributes<HTMLDivElement> & {

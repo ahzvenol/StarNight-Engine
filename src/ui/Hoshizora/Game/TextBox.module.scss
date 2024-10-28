@@ -48,8 +48,9 @@
     display: inline-block;
     height: 32px;
     width: 32px;
+    margin-top: 16px;
     background-image: url(./static/Texture2D/window_click.png);
-    transform: rotate(180deg);
+    // transform: rotate(180deg);
     animation: flash 0.5s infinite alternate;
     @keyframes flash {
         from {

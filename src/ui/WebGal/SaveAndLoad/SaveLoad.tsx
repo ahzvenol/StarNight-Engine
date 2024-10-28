@@ -4,6 +4,7 @@ import { useSignal } from '@/utils/Reactive'
 import { Component, Show } from 'solid-js'
 import { Button, Clone } from '@/ui/Elements'
 import styles from './SaveAndLoad.module.scss'
+import dayjs from 'dayjs'
 
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
     const currentPage = useSignal(0)
@@ -55,7 +56,7 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                                             [styles.Save_Load_content_element_top_date]: true,
                                             [styles.Load_content_element_top_date]: mode === 'Load'
                                         }}>
-                                        {new Date().format('MM-dd hh:mm:ss')}
+                                        {dayjs().format('MM-DD HH:mm:ss')}
                                     </div>
                                 </div>
                                 <div class={styles.Save_Load_content_miniRen}>
