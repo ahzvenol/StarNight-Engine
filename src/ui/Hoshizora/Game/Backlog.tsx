@@ -1,10 +1,10 @@
+import { backlogView } from '@/core/commands/script/backlog'
+import { useAudioConfig } from '@/store/effect/audioManager'
 import Scrollbar from '@/ui/Scrollbar'
 import { Signal } from '@/utils/Reactive'
 import { Component, createEffect, For, Show } from 'solid-js'
 import Back from '../Back/Back'
 import styles from './Backlog.module.scss'
-import { backlogView } from '@/core/commands/script/backlog'
-import { useAudioConfig } from '@/store/effect/audioManager'
 
 export const Backlog: Component<{ showBacklog: Signal<boolean> }> = ({ showBacklog }) => {
     createEffect(() => {

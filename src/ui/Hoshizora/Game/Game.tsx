@@ -1,9 +1,10 @@
 import { Core, GameUIElement, useEvents } from '@/core/Core'
-import { TextBox } from './TextBox'
-import { Component, Show } from 'solid-js'
-import { ControlPanel } from './ControlPanel'
-import { Backlog } from './Backlog'
 import { useSignal } from '@/utils/Reactive'
+import { Component, Show } from 'solid-js'
+import { Backlog } from './Backlog'
+import { ControlPanel } from './ControlPanel'
+import { TextBox } from './TextBox'
+import { Video } from './Video'
 
 const GameUI: GameUIElement = (canvans) => {
     const showBacklog = useSignal(false)
@@ -20,11 +21,12 @@ const GameUI: GameUIElement = (canvans) => {
                 <Show when={showBacklog()}>
                     <Backlog showBacklog={showBacklog} />
                 </Show>
+                <Video />
             </div>
         </>
     )
 }
 
-const Game: Component = () => <Core startAt={0}>{GameUI}</Core>
+const Game: Component = () => <Core startAt={1}>{GameUI}</Core>
 
 export default Game

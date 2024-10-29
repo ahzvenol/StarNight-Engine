@@ -1,18 +1,18 @@
+import { book } from '@/store/book'
 import { Store } from '@/store/default'
+import { Y } from '@/utils/FPUtil'
 import { log } from '@/utils/Logger'
 import { PromiseX } from '@/utils/PromiseX'
 import { Signal } from '@/utils/Reactive'
-import { Y } from '@/utils/FPUtil'
 import { delay, mapValues } from 'es-toolkit'
 import { ReactiveType } from 'micro-reactive'
 import Mustache from 'mustache'
 import { match, P } from 'ts-pattern'
 import { GameRuntimeContext, State } from './Command'
-import { EventDispatcher } from './EventDispatcher'
-import { Timer } from './Timer'
 import { commands, hooks } from './commands'
-import { par } from './Flow'
-import { book } from '@/store/book'
+import { EventDispatcher } from './EventDispatcher'
+import { Async, Await, fork } from './Flow'
+import { Timer } from './Timer'
 
 const actStartEvent = new EventDispatcher<GameRuntimeContext>()
 const actEndEvent = new EventDispatcher<GameRuntimeContext>()
@@ -36,7 +36,7 @@ async function runAct(
     // fix:这些元素比timer活的都长,不合适用timer了
     // createjs库下一切操作的启动和暂停都可以通过以下两个操作管理,预先添加它以避免每个命令重复处理
     timer.addPauseMethod(() => (createjs.Ticker.paused = true))
-    timer.addRestartMethod(() => (createjs.Ticker.paused = false))
+    timer.addResumeMethod(() => (createjs.Ticker.paused = false))
     const context: GameRuntimeContext = { timer, state, store, stage, row }
     // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕,通过timer立即执行全部效果
     // 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
@@ -53,7 +53,7 @@ async function runAct(
     actStartEvent.publish(context)
     hooks.forEach((hook) => hook.beforeActStart?.(context))
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-    const commandOutput = await par(
+    const commandOutput = await fork(
         (await book)[row]
             .map((args) =>
                 mapValues(args, (value) =>
@@ -62,11 +62,14 @@ async function runAct(
                         .otherwise((value) => value)
                 )
             )
-            .map(
-                (args) => () =>
-                    match(args['@'] in commands)
-                        .with(true, () => commands[args['@']](context)(args))
-                        .otherwise(() => log.error(`找不到命令:${args['@']}`, args))
+            .map((args) =>
+                match(args['@'])
+                    .with('wait', (sign) => new Await(() => commands[sign](context)(args)))
+                    .when(
+                        (sign) => sign in commands,
+                        (sign) => new Async(() => commands[sign as keyof typeof commands](context)(args))
+                    )
+                    .otherwise((sign) => () => log.error(`找不到命令:${sign}`, args))
             )
     )()
     // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
@@ -113,3 +116,4 @@ function runLoop(
 }
 
 export { runAct, runLoop }
+

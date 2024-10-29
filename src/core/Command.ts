@@ -39,7 +39,7 @@ export type GameRuntimeContext = {
 //     value: string | number | boolean
 // }
 
-export type CommandArgTypes = string | number | boolean
+export type CommandArgTypes = string | number | boolean | undefined
 
 export type CommandArgs = Record<string, CommandArgTypes>
 

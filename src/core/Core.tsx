@@ -23,7 +23,7 @@ export const useEvents = () => useContext(EventsContext)!
 export const useVariables = () => useContext(VariablesContext)!
 
 export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ startAt, children }) => {
-    startAt = 230
+    startAt = 90
 
     const store = useStore()
     const row = useSignal(startAt)
@@ -73,7 +73,9 @@ export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ 
 
     const variables = {}
 
-    const canvans = (<canvas id="canvas" width="1280" height="720" />) as HTMLCanvasElement
+    const canvans = (
+        <canvas id="canvas" width={store.system.width()} height={store.system.height()} />
+    ) as HTMLCanvasElement
 
     const mount = once(async () => {
         const stage = new createjs.Stage(canvans)

@@ -1,4 +1,4 @@
-import { CommandLifeCycleFunction, CommandRunFunction, State } from '@/core/Command'
+import { CommandArgTypes, CommandLifeCycleFunction, CommandRunFunction, State } from '@/core/Command'
 import { Y } from '@/utils/FPUtil'
 import { range } from 'es-toolkit'
 import { match, P } from 'ts-pattern'
@@ -74,44 +74,34 @@ export const SetImage = setImage
 
 export const SetImageHooks = { beforeInit, afterInit }
 
-// type MoveImageCommandArgs = {
-//     target: string
-// } & TweenCommandArgs
+type TweenImageCommandArgs = {
+    target: string
+    ease?: string
+    duration: number
+} & Record<string, CommandArgTypes>
 
-// const moveImage: CommandRunFunction<MoveImageCommandArgs> =
-//     ({
-//         state,
-//         stage
-//         // save: {
-//         //     global: { cg }
-//         // }
-//     }) =>
-//     ({ name, file, x = 0, y = 0, z = 1, w, h }) => {
-//         // if (!cg().includes(file)) cg().push(file)
-//         const container = new createjs.Container()
-//         if (state === State.Init) {
-//             const image = new Image()
-//             image.meta = file
-//             const bitmap = new createjs.Bitmap(image)
-//             container.addChild(bitmap)
-//         } else {
-//             const bitmap = new createjs.Bitmap(file)
-//             container.addChild(bitmap)
-//         }
-//         container.name = name
-//         container.x = x
-//         container.y = y
-//         stage.addChildAt(container, z)
-//     }
+const tweenImage: CommandRunFunction<TweenImageCommandArgs> =
+    (context) =>
+    ({ target, ease, duration, ...args }) => {
+        const { stage } = context
+        const tweenTarget = (stage.getChildByName(target) as createjs.Container).getChildAt(0)
+        Tween(context)({ target: tweenTarget, ease, duration })(args)
+    }
 
-// x, y,w, h,duration,transition可选,若不设定则保持原参数
-// const move =
-//     (context) =>
-//     ({ target, x, y, w, h, duration, transition }) => {}
+export const TweenImage = tweenImage
 
-// //如果图片已经移动到视图外的话,其实清除与否是无所谓的事情了
-// const clear =
-//     (context) =>
-//     ({ target }) => {}
+type RemoveImageCommandArgs = XOR<{ target: string }, { exclude: string }>
 
-// export { set, move, clear }
+const removeImage: CommandRunFunction<RemoveImageCommandArgs> =
+    ({ stage }) =>
+    ({ target, exclude }) => {
+        if (target) {
+            stage.removeChild(stage.getChildByName(target))
+        } else {
+            stage.children.forEach((e) => {
+                if (e.name !== exclude) stage.removeChild(e)
+            })
+        }
+    }
+
+export const RemoveImage = removeImage

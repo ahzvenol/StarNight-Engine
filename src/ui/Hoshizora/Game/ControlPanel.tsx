@@ -1,9 +1,9 @@
+import { router } from '@/router'
+import { Button } from '@/ui/Elements'
+import { Pages } from '@/ui/Pages'
 import { Signal } from '@/utils/Reactive'
 import { Component } from 'solid-js'
 import styles from './ControlPanel.module.scss'
-import { router } from '@/router'
-import { Pages } from '@/ui/Pages'
-import { Button } from '@/ui/Elements'
 
 export const ControlPanel: Component<{ showBacklog: Signal<boolean> }> = ({ showBacklog }) => {
     return (

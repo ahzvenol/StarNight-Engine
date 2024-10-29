@@ -59,7 +59,7 @@ class TimerX {
         } else {
             const promise = new Promise<void>((res) => {
                 const controller = new TimeoutController(res, wait)
-                this.addRestartMethod(controller.start)
+                this.addResumeMethod(controller.start)
                 this.addPauseMethod(controller.pause)
                 this.addFinalizeMethod(controller.immediateExecution)
             })
@@ -76,7 +76,7 @@ class TimerX {
     // }
     // 为外部不可控第三方库添加暂停和取消暂停方法,比如createjs.Ticker.paused = true
     // timer不会在添加时自动调用start
-    public addRestartMethod = (fn: Function0<void>): void => {
+    public addResumeMethod = (fn: Function0<void>): void => {
         if (this.isImmediate) return
         this.startList.push(fn)
     }
