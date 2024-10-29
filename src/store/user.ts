@@ -1,12 +1,11 @@
-import { parse } from 'js-ini'
+import * as INI from 'js-ini'
 import { IniKV } from './default'
 import { log } from '@/utils/Logger'
+import request from '@/utils/request'
 
 // 如果用户输入了错误的配置数据,目前不做处理
 export const getUserConfig = async () => {
-    const ini = (await fetch('./config.ini')
-        .then((res) => res.text())
-        .then(parse)) as Record<string, IniKV>
+    const ini = (await request('./config.ini').then((res) => INI.parse(res.data))) as Record<string, IniKV>
 
     const { info = {}, graphic = {}, config = {}, user = {} } = ini
 

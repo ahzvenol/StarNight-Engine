@@ -1,4 +1,4 @@
-import { debounce, toMerged, cloneDeep } from 'es-toolkit'
+import { cloneDeep, debounce, toMerged } from 'es-toolkit'
 import localforage from 'localforage'
 import { useReactive } from 'micro-reactive'
 import { createEffect, createResource, on, type Resource } from 'solid-js'
@@ -9,7 +9,9 @@ import { getUserConfig } from './user'
 
 // 响应式变量会修改原始对象,需要处处clone避免默认数据被修改
 const createStore = async () => {
-    const userDefaultStore = toMerged(systemDefaultStore, await getUserConfig())
+    const userConfig = (await getUserConfig().catch((e) => log.warn('没有获取到用户配置', e))) || {}
+
+    const userDefaultStore = toMerged(systemDefaultStore, userConfig)
 
     localforage.config({ name: userDefaultStore.system.name })
 
@@ -50,6 +52,7 @@ const createStore = async () => {
 
     log.info('Store初始化完毕:', store())
 
+    // 响应式绑定最终还是会修改原始对象,所以需要深度克隆避免默认配置被修改
     return { userDefaultStore: () => cloneDeep(userDefaultStore), store }
 }
 
@@ -69,3 +72,4 @@ const [store] = createResource(async () => await storePromise)
 export default store as Resource<Store>
 
 export { clearSave, clearStorage, resetConfig, storePromise }
+
