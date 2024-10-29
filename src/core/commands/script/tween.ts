@@ -6,7 +6,7 @@ export type TweenCommandArgs = { target: object; ease?: string; duration: number
 
 const activeTweens = new Map<object, anime.AnimeTimelineInstance>()
 
-const onActStart = () => activeTweens.clear()
+const beforeActStart = () => activeTweens.clear()
 
 const tween: Function1<
     GameRuntimeContext,
@@ -37,4 +37,4 @@ const tween: Function1<
 
 export const Tween = tween
 
-export const TweenHooks = { onActStart }
+export const TweenHooks = { beforeActStart }
