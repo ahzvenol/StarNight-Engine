@@ -5,10 +5,10 @@ const request = axios.create({
     timeout: 10000
 })
 
-request.interceptors.request.use((config) => config)
+// request.interceptors.request.use((config) => config)
 
 request.interceptors.response.use(
-    (response) => response.data,
+    (response) => response,
     (error) => Promise.reject(new Error(error.message))
 )
 
