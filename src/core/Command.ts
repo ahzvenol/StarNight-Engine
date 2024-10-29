@@ -57,5 +57,8 @@ export type CommandLifeCycleFunction = Function1<GameContext, void>
 export type GameHooks = {
     beforeInit?: CommandLifeCycleFunction
     afterInit?: CommandLifeCycleFunction
-    onActStart?: CommandLifeCycleFunction
+    beforeActStart?: CommandLifeCycleFunction
+    onLeft?: CommandLifeCycleFunction
+    onActivated?: CommandLifeCycleFunction
+    onDeactivated?: CommandLifeCycleFunction
 }

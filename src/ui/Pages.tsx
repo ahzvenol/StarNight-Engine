@@ -1,6 +1,5 @@
 import { Route, router } from '@/router'
-import { BGM, Clip, SE } from '@/store/effect/audioManager'
-import { play } from '@/utils/AudioUtil'
+import { useAudioConfig } from '@/store/effect/audioManager'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import createjs from 'createjs-npm'
@@ -17,14 +16,21 @@ enum Pages {
 }
 
 const Title: Component<ParentProps<{ bgm: string }>> = (props) => {
+    const TitleBGM = useAudioConfig(
+        'BGM',
+        new Howl({
+            src: props.bgm
+        })
+    )
     createEffect(
         on(router.active, () => {
             if (router.active() === Pages.Title) {
-                // tag:如果允许自定义轨道的话,这里也要对应的清理轨道
-                play(BGM)(props.bgm)
-                SE.src = ''
-                Clip.src = ''
-                log.info('播放主背景音乐')
+                if (!TitleBGM.playing()) {
+                    TitleBGM.play()
+                    log.info('播放主背景音乐')
+                }
+            } else if (router.active() === Pages.Game) {
+                TitleBGM.pause().seek(0)
             }
         })
     )
@@ -36,15 +42,6 @@ const key = useSignal(0)
 const Game: Component<ParentProps> = (props) => {
     createjs.Ticker.framerate = 60
     createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED
-    createEffect(
-        on(router.active, () => {
-            if (router.active() === Pages.Game) {
-                BGM.src = ''
-                SE.src = ''
-                Clip.src = ''
-            }
-        })
-    )
     const { removeElement } = useKeepAlive()[1]
     createEffect(on(key, () => removeElement(Pages.Game)))
     return (

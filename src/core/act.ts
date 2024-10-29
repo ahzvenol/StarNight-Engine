@@ -12,7 +12,6 @@ import { EventDispatcher } from './EventDispatcher'
 import { Timer } from './Timer'
 import { commands, hooks } from './commands'
 import { par } from './Flow'
-import { tracks } from './commands/script/audio'
 import { book } from '@/store/book'
 
 const actStartEvent = new EventDispatcher<GameRuntimeContext>()
@@ -38,8 +37,6 @@ async function runAct(
     // createjs库下一切操作的启动和暂停都可以通过以下两个操作管理,预先添加它以避免每个命令重复处理
     timer.addPauseMethod(() => (createjs.Ticker.paused = true))
     timer.addRestartMethod(() => (createjs.Ticker.paused = false))
-    timer.addPauseMethod(() => mapValues(tracks, (audio) => audio.pause()))
-    timer.addRestartMethod(() => mapValues(tracks, (audio) => audio.play()))
     const context: GameRuntimeContext = { timer, state, store, stage, row }
     // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕,通过timer立即执行全部效果
     // 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
@@ -54,7 +51,7 @@ async function runAct(
     Promise.race([onClick, onFast]).then(immPromise.resolve)
     // act start
     actStartEvent.publish(context)
-    hooks.forEach((hook) => hook.onActStart?.(context))
+    hooks.forEach((hook) => hook.beforeActStart?.(context))
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
     const commandOutput = await par(
         (await book)[row]

@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@types/animejs": "^3.1.12",
+    "@types/howler": "^2.2.12",
     "@types/mustache": "^4.2.5",
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "eslint": "^8.52.0",
@@ -36,6 +37,7 @@
     "dayjs": "^1.11.13",
     "devtools-detector": "^2.0.14",
     "es-toolkit": "^1.22.0",
+    "howler": "^2.2.4",
     "js-ini": "^1.6.0",
     "localforage": "^1.10.0",
     "micro-reactive": "2.6.4",

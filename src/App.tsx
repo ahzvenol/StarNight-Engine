@@ -1,4 +1,3 @@
-import createjs from 'createjs-npm'
 import type { Component } from 'solid-js'
 import { Match, Switch } from 'solid-js'
 

@@ -32,6 +32,9 @@ dependencies:
   es-toolkit:
     specifier: ^1.22.0
     version: 1.22.0
+  howler:
+    specifier: ^2.2.4
+    version: 2.2.4
   js-ini:
     specifier: ^1.6.0
     version: 1.6.0
@@ -67,6 +70,9 @@ devDependencies:
   '@types/animejs':
     specifier: ^3.1.12
     version: 3.1.12
+  '@types/howler':
+    specifier: ^2.2.12
+    version: 2.2.12
   '@types/mustache':
     specifier: ^4.2.5
     version: 4.2.5
@@ -505,6 +511,10 @@ packages:
   /@types/css-tree@2.3.2:
     resolution: {integrity: sha512-B5nF6h7xxpMLvZ1pzugAYUGj1aw4KgTpXZzOijkDMRzey4SlFi0jVWb3o0SS1CVSxyBciltVgjt67CwrgjmlWA==}
     dev: false
+
+  /@types/howler@2.2.12:
+    resolution: {integrity: sha512-hy769UICzOSdK0Kn1FBk4gN+lswcj1EKRkmiDtMkUGvFfYJzgaDXmVXkSShS2m89ERAatGIPnTUlp2HhfkVo5g==}
+    dev: true
 
   /@types/mustache@4.2.5:
     resolution: {integrity: sha512-PLwiVvTBg59tGFL/8VpcGvqOu3L4OuveNvPi0EYbWchRdEVP++yRUXJPFl+CApKEq13017/4Nf7aQ5lTtHUNsA==}
@@ -1554,6 +1564,10 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
+
+  /howler@2.2.4:
+    resolution: {integrity: sha512-iARIBPgcQrwtEr+tALF+rapJ8qSc+Set2GJQl7xT1MQzWaVkFebdJhR3alVlSiUf5U7nAANKuj3aWpwerocD5w==}
+    dev: false
 
   /html-tags@3.3.1:
     resolution: {integrity: sha512-ztqyC3kLto0e9WbNp0aeP+M3kTt+nbaIveGmUxAtZa+8iFgKLUOD4YKM5j+f3QD89bra7UeumolZHKuOXnTmeQ==}

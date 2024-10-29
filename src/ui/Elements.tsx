@@ -1,4 +1,4 @@
-import { createAudioTrack } from '@/store/effect/audioManager'
+import { useAudioConfig } from '@/store/effect/audioManager'
 import { Store } from '@/store/default'
 import { range } from 'es-toolkit'
 import type { Component } from 'solid-js'
@@ -6,7 +6,6 @@ import { For, JSX, splitProps } from 'solid-js'
 import Scale from './Scale'
 import click from '@/assets/mouse_click_1.wav'
 import hover from '@/assets/mouse_hover_1.wav'
-import { clone } from '@/utils/AudioUtil'
 
 //横行竖列
 //给出总行数，返回每个index对应的行数
@@ -51,12 +50,8 @@ const Graphic = (props: { config: Store['system']; children: JSX.Element }) => (
     </div>
 )
 
-const CSE = createAudioTrack('UISE')
-CSE.src = click
-const HSE = createAudioTrack('UISE')
-HSE.src = hover
-const clickSoundEffect = () => clone(CSE).play()
-const hoverSoundEffect = () => clone(HSE).play()
+const ClickSE = useAudioConfig('UISE', new Howl({ src: click }))
+const HoverSE = useAudioConfig('UISE', new Howl({ src: hover }))
 
 const Button: Component<
     JSX.HTMLAttributes<HTMLDivElement> & {
@@ -70,11 +65,11 @@ const Button: Component<
             classList={{ ...local.classList }}
             onClick={(e) => {
                 e.stopPropagation()
-                clickSoundEffect()
+                ClickSE.play()
                 local.onClick?.()
             }}
             onMouseEnter={() => {
-                hoverSoundEffect()
+                HoverSE.play()
                 local.onMouseEnter?.()
             }}
             {...others}

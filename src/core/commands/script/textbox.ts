@@ -29,7 +29,7 @@ const text: CommandRunFunction<{ text: string }> =
 
 export const Text = noInit(text)
 
-export const TextHooks = { beforeInit: () => textView(''), onActStart: () => textView('') }
+export const TextHooks = { beforeInit: () => textView(''), beforeActStart: () => textView('') }
 
 export const nameView = useSignal('')
 

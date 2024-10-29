@@ -1,15 +1,15 @@
+import { book } from '@/store/book'
 import { useStore } from '@/store/context'
-import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
-import { useEventListener } from '@/utils/useEventListener'
 import { once, range, throttle } from 'es-toolkit'
-import { Component, createContext, JSX, onMount, useContext } from 'solid-js'
+import { Component, createContext, createEffect, JSX, on, onMount, useContext } from 'solid-js'
 import { GameContext, State } from './Command'
-import { EventDispatcher, on } from './EventDispatcher'
 import { Timer } from './Timer'
 import { runLoop } from './act'
 import { commands, hooks } from './commands'
-import { book } from '@/store/book'
+import { bindClickEventWithKey, createEventDispatchers } from './event'
+import { router } from '@/router'
+import { Pages } from '@/ui/Pages'
 
 export type Variables = Record<string, unknown>
 
@@ -23,57 +23,53 @@ export const useEvents = () => useContext(EventsContext)!
 export const useVariables = () => useContext(VariablesContext)!
 
 export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ startAt, children }) => {
-    startAt = 165
+    startAt = 230
 
     const store = useStore()
-
     const row = useSignal(startAt)
     // tag:可能需要一些更复杂的分支预测机制
     // createEffect(() => preLoad(row() + 5))
-
     const clickLock = useSignal(false)
+    const dispatchs = createEventDispatchers()
 
-    const gameClickEvent = new EventDispatcher<void>()
-    const fastButtonClickEvent = new EventDispatcher<void>()
-    const autoButtonClickEvent = new EventDispatcher<void>()
-    const onClick = on(gameClickEvent)
-    const onFast = on(fastButtonClickEvent)
-    const onAuto = on(autoButtonClickEvent)
-    gameClickEvent.subscribe(() => log.info('触发点击事件'))
-    fastButtonClickEvent.subscribe(() => log.info('触发快进事件'))
-    autoButtonClickEvent.subscribe(() => log.info('触发自动事件'))
     // 0.1秒点击锁，防止过快点击
     const emitClickEvent = throttle(
         () => {
             if (!clickLock()) {
-                gameClickEvent.publish()
+                dispatchs.click.publish()
             }
         },
         100,
         { edges: ['leading'] }
     )
-    // 空格等点击方式
-    let spacePressed = false
-    useEventListener('keydown', (event) => {
-        if (event.code === 'Space' && !spacePressed) {
-            spacePressed = true
-            emitClickEvent()
-        }
-    })
-    useEventListener('keyup', (event) => {
-        if (event.code === 'Space') {
-            spacePressed = false
-        }
-    })
+
+    bindClickEventWithKey(emitClickEvent)
+
     const events: Events = {
         click: emitClickEvent,
-        fast: fastButtonClickEvent.publish,
-        auto: autoButtonClickEvent.publish
+        fast: dispatchs.fast.publish,
+        auto: dispatchs.auto.publish
     }
 
     const state = useSignal(State.Normal)
-    fastButtonClickEvent.subscribe(() => state(state() === State.Fast ? State.Normal : State.Fast))
-    autoButtonClickEvent.subscribe(() => state(state() === State.Auto ? State.Normal : State.Auto))
+    dispatchs.fast.subscribe(() => state(state() === State.Fast ? State.Normal : State.Fast))
+    dispatchs.auto.subscribe(() => state(state() === State.Auto ? State.Normal : State.Auto))
+
+    createEffect(
+        on(
+            router.active,
+            () => {
+                if (router.active() === Pages.Title) {
+                    hooks.forEach((hook) => hook.onLeft?.())
+                } else if (router.active() !== Pages.Game) {
+                    hooks.forEach((hook) => hook.onDeactivated?.())
+                } else {
+                    hooks.forEach((hook) => hook.onActivated?.())
+                }
+            },
+            { defer: true }
+        )
+    )
 
     const variables = {}
 
@@ -96,7 +92,7 @@ export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ 
         // 初始化过程中有一些使用了Promise包装的命令,先让它们执行完毕再进行接下来的步骤
         setTimeout(() => hooks.forEach((hook) => hook.afterInit?.(context)))
         // 幕循环的第一次运行没有任何条件,所以不需要推动
-        setTimeout(() => runLoop(row, state, store, stage, onClick, onAuto, onFast))
+        setTimeout(() => runLoop(row, state, store, stage, dispatchs.onClick, dispatchs.onAuto, dispatchs.onFast))
         // clickLock(false)
     })
 

@@ -1,12 +1,10 @@
-import { Clone } from '@/ui/Elements'
 import Scrollbar from '@/ui/Scrollbar'
 import { Signal } from '@/utils/Reactive'
 import { Component, createEffect, For, Show } from 'solid-js'
 import Back from '../Back/Back'
 import styles from './Backlog.module.scss'
 import { backlogView } from '@/core/commands/script/backlog'
-import { createAudioTrack } from '@/store/effect/audioManager'
-import { play } from '@/utils/AudioUtil'
+import { useAudioConfig } from '@/store/effect/audioManager'
 
 export const Backlog: Component<{ showBacklog: Signal<boolean> }> = ({ showBacklog }) => {
     createEffect(() => {
@@ -25,7 +23,9 @@ export const Backlog: Component<{ showBacklog: Signal<boolean> }> = ({ showBackl
                                     <Show when={row.file}>
                                         <div
                                             class={styles.Game_Backlog_element_clip}
-                                            onClick={() => play(createAudioTrack('Clip'))(row.file!)}
+                                            onClick={() =>
+                                                useAudioConfig('Clip', new Howl({ src: row.file!, autoplay: true }))
+                                            }
                                         />
                                     </Show>
                                     <div class={styles.Game_Backlog_element_name}>{row.name}</div>
