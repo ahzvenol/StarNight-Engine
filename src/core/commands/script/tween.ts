@@ -1,4 +1,4 @@
-import { GameRuntimeContext, State } from '@/core/Command'
+import { CommandArgTypes, GameRuntimeContext, State } from '@/core/Command'
 import anime from 'animejs/lib/anime.es.js'
 import { omit } from 'es-toolkit'
 
@@ -10,7 +10,7 @@ const beforeActStart = () => activeTweens.clear()
 
 const tween: Function1<
     GameRuntimeContext,
-    Function1<TweenCommandArgs, Function1<Record<string, string | number | boolean>, Promise<void>>>
+    Function1<TweenCommandArgs, Function1<Record<string, CommandArgTypes>, Promise<void>>>
 > =
     ({ state, timer }) =>
     ({ target, ease, duration }) =>

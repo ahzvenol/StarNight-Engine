@@ -72,4 +72,3 @@ const [store] = createResource(async () => await storePromise)
 export default store as Resource<Store>
 
 export { clearSave, clearStorage, resetConfig, storePromise }
-
