@@ -7,14 +7,6 @@ type Function1<T1, R> = (arg0: T1) => R
 type Function2<T1, T2, R> = (arg0: T1, arg1: T2) => R
 type Function3<T1, T2, T3, R> = (arg0: T1, arg1: T2, arg2: T3) => R
 
-interface NumberConstructor {
-    isFinite(number: unknown): number is number
-}
-
-interface HTMLImageElement {
-    meta: string
-}
-
 // 定义排除类型：将U从T中剔除, keyof 会取出T与U的所有键, 限定P的取值范围为T中的所有键, 并将其类型设为never
 type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never }
 

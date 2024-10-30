@@ -2,6 +2,9 @@ import { CommandArgTypes, GameRuntimeContext, State } from '@/core/Command'
 import anime from 'animejs/lib/anime.es.js'
 import { omit } from 'es-toolkit'
 
+// anime.suspendWhenDocumentHidden = true;
+// test:缓动库自带了一个暂停,但是不知道有没有用
+
 export type TweenCommandArgs = { target: object; ease?: string; duration: number }
 
 const activeTweens = new Map<object, anime.AnimeTimelineInstance>()
