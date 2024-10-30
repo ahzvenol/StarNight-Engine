@@ -26,18 +26,13 @@ async function runAct(
     row: number,
     state: State,
     store: ReactiveType<Store>,
-    stage: createjs.Stage,
     onClick: Promise<void>,
     onFast: Promise<void>
 ) {
     const timer = new Timer()
     // 如果现在是快进状态,直接把timer设置到立即执行
     if (state == State.Fast) timer.toImmediate()
-    // fix:这些元素比timer活的都长,不合适用timer了
-    // createjs库下一切操作的启动和暂停都可以通过以下两个操作管理,预先添加它以避免每个命令重复处理
-    timer.addPauseMethod(() => (createjs.Ticker.paused = true))
-    timer.addResumeMethod(() => (createjs.Ticker.paused = false))
-    const context: GameRuntimeContext = { timer, state, store, stage, row }
+    const context: GameRuntimeContext = { timer, state, store, row }
     // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕,通过timer立即执行全部效果
     // 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
     const immPromise = new PromiseX()
@@ -83,14 +78,13 @@ function runLoop(
     row: Signal<number>,
     state: Signal<State>,
     store: Store,
-    stage: createjs.Stage,
     onClick: () => Promise<void>,
     onAuto: () => Promise<void>,
     onFast: () => Promise<void>
 ) {
     return Y<void, Promise<void>>((rec) => async () => {
         // 幕运行过程中不会操作任何状态
-        const res = await runAct(row(), state(), store(), stage, onClick(), onFast())
+        const res = await runAct(row(), state(), store(), onClick(), onFast())
         // 等待过程受continue命令影响
         if (res['continue'] !== true) {
             // 只有两个地方会有阻塞:正在运行一幕,等待点击事件
@@ -105,8 +99,9 @@ function runLoop(
         }
         // 调用jump命令修改接下来一幕的行号
         const jumpTarget = res['jump']
-        if (Number.isFinite(jumpTarget)) row(jumpTarget)
-        else row((i) => i + 1)
+        if (Number.isFinite(jumpTarget)) {
+            row(jumpTarget as number)
+        } else row((i) => i + 1)
         // 调用end命令结束幕循环
         if (res['end'] === true) return Promise.resolve()
         // 当行号超出时,自动退出
@@ -116,4 +111,3 @@ function runLoop(
 }
 
 export { runAct, runLoop }
-

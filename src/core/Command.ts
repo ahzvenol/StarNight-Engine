@@ -11,7 +11,6 @@ export enum State {
 }
 
 export type GameContext = {
-    stage: createjs.Stage
     store: ReactiveType<Store>
     // 临时变量
     variables: Variables

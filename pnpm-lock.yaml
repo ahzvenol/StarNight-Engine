@@ -20,9 +20,6 @@ dependencies:
   axios:
     specifier: ^1.2.2
     version: registry.npmmirror.com/axios@1.2.2
-  createjs-npm:
-    specifier: ^0.2.0
-    version: registry.npmmirror.com/createjs-npm@0.2.0
   dayjs:
     specifier: ^1.11.13
     version: 1.11.13
@@ -3413,12 +3410,6 @@ packages:
     resolution: {integrity: sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/convert-source-map/-/convert-source-map-1.9.0.tgz}
     name: convert-source-map
     version: 1.9.0
-    dev: false
-
-  registry.npmmirror.com/createjs-npm@0.2.0:
-    resolution: {integrity: sha512-KGbyFkfwSv1D6pVm6d4qkABp2jc8gEBFLQeKg4aVm+yXOHUx9xIq8tERbkVNdjI+tvssD/rO6gG3lQsn9F7ZxQ==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/createjs-npm/-/createjs-npm-0.2.0.tgz}
-    name: createjs-npm
-    version: 0.2.0
     dev: false
 
   registry.npmmirror.com/debug@4.3.4:

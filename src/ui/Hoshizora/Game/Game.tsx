@@ -5,25 +5,23 @@ import { Backlog } from './Backlog'
 import { ControlPanel } from './ControlPanel'
 import { TextBox } from './TextBox'
 import { Video } from './Video'
+import { Stage } from './Stage'
 
-const GameUI: GameUIElement = (canvans) => {
+const GameUI: GameUIElement = () => {
     const showBacklog = useSignal(false)
     const click = useEvents().click
     return (
-        <>
-            <div style={{ display: 'contents' }} onClick={click}>
-                {canvans}
-                {/* <div style={{ width: '100%', height: '100%', 'background-color': 'white' }} /> */}
-                <Show when={!showBacklog()}>
-                    <TextBox />
-                    <ControlPanel showBacklog={showBacklog} />
-                </Show>
-                <Show when={showBacklog()}>
-                    <Backlog showBacklog={showBacklog} />
-                </Show>
-                <Video />
-            </div>
-        </>
+        <div style={{ display: 'contents' }} onClick={click}>
+            <Stage />
+            <Show when={!showBacklog()}>
+                <TextBox />
+                <ControlPanel showBacklog={showBacklog} />
+            </Show>
+            <Show when={showBacklog()}>
+                <Backlog showBacklog={showBacklog} />
+            </Show>
+            <Video />
+        </div>
     )
 }
 

@@ -2,7 +2,6 @@ import { Route, router } from '@/router'
 import { useAudioConfig } from '@/store/effect/audioManager'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
-import createjs from 'createjs-npm'
 import { Component, createEffect, on, ParentProps } from 'solid-js'
 import { KeepAlive, useKeepAlive } from 'solid-keep-alive'
 
@@ -30,7 +29,7 @@ const Title: Component<ParentProps<{ bgm: string }>> = (props) => {
                     log.info('播放主背景音乐')
                 }
             } else if (router.active() === Pages.Game) {
-                TitleBGM.pause().seek(0)
+                TitleBGM.stop()
             }
         })
     )
@@ -40,8 +39,6 @@ const Title: Component<ParentProps<{ bgm: string }>> = (props) => {
 const key = useSignal(0)
 
 const Game: Component<ParentProps> = (props) => {
-    createjs.Ticker.framerate = 60
-    createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED
     const { removeElement } = useKeepAlive()[1]
     createEffect(on(key, () => removeElement(Pages.Game)))
     return (

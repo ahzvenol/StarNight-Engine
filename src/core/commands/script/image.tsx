@@ -1,9 +1,11 @@
 import { CommandArgTypes, CommandLifeCycleFunction, CommandRunFunction, State } from '@/core/Command'
 import { Y } from '@/utils/FPUtil'
-import { range } from 'es-toolkit'
-import { match, P } from 'ts-pattern'
+import { match } from 'ts-pattern'
 import { Tween } from './tween'
+import { useSignal } from '@/utils/Reactive'
+import { isNotNil } from 'es-toolkit'
 
+// 跨幕环境变量file,需要收集副作用
 type SetImageCommandArgs = {
     name: string
     file: string
@@ -15,59 +17,41 @@ type SetImageCommandArgs = {
     w?: number
     h?: number
 }
-// 跨幕环境变量file,需要收集副作用
 
-// 为了让addChildAt正常工作,预先添加一些空容器
-const beforeInit: CommandLifeCycleFunction = ({ stage }) =>
-    range(0, 100)
-        .map(() => new createjs.Container())
-        .forEach((c) => stage.addChild(c))
+export const stageView = useSignal<HTMLDivElement | null>(null)
 
-const afterInit: CommandLifeCycleFunction = ({ stage }) =>
-    Y<createjs.DisplayObject, void>((rec) => (displayObject) => {
-        if ('children' in displayObject && Array.isArray(displayObject.children)) {
-            displayObject.children.forEach(rec)
-        } else if (displayObject instanceof createjs.Bitmap) {
-            const bitmap = displayObject
-            if (bitmap.image.tagName === 'image') {
-                const container = bitmap.parent
-                container.removeChild(bitmap)
-                container.addChild(new createjs.Bitmap(bitmap.image.getAttribute('meta')!))
-            }
+const beforeInit: CommandLifeCycleFunction = () => stageView(document.createElement('div'))
+
+const afterInit: CommandLifeCycleFunction = () =>
+    Y<Element, void>((rec) => (displayObject) => {
+        Array.from(displayObject.children).forEach(rec)
+        if (displayObject instanceof HTMLImageElement) {
+            displayObject.src = displayObject.getAttribute('meta')!
         }
-    })(stage)
+    })(stageView()!)
 
 // z,w,h可选,若不设定则默认在最上层,保持图片原宽高
 const setImage: CommandRunFunction<SetImageCommandArgs> =
     (context) =>
-    ({ name, file, ease, duration, x = 0, y = 0, z, w, h }) => {
-        const { state, stage, save } = context
+    ({ name, file, ease, duration, x = 0, y = 0, z = 1, w, h }) => {
+        const { state, save } = context
         // if (!cg().includes(file)) cg().push(file)
-        const container = match(stage.getChildByName(name))
-            .with(P.nullish, () => {
-                const container = new createjs.Container()
-                container.name = name
-                stage.addChild(container)
-                return container
-            })
-            .otherwise((e) => e as createjs.Container)
+        const array = stageView()!.getElementsByClassName(name)
         const bitmap = match(state)
             // @ts-expect-error 类型与属性识别异常
-            .with(State.Init, () => new createjs.Bitmap(<image attr:meta={file} />))
-            .otherwise(() => new createjs.Bitmap(file))
-        // 由于直接给bitmap更新src不起作用,叠加一层容器用来保存bitmap的属性
-        // 在初始化之后会以移除bitmap再插入新bitmap的方式更新视图
-        const bitmapPlaceholder = new createjs.Container()
-        bitmapPlaceholder.x = x
-        bitmapPlaceholder.y = y
-        bitmapPlaceholder.addChild(bitmap)
-        container.addChildAt(bitmapPlaceholder, 0)
-        stage.setChildIndex(container, z ?? stage.getChildIndex(container) ?? 1)
-        if (container.getChildAt(1)) {
-            Tween(context)({ target: container.getChildAt(1), ease, duration })({ alpha: 0 }).then(() => {
-                container.removeChildAt(1)
+            .with(State.Init, () => <img attr:meta={file} />)
+            .otherwise(() => <img src={file} />) as HTMLImageElement
+        bitmap.className = name
+        bitmap.style.left = `${x}px`
+        bitmap.style.top = `${y}px`
+        bitmap.style.zIndex = `${z}`
+        const oldBitmap = array[0]
+        if (isNotNil(oldBitmap)) {
+            Tween(context)({ target: oldBitmap, ease, duration })({ opacity: 0 }).then(() => {
+                stageView()!.removeChild(oldBitmap)
             })
         }
+        stageView()!.insertBefore(bitmap, stageView()!.firstChild)
     }
 
 export const SetImage = setImage
@@ -83,8 +67,15 @@ type TweenImageCommandArgs = {
 const tweenImage: CommandRunFunction<TweenImageCommandArgs> =
     (context) =>
     ({ target, ease, duration, ...args }) => {
-        const { stage } = context
-        const tweenTarget = (stage.getChildByName(target) as createjs.Container).getChildAt(0)
+        if (args.x !== undefined) {
+            args.translateX = args.x
+            args.x = undefined
+        }
+        if (args.y !== undefined) {
+            args.translateY = args.y
+            args.y = undefined
+        }
+        const tweenTarget = stageView()!.getElementsByClassName(target)[0]
         Tween(context)({ target: tweenTarget, ease, duration })(args)
     }
 
@@ -93,13 +84,13 @@ export const TweenImage = tweenImage
 type RemoveImageCommandArgs = XOR<{ target: string }, { exclude: string }>
 
 const removeImage: CommandRunFunction<RemoveImageCommandArgs> =
-    ({ stage }) =>
+    () =>
     ({ target, exclude }) => {
         if (target) {
-            stage.removeChild(stage.getChildByName(target))
+            stageView()!.removeChild(stageView()!.getElementsByClassName(target)[0])
         } else {
-            stage.children.forEach((e) => {
-                if (e.name !== exclude) stage.removeChild(e)
+            Array.from(stageView()!.children).forEach((e) => {
+                if (e.className !== exclude) stageView()!.removeChild(e)
             })
         }
     }

@@ -15,7 +15,7 @@ export type Variables = Record<string, unknown>
 
 export type Events = { click: Function0<void>; fast: Function0<void>; auto: Function0<void> }
 
-export type GameUIElement = Function1<HTMLCanvasElement, JSX.Element>
+export type GameUIElement = Function0<JSX.Element>
 
 const EventsContext = createContext<Events>()
 const VariablesContext = createContext<Variables>()
@@ -23,7 +23,7 @@ export const useEvents = () => useContext(EventsContext)!
 export const useVariables = () => useContext(VariablesContext)!
 
 export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ startAt, children }) => {
-    startAt = 90
+    startAt = 230
 
     const store = useStore()
     const row = useSignal(startAt)
@@ -55,33 +55,10 @@ export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ 
     dispatchs.fast.subscribe(() => state(state() === State.Fast ? State.Normal : State.Fast))
     dispatchs.auto.subscribe(() => state(state() === State.Auto ? State.Normal : State.Auto))
 
-    createEffect(
-        on(
-            router.active,
-            () => {
-                if (router.active() === Pages.Title) {
-                    hooks.forEach((hook) => hook.onLeft?.())
-                } else if (router.active() !== Pages.Game) {
-                    hooks.forEach((hook) => hook.onDeactivated?.())
-                } else {
-                    hooks.forEach((hook) => hook.onActivated?.())
-                }
-            },
-            { defer: true }
-        )
-    )
-
     const variables = {}
 
-    const canvans = (
-        <canvas id="canvas" width={store.system.width()} height={store.system.height()} />
-    ) as HTMLCanvasElement
-
     const mount = once(async () => {
-        const stage = new createjs.Stage(canvans)
-        createjs.Ticker.addEventListener('tick', stage)
-
-        const context: GameContext = { stage, variables, store: store() }
+        const context: GameContext = { variables, store: store() }
         // clickLock(true)
         const timer = new Timer()
         timer.toImmediate()
@@ -89,13 +66,29 @@ export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ 
         // const context = { timer, state: State.Init }
         // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
         range(0, startAt).forEach(async (row) =>
+            // @ts-expect-error 类型为 "any" 的表达式不能用于索引类型...
             (await book)[row].forEach((i) => commands[i['@']]?.({ row, timer, state: State.Init, ...context })(i))
         )
         // 初始化过程中有一些使用了Promise包装的命令,先让它们执行完毕再进行接下来的步骤
         setTimeout(() => hooks.forEach((hook) => hook.afterInit?.(context)))
         // 幕循环的第一次运行没有任何条件,所以不需要推动
-        setTimeout(() => runLoop(row, state, store, stage, dispatchs.onClick, dispatchs.onAuto, dispatchs.onFast))
+        setTimeout(() => runLoop(row, state, store, dispatchs.onClick, dispatchs.onAuto, dispatchs.onFast))
         // clickLock(false)
+        createEffect(
+            on(
+                router.active,
+                () => {
+                    if (router.active() === Pages.Title) {
+                        hooks.forEach((hook) => hook.onLeft?.(context))
+                    } else if (router.active() !== Pages.Game) {
+                        hooks.forEach((hook) => hook.onDeactivated?.(context))
+                    } else {
+                        hooks.forEach((hook) => hook.onActivated?.(context))
+                    }
+                },
+                { defer: true }
+            )
+        )
     })
 
     // solid-keep-alive + micro-reactive
@@ -104,7 +97,7 @@ export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ 
 
     return (
         <EventsContext.Provider value={events}>
-            <VariablesContext.Provider value={variables}>{children(canvans)}</VariablesContext.Provider>
+            <VariablesContext.Provider value={variables}>{children()}</VariablesContext.Provider>
         </EventsContext.Provider>
     )
 }
