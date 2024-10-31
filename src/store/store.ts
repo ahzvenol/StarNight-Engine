@@ -1,10 +1,9 @@
 import { cloneDeep, debounce, toMerged } from 'es-toolkit'
 import localforage from 'localforage'
 import { useReactive } from 'micro-reactive'
-import { createEffect, createResource, on, type Resource } from 'solid-js'
-
+import { type Resource, createEffect, createResource, on } from 'solid-js'
 import { log } from '@/utils/Logger'
-import systemDefaultStore, { Store } from './default'
+import systemDefaultStore, { ReactiveStore, Store } from './default'
 import { getUserConfig } from './user'
 
 // 响应式变量会修改原始对象,需要处处clone避免默认数据被修改
@@ -41,9 +40,9 @@ const createStore = async () => {
     Object.keys(store()).forEach((key) => {
         createEffect(
             on(
-                store[key as keyof Store],
+                store[key as keyof ReactiveStore],
                 debounce(() => {
-                    localforage.setItem(key, store[key as keyof Store]())
+                    localforage.setItem(key, store[key as keyof ReactiveStore]())
                     log.info(`写入本地存储:${key}`)
                 }, 100)
             )
@@ -69,6 +68,6 @@ const clearSave = () => storePackage.then(({ userDefaultStore, store }) => store
 
 const [store] = createResource(async () => await storePromise)
 
-export default store as Resource<Store>
+export default store as Resource<ReactiveStore>
 
 export { clearSave, clearStorage, resetConfig, storePromise }

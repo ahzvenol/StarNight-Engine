@@ -7,9 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "format": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\""
+    "lint:prettier": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\"",
+    "lint:style": "stylelint src\"/**/*.+(css|scss|less|stylus|sass|postcss)\" --fix",
+    "lint:format": "concurrently \"npm run lint:prettier\" \"npm run lint:style\""
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/animejs": "^3.1.12",
     "@types/howler": "^2.2.12",
     "@types/mustache": "^4.2.5",
@@ -22,6 +25,14 @@
     "prettier-eslint": "^16.1.2",
     "rollup-plugin-visualizer": "^5.12.0",
     "sass": "^1.77.8",
+    "stylelint": "^16.10.0",
+    "stylelint-config-prettier": "^9.0.5",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-config-standard": "^36.0.1",
+    "stylelint-config-standard-scss": "^13.1.0",
+    "stylelint-order": "^6.0.4",
+    "stylelint-prettier": "^5.0.2",
+    "stylelint-scss": "^6.8.1",
     "typescript": "^5.6.2",
     "typescript-plugin-css-modules": "^5.1.0",
     "vite": "^3.0.9",

@@ -1,13 +1,4 @@
-const to = (start: number, end: number): Array<number> => {
-    const arr: Array<number> = []
-    const go = (start: number, end: number) => {
-        arr.push(start)
-        if (start === end) return arr
-        else go(start + 1, end)
-    }
-    go(start, end)
-    return arr
-}
+import { range } from 'es-toolkit'
 
 // 转换数组到数学区间以压缩空间占用
 function arrayToInterval(list: Array<number>): string {
@@ -34,10 +25,7 @@ function arrayToInterval(list: Array<number>): string {
 
 // 转换数学区间到数组
 function intervalToArray(str: string): Array<number> {
-    const list = JSON.parse(str || '[]') as Array<[number, number]>
-    const res: Array<number> = []
-    list.forEach((e) => res.push(...to(e[0], e[1])))
-    return res
+    return (JSON.parse(str) as Array<[number, number]>).map((e) => range(e[0], e[1])).flat()
 }
 
 export { arrayToInterval, intervalToArray }

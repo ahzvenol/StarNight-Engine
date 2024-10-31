@@ -26,7 +26,6 @@ module.exports = {
         ecmaVersion: 'latest',
         sourceType: 'module'
     },
-    plugins: ['@typescript-eslint', 'solid'],
     rules: {
         'solid/no-destructure': 'off'
     }

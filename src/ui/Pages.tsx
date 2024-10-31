@@ -1,9 +1,9 @@
+import { Component, ParentProps, createEffect, on } from 'solid-js'
+import { KeepAlive, useKeepAlive } from 'solid-keep-alive'
 import { Route, router } from '@/router'
 import { useAudioConfig } from '@/store/effect/audioManager'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
-import { Component, createEffect, on, ParentProps } from 'solid-js'
-import { KeepAlive, useKeepAlive } from 'solid-keep-alive'
 
 enum Pages {
     'Title' = '',

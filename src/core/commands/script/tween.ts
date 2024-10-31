@@ -1,6 +1,6 @@
-import { CommandArgTypes, GameRuntimeContext, State } from '@/core/Command'
 import anime from 'animejs/lib/anime.es.js'
 import { omit } from 'es-toolkit'
+import { CommandArg, GameRuntimeContext, State } from '@/core/type'
 
 // anime.suspendWhenDocumentHidden = true;
 // test:缓动库自带了一个暂停,但是不知道有没有用
@@ -13,7 +13,7 @@ const beforeActStart = () => activeTweens.clear()
 
 const tween: Function1<
     GameRuntimeContext,
-    Function1<TweenCommandArgs, Function1<Record<string, CommandArgTypes>, Promise<void>>>
+    Function1<TweenCommandArgs, Function1<Record<string, CommandArg>, Promise<void>>>
 > =
     ({ state, timer }) =>
     ({ target, ease, duration }) =>

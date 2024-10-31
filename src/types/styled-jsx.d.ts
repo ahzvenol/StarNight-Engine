@@ -1,1 +1,1 @@
-import {} from 'solid-styled'
+import 'solid-styled'

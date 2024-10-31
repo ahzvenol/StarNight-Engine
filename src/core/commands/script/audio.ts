@@ -1,6 +1,6 @@
-import { CommandLifeCycleFunction, CommandRunFunction, State } from '@/core/Command'
-import { AudioTracksType, useAudioConfig } from '@/store/effect/audioManager'
 import { mapValues } from 'es-toolkit'
+import { CommandLifeCycleFunction, CommandRunFunction, State } from '@/core/type'
+import { AudioTracksType, useAudioConfig } from '@/store/effect/audioManager'
 
 // 跨幕环境变量file,需要收集副作用
 export type AudioCommandArgs = XOR<

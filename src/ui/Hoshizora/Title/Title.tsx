@@ -1,7 +1,7 @@
+import { Component } from 'solid-js'
 import { router } from '@/router'
 import { Button, Clone, Variable, line } from '@/ui/Elements'
 import { Pages, restartGame } from '@/ui/Pages'
-import { Component } from 'solid-js'
 import styles from './Title.module.scss'
 
 const Title: Component = () => {
