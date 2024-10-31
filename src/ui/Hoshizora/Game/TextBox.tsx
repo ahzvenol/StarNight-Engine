@@ -1,6 +1,6 @@
+import { Component, Show } from 'solid-js'
 import { nameView, textView } from '@/core/commands/script/textbox'
 import { useStore } from '@/store/context'
-import { Component, Show } from 'solid-js'
 import styles from './TextBox.module.scss'
 
 export const STAR_MARKER = '<star>'

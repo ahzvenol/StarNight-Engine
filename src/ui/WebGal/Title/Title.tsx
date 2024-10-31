@@ -1,7 +1,7 @@
 import { Component } from 'solid-js'
-import { router } from '../../../router'
 import { translation } from '@/store/effect/translations'
 import { Button, Clone } from '@/ui/Elements'
+import { router } from '../../../router'
 import styles from './Title.module.scss'
 
 /**

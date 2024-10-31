@@ -1,14 +1,14 @@
 import { Component } from 'solid-js'
+import bgm01 from '@/assets/bgm01.wav'
+import jcyt500W from '@/assets/jcyt500W.ttf'
 import { Route, router } from '../../router'
+import { Game, Title } from '../Pages'
+import Back from './Back/Back'
 import Config from './Config/Config'
 import Gallery from './Gallery/Gallery'
+import GameImpl from './Game/Game'
 import SaveLoad from './SaveAndLoad/SaveLoad'
 import TitleImpl from './Title/Title'
-import GameImpl from './Game/Game'
-import Back from './Back/Back'
-import jcyt500W from '@/assets/jcyt500W.ttf'
-import bgm01 from '@/assets/bgm01.wav'
-import { Game, Title } from '../Pages'
 
 const UI: Component = () => (
     <>

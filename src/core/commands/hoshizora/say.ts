@@ -1,8 +1,8 @@
-import { CommandRunFunction } from '@/core/Command'
+import { par } from '@/core/flow'
+import { CommandRunFunction } from '@/core/type'
+import { Audio } from '../script/audio'
 import { Backlog } from '../script/backlog'
 import { Name, Text } from '../script/textbox'
-import { Audio } from '../script/audio'
-import { par } from '@/core/Flow'
 
 type SayCommandArgs = { text: string; name?: string; file?: string }
 

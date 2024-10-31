@@ -3,121 +3,132 @@ $endTransform: scale(1, 1) translate3d(0, 0, 0);
 
 @keyframes cg_softIn_-5 {
     0% {
-        opacity: 0;
         transform: $initialTransform;
+        opacity: 0;
     }
+
     100% {
-        opacity: 1;
         transform: $endTransform + rotate(-5deg);
+        opacity: 1;
     }
 }
 
 @keyframes cg_softIn_-4 {
     0% {
-        opacity: 0;
         transform: $initialTransform;
+        opacity: 0;
     }
+
     100% {
-        opacity: 1;
         transform: $endTransform + rotate(-4deg);
+        opacity: 1;
     }
 }
 
 @keyframes cg_softIn_-3 {
     0% {
-        opacity: 0;
         transform: $initialTransform;
+        opacity: 0;
     }
+
     100% {
-        opacity: 1;
         transform: $endTransform + rotate(-3deg);
+        opacity: 1;
     }
 }
 
 @keyframes cg_softIn_-2 {
     0% {
-        opacity: 0;
         transform: $initialTransform;
+        opacity: 0;
     }
+
     100% {
-        opacity: 1;
         transform: $endTransform + rotate(-2deg);
+        opacity: 1;
     }
 }
 
 @keyframes cg_softIn_-1 {
     0% {
-        opacity: 0;
         transform: $initialTransform;
+        opacity: 0;
     }
+
     100% {
-        opacity: 1;
         transform: $endTransform + rotate(-1deg);
+        opacity: 1;
     }
 }
 
 @keyframes cg_softIn_0 {
     0% {
-        opacity: 0;
         transform: $initialTransform;
+        opacity: 0;
     }
+
     100% {
-        opacity: 1;
         transform: $endTransform + rotate(0);
+        opacity: 1;
     }
 }
 
 @keyframes cg_softIn_1 {
     0% {
-        opacity: 0;
         transform: $initialTransform;
+        opacity: 0;
     }
+
     100% {
-        opacity: 1;
         transform: $endTransform + rotate(1deg);
+        opacity: 1;
     }
 }
 
 @keyframes cg_softIn_2 {
     0% {
-        opacity: 0;
         transform: $initialTransform;
+        opacity: 0;
     }
+
     100% {
-        opacity: 1;
         transform: $endTransform + rotate(2deg);
+        opacity: 1;
     }
 }
 
 @keyframes cg_softIn_3 {
     0% {
-        opacity: 0;
         transform: $initialTransform;
+        opacity: 0;
     }
+
     100% {
-        opacity: 1;
         transform: $endTransform + rotate(3deg);
+        opacity: 1;
     }
 }
 
 @keyframes cg_softIn_4 {
     0% {
-        opacity: 0;
         transform: $initialTransform;
+        opacity: 0;
     }
+
     100% {
-        opacity: 1;
         transform: $endTransform + rotate(4deg);
+        opacity: 1;
     }
 }
 
 @keyframes cg_softIn_5 {
     0% {
-        opacity: 0;
         transform: $initialTransform;
+        opacity: 0;
     }
+
     100% {
-        opacity: 1;
         transform: $endTransform + rotate(5deg);
+        opacity: 1;
     }
 }

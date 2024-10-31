@@ -1,7 +1,7 @@
-import { CommandOutput, RuntimeCommandOutput } from '@/core/Command'
-import { log } from '@/utils/Logger'
 import { merge } from 'es-toolkit'
-import { match, P } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
+import { CommandOutput, RuntimeCommandOutput } from '@/core/type'
+import { log } from '@/utils/Logger'
 
 // 有两种方式可以实现异步流控制,使用程序编写的代码可以直接使用await,而文字剧本则需要经过二次转换
 

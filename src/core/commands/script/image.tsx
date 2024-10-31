@@ -1,9 +1,9 @@
-import { CommandArgTypes, CommandLifeCycleFunction, CommandRunFunction, State } from '@/core/Command'
-import { Y } from '@/utils/FPUtil'
-import { match } from 'ts-pattern'
-import { Tween } from './tween'
-import { useSignal } from '@/utils/Reactive'
 import { isNotNil } from 'es-toolkit'
+import { match } from 'ts-pattern'
+import { CommandArg, CommandLifeCycleFunction, CommandRunFunction, State } from '@/core/type'
+import { Y } from '@/utils/FPUtil'
+import { useSignal } from '@/utils/Reactive'
+import { Tween } from './tween'
 
 // 跨幕环境变量file,需要收集副作用
 type SetImageCommandArgs = {
@@ -34,8 +34,8 @@ const afterInit: CommandLifeCycleFunction = () =>
 const setImage: CommandRunFunction<SetImageCommandArgs> =
     (context) =>
     ({ name, file, ease, duration, x = 0, y = 0, z = 1, w, h }) => {
-        const { state, save } = context
-        // if (!cg().includes(file)) cg().push(file)
+        const { state } = context
+        // tag:unlock cg
         const array = stageView()!.getElementsByClassName(name)
         const bitmap = match(state)
             // @ts-expect-error 类型与属性识别异常
@@ -62,18 +62,18 @@ type TweenImageCommandArgs = {
     target: string
     ease?: string
     duration: number
-} & Record<string, CommandArgTypes>
+} & Record<string, CommandArg>
 
 const tweenImage: CommandRunFunction<TweenImageCommandArgs> =
     (context) =>
     ({ target, ease, duration, ...args }) => {
         if (args.x !== undefined) {
             args.translateX = args.x
-            args.x = undefined
+            delete args.x
         }
         if (args.y !== undefined) {
             args.translateY = args.y
-            args.y = undefined
+            delete args.y
         }
         const tweenTarget = stageView()!.getElementsByClassName(target)[0]
         Tween(context)({ target: tweenTarget, ease, duration })(args)

@@ -1,7 +1,7 @@
-import { useValue } from '@/hooks/useValue'
-import styles from '@/UI/Extra/extra.module.scss'
 import React from 'react'
+import styles from '@/UI/Extra/extra.module.scss'
 import useSoundEffect from '@/hooks/useSoundEffect'
+import { useValue } from '@/hooks/useValue'
 
 interface IProps {
     name: string

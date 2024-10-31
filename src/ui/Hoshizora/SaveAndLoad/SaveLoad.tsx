@@ -1,14 +1,16 @@
+import dayjs from 'dayjs'
+import { Component, Show } from 'solid-js'
 import { useStore } from '@/store/context'
 import { Clone, Variable } from '@/ui/Elements'
 import { useSignal } from '@/utils/Reactive'
-import dayjs from 'dayjs'
-import { Component } from 'solid-js'
 import styles from './SaveAndLoad.module.scss'
 
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
     const currentPage = useSignal(0)
 
-    const save = useStore().save.individual
+    const save = useStore().save.local
+    console.log(save())
+
     return (
         <div class={'Page' + ' ' + styles.Save_Load_container}>
             <div
@@ -47,17 +49,29 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                             {(i) => (
                                 // todo:!empty时才有:hover和Button行为
                                 <div class={styles.Save_Load_content_element}>
-                                    <div class={styles.Save_Load_content_element_empty_image} />
                                     <div class={styles.Save_Load_content_element_index}>
                                         {/* 原作从0开始 */}
                                         No.&nbsp;&nbsp;&nbsp;{i + 1 + currentPage() * count}
                                     </div>
-                                    <div class={styles.Save_Load_content_element_date}>
-                                        {dayjs().format('YYYY/MM/DD HH:mm:ss')}
-                                    </div>
                                     <Variable value={save()[i + 1 + currentPage() * count]}>
                                         {(save) => (
-                                            <div class={styles.Save_Load_content_text}>{save?.text || 'Empty'}</div>
+                                            <Show
+                                                when={save !== undefined}
+                                                fallback={
+                                                    <>
+                                                        <div class={styles.Save_Load_content_element_empty_image} />
+                                                        <div class={styles.Save_Load_content_text}>Empty</div>
+                                                    </>
+                                                }>
+                                                <div
+                                                    class={styles.Save_Load_content_element_image}
+                                                    style={{ 'background-image': `url(${save.image})` }}
+                                                />
+                                                <div class={styles.Save_Load_content_element_date}>
+                                                    {dayjs(save.date).format('YYYY/MM/DD HH:mm:ss')}
+                                                </div>
+                                                <div class={styles.Save_Load_content_text}>{save.text}</div>
+                                            </Show>
                                         )}
                                     </Variable>
                                 </div>

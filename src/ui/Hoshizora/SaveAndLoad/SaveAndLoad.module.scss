@@ -1,41 +1,42 @@
 .Save_Load_container {
-    background-image: url(./static/Texture2D/saveload_window.png);
+    background-image: url('./static/Texture2D/saveload_window.png');
 }
 
 .Save_Load_title {
+    top: 60px;
+    left: 114px;
     width: 88px;
     height: 39px;
-    left: 114px;
-    top: 60px;
 }
 
 .Save_Load_top_buttonList {
-    width: 435px;
-    height: 30px;
     top: 145px;
     right: 123px;
     display: flex;
     justify-content: space-between;
+    width: 435px;
+    height: 30px;
 }
 
 .Save_Load_top_button {
+    position: unset;
     width: 30px;
     border-radius: 50%;
-    position: unset;
     transition: 0.15s;
 }
 
 .Save_Load_top_arrow {
+    top: 145px;
     width: 18px;
     height: 30px;
-    top: 145px;
-    background-image: url(./static/Texture2D/ShiftArrow.png);
+    background-image: url('./static/Texture2D/ShiftArrow.png');
     background-repeat: no-repeat;
     background-position: left;
+
     &:hover {
         width: 18 + 32px;
+        filter: drop-shadow(32px 0 #909090);
         scale: 1.01;
-        filter: drop-shadow(32px 0px #909090);
     }
 }
 
@@ -49,28 +50,30 @@
 }
 
 .Save_Load_content {
-    width: 1160px;
-    height: 420px;
-    left: 60px;
     bottom: 98px;
+    left: 60px;
     display: grid;
     grid-auto-flow: column;
     grid-template-rows: repeat(3, auto);
     justify-content: space-between;
+    width: 1160px;
+    height: 420px;
 }
 
 .Save_Load_content_element {
+    position: relative;
     width: 380px;
     height: 134px;
     color: white;
-    position: relative;
+
     &::before {
-        content: '';
         display: block;
         width: 100%;
         height: 100%;
-        background-image: url(./static/Texture2D/saveload_frame.png);
+        background-image: url('./static/Texture2D/saveload_frame.png');
+        content: '';
     }
+
     &:hover::before {
         opacity: 0.412;
     }
@@ -78,15 +81,15 @@
 
 .Save_Load_content_element_image,
 .Save_Load_content_element_empty_image {
+    top: 26.5px;
+    left: 10px;
     width: 180px;
     height: 100px;
-    left: 10px;
-    top: 26.5px;
     pointer-events: none;
 }
 
 .Save_Load_content_element_empty_image {
-    background-image: url(./static/Texture2D/saveload_thumb.png);
+    background-image: url('./static/Texture2D/saveload_thumb.png');
 }
 
 /* tag:这用的大概不是江城圆体 */
@@ -104,7 +107,7 @@
 }
 
 .Save_Load_content_text {
-    left: 195px;
     top: 36px;
-    font-family: '';
+    left: 195px;
+    font-family: unset;
 }

@@ -1,7 +1,7 @@
-import useTrans from '@/hooks/useTrans'
 import { Left } from '@icon-park/react'
-import s from './about.module.scss'
 import { __INFO } from '@/config/info'
+import useTrans from '@/hooks/useTrans'
+import s from './about.module.scss'
 
 export default function About(props: { onClose: () => void }) {
     const t = useTrans('menu.options.pages.system.options.about.')

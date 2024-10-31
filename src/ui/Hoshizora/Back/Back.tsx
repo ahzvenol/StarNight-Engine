@@ -1,5 +1,5 @@
-import { Button } from '@/ui/Elements'
 import { Component } from 'solid-js'
+import { Button } from '@/ui/Elements'
 import styles from './Back.module.scss'
 
 const Back: Component<{ onClick: Function0<void> }> = (props) => (

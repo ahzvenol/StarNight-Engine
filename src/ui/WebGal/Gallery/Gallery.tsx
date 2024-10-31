@@ -1,8 +1,8 @@
-import { translation } from '@/store/effect/translations'
-import styles from './Gallery.module.scss'
-import { router } from '@/router'
-import { Button } from '@/ui/Elements'
 import { Component } from 'solid-js'
+import { router } from '@/router'
+import { translation } from '@/store/effect/translations'
+import { Button } from '@/ui/Elements'
+import styles from './Gallery.module.scss'
 
 const CloseSmall: Component = () => (
     <svg width="4em" height="4em" viewBox="0 0 48 48" fill="none">

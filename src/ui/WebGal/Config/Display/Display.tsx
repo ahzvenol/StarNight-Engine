@@ -1,11 +1,11 @@
+import { Component } from 'solid-js'
 import { translation } from '@/store/effect/translations'
 import { Clone, Variable } from '@/ui/Elements'
-import { Component } from 'solid-js'
+import { useSignal } from '@/utils/Reactive'
 import Button from '../Button'
 import Cell from '../Cell'
-import Slider from '../Slider'
 import styles from '../Config.module.scss'
-import { useSignal } from '@/utils/Reactive'
+import Slider from '../Slider'
 
 const Display: Component = () => {
     const t = translation.menu.options.pages.display.options

@@ -1,4 +1,4 @@
-import { CommandRunFunction } from '@/core/Command'
+import { CommandRunFunction } from '@/core/type'
 import { useSignal } from '@/utils/Reactive'
 
 type BacklogCommandArgs = { text: string; name?: string; file?: string }

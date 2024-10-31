@@ -1,12 +1,12 @@
-import { log } from '@/utils/Logger'
-import { useSignal } from '@/utils/Reactive'
 import { Component, Match, Switch, createEffect } from 'solid-js'
 import { translation } from '@/store/effect/translations'
 import { Button, Clone } from '@/ui/Elements'
+import { log } from '@/utils/Logger'
+import { useSignal } from '@/utils/Reactive'
+import styles from './Config.module.scss'
 import Display from './Display/Display'
 import Sound from './Sound/Sound'
 import System from './System/System'
-import styles from './Config.module.scss'
 
 enum Page {
     'System' = 'System',

@@ -1,9 +1,9 @@
-import { CommandRunFunction } from '@/core/Command'
+import { CommandRunFunction } from '@/core/type'
 import { PromiseX } from '@/utils/PromiseX'
-import { Jump } from './!'
 import { useSignal } from '@/utils/Reactive'
+import { Jump } from './!'
 
-interface Selection {
+type Selection = {
     label: string
     disable: boolean
     select: () => void

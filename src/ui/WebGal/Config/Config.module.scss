@@ -1,60 +1,63 @@
 .Options_main {
     position: absolute;
-    cursor: default;
-    height: 90%;
     width: 100%;
+    height: 90%;
+    cursor: default;
+
     //background: rgba(255, 255, 255, 0.65);
 }
 
 .Options_top {
-    height: 15%;
-    width: 100%;
     display: flex;
     align-items: flex-start;
+    width: 100%;
+    height: 15%;
 }
 
 .Options_title {
+    box-sizing: border-box;
+    margin: 0.5em 0;
+    padding: 0.2em 2em 0.2em 1.1em;
+    font-size: 225%;
     font-family: '思源宋体', serif;
     letter-spacing: 0.1em;
-    font-size: 225%;
-    margin: 0.5em 0 0.5em 0;
-    padding: 0.2em 2em 0.2em 1.1em;
-    box-sizing: border-box;
+
     //background-color: rgba(255, 255, 255, 0.99);
     //border-right: .2em solid rgba(81, 110, 65, 0.9);
     //box-shadow: .1em .1em .8em .2em rgba(0, 0, 0, 0.07);
 }
 
 .Option_title_text {
-    font-size: 165%;
-    font-weight: bold;
     color: transparent;
-    background: linear-gradient(to left, #227d51, rgba(81, 110, 65, 1));
-    -webkit-background-clip: text;
+    font-weight: bold;
+    font-size: 165%;
+    background: linear-gradient(to left, #227d51, rgb(81 110 65 / 100%));
+    background-clip: text;
     animation: Elements_in ease-out 0.7s forwards;
 }
 
 .Option_title_text_shadow {
     position: absolute;
-    color: rgba(0, 0, 0, 0);
-    -webkit-text-stroke: 3px rgba(0, 0, 0, 1);
     z-index: -1;
+    color: rgb(0 0 0 / 0%);
+    -webkit-text-stroke: 3px rgb(0 0 0 / 100%);
 }
 
 .Option_title_text_ts {
     position: absolute;
-    color: rgba(0, 0, 0, 0);
-    text-shadow:
-        0.04em 0.04em rgba(81, 110, 65, 0.9),
-        0.05em 0.05em rgba(81, 110, 65, 0.9),
-        0.06em 0.06em rgba(81, 110, 65, 0.9),
-        0.07em 0.07em rgba(81, 110, 65, 0.9);
+
     //0.08em 0.08em rgba(81, 110, 65, 0.9),
     //0.09em 0.09em rgba(81, 110, 65, 0.9),
     //0.10em 0.10em rgba(81, 110, 65, 0.9),
     //0.11em 0.11em rgba(81, 110, 65, 0.9),
     //0.12em 0.12em rgba(81, 110, 65, 0.9);
     z-index: -1;
+    color: rgb(0 0 0 / 0%);
+    text-shadow:
+        0.04em 0.04em rgb(81 110 65 / 90%),
+        0.05em 0.05em rgb(81 110 65 / 90%),
+        0.06em 0.06em rgb(81 110 65 / 90%),
+        0.07em 0.07em rgb(81 110 65 / 90%);
 }
 
 .Options_main_content {
@@ -65,48 +68,48 @@
 }
 
 .Options_main_content_half {
-    width: 95%;
     display: flex;
     flex-flow: row;
-    align-items: flex-start;
-    align-content: flex-start;
     flex-wrap: wrap;
-    padding: 0 1em 0 1em;
+    align-content: flex-start;
+    align-items: flex-start;
+    width: 95%;
+    padding: 0 1em;
 }
 
 .About_title_text {
-    margin: 0.2em 1em 0.2em 1em;
-    padding: 0.2em 0.2em 0.2em 0.2em;
     width: 100%;
-    animation: Elements_in ease-out 0.7s forwards;
+    margin: 0.2em 1em;
+    padding: 0.2em;
     cursor: pointer;
+    animation: Elements_in ease-out 0.7s forwards;
 }
 
 .About_text {
-    font-weight: bold;
     color: transparent;
-    background: linear-gradient(to left, rgba(34, 125, 81, 0.65), rgba(81, 110, 65, 0.65));
-    -webkit-background-clip: text;
+    font-weight: bold;
     font-size: 135%;
     text-decoration: underline;
+    background: linear-gradient(to left, rgb(34 125 81 / 65%), rgb(81 110 65 / 65%));
+    background-clip: text;
 }
 
 @keyframes Elements_in {
     0% {
-        opacity: 0;
         transform: scale(1.03, 1.03) translate(-25px, -20px);
+        opacity: 0;
     }
 
     100% {
-        opacity: 1;
         transform: scale(1, 1) translate(0, 0);
+        opacity: 1;
     }
 }
 
 .Options_page_container {
-    height: 85%;
     display: flex;
-    padding: 1em 3.75em 1em 3.75em;
+    height: 85%;
+    padding: 1em 3.75em;
 }
 
 .Options_button_list {
@@ -114,23 +117,23 @@
 }
 
 .Options_page_button {
-    font-family: '思源宋体', serif;
-    font-size: 300%;
-    font-weight: bold;
     color: transparent;
-    background: linear-gradient(to left, #227d51, rgba(81, 110, 65, 1));
+    font-weight: bold;
+    font-size: 300%;
+    font-family: '思源宋体', serif;
+    background: linear-gradient(to left, #227d51, rgb(81 110 65 / 100%));
+    background-clip: text;
+    cursor: pointer;
     opacity: 0.35;
-    -webkit-background-clip: text;
     transition:
         color 0.33s,
         background-image 0.33s,
         opacity 0.33s;
-    cursor: pointer;
 }
 
 .Options_page_button_active {
-    background-image: linear-gradient(to left, #227d51, rgba(81, 110, 65, 1));
-    -webkit-background-clip: text;
+    background-image: linear-gradient(to left, #227d51, rgb(81 110 65 / 100%));
+    background-clip: text;
     opacity: 1;
 }
 

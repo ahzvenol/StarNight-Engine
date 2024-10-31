@@ -1,5 +1,4 @@
-import type { Component, ParentProps } from 'solid-js'
-import { onCleanup, children } from 'solid-js'
+import { Component, ParentProps, children, onCleanup } from 'solid-js'
 
 const Scale: Component<ParentProps<{ width: number; height: number; mode: 'auto' | 'full' | unknown }>> = (props) => {
     let intervalId!: NodeJS.Timer

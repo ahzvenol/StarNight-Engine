@@ -1,6 +1,6 @@
 import { Component, ParentProps } from 'solid-js'
-import { MenuPanel } from './MenuPanel'
 import styles from './Menu.module.scss'
+import { MenuPanel } from './MenuPanel'
 
 /**
  * Menu 页面，包括存读档、选项等

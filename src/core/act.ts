@@ -1,18 +1,18 @@
+import { delay, mapValues } from 'es-toolkit'
+import { ReactiveType } from 'micro-reactive'
+import Mustache from 'mustache'
+import { P, match } from 'ts-pattern'
 import { book } from '@/store/book'
-import { Store } from '@/store/default'
+import { ReactiveStore } from '@/store/default'
 import { Y } from '@/utils/FPUtil'
 import { log } from '@/utils/Logger'
 import { PromiseX } from '@/utils/PromiseX'
 import { Signal } from '@/utils/Reactive'
-import { delay, mapValues } from 'es-toolkit'
-import { ReactiveType } from 'micro-reactive'
-import Mustache from 'mustache'
-import { match, P } from 'ts-pattern'
-import { GameRuntimeContext, State } from './Command'
-import { commands, hooks } from './commands'
 import { EventDispatcher } from './EventDispatcher'
-import { Async, Await, fork } from './Flow'
 import { Timer } from './Timer'
+import { commands, hooks } from './commands'
+import { Async, Await, fork } from './flow'
+import { GameRuntimeContext, State, Variables } from './type'
 
 const actStartEvent = new EventDispatcher<GameRuntimeContext>()
 const actEndEvent = new EventDispatcher<GameRuntimeContext>()
@@ -25,14 +25,15 @@ actSecondClickEvent.subscribe(() => log.info('一幕内第二次点击,立即执
 async function runAct(
     row: number,
     state: State,
-    store: ReactiveType<Store>,
+    store: ReactiveType<ReactiveStore>,
+    variables: Variables,
     onClick: Promise<void>,
     onFast: Promise<void>
 ) {
     const timer = new Timer()
     // 如果现在是快进状态,直接把timer设置到立即执行
     if (state == State.Fast) timer.toImmediate()
-    const context: GameRuntimeContext = { timer, state, store, row }
+    const context: GameRuntimeContext = { timer, state, store, variables, row }
     // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕,通过timer立即执行全部效果
     // 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
     const immPromise = new PromiseX()
@@ -73,18 +74,18 @@ async function runAct(
     return commandOutput
 }
 
-// context只作为中间变量向下传输,不使用
 function runLoop(
     row: Signal<number>,
     state: Signal<State>,
-    store: Store,
+    store: ReactiveStore,
+    variables: Variables,
     onClick: () => Promise<void>,
     onAuto: () => Promise<void>,
     onFast: () => Promise<void>
 ) {
     return Y<void, Promise<void>>((rec) => async () => {
-        // 幕运行过程中不会操作任何状态
-        const res = await runAct(row(), state(), store(), onClick(), onFast())
+        // 幕运行过程中不会操作任何状态,但可以操作variables
+        const res = await runAct(row(), state(), store(), variables, onClick(), onFast())
         // 等待过程受continue命令影响
         if (res['continue'] !== true) {
             // 只有两个地方会有阻塞:正在运行一幕,等待点击事件

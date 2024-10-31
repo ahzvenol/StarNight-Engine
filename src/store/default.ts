@@ -1,5 +1,6 @@
-import { language } from '@/store/effect/translations'
 import { Reactive } from 'micro-reactive'
+import { CommandArg } from '@/core/type'
+import { language } from '@/store/effect/translations'
 
 // 确保程序运行所需的键值,如新增依赖变量,需要在这里添加默认值
 const systemDefaultStore = {
@@ -26,28 +27,19 @@ const systemDefaultStore = {
         Language: 'zh-CN' as keyof typeof language
     },
     save: {
-        global: {} as Record<string, unknown>,
-        individual: {} as Record<number, IndividualSaveData>
+        global: { cg: Array<string>(), segment: '[]' },
+        local: {} as Record<number, LocalSaveData>
     },
     user: {}
 }
 
-// tag:考虑global放info,graphic,variable这些,archive放list,variable,readed(这词拼写错误但是意思到了)
-// 'readed'似乎可以是'seen'
-// archive中应包含内容按照之前有 previewpic index text 具体名称修改待考虑
-
-type IniKV = Record<string, string | number | boolean>
-type IndividualSaveData = Record<string, unknown>
-
-// & IniKV会丢失类型检查,所以不在类型上书写它
-// type Store = Reactive<{
-//     system: typeof systemDefaultStore['system'],
-//     config: typeof systemDefaultStore['config'],
-//     save: typeof systemDefaultStore['save'],
-//     user: typeof systemDefaultStore['user']
-// }>
-type Store = Reactive<typeof systemDefaultStore>
-
 export default systemDefaultStore
 
-export type { IniKV, Store, IndividualSaveData }
+export type IniKV = Record<string, string | number | boolean>
+
+// & IniKV会丢失类型检查,所以不在类型上书写它
+export type Store = typeof systemDefaultStore
+export type ReactiveStore = Reactive<Store>
+
+export type GlobalSaveData = Record<string, unknown> & Store['save']['global']
+export type LocalSaveData = Record<string, CommandArg> & { row: number; date: number; preview: string; text: string }

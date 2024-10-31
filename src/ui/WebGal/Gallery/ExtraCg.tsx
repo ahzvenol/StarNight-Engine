@@ -1,10 +1,10 @@
-import styles from '@/UI/Extra/extra.module.scss'
 import { useSelector } from 'react-redux'
-import { RootState } from '@/store/store'
-import { useValue } from '@/hooks/useValue'
-import './extraCG_animation_List.scss'
-import { ExtraCgElement } from '@/ui/WebGal/Gallery/ExtraCgElement'
+import styles from '@/UI/Extra/extra.module.scss'
 import useSoundEffect from '@/hooks/useSoundEffect'
+import { useValue } from '@/hooks/useValue'
+import { RootState } from '@/store/store'
+import { ExtraCgElement } from '@/ui/WebGal/Gallery/ExtraCgElement'
+import './extraCG_animation_List.scss'
 
 export function ExtraCg() {
     const cgPerPage = 8

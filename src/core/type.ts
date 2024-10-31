@@ -1,7 +1,6 @@
-import { IndividualSaveData, Store } from '@/store/default'
 import { Reactive, ReactiveType } from 'micro-reactive'
+import { GlobalSaveData, LocalSaveData, ReactiveStore } from '@/store/default'
 import { Timer } from './Timer'
-import { Variables } from './Core'
 
 export enum State {
     Init,
@@ -10,14 +9,20 @@ export enum State {
     Auto
 }
 
-export type GameContext = {
-    store: ReactiveType<Store>
+export type Events = { click: Function0<void>; fast: Function0<void>; auto: Function0<void> }
+
+export type Variables = {
     // 临时变量
-    variables: Variables
+    temp: Reactive<LocalSaveData>
     // 全局存档变量
-    global: Reactive<Record<string, unknown>>
+    global: Reactive<GlobalSaveData>
     // 独立存档变量
-    individual: IndividualSaveData
+    local: Reactive<LocalSaveData>
+}
+
+export type GameContext = {
+    store: ReactiveType<ReactiveStore>
+    variables: Variables
 }
 
 export type GameRuntimeContext = {
@@ -26,27 +31,15 @@ export type GameRuntimeContext = {
     row: number
 } & GameContext
 
-// export type Args = {
-//     name: string
-//     target: string | number
-//     file: string
-//     duration: number
-//     transition: string
-//     text: string
-//     number: number
-//     bool: boolean
-//     value: string | number | boolean
-// }
+export type CommandArg = string | number | boolean
 
-export type CommandArgTypes = string | number | boolean | undefined
-
-export type CommandArgs = Record<string, CommandArgTypes>
+export type SingalCommand = Record<string, CommandArg | undefined>
 
 export type CommandOutput = Record<string, unknown> & Partial<{ continue: boolean; jump: number; end: boolean }>
 
 export type RuntimeCommandOutput = Promise<CommandOutput> | Promise<void> | CommandOutput | void
 
-export type CommandRunFunction<T extends CommandArgs> = Function1<
+export type CommandRunFunction<T extends SingalCommand> = Function1<
     GameRuntimeContext,
     Function1<T, RuntimeCommandOutput>
 >

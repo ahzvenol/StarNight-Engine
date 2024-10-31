@@ -1,5 +1,5 @@
 .Config_container {
-    background-image: url(./static/Texture2D/config_BG.png);
+    background-image: url('./static/Texture2D/config_BG.png');
 }
 
 .Config_cell {
@@ -8,8 +8,8 @@
 }
 
 .Config_cell_text {
-    left: -12px;
     top: -80%;
+    left: -12px;
     color: #344460;
 }
 
@@ -25,11 +25,13 @@
     width: 320px;
     height: 30px;
 }
+
 .Config_button_full_screen_off {
-    background-image: url(./static/Texture2D/config_window.png);
+    background-image: url('./static/Texture2D/config_window.png');
 }
+
 .Config_button_full_screen_on {
-    background-image: url(./static/Texture2D/config_full.png);
+    background-image: url('./static/Texture2D/config_full.png');
 }
 
 .Config_button {
@@ -48,37 +50,42 @@
 }
 
 .Config_button_off_off {
-    background-image: url(./static/Texture2D/config_button_off.png);
+    background-image: url('./static/Texture2D/config_button_off.png');
 }
+
 .Config_button_off_on {
-    background-image: url(./static/Texture2D/config_button_off_ov.png);
+    background-image: url('./static/Texture2D/config_button_off_ov.png');
 }
+
 .Config_button_on_off {
-    background-image: url(./static/Texture2D/config_button_on.png);
+    background-image: url('./static/Texture2D/config_button_on.png');
 }
+
 .Config_button_on_on {
-    background-image: url(./static/Texture2D/config_button_on_ov.png);
+    background-image: url('./static/Texture2D/config_button_on_ov.png');
 }
 
 .Config_bottom_back_title,
 .Config_bottom_reset {
+    bottom: 25px;
     width: 88px;
     height: 23px;
-    bottom: 25px;
 }
 
 .Config_bottom_back_title {
     right: 148px;
-    background-image: url(./static/Texture2D/config_backtitle.png);
+    background-image: url('./static/Texture2D/config_backtitle.png');
+
     &:hover {
-        background-image: url(./static/Texture2D/config_backtitle_ov.png);
+        background-image: url('./static/Texture2D/config_backtitle_ov.png');
     }
 }
 
 .Config_bottom_reset {
     right: 248px;
-    background-image: url(./static/Texture2D/config_reset.png);
+    background-image: url('./static/Texture2D/config_reset.png');
+
     &:hover {
-        background-image: url(./static/Texture2D/config_reset_ov.png);
+        background-image: url('./static/Texture2D/config_reset_ov.png');
     }
 }

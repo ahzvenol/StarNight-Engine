@@ -1,11 +1,11 @@
+import { Component, Show } from 'solid-js'
 import { Core, GameUIElement, useEvents } from '@/core/Core'
 import { useSignal } from '@/utils/Reactive'
-import { Component, Show } from 'solid-js'
 import { Backlog } from './Backlog'
 import { ControlPanel } from './ControlPanel'
+import { Stage } from './Stage'
 import { TextBox } from './TextBox'
 import { Video } from './Video'
-import { Stage } from './Stage'
 
 const GameUI: GameUIElement = () => {
     const showBacklog = useSignal(false)

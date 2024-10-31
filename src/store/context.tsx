@@ -1,11 +1,11 @@
 import { JSX, createContext, useContext } from 'solid-js'
-import { Store } from './default'
+import { ReactiveStore } from './default'
 
-const storeContext = createContext<Store>()
+const storeContext = createContext<ReactiveStore>()
 
 const useStore = () => useContext(storeContext)!
 
-const Context = <U extends JSX.Element>(props: { environment: Store; children: U }) => (
+const Context = <U extends JSX.Element>(props: { environment: ReactiveStore; children: U }) => (
     <storeContext.Provider value={props.environment}>{props.children}</storeContext.Provider>
 )
 

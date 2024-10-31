@@ -1,16 +1,16 @@
+import dayjs from 'dayjs'
+import { Component, Show } from 'solid-js'
 import { useStore } from '@/store/context'
 import { translation } from '@/store/effect/translations'
-import { useSignal } from '@/utils/Reactive'
-import { Component, Show } from 'solid-js'
 import { Button, Clone } from '@/ui/Elements'
+import { useSignal } from '@/utils/Reactive'
 import styles from './SaveAndLoad.module.scss'
-import dayjs from 'dayjs'
 
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
     const currentPage = useSignal(0)
     const t = translation.menu
 
-    const save = useStore().save.individual
+    const save = useStore().save.local
     return (
         <div class={styles.Save_Load_main}>
             <div class={styles.Save_Load_top}>

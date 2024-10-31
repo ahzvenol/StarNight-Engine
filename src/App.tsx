@@ -1,13 +1,11 @@
-import type { Component } from 'solid-js'
-import { Match, Switch } from 'solid-js'
-
-import '@/store/effect/index'
-import UI from './ui/Hoshizora'
-import store from './store/store'
-import { log } from './utils/Logger'
-import { Context } from './store/context'
-import { Graphic } from './ui/Elements'
+import { Component, Match, Switch } from 'solid-js'
 import { KeepAliveProvider } from 'solid-keep-alive'
+import '@/store/effect/index'
+import { Context } from './store/context'
+import store from './store/store'
+import { Graphic } from './ui/Elements'
+import UI from './ui/Hoshizora'
+import { log } from './utils/Logger'
 
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false

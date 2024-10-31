@@ -1,6 +1,6 @@
+import { Component, Show } from 'solid-js'
 import { Clone, Variable } from '@/ui/Elements'
 import { useSignal } from '@/utils/Reactive'
-import { Component, Show } from 'solid-js'
 import { CGElement } from './CGElement'
 import styles from './Gallery.module.scss'
 

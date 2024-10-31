@@ -1,6 +1,6 @@
 .Game_Backlog_container {
     z-index: 9;
-    background-image: url(./static/Texture2D/backlog.png);
+    background-image: url('./static/Texture2D/backlog.png');
 }
 
 .Game_Backlog_mask {
@@ -10,76 +10,77 @@
 }
 
 .Game_Backlog_content {
+    top: 100px;
+    left: 148px;
     width: 948px;
     height: 720 - 100px;
-    left: 148px;
-    top: 100px;
     overflow: hidden;
 
     > * {
         display: flex;
-        min-height: 100%;
         flex-direction: column-reverse;
+        min-height: 100%;
     }
 
     * {
-        font-family: '';
         color: white;
+        font-family: unset;
     }
 }
 
 .Game_Backlog_element {
+    position: relative;
     width: 100%;
     height: 140px;
-    position: relative;
 }
 
 .Game_Backlog_element_clip {
+    top: 65px;
+    left: 0;
     width: 30px;
     height: 30px;
-    left: 0;
-    top: 65px;
-    background-image: url(./static/Texture2D/backlog_backvoice.png);
+    background-image: url('./static/Texture2D/backlog_backvoice.png');
 }
 
 .Game_Backlog_element_name {
+    top: 0;
+    left: 100px;
     z-index: 6;
     box-sizing: border-box;
     width: 249px;
     height: 39px;
-    padding-left: 30px;
     padding-top: 6px;
-    top: 0;
-    left: 100px;
-    font-size: 27px;
+    padding-left: 30px;
     font-weight: 300;
-    background-image: url(./static/Texture2D/backlog_name.png);
+    font-size: 27px;
+    background-image: url('./static/Texture2D/backlog_name.png');
 }
 
 .Game_Backlog_element_text {
+    left: 45px;
     z-index: 5;
     box-sizing: border-box;
     width: 900px;
     height: 125px;
-    padding-left: 100px;
     padding-top: 50px;
-    left: 45px;
+    padding-left: 100px;
     font-size: 20px;
-    background-image: url(./static/Texture2D/backlog_window.png);
+    background-image: url('./static/Texture2D/backlog_window.png');
 }
 
 .Game_Backlog_Scrollbar_track {
-    height: 410px;
-    width: 20px;
-    left: 1220px;
     top: 180px;
-    background-color: rgba($color: #fff, $alpha: 0.585);
+    left: 1220px;
+    width: 20px;
+    height: 410px;
+    background-color: rgba($color: #ffffff, $alpha: 58.5%);
 }
 
 .Game_Backlog_Scrollbar_thumb {
     width: 100%;
     background-color: #433e3e;
     transition: background-color 0.1s;
+
     &:active {
         background-color: #353131;
     }

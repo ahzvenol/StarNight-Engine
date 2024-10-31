@@ -1,11 +1,10 @@
-import { useAudioConfig } from '@/store/effect/audioManager'
-import { Store } from '@/store/default'
 import { range } from 'es-toolkit'
-import type { Component } from 'solid-js'
-import { For, JSX, splitProps } from 'solid-js'
-import Scale from './Scale'
+import { Component, For, JSX, splitProps } from 'solid-js'
 import click from '@/assets/mouse_click_1.wav'
 import hover from '@/assets/mouse_hover_1.wav'
+import { ReactiveStore } from '@/store/default'
+import { useAudioConfig } from '@/store/effect/audioManager'
+import Scale from './Scale'
 
 //横行竖列
 //给出总行数，返回每个index对应的行数
@@ -42,7 +41,7 @@ const column = (x: number) => (index: number) => Math.ceil((index + 1) / x)
 //     return <div {...props}></div>
 // }
 
-const Graphic = (props: { config: Store['system']; children: JSX.Element }) => (
+const Graphic = (props: { config: ReactiveStore['system']; children: JSX.Element }) => (
     <div style={{ width: '100vw', height: '100vh', 'background-color': '#000' }}>
         <Scale width={props.config.width()} height={props.config.height()} mode={props.config.mode()}>
             <div>{props.children}</div>

@@ -1,7 +1,7 @@
-import { CommandRunFunction } from '@/core/Command'
-import { useSignal } from '@/utils/Reactive'
 import { noInit } from '@/core/macro'
+import { CommandRunFunction } from '@/core/type'
 import { PromiseX } from '@/utils/PromiseX'
+import { useSignal } from '@/utils/Reactive'
 import { Continue } from './!'
 
 export const videoView = useSignal<HTMLVideoElement | null>(null)

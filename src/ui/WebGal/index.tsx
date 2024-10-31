@@ -1,4 +1,8 @@
 import { Component } from 'solid-js'
+import LXGWWenKai_Regular from '@/assets/LXGWWenKai-Regular.ttf'
+import OPPOSans_R from '@/assets/OPPOSans-R.ttf'
+import SourceHanSerifCN_Regular from '@/assets/SourceHanSerifCN-Regular.ttf'
+import Game from '@/core/Game'
 import { Route, router } from '../../router'
 import Config from './Config/Config'
 import Gallery from './Gallery/Gallery'
@@ -6,10 +10,6 @@ import Dialog from './GlobalDialog/GlobalDialog'
 import Menu from './Menu/Menu'
 import SaveLoad from './SaveAndLoad/SaveLoad'
 import Title from './Title/Title'
-import Game from '@/core/Game'
-import SourceHanSerifCN_Regular from '@/assets/SourceHanSerifCN-Regular.ttf'
-import LXGWWenKai_Regular from '@/assets/LXGWWenKai-Regular.ttf'
-import OPPOSans_R from '@/assets/OPPOSans-R.ttf'
 
 // todo:最后让AI去整理import的值和type吧
 const UI: Component = () => (

@@ -1,4 +1,4 @@
-import { CommandRunFunction, GameHooks } from '../Command'
+import { CommandRunFunction, GameHooks } from '../type'
 import { Audio } from './hoshizora/audio'
 import { SetImage } from './hoshizora/image'
 import { Say } from './hoshizora/say'
@@ -6,14 +6,15 @@ import { Video } from './hoshizora/video'
 import { Continue, End, Jump } from './script/!'
 import { AudioHooks } from './script/audio'
 import { BacklogHooks } from './script/backlog'
-import { RemoveImage, TweenImage, SetImageHooks } from './script/image'
+import { RemoveImage, SetImageHooks, TweenImage } from './script/image'
 import { NameHooks, TextHooks } from './script/textbox'
 import { TweenHooks } from './script/tween'
 import { Variable } from './script/variable'
 import { VideoHooks } from './script/video'
 import { Wait } from './script/wait'
 
-const _commands = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const _commands: Record<string, CommandRunFunction<any>> = {
     continue: Continue,
     jump: Jump,
     end: End,

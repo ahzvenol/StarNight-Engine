@@ -1,12 +1,12 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '@/store/store'
-import React from 'react'
-import styles from '@/UI/Extra/extra.module.scss'
-import { useValue } from '@/hooks/useValue'
-import { setStage } from '@/store/stageReducer'
 import { GoEnd, GoStart, MusicList, PlayOne, SquareSmall } from '@icon-park/react'
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import styles from '@/UI/Extra/extra.module.scss'
 import useSoundEffect from '@/hooks/useSoundEffect'
+import { useValue } from '@/hooks/useValue'
 import { setGuiAsset } from '@/store/GUIReducer'
+import { setStage } from '@/store/stageReducer'
+import { RootState } from '@/store/store'
 
 export function ExtraBgm() {
     const { playSeClick, playSeEnter } = useSoundEffect()

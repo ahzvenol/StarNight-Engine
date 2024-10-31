@@ -25,4 +25,11 @@ module.exports = {
     endOfLine: 'crlf',
     // 格式化字符串中的代码
     embeddedLanguageFormatting: 'auto',
+    plugins: ['@trivago/prettier-plugin-sort-imports'],
+    importOrderSortSpecifiers: true, // import { a, b } 内容要不要也排序
+    importOrder: [
+        '<THIRD_PARTY_MODULES>', // match 所有 node_modules 的 imports
+        '^@(/.*)$', // match 项目 module
+        '^[.]'
+    ]
 }

@@ -1,6 +1,6 @@
+import * as INI from 'js-ini'
 import { log } from '@/utils/Logger'
 import request from '@/utils/request'
-import * as INI from 'js-ini'
 import { IniKV } from './default'
 
 // 如果用户输入了错误的配置数据,目前不做处理

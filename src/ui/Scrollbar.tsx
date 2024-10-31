@@ -1,7 +1,7 @@
-import { children, Component, createEffect, JSX, onMount } from 'solid-js'
-import Slider from './Slider'
-import { useSignal } from '@/utils/Reactive'
+import { Component, JSX, children, createEffect, onMount } from 'solid-js'
 import { Portal } from 'solid-js/web'
+import { useSignal } from '@/utils/Reactive'
+import Slider from './Slider'
 
 const Scrollbar: Component<{
     container: JSX.Element

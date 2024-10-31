@@ -1,6 +1,6 @@
-import { Button } from '@/ui/Elements'
 import { useReactive } from 'micro-reactive'
 import { Component, Show } from 'solid-js'
+import { Button } from '@/ui/Elements'
 import styles from './GlobalDialog.module.scss'
 
 interface IShowGlobalDialogProps {

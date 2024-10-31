@@ -1,9 +1,9 @@
 .Config_Slider_background {
-    width: 320px;
-    height: 30px;
     display: flex;
     justify-content: center;
-    background-image: url(./static/Texture2D/config_gauge_BG.png);
+    width: 320px;
+    height: 30px;
+    background-image: url('./static/Texture2D/config_gauge_BG.png');
 }
 
 .Config_Slider_track {
@@ -11,15 +11,17 @@
     width: 320 - 18 * 2px;
     height: 30px;
 }
+
 .Config_Slider_thumb {
     width: 9px;
     height: 9px;
+    background-color: #344460;
     border: 3.5px solid white;
     border-radius: 50%;
-    background-color: #344460;
     translate: -50% 7px;
 }
-.Config_Slider_fill{
+
+.Config_Slider_fill {
     height: 4px;
     background-color: white;
     translate: 0 12.5px;

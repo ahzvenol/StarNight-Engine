@@ -1,5 +1,5 @@
-import { videoView } from '@/core/commands/script/video'
 import { Component, Show } from 'solid-js'
+import { videoView } from '@/core/commands/script/video'
 import styles from './Video.module.scss'
 
 export const Video: Component = () => {

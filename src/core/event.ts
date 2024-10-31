@@ -1,6 +1,6 @@
 import { log } from '@/utils/Logger'
-import { EventDispatcher, on } from './EventDispatcher'
 import { useEventListener } from '@/utils/useEventListener'
+import { EventDispatcher, on } from './EventDispatcher'
 
 export function createEventDispatchers() {
     const gameClickEvent = new EventDispatcher<void>()

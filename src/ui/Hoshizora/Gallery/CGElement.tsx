@@ -1,7 +1,7 @@
-import { useSignal } from '@/utils/Reactive'
 import { Getter } from 'micro-reactive'
 import { Component, Show } from 'solid-js'
 import { Portal } from 'solid-js/web'
+import { useSignal } from '@/utils/Reactive'
 import styles from './Gallery.module.scss'
 
 export const CGElement: Component<Getter<Array<string>>> = (cg) => {

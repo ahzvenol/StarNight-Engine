@@ -1,8 +1,8 @@
+import { Component, For, Show, createEffect } from 'solid-js'
 import { backlogView } from '@/core/commands/script/backlog'
 import { useAudioConfig } from '@/store/effect/audioManager'
 import Scrollbar from '@/ui/Scrollbar'
 import { Signal } from '@/utils/Reactive'
-import { Component, createEffect, For, Show } from 'solid-js'
 import Back from '../Back/Back'
 import styles from './Backlog.module.scss'
 

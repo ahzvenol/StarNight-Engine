@@ -1,12 +1,12 @@
+import { Component } from 'solid-js'
 import { useStore } from '@/store/context'
 import { translation } from '@/store/effect/translations'
 import { Clone, Variable } from '@/ui/Elements'
 import { useSignal } from '@/utils/Reactive'
-import { Component } from 'solid-js'
 import Button from '../Button'
 import Cell from '../Cell'
-import Slider from '../Slider'
 import styles from '../Config.module.scss'
+import Slider from '../Slider'
 
 const Sound: Component = () => {
     const t = translation.menu.options.pages.sound.options
