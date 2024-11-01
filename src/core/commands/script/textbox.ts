@@ -1,5 +1,5 @@
+import type { CommandRunFunction } from '@/core/type'
 import { noInit } from '@/core/macro'
-import { CommandRunFunction } from '@/core/type'
 import { STAR_MARKER } from '@/ui/Hoshizora/Game/TextBox'
 import { Y } from '@/utils/FPUtil'
 import { useSignal } from '@/utils/Reactive'

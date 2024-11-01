@@ -1,4 +1,5 @@
-import { Component, Show } from 'solid-js'
+import type { Component } from 'solid-js'
+import { Show } from 'solid-js'
 import { nameView, textView } from '@/core/commands/script/textbox'
 import { useStore } from '@/store/context'
 import styles from './TextBox.module.scss'

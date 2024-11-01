@@ -1,8 +1,8 @@
+import type { RootState } from '@/store/store'
 import { useSelector } from 'react-redux'
-import styles from '@/UI/Extra/extra.module.scss'
 import useSoundEffect from '@/hooks/useSoundEffect'
 import { useValue } from '@/hooks/useValue'
-import { RootState } from '@/store/store'
+import styles from '@/UI/Extra/extra.module.scss'
 import { ExtraCgElement } from '@/ui/WebGal/Gallery/ExtraCgElement'
 import './extraCG_animation_List.scss'
 
@@ -49,9 +49,8 @@ export function ExtraCg() {
                     currentPage.set(i)
                     playSeClick()
                 }}
-                key={'nav' + i}
                 onMouseEnter={playSeEnter}
-                className={className}>
+                class={className}>
                 {i}
             </div>
         )
@@ -59,11 +58,11 @@ export function ExtraCg() {
     }
 
     return (
-        <div className={styles.cgMain}>
-            <div className={styles.cgShowDiv}>
-                <div className={styles.cgShowDivWarpper}>{showNav}</div>
+        <div class={styles.cgMain}>
+            <div class={styles.cgShowDiv}>
+                <div class={styles.cgShowDivWarpper}>{showNav}</div>
             </div>
-            <div className={styles.cgContainer}>{showCgList}</div>
+            <div class={styles.cgContainer}>{showCgList}</div>
         </div>
     )
 }

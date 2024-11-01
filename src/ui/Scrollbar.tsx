@@ -1,4 +1,5 @@
-import { Component, JSX, children, createEffect, onMount } from 'solid-js'
+import type { Component, JSX } from 'solid-js'
+import { children, createEffect, onMount } from 'solid-js'
 import { Portal } from 'solid-js/web'
 import { useSignal } from '@/utils/Reactive'
 import Slider from './Slider'

@@ -1,8 +1,8 @@
-import { Component } from 'solid-js'
+import type { Component } from 'solid-js'
+import type { Signal } from '@/utils/Reactive'
 import { router } from '@/router'
 import { Button } from '@/ui/Elements'
 import { Pages } from '@/ui/Pages'
-import { Signal } from '@/utils/Reactive'
 import styles from './ControlPanel.module.scss'
 
 export const ControlPanel: Component<{ showBacklog: Signal<boolean> }> = ({ showBacklog }) => {

@@ -1,5 +1,6 @@
-import { Getter } from 'micro-reactive'
-import { Component, Show } from 'solid-js'
+import type { Getter } from 'micro-reactive'
+import type { Component } from 'solid-js'
+import { Show } from 'solid-js'
 import { Portal } from 'solid-js/web'
 import { useSignal } from '@/utils/Reactive'
 import styles from './Gallery.module.scss'

@@ -1,4 +1,4 @@
-import { CommandRunFunction, GameHooks } from '../type'
+import type { CommandRunFunction, GameHooks } from '../type'
 import { Audio } from './hoshizora/audio'
 import { SetImage } from './hoshizora/image'
 import { Say } from './hoshizora/say'

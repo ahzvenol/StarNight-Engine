@@ -1,14 +1,5 @@
-import {
-    Accessor,
-    EffectFunction,
-    EffectOptions,
-    Setter,
-    SignalOptions,
-    createEffect,
-    createRoot,
-    createSignal,
-    onCleanup
-} from 'solid-js'
+import type { Accessor, EffectFunction, EffectOptions, Setter, SignalOptions } from 'solid-js'
+import { createEffect, createRoot, createSignal, onCleanup } from 'solid-js'
 
 // tag:micro-reactive的effect是不受solidjs控制的
 // 如果在局部组件createEffect全局变量,由于组件可能重新渲染,createEffect会被重复记录和执行

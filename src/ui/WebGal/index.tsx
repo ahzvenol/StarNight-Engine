@@ -1,4 +1,4 @@
-import { Component } from 'solid-js'
+import type { Component } from 'solid-js'
 import LXGWWenKai_Regular from '@/assets/LXGWWenKai-Regular.ttf'
 import OPPOSans_R from '@/assets/OPPOSans-R.ttf'
 import SourceHanSerifCN_Regular from '@/assets/SourceHanSerifCN-Regular.ttf'

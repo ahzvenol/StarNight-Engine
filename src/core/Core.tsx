@@ -1,17 +1,19 @@
+import type { Component, JSX } from 'solid-js'
+import type { LocalSaveData } from '@/store/default'
+import type { Events, GameContext, Variables } from './type'
 import { once, range, throttle } from 'es-toolkit'
 import { useReactive } from 'micro-reactive'
-import { Component, JSX, createContext, createEffect, on, onMount, useContext } from 'solid-js'
+import { createContext, createEffect, on, onMount, useContext } from 'solid-js'
 import { router } from '@/router'
 import { book } from '@/store/book'
 import { useStore } from '@/store/context'
-import { LocalSaveData } from '@/store/default'
 import { Pages } from '@/ui/Pages'
 import { useSignal } from '@/utils/Reactive'
-import { Timer } from './Timer'
 import { runLoop } from './act'
 import { commands, hooks } from './commands'
 import { bindClickEventWithKey, createEventDispatchers } from './event'
-import { Events, GameContext, State, Variables } from './type'
+import { Timer } from './Timer'
+import { State } from './type'
 
 export type GameUIElement = Function0<JSX.Element>
 

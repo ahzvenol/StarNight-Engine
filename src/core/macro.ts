@@ -1,4 +1,5 @@
-import { CommandRunFunction, SingalCommand, State } from './type'
+import type { CommandRunFunction, SingalCommand } from './type'
+import { State } from './type'
 
 export function toApply<T extends SingalCommand>({
     init,

@@ -1,5 +1,6 @@
-import { Reactive } from 'micro-reactive'
-import { Component, JSX, children } from 'solid-js'
+import type { Reactive } from 'micro-reactive'
+import type { Component, JSX } from 'solid-js'
+import { children } from 'solid-js'
 
 // 滑块组件,提供最大限度的自由配置,根据此组件父元素的width作为滑块长度
 // 为了实现功能,此组件会修改以下属性,其余属性自由配置

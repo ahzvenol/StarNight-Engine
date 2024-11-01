@@ -1,5 +1,6 @@
-import { Component, Show } from 'solid-js'
-import { Variables } from '../../../core/Core'
+import type { Component } from 'solid-js'
+import type { Variables } from '../../../core/Core'
+import { Show } from 'solid-js'
 import styles from './TextBox.module.scss'
 
 export const TextBox: Component<{ variables: Variables }> = ({ variables }) => {
@@ -7,7 +8,7 @@ export const TextBox: Component<{ variables: Variables }> = ({ variables }) => {
         <>
             <div class={styles.TextBox_Container}>
                 {/* 因为透明度继承问题,对背景进行分离 */}
-                <div class={styles.TextBox_Background}></div>
+                <div class={styles.TextBox_Background} />
                 <div class={styles.TextBox_main}>
                     <span>
                         <span innerHTML={variables.reactive.textView().trim()} />

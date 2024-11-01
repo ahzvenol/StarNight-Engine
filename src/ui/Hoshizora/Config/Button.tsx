@@ -1,5 +1,5 @@
-import { Reactive } from 'micro-reactive'
-import { Component } from 'solid-js'
+import type { Reactive } from 'micro-reactive'
+import type { Component } from 'solid-js'
 import styles from './Config.module.scss'
 
 const BinaryButton: Component<{ signal: Reactive<boolean> }> = ({ signal: item }) => {

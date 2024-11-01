@@ -1,4 +1,5 @@
-import { Component, For } from 'solid-js'
+import type { Component } from 'solid-js'
+import { For } from 'solid-js'
 import { useStore } from '@/store/context'
 import { description, language, translation } from '@/store/effect/translations'
 import { clearSave, clearStorage, resetConfig } from '@/store/store'

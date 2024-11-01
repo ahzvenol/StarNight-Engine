@@ -1,6 +1,7 @@
+import type { CommandArg, CommandLifeCycleFunction, CommandRunFunction } from '@/core/type'
 import { isNotNil } from 'es-toolkit'
 import { match } from 'ts-pattern'
-import { CommandArg, CommandLifeCycleFunction, CommandRunFunction, State } from '@/core/type'
+import { State } from '@/core/type'
 import { Y } from '@/utils/FPUtil'
 import { useSignal } from '@/utils/Reactive'
 import { Tween } from './tween'

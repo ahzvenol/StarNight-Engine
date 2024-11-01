@@ -1,6 +1,7 @@
+import type { CommandArg, GameRuntimeContext } from '@/core/type'
 import anime from 'animejs/lib/anime.es.js'
 import { omit } from 'es-toolkit'
-import { CommandArg, GameRuntimeContext, State } from '@/core/type'
+import { State } from '@/core/type'
 
 // anime.suspendWhenDocumentHidden = true;
 // test:缓动库自带了一个暂停,但是不知道有没有用

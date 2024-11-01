@@ -1,4 +1,4 @@
-import { Component, ParentProps } from 'solid-js'
+import type { Component, ParentProps } from 'solid-js'
 import styles from './Menu.module.scss'
 import { MenuPanel } from './MenuPanel'
 

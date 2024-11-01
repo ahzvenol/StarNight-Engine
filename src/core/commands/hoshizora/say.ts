@@ -1,5 +1,5 @@
+import type { CommandRunFunction } from '@/core/type'
 import { par } from '@/core/flow'
-import { CommandRunFunction } from '@/core/type'
 import { Audio } from '../script/audio'
 import { Backlog } from '../script/backlog'
 import { Name, Text } from '../script/textbox'

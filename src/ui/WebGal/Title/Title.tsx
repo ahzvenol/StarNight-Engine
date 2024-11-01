@@ -1,4 +1,4 @@
-import { Component } from 'solid-js'
+import type { Component } from 'solid-js'
 import { translation } from '@/store/effect/translations'
 import { Button, Clone } from '@/ui/Elements'
 import { router } from '../../../router'

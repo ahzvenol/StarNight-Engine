@@ -1,7 +1,7 @@
 import React from 'react'
-import styles from '@/UI/Extra/extra.module.scss'
 import useSoundEffect from '@/hooks/useSoundEffect'
 import { useValue } from '@/hooks/useValue'
+import styles from '@/UI/Extra/extra.module.scss'
 
 interface IProps {
     name: string
@@ -21,14 +21,14 @@ export function ExtraCgElement(props: IProps) {
                         showFull.set(!showFull.value)
                         playSeClick()
                     }}
-                    className={styles.showFullContainer}
+                    class={styles.showFullContainer}
                     onMouseEnter={playSeEnter}>
-                    <div className={styles.showFullCgMain}>
+                    <div class={styles.showFullCgMain}>
                         <div
                             style={{
-                                backgroundImage: `url('${props.imgUrl}')`,
-                                backgroundSize: `cover`,
-                                backgroundPosition: 'center',
+                                'background-image': `url('${props.imgUrl}')`,
+                                'background-size': `cover`,
+                                'background-position': 'center',
                                 width: '100%',
                                 height: '100%'
                             }}
@@ -46,13 +46,12 @@ export function ExtraCgElement(props: IProps) {
                     // transform: `rotate(${deg}deg)`,
                     animation: `cg_softIn_${props.transformDeg} 1.5s ease-out ${100 + props.index * 100}ms forwards `
                 }}
-                key={props.name}
-                className={styles.cgElement}>
+                class={styles.cgElement}>
                 <div
                     style={{
-                        backgroundImage: `url('${props.imgUrl}')`,
-                        backgroundSize: `cover`,
-                        backgroundPosition: 'center',
+                        'background-image': `url('${props.imgUrl}')`,
+                        'background-size': `cover`,
+                        'background-position': 'center',
                         width: '100%',
                         height: '100%'
                     }}

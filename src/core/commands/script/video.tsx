@@ -1,5 +1,5 @@
+import type { CommandRunFunction } from '@/core/type'
 import { noInit } from '@/core/macro'
-import { CommandRunFunction } from '@/core/type'
 import { PromiseX } from '@/utils/PromiseX'
 import { useSignal } from '@/utils/Reactive'
 import { Continue } from './!'

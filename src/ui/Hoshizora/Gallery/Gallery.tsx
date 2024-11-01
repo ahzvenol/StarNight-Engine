@@ -1,4 +1,5 @@
-import { Component, Show } from 'solid-js'
+import type { Component } from 'solid-js'
+import { Show } from 'solid-js'
 import { Clone, Variable } from '@/ui/Elements'
 import { useSignal } from '@/utils/Reactive'
 import { CGElement } from './CGElement'

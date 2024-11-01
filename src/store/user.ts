@@ -1,7 +1,7 @@
+import type { IniKV } from './default'
 import * as INI from 'js-ini'
 import { log } from '@/utils/Logger'
 import request from '@/utils/request'
-import { IniKV } from './default'
 
 // 如果用户输入了错误的配置数据,目前不做处理
 export const getUserConfig = async () => {

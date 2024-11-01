@@ -1,4 +1,5 @@
-import { Component, Match, Switch, createEffect } from 'solid-js'
+import type { Component } from 'solid-js'
+import { createEffect, Match, Switch } from 'solid-js'
 import { translation } from '@/store/effect/translations'
 import { Button, Clone } from '@/ui/Elements'
 import { log } from '@/utils/Logger'
@@ -45,13 +46,13 @@ const Config: Component = () => {
                 <div class={styles.Options_main_content}>
                     <Switch>
                         <Match when={currentPage() === Page.System}>
-                            <System></System>
+                            <System />
                         </Match>
                         <Match when={currentPage() === Page.Display}>
-                            <Display></Display>
+                            <Display />
                         </Match>
                         <Match when={currentPage() === Page.Sound}>
-                            <Sound></Sound>
+                            <Sound />
                         </Match>
                     </Switch>
                 </div>

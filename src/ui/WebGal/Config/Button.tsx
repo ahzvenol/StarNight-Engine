@@ -1,4 +1,4 @@
-import { Reactive } from 'micro-reactive'
+import type { Reactive } from 'micro-reactive'
 import { createSelector, splitProps } from 'solid-js'
 import { Button as BaseButton } from '@/ui/Elements'
 import styles from './Button.module.scss'

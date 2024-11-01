@@ -7,17 +7,18 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
+    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
     "lint:prettier": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\"",
     "lint:style": "stylelint src\"/**/*.+(css|scss|less|stylus|sass|postcss)\" --fix",
-    "lint:format": "concurrently \"npm run lint:prettier\" \"npm run lint:style\""
+    "lint:all": "concurrently \"pnpm run lint:prettier\" \"pnpm run lint:style\" \"pnpm run lint:fix\""
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
     "@types/animejs": "^3.1.12",
     "@types/howler": "^2.2.12",
     "@types/mustache": "^4.2.5",
     "@typescript-eslint/eslint-plugin": "^8.6.0",
-    "eslint": "^8.52.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-solid": "^0.14.3",

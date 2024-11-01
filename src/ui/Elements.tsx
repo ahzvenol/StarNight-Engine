@@ -1,8 +1,9 @@
+import type { Component, JSX } from 'solid-js'
+import type { ReactiveStore } from '@/store/default'
 import { range } from 'es-toolkit'
-import { Component, For, JSX, splitProps } from 'solid-js'
+import { For, splitProps } from 'solid-js'
 import click from '@/assets/mouse_click_1.wav'
 import hover from '@/assets/mouse_hover_1.wav'
-import { ReactiveStore } from '@/store/default'
 import { useAudioConfig } from '@/store/effect/audioManager'
 import Scale from './Scale'
 

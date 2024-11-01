@@ -1,4 +1,4 @@
-import { Component } from 'solid-js'
+import type { Component } from 'solid-js'
 import { Button } from '@/ui/Elements'
 import styles from './Back.module.scss'
 

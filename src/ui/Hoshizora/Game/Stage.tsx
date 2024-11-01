@@ -1,4 +1,4 @@
-import { Component } from 'solid-js'
+import type { Component } from 'solid-js'
 import { stageView } from '@/core/commands/script/image'
 import styles from './Stage.module.scss'
 

@@ -1,4 +1,4 @@
-import { Component } from 'solid-js'
+import type { Component } from 'solid-js'
 import { translation } from '@/store/effect/translations'
 import { Clone, Variable } from '@/ui/Elements'
 import { useSignal } from '@/utils/Reactive'

@@ -8,10 +8,10 @@ class ObjectUtils {
     static isString(value: unknown): value is string {
         return Object.prototype.toString.call(value) === '[object String]'
     }
-    static isEmpty(object: Object): boolean {
+    static isEmpty(object: object): boolean {
         return JSON.stringify(object) === '{}'
     }
-    static isNotEmpty(object: Object): boolean {
+    static isNotEmpty(object: object): boolean {
         return JSON.stringify(object) !== '{}'
     }
     static forEach<K extends string | number | symbol, V>(object: Partial<Record<K, V>>) {

@@ -1,4 +1,4 @@
-import { Component } from 'solid-js'
+import type { Component } from 'solid-js'
 
 const Save: Component<{ fill: string }> = (props) => (
     <svg stroke={props.fill} width="1.2em" height="1.2em" viewBox="0 0 48 48" fill="none">

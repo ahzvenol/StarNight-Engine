@@ -1,5 +1,6 @@
+import type { Component } from 'solid-js'
 import dayjs from 'dayjs'
-import { Component, Show } from 'solid-js'
+import { Show } from 'solid-js'
 import { useStore } from '@/store/context'
 import { translation } from '@/store/effect/translations'
 import { Button, Clone } from '@/ui/Elements'
@@ -42,7 +43,7 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                         <Button
                             class={styles.Save_Load_content_element}
                             style={{ 'animation-delay': `${(i + 1) * 30}ms` }}>
-                            <Show when={save()[i]} fallback={<div></div>}>
+                            <Show when={save()[i]} fallback={<div />}>
                                 <div class={styles.Save_Load_content_element_top}>
                                     <div
                                         classList={{

@@ -1,4 +1,5 @@
-import { Component, ParentProps, children, onCleanup } from 'solid-js'
+import type { Component, ParentProps } from 'solid-js'
+import { children, onCleanup } from 'solid-js'
 
 const Scale: Component<ParentProps<{ width: number; height: number; mode: 'auto' | 'full' | unknown }>> = (props) => {
     let intervalId!: NodeJS.Timer
@@ -39,7 +40,9 @@ const Scale: Component<ParentProps<{ width: number; height: number; mode: 'auto'
         clearInterval(intervalId)
     })
     return (
-        <div ref={autoResize} style="width: 100%;height: 100%;overflow: hidden;position: absolute;z-index: 9;">
+        <div
+            ref={autoResize}
+            style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'absolute', 'z-index': '9' }}>
             {slot}
         </div>
     )

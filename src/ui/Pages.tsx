@@ -1,4 +1,5 @@
-import { Component, ParentProps, createEffect, on } from 'solid-js'
+import type { Component, ParentProps } from 'solid-js'
+import { createEffect, on } from 'solid-js'
 import { KeepAlive, useKeepAlive } from 'solid-keep-alive'
 import { Route, router } from '@/router'
 import { useAudioConfig } from '@/store/effect/audioManager'

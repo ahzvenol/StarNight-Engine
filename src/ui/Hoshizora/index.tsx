@@ -1,4 +1,4 @@
-import { Component } from 'solid-js'
+import type { Component } from 'solid-js'
 import bgm01 from '@/assets/bgm01.wav'
 import jcyt500W from '@/assets/jcyt500W.ttf'
 import { Route, router } from '../../router'

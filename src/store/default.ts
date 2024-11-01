@@ -1,6 +1,6 @@
-import { Reactive } from 'micro-reactive'
-import { CommandArg } from '@/core/type'
-import { language } from '@/store/effect/translations'
+import type { Reactive } from 'micro-reactive'
+import type { CommandArg } from '@/core/type'
+import type { language } from '@/store/effect/translations'
 
 // 确保程序运行所需的键值,如新增依赖变量,需要在这里添加默认值
 const systemDefaultStore = {

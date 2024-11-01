@@ -1,12 +1,12 @@
+import type { RootState } from '@/store/store'
 import { GoEnd, GoStart, MusicList, PlayOne, SquareSmall } from '@icon-park/react'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import styles from '@/UI/Extra/extra.module.scss'
 import useSoundEffect from '@/hooks/useSoundEffect'
 import { useValue } from '@/hooks/useValue'
 import { setGuiAsset } from '@/store/GUIReducer'
 import { setStage } from '@/store/stageReducer'
-import { RootState } from '@/store/store'
+import styles from '@/UI/Extra/extra.module.scss'
 
 export function ExtraBgm() {
     const { playSeClick, playSeEnter } = useSoundEffect()
@@ -51,10 +51,9 @@ export function ExtraBgm() {
                     currentPlayingBgmName.set(e.name)
                     dispatch(setGuiAsset({ asset: 'titleBgm', value: e.url }))
                 }}
-                key={e.name}
-                className={className}
+                class={className}
                 style={{
-                    animationDelay: `${i * 150}ms`
+                    'animation-delay': `${i * 150}ms`
                 }}
                 onMouseEnter={playSeEnter}>
                 {e.name}
@@ -62,8 +61,8 @@ export function ExtraBgm() {
         )
     })
     return (
-        <div className={styles.bgmContainer} style={{ maxHeight: bgmPlayerHeight }}>
-            <div className={styles.bgmPlayerMain}>
+        <div class={styles.bgmContainer} style={{ 'max-height': bgmPlayerHeight }}>
+            <div class={styles.bgmPlayerMain}>
                 <div
                     onClick={() => {
                         playSeClick()
@@ -74,7 +73,7 @@ export function ExtraBgm() {
                         }
                     }}
                     onMouseEnter={playSeEnter}
-                    className={styles.bgmControlButton}>
+                    class={styles.bgmControlButton}>
                     <GoStart theme="filled" size={iconSize} fill="#fff" strokeWidth={3} strokeLinejoin="miter" />
                 </div>
                 <div
@@ -84,7 +83,7 @@ export function ExtraBgm() {
                         bgmControl?.play().then()
                     }}
                     onMouseEnter={playSeEnter}
-                    className={styles.bgmControlButton}>
+                    class={styles.bgmControlButton}>
                     <PlayOne theme="filled" size={iconSize} fill="#fff" strokeWidth={3} strokeLinejoin="miter" />
                 </div>
                 <div
@@ -97,7 +96,7 @@ export function ExtraBgm() {
                         }
                     }}
                     onMouseEnter={playSeEnter}
-                    className={styles.bgmControlButton}>
+                    class={styles.bgmControlButton}>
                     <GoEnd theme="filled" size={iconSize} fill="#fff" strokeWidth={3} strokeLinejoin="miter" />
                 </div>
                 <div
@@ -107,22 +106,22 @@ export function ExtraBgm() {
                         bgmControl.pause()
                     }}
                     onMouseEnter={playSeEnter}
-                    className={styles.bgmControlButton}>
+                    class={styles.bgmControlButton}>
                     <SquareSmall theme="filled" size={iconSize} fill="#fff" strokeWidth={3} strokeLinejoin="miter" />
                 </div>
-                <div className={styles.bgmName}>{foundCurrentBgmName}</div>
+                <div class={styles.bgmName}>{foundCurrentBgmName}</div>
                 <div
                     onClick={() => {
                         playSeClick()
                         isShowBgmList.set(!isShowBgmList.value)
                     }}
                     onMouseEnter={playSeEnter}
-                    className={styles.bgmControlButton}
-                    style={{ marginLeft: 'auto' }}>
+                    class={styles.bgmControlButton}
+                    style={{ 'margin-left': 'auto' }}>
                     <MusicList theme="filled" size={iconSize} fill="#fff" strokeWidth={3} strokeLinejoin="miter" />
                 </div>
             </div>
-            {isShowBgmList.value && <div className={styles.bgmListContainer}> {showBgmList}</div>}
+            {isShowBgmList.value && <div class={styles.bgmListContainer}> {showBgmList}</div>}
         </div>
     )
 }

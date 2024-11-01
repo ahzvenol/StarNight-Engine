@@ -1,9 +1,11 @@
+import type { Resource } from 'solid-js'
+import type { ReactiveStore, Store } from './default'
 import { cloneDeep, debounce, toMerged } from 'es-toolkit'
 import localforage from 'localforage'
 import { useReactive } from 'micro-reactive'
-import { type Resource, createEffect, createResource, on } from 'solid-js'
+import { createEffect, createResource, on } from 'solid-js'
 import { log } from '@/utils/Logger'
-import systemDefaultStore, { ReactiveStore, Store } from './default'
+import systemDefaultStore from './default'
 import { getUserConfig } from './user'
 
 // 响应式变量会修改原始对象,需要处处clone避免默认数据被修改

@@ -1,5 +1,6 @@
+import type { Component } from 'solid-js'
 import dayjs from 'dayjs'
-import { Component, Show } from 'solid-js'
+import { Show } from 'solid-js'
 import { useStore } from '@/store/context'
 import { Clone, Variable } from '@/ui/Elements'
 import { useSignal } from '@/utils/Reactive'

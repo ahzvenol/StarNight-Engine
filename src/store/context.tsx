@@ -1,5 +1,6 @@
-import { JSX, createContext, useContext } from 'solid-js'
-import { ReactiveStore } from './default'
+import type { JSX } from 'solid-js'
+import type { ReactiveStore } from './default'
+import { createContext, useContext } from 'solid-js'
 
 const storeContext = createContext<ReactiveStore>()
 

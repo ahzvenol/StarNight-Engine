@@ -1,5 +1,5 @@
-import { Reactive } from 'micro-reactive'
-import { Component, ParentProps } from 'solid-js'
+import type { Reactive } from 'micro-reactive'
+import type { Component, ParentProps } from 'solid-js'
 import styles from './Cell.module.scss'
 
 const Cell: Component<ParentProps<{ title: Reactive<string> }>> = ({ title, children }) => {
