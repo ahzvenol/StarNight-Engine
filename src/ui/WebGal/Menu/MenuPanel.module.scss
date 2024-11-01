@@ -4,7 +4,6 @@
     justify-content: center;
     width: 100%;
     height: 10%;
-
     //background-color: rgba(255, 255, 255, 1);
     //box-shadow: 0 0 45px 15px rgba(0, 0, 0, 0.05);
     padding: 0 55px;
@@ -13,7 +12,6 @@
 .MenuPanel_button {
     display: flex;
     justify-content: center;
-
     //width: 20%;
     min-width: 12.5%;
     margin-right: 15px;
@@ -23,11 +21,9 @@
     font-size: 200%;
     text-align: center;
     background: rgb(0 0 0 / 0%);
-
     //font-weight: bold;
     border-radius: 6px;
     cursor: pointer;
-
     //border-right: 1.5px solid rgba(0, 0, 0, 0.15);
     transition:
         text-shadow 0.7s,

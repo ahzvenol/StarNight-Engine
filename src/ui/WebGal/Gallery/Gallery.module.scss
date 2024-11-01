@@ -66,7 +66,6 @@
     display: flex;
     flex-flow: column-reverse;
     align-content: center;
-
     //width: 100%;
     //height: 70%;
     box-sizing: border-box;
@@ -87,7 +86,6 @@
     align-items: flex-start;
     justify-content: flex-start;
     box-sizing: border-box;
-
     //overflow: hidden;
     width: 100%;
     margin: 0 0 15px;
@@ -134,7 +132,6 @@
     font-family: '思源宋体', serif;
     background-color: rgb(0 0 0 / 10%);
     border-radius: 5px;
-
     //animation: bgmElement_In 0.5s forwards ease-out;
     cursor: pointer;
     opacity: 1;
@@ -146,7 +143,6 @@
 @keyframes bgmElement_In {
     0% {
         opacity: 0.95;
-
         //transform: translate(-50px, 0);
     }
 
@@ -214,7 +210,6 @@
     align-items: flex-end;
     justify-content: center;
     padding: 12px 15px;
-
     //background: rgba(255, 255, 255, 0.35);
     border-radius: 7px;
 }
@@ -222,11 +217,9 @@
 .cgNav {
     margin: 0 0.25em;
     padding: 0.12em 1em;
-
     //background-color: rgba(0, 0, 0, 0.2);
     color: white;
     font-size: 170%;
-
     //width: 20px;
     text-align: center;
     border-radius: 7px;

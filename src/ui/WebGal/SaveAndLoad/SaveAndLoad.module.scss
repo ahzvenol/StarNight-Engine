@@ -7,12 +7,10 @@
 
 .Save_Load_top {
     display: flex;
-
     //border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     justify-content: center;
     width: 100%;
     height: 10%;
-
     //background-color: rgba(255, 255, 255, 1);
     //box-shadow: 0 0 1.5em 0.1em rgba(0, 0, 0, 0.05);
     animation: Elements_in ease-out 1s forwards;
@@ -23,12 +21,10 @@
     top: 0;
     left: 20px;
     z-index: -1;
-
     //border-bottom: 4px solid #77428D;
     display: flex;
     align-items: center;
     justify-content: center;
-
     //margin: 0 0 0 0.8em;
     //padding: 0 0.8em 0 0.8em;
     box-sizing: border-box;
@@ -60,7 +56,6 @@
 .Save_Load_top_buttonList {
     display: flex;
     height: 100%;
-
     //padding: 0 0 0 2em;
 }
 
@@ -130,7 +125,6 @@
     width: 17.5%;
     height: 45%;
     overflow: hidden;
-
     //background: linear-gradient(-45deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%);
     background: linear-gradient(-45deg, rgb(0 0 0 / 5%), rgb(0 0 0 / 7.5%));
     border-radius: 4px;
@@ -139,7 +133,6 @@
     transition:
         transform 0.25s,
         box-shadow 0.25s;
-
     //box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     animation:
         Elements_in 1s ease-out forwards,
@@ -195,7 +188,6 @@
     width: 100%;
     height: 40%;
     color: #373c38;
-
     //background: rgba(255,255,255,1);
     font-size: 120%;
     font-family: WebgalUI, sans-serif;
@@ -212,11 +204,9 @@
     width: 100%;
     padding: 0.35em 0.8em 0.25em;
     color: #77428d;
-
     //margin: 0.35em 0 0 0;
     //background: rgba(0, 0, 0, 0.04);
     font-weight: bold;
-
     //border-radius: 4px;
     border-bottom: 1px solid rgb(0 0 0 / 10%);
 }
