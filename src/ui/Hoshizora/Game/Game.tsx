@@ -11,13 +11,14 @@ import { Video } from './Video'
 
 const GameUI: GameUIElement = () => {
     const showBacklog = useSignal(false)
+    const showBottomBox = useSignal(true)
     const click = useEvents().click
     return (
-        <div style={{ display: 'contents' }} onClick={click}>
+        <div style={{ display: 'contents' }} onClick={() => (showBottomBox() ? click() : showBottomBox(true))}>
             <Stage />
-            <Show when={!showBacklog()}>
+            <Show when={!showBacklog() && showBottomBox()}>
                 <TextBox />
-                <ControlPanel showBacklog={showBacklog} />
+                <ControlPanel showBacklog={showBacklog} showBottomBox={showBottomBox} />
             </Show>
             <Show when={showBacklog()}>
                 <Backlog showBacklog={showBacklog} />

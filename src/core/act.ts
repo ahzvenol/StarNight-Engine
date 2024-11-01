@@ -93,7 +93,7 @@ function runLoop(
             // 为了更清晰的表示,用Promise.race同时监听几个事件来推进幕循环
             // auto的话,不需要去加速正在运行的幕,但是需要去推动已经停止的循环
             // 像是选项要卡死幕循环的情况,使用不在timer控制范围内的await就可以
-            await match(state)
+            await match(state())
                 .with(State.Fast, () => delay(100))
                 .with(State.Auto, () => delay(2000 - store.config.AutoReadSpeed() * 2000))
                 .otherwise(() => Promise.race([onClick(), onAuto(), onFast()]))

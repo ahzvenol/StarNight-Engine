@@ -55,8 +55,8 @@ export const Core: Component<{ startAt: number; children: GameUIElement }> = ({ 
     }
 
     const state = useSignal(State.Normal)
-    dispatchs.fast.subscribe(() => state(state() === State.Fast ? State.Normal : State.Fast))
     dispatchs.auto.subscribe(() => state(state() === State.Auto ? State.Normal : State.Auto))
+    dispatchs.fast.subscribe(() => state(state() === State.Fast ? State.Normal : State.Fast))
 
     slot({})
 

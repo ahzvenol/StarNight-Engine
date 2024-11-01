@@ -19,9 +19,14 @@
     font-size: 30px;
     white-space: pre-wrap;
     word-break: break-all;
-
     // tag:描边效果有点烂,还是叠字吧
     -webkit-text-stroke: 0.1px black;
+
+    > * {
+        position: relative;
+        display: inline-block;
+        width: auto;
+    }
 }
 
 .Game_TextBox_name_container {
@@ -47,12 +52,12 @@
 }
 
 .Game_TextBox_star {
-    display: inline-block;
+    position: absolute;
+    right: -32px;
+    bottom: -12px;
     width: 32px;
     height: 32px;
-    margin-top: 16px;
     background-image: url('./static/Texture2D/window_click.png');
-
     // transform: rotate(180deg);
     animation: flash 0.5s infinite alternate;
 
