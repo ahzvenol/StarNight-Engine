@@ -1,5 +1,6 @@
+import type { JSX, ParentProps } from 'solid-js'
 import { isFunction, isString } from 'es-toolkit'
-import { JSX, ParentProps, Show, createEffect } from 'solid-js'
+import { createEffect, Show } from 'solid-js'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 

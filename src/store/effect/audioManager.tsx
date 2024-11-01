@@ -1,4 +1,5 @@
-import { Howl, Howler } from 'howler'
+import type { Howl } from 'howler'
+import { Howler } from 'howler'
 import { createEffect } from 'solid-js'
 import { useEventListener } from '@/utils/useEventListener'
 import { storePromise } from '../store'

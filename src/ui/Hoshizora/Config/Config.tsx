@@ -1,4 +1,4 @@
-import { Component } from 'solid-js'
+import type { Component } from 'solid-js'
 import { router } from '@/router'
 import { useStore } from '@/store/context'
 import { resetConfig } from '@/store/store'

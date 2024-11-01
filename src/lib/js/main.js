@@ -75,7 +75,7 @@ function $objectGetClass(arg0) {
                 return $d_jl_Long.getClassOf()
             } else if (arg0 instanceof $Char) {
                 return $d_jl_Character.getClassOf()
-            } else if (!!(arg0 && arg0.$classData)) {
+            } else if (arg0 && arg0.$classData) {
                 return arg0.$classData.getClassOf()
             } else {
                 return null
@@ -116,7 +116,7 @@ function $objectClassName(arg0) {
                 return 'java.lang.Long'
             } else if (arg0 instanceof $Char) {
                 return 'java.lang.Character'
-            } else if (!!(arg0 && arg0.$classData)) {
+            } else if (arg0 && arg0.$classData) {
                 return arg0.$classData.name
             } else {
                 return null.getName__T()
@@ -942,7 +942,7 @@ $h_jl_System$SystemProperties$.prototype = $c_jl_System$SystemProperties$.protot
 $c_jl_System$SystemProperties$.prototype.getProperty__T__T__T = function (key, default$1) {
     if (this.jl_System$SystemProperties$__f_dict !== null) {
         var dict = this.jl_System$SystemProperties$__f_dict
-        return !!$m_jl_Utils$Cache$().jl_Utils$Cache$__f_safeHasOwnProperty.call(dict, key) ? dict[key] : default$1
+        return $m_jl_Utils$Cache$().jl_Utils$Cache$__f_safeHasOwnProperty.call(dict, key) ? dict[key] : default$1
     } else {
         return this.jl_System$SystemProperties$__f_properties.getProperty__T__T__T(key, default$1)
     }
@@ -1959,7 +1959,7 @@ function $p_ju_regex_PatternCompiler__compileEscape__T($thiz) {
                 (1 + $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex) | 0
             var groupName = $p_ju_regex_PatternCompiler__parseGroupName__T($thiz)
             var dict = $thiz.ju_regex_PatternCompiler__f_namedGroups
-            if (!!!$m_jl_Utils$Cache$().jl_Utils$Cache$__f_safeHasOwnProperty.call(dict, groupName)) {
+            if (!$m_jl_Utils$Cache$().jl_Utils$Cache$__f_safeHasOwnProperty.call(dict, groupName)) {
                 $p_ju_regex_PatternCompiler__parseError__T__E(
                     $thiz,
                     'named capturing group <' + groupName + '> does not exit'
@@ -2554,7 +2554,7 @@ function $p_ju_regex_PatternCompiler__compileGroup__T($thiz) {
                 $thiz.ju_regex_PatternCompiler__f_java$util$regex$PatternCompiler$$pIndex = (3 + start) | 0
                 var name = $p_ju_regex_PatternCompiler__parseGroupName__T($thiz)
                 var dict = $thiz.ju_regex_PatternCompiler__f_namedGroups
-                if (!!$m_jl_Utils$Cache$().jl_Utils$Cache$__f_safeHasOwnProperty.call(dict, name)) {
+                if ($m_jl_Utils$Cache$().jl_Utils$Cache$__f_safeHasOwnProperty.call(dict, name)) {
                     $p_ju_regex_PatternCompiler__parseError__T__E(
                         $thiz,
                         'named capturing group <' + name + '> is already defined'

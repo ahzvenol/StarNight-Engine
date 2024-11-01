@@ -1,6 +1,6 @@
-import { Reactive, ReactiveType } from 'micro-reactive'
-import { GlobalSaveData, LocalSaveData, ReactiveStore } from '@/store/default'
-import { Timer } from './Timer'
+import type { Reactive, ReactiveType } from 'micro-reactive'
+import type { GlobalSaveData, LocalSaveData, ReactiveStore } from '@/store/default'
+import type { Timer } from './Timer'
 
 export enum State {
     Init,

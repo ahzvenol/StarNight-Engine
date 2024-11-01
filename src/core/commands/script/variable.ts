@@ -1,4 +1,4 @@
-import { CommandArg, CommandRunFunction, Variables } from '@/core/type'
+import type { CommandArg, CommandRunFunction, Variables } from '@/core/type'
 
 type VariableCommandArgs = { name: string; type: keyof Variables; value: CommandArg }
 

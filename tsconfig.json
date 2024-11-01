@@ -1,34 +1,31 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "jsx": "preserve",
-    "jsxImportSource": "solid-js",
-    "types": [
-      "vite/client"
-    ],
-    "noEmit": true,
-    "isolatedModules": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
-    // "suppressImplicitAnyIndexErrors":true,
-    // "resolveJsonModule": true,
-    "ignoreDeprecations": "5.0",
-    "plugins": [
-      {
-        "name": "typescript-plugin-css-modules",
-        "options": {
-          "customMatcher": "\\.(c|le||lle|sa|sc)ss$"
-        }
-      }
-    ]
-  }
+    "include": ["**/*.ts", "**/*.tsx"],
+    "compilerOptions": {
+        "strict": true,
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "jsx": "preserve",
+        "jsxImportSource": "solid-js",
+        "types": ["vite/client"],
+        "noEmit": true,
+        "isolatedModules": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        },
+        // "suppressImplicitAnyIndexErrors":true,
+        // "resolveJsonModule": true,
+        "ignoreDeprecations": "5.0",
+        "plugins": [
+            {
+                "name": "typescript-plugin-css-modules",
+                "options": {
+                    "customMatcher": "\\.(c|le||lle|sa|sc)ss$"
+                }
+            }
+        ]
+    }
 }
