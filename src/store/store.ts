@@ -8,7 +8,6 @@ import { log } from '@/utils/Logger'
 import systemDefaultStore from './default'
 import { getUserConfig } from './user'
 
-// 响应式变量会修改原始对象,需要处处clone避免默认数据被修改
 const createStore = async () => {
     const userConfig = (await getUserConfig().catch((e) => log.warn('没有获取到用户配置', e))) || {}
 
@@ -32,12 +31,18 @@ const createStore = async () => {
     const save = await localforage.getItem<Store['save']>('save')
 
     // 这里是默认配置与storage配置之间的关系逻辑
-    const store = useReactive({
-        system: toMerged(system, userDefaultStore.system),
-        config: toMerged(userDefaultStore.config, config),
-        save: save || userDefaultStore.save,
-        user: userDefaultStore.user
-    })
+    const store = useReactive([
+        {
+            system: toMerged(system, userDefaultStore.system),
+            config: toMerged(userDefaultStore.config, config),
+            save: save || userDefaultStore.save,
+            user: userDefaultStore.user
+        }
+    ])[0]
+    // tag:直接访问根对象,如store(),会导致store数据改变时,组件被重复调用
+    // 我也不知道怎么回事,总之套一层数组来解构一下它就好了
+    // micro-reactive的更新版本没有这个问题,但是
+    // 新版本也取消了子变量修改时对父变量的Effect传递,所以,不能更新
 
     Object.keys(store()).forEach((key) => {
         createEffect(
