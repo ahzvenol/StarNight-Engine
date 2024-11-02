@@ -11,14 +11,14 @@ updateComputation = function (node) {
 }`
 
 export default function TrackEffect() {
-  return {
-    name: 'track-effect',
-    transform(src: string, id: string) {
-      if (fileRegex.test(id) && funcRegex.test(src)) {
-        return {
-          code: importUseEffect + src + hackUpdateComputation
+    return {
+        name: 'track-effect',
+        transform(src: string, id: string) {
+            if (fileRegex.test(id) && funcRegex.test(src)) {
+                return {
+                    code: importUseEffect + src + hackUpdateComputation
+                }
+            }
         }
-      }
     }
-  }
 }
