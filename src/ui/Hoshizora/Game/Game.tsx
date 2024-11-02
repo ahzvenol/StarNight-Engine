@@ -1,5 +1,4 @@
 import type { Component } from 'solid-js'
-import type { GameUIElement } from '@/core/Core'
 import { throttle } from 'es-toolkit'
 import { Show } from 'solid-js'
 import { clickState, EventState } from '@/core/commands/script/click'
@@ -50,10 +49,11 @@ const GameUI: Component = () => {
     )
 }
 
-const Game: Component = () => (
-    <Core startAt={1}>
-        <GameUI />
-    </Core>
-)
-
+const Game: Component = () => {
+    return (
+        <Core startAt={1}>
+            <GameUI />
+        </Core>
+    )
+}
 export default Game

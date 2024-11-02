@@ -5,6 +5,7 @@ import { useReactive } from 'micro-reactive'
 import { createContext, createEffect, on, onMount, useContext } from 'solid-js'
 import { router } from '@/router'
 import book from '@/store/book'
+import { useStore } from '@/store/context'
 import systemDefaultStore from '@/store/default'
 import { Pages } from '@/ui/Pages'
 import { log } from '@/utils/Logger'
@@ -32,10 +33,9 @@ export const Core: Component<ParentProps<{ startAt: number }>> = (props) => {
 
     const startAt = props.startAt
     // startAt = 1
-    // const store = useStore()
-    const store = useReactive(systemDefaultStore)
+    const store = useStore()
 
-    const index = useSignal(props.startAt)
+    const index = useSignal(startAt)
     // tag:可能需要一些更复杂的分支预测机制
     // createEffect(() => preLoad(index() + 5))
     const dispatchs = createEventDispatchers()
@@ -58,7 +58,7 @@ export const Core: Component<ParentProps<{ startAt: number }>> = (props) => {
         // global: store.save.global as Reactive<GlobalSaveData>
     }
 
-    const context: GameContext = { variables, store: store() }
+    const context: GameContext = { variables, store: store }
 
     createEffect(
         on(

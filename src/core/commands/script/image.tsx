@@ -35,8 +35,6 @@ const afterInit: CommandLifeCycleFunction = () =>
 const setImage: CommandRunFunction<SetImageCommandArgs> =
     (context) =>
     ({ name, file, ease, duration, x = 0, y = 0, z = 1, w, h }) => {
-        console.log(stageView())
-
         const { state } = context
         // tag:unlock cg
         const array = stageView()!.getElementsByClassName(name)

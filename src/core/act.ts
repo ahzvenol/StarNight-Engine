@@ -18,8 +18,8 @@ import { State } from './type'
 const actStartEvent = new EventDispatcher<GameRuntimeContext>()
 const actEndEvent = new EventDispatcher<GameRuntimeContext>()
 const actSecondClickEvent = new EventDispatcher<GameRuntimeContext>()
-actStartEvent.subscribe((context) => log.info(`开始执行第${context.row}幕...`))
-actEndEvent.subscribe((context) => log.info(`第${context.row}幕执行结束`))
+actStartEvent.subscribe((context) => log.info(`开始执行第${context.index}幕...`))
+actEndEvent.subscribe((context) => log.info(`第${context.index}幕执行结束`))
 actSecondClickEvent.subscribe(() => log.info('一幕内第二次点击,立即执行'))
 
 // 给予全部命令操作actindex的能力是危险的,有几个特殊的命令会影响主循环,可以单独提出

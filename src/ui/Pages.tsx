@@ -2,6 +2,7 @@ import type { Component, ParentProps } from 'solid-js'
 import { createEffect, on } from 'solid-js'
 import { KeepAlive, useKeepAlive } from 'solid-keep-alive'
 import { Route, router } from '@/router'
+import { useStore } from '@/store/context'
 import { useAudioConfig } from '@/store/effect/audioManager'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
@@ -42,11 +43,14 @@ const key = useSignal(0)
 const Game: Component<ParentProps> = (props) => {
     const { removeElement } = useKeepAlive()[1]
     createEffect(on(key, () => removeElement(Pages.Game)))
+
     return (
-        <Route path={Pages.Game}>
-            {/* @ts-expect-error  返回类型 "() => Element" 不是有效的 JSX 元素。*/}
-            <KeepAlive id={Pages.Game}>{props.children}</KeepAlive>
-        </Route>
+        <>
+            <Route path={Pages.Game}>
+                {/* @ts-expect-error  返回类型 "() => Element" 不是有效的 JSX 元素。*/}
+                <KeepAlive id={Pages.Game}>{props.children}</KeepAlive>
+            </Route>
+        </>
     )
 }
 

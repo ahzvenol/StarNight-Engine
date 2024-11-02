@@ -3,7 +3,6 @@ import type { AudioTracksType } from '@/store/effect/audioManager'
 import { mapValues } from 'es-toolkit'
 import { State } from '@/core/type'
 import { useAudioConfig } from '@/store/effect/audioManager'
-import { PromiseX } from '@/utils/PromiseX'
 
 // 跨幕环境变量file,需要收集副作用
 export type AudioCommandArgs = XOR<
@@ -40,23 +39,22 @@ const audio: CommandRunFunction<AudioCommandArgs> =
             if (oldAudio && duration) oldAudio.fade(oldAudio.volume(), 0, duration)
             timer.delay(duration).then(() => oldAudio?.stop())
             // 挂载新音频
-            const promise = new PromiseX<void>()
             const audio = useAudioConfig(
                 type as AudioTracksType,
                 new Howl({
                     src: file,
                     autoplay: true,
                     loop,
-                    preload: state !== State.Init,
-                    onend: () => {
-                        promise.resolve()
-                    }
+                    preload: state !== State.Init
                 })
             )
             tracks[name] = audio
+            // 由于无从得知audio是否播放完毕,重复调用play()会导致重复播放,所以在audio播放完毕的时候销毁它
+            audio.on('end', () => audio.unload())
             if (duration) timer.delay(duration).then(() => audio.fade(0, audio.volume(), duration))
             // 自动模式需要对audio计时
-            if (state === State.Auto && type === 'Clip') return promise
+            if (state === State.Auto && type === 'Clip')
+                return new Promise<void>((res) => audio.once('end', () => res()))
         } // 根据名称关闭音轨
         else {
             // 如果省略了target,关闭全部轨道

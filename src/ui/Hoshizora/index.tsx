@@ -18,23 +18,23 @@ const UI: Component = () => (
         <Game>
             <GameImpl />
         </Game>
-        <div onContextMenu={router.back} style={{ display: 'contents' }}>
-            <Route path="Config">
-                <Config />
-            </Route>
-            <Route path="Load">
-                <SaveLoad mode="Load" />
-            </Route>
-            <Route path="Save">
-                <SaveLoad mode="Save" />
-            </Route>
-            <Route path="Gallery">
-                <Gallery />
-            </Route>
-            <Route when={(path) => path === 'Config' || path === 'Load' || path === 'Save' || path === 'Gallery'}>
+        <Route when={(path) => path === 'Config' || path === 'Load' || path === 'Save' || path === 'Gallery'}>
+            <div onContextMenu={router.back} style={{ display: 'contents' }}>
+                <Route path="Config">
+                    <Config />
+                </Route>
+                <Route path="Load">
+                    <SaveLoad mode="Load" />
+                </Route>
+                <Route path="Save">
+                    <SaveLoad mode="Save" />
+                </Route>
+                <Route path="Gallery">
+                    <Gallery />
+                </Route>
                 <Back onClick={router.back} />
-            </Route>
-        </div>
+            </div>
+        </Route>
         <style jsx global>
             {`
                 @font-face {
