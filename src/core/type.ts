@@ -28,7 +28,7 @@ export type GameContext = {
 export type GameRuntimeContext = {
     timer: Timer
     state: State
-    row: number
+    index: number
 } & GameContext
 
 export type CommandArg = string | number | boolean

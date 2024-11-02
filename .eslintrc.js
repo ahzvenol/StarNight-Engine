@@ -1,4 +1,5 @@
 module.exports = {
+    root: true, // 当前配置为根配置，将不再从上级文件夹查找配置
     ignorePatterns: ['.eslintrc.js', '**/lib/**'],
     env: {
         browser: true,

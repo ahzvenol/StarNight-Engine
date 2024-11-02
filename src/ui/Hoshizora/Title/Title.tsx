@@ -2,9 +2,11 @@ import type { Component } from 'solid-js'
 import { router } from '@/router'
 import { Button, Clone, line, Variable } from '@/ui/Elements'
 import { Pages, restartGame } from '@/ui/Pages'
+import { log } from '@/utils/Logger'
 import styles from './Title.module.scss'
 
 const Title: Component = () => {
+    log.info('Title组件发生函数调用')
     return (
         <div class={'Page' + ' ' + styles.Title_container}>
             <Clone count={4}>

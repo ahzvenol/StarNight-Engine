@@ -3,11 +3,13 @@ import { router } from '@/router'
 import { useStore } from '@/store/context'
 import { resetConfig } from '@/store/store'
 import { Button, Clone, Variable } from '@/ui/Elements'
+import { log } from '@/utils/Logger'
 import { BinaryButton, GroupButton } from './Button'
 import styles from './Config.module.scss'
 import Slider from './Slider'
 
 const Config: Component = () => {
+    log.info('Config组件发生函数调用')
     const config = useStore().config
     return (
         <div class={'Page' + ' ' + styles.Config_container}>

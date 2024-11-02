@@ -5,7 +5,7 @@ import type { GameRuntimeContext, Variables } from './type'
 import { delay, mapValues } from 'es-toolkit'
 import Mustache from 'mustache'
 import { match, P } from 'ts-pattern'
-import { book } from '@/store/book'
+import book from '@/store/book'
 import { Y } from '@/utils/FPUtil'
 import { log } from '@/utils/Logger'
 import { PromiseX } from '@/utils/PromiseX'
@@ -24,7 +24,7 @@ actSecondClickEvent.subscribe(() => log.info('一幕内第二次点击,立即执
 
 // 给予全部命令操作actindex的能力是危险的,有几个特殊的命令会影响主循环,可以单独提出
 async function runAct(
-    row: number,
+    index: number,
     state: State,
     store: ReactiveType<ReactiveStore>,
     variables: Variables,
@@ -34,7 +34,7 @@ async function runAct(
     const timer = new Timer()
     // 如果现在是快进状态,直接把timer设置到立即执行
     if (state == State.Fast) timer.toImmediate()
-    const context: GameRuntimeContext = { timer, state, store, variables, row }
+    const context: GameRuntimeContext = { timer, state, store, variables, index }
     // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕,通过timer立即执行全部效果
     // 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
     const immPromise = new PromiseX()
@@ -51,7 +51,7 @@ async function runAct(
     hooks.forEach((hook) => hook.beforeActStart?.(context))
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
     const commandOutput = await fork(
-        (await book)[row]
+        (await book.row(index))
             .map((args) =>
                 mapValues(args, (value) =>
                     match(value)
@@ -76,7 +76,7 @@ async function runAct(
 }
 
 function runLoop(
-    row: Signal<number>,
+    index: Signal<number>,
     state: Signal<State>,
     store: ReactiveStore,
     variables: Variables,
@@ -86,7 +86,7 @@ function runLoop(
 ) {
     return Y<void, Promise<void>>((rec) => async () => {
         // 幕运行过程中不会操作任何状态,但可以操作variables
-        const res = await runAct(row(), state(), store(), variables, onClick(), onFast())
+        const res = await runAct(index(), state(), store(), variables, onClick(), onFast())
         // 等待过程受continue命令影响
         if (res['continue'] !== true) {
             // 只有两个地方会有阻塞:正在运行一幕,等待点击事件
@@ -102,12 +102,12 @@ function runLoop(
         // 调用jump命令修改接下来一幕的行号
         const jumpTarget = res['jump']
         if (Number.isFinite(jumpTarget)) {
-            row(jumpTarget as number)
-        } else row((i) => i + 1)
+            index(jumpTarget as number)
+        } else index((i) => i + 1)
         // 调用end命令结束幕循环
         if (res['end'] === true) return Promise.resolve()
         // 当行号超出时,自动退出
-        if (row() < (await book).length) return rec()
+        if (index() < (await book.length())) return rec()
         else return Promise.resolve()
     })()
 }

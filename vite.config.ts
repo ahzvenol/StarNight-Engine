@@ -1,6 +1,7 @@
 import { resolve } from 'path'
+import type { PluginOption } from 'vite'
 import { visualizer } from 'rollup-plugin-visualizer'
-import { defineConfig, PluginOption } from 'vite'
+import { defineConfig } from 'vite'
 import importToCDN from 'vite-plugin-cdn-import'
 import solidPlugin from 'vite-plugin-solid'
 import TrackEffect from './plugins/vite-plugin-track-effect'

@@ -1,6 +1,7 @@
 import type { Component } from 'solid-js'
 import { Show } from 'solid-js'
 import { Clone, Variable } from '@/ui/Elements'
+import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { CGElement } from './CGElement'
 import styles from './Gallery.module.scss'
@@ -30,6 +31,7 @@ const CG = [
 ]
 
 const Gallery: Component = () => {
+    log.info('Gallery组件发生函数调用')
     const currentPage = useSignal<0 | 1>(0)
     return (
         <div class={'Page' + ' ' + styles.Gallery_container}>

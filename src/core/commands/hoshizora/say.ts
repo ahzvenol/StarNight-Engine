@@ -16,7 +16,7 @@ const say: CommandRunFunction<SayCommandArgs> =
                 if (name !== undefined) return Name(context)({ name })
             },
             () => {
-                if (file !== undefined) return Audio(context)({ target: 'Clip', file })
+                if (file !== undefined) return Audio(context)({ name: 'Clip', file })
             },
             () => Backlog(context)({ text, name, file })
         ])()

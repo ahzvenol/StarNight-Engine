@@ -12,5 +12,9 @@
         > * {
             position: absolute;
         }
+
+        > img {
+            object-fit: cover;
+        }
     }
 }

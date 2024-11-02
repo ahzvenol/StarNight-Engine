@@ -35,6 +35,8 @@ const afterInit: CommandLifeCycleFunction = () =>
 const setImage: CommandRunFunction<SetImageCommandArgs> =
     (context) =>
     ({ name, file, ease, duration, x = 0, y = 0, z = 1, w, h }) => {
+        console.log(stageView())
+
         const { state } = context
         // tag:unlock cg
         const array = stageView()!.getElementsByClassName(name)
@@ -46,6 +48,8 @@ const setImage: CommandRunFunction<SetImageCommandArgs> =
         bitmap.style.left = `${x}px`
         bitmap.style.top = `${y}px`
         bitmap.style.zIndex = `${z}`
+        if (w !== undefined) bitmap.style.width = `${w}px`
+        if (h !== undefined) bitmap.style.height = `${h}px`
         const oldBitmap = array[0]
         if (isNotNil(oldBitmap)) {
             Tween(context)({ target: oldBitmap, ease, duration })({ opacity: 0 }).then(() => {
