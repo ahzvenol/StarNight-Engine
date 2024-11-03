@@ -8,9 +8,6 @@ dependencies:
   '@solidjs/router':
     specifier: ^0.8.3
     version: 0.8.3(solid-js@1.9.2)
-  '@types/createjs':
-    specifier: ^0.0.29
-    version: registry.npmmirror.com/@types/createjs@0.0.29
   '@types/node':
     specifier: ^18.11.9
     version: registry.npmmirror.com/@types/node@18.11.9
@@ -26,6 +23,9 @@ dependencies:
   devtools-detector:
     specifier: ^2.0.14
     version: registry.npmmirror.com/devtools-detector@2.0.14
+  dom-to-image:
+    specifier: ^2.6.0
+    version: 2.6.0
   es-toolkit:
     specifier: ^1.22.0
     version: 1.22.0
@@ -70,6 +70,9 @@ devDependencies:
   '@types/animejs':
     specifier: ^3.1.12
     version: 3.1.12
+  '@types/dom-to-image':
+    specifier: ^2.6.7
+    version: 2.6.7
   '@types/howler':
     specifier: ^2.2.12
     version: 2.2.12
@@ -740,6 +743,10 @@ packages:
   /@types/css-tree@2.3.2:
     resolution: {integrity: sha512-B5nF6h7xxpMLvZ1pzugAYUGj1aw4KgTpXZzOijkDMRzey4SlFi0jVWb3o0SS1CVSxyBciltVgjt67CwrgjmlWA==}
     dev: false
+
+  /@types/dom-to-image@2.6.7:
+    resolution: {integrity: sha512-me5VbCv+fcXozblWwG13krNBvuEOm6kA5xoa4RrjDJCNFOZSWR3/QLtOXimBHk1Fisq69Gx3JtOoXtg1N1tijg==}
+    dev: true
 
   /@types/glob@7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
@@ -1729,6 +1736,10 @@ packages:
       domelementtype: 2.3.0
       entities: 2.2.0
     dev: true
+
+  /dom-to-image@2.6.0:
+    resolution: {integrity: sha512-Dt0QdaHmLpjURjU7Tnu3AgYSF2LuOmksSGsUcE6ItvJoCWTBEmiMXcqBdNSAm9+QbbwD7JMoVsuuKX6ZVQv1qA==}
+    dev: false
 
   /domelementtype@1.3.1:
     resolution: {integrity: sha512-BSKB+TSpMpFI/HOxCNr1O8aMOTZ8hT3pM3GQ0w/mWRmkhEDSFJkkyzz4XQsBV44BChwGkrDfMyjVD0eA2aFV3w==}
@@ -5899,33 +5910,6 @@ packages:
       picomatch: registry.npmmirror.com/picomatch@2.3.1
     dev: true
 
-  registry.npmmirror.com/@types/createjs-lib@0.0.29:
-    resolution: {integrity: sha512-SjceOhvNEqweSfWNMT6wu4DsH09X0phnlzCCj5s+VAwLXuTsb8YS+vAmngg+DTuWu75vcF3qFsqxZQ85KZ3/Lw==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@types/createjs-lib/-/createjs-lib-0.0.29.tgz}
-    name: '@types/createjs-lib'
-    version: 0.0.29
-    dev: false
-
-  registry.npmmirror.com/@types/createjs@0.0.29:
-    resolution: {integrity: sha512-bDZJTAEoGZw12zjXHLrcQHz0tuyv+MMlFh9tLm7DWZfF33biqWaXQgk4g7pMvploRu42sbH4XkXVJ7Wz9O1sCg==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@types/createjs/-/createjs-0.0.29.tgz}
-    name: '@types/createjs'
-    version: 0.0.29
-    dependencies:
-      '@types/createjs-lib': registry.npmmirror.com/@types/createjs-lib@0.0.29
-      '@types/easeljs': registry.npmmirror.com/@types/easeljs@1.0.1
-      '@types/preloadjs': registry.npmmirror.com/@types/preloadjs@0.6.32
-      '@types/soundjs': registry.npmmirror.com/@types/soundjs@0.6.28
-      '@types/tweenjs': registry.npmmirror.com/@types/tweenjs@1.0.4
-    dev: false
-
-  registry.npmmirror.com/@types/easeljs@1.0.1:
-    resolution: {integrity: sha512-mu4oIs+2CbN60Vgq8DSt7aXR2I0tV9K2ev/ZIPlkyE5UvQ+xIvw8D3NDB4dnGFkvHN303faYcETIhuvNDm6siQ==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@types/easeljs/-/easeljs-1.0.1.tgz}
-    name: '@types/easeljs'
-    version: 1.0.1
-    dependencies:
-      '@types/createjs-lib': registry.npmmirror.com/@types/createjs-lib@0.0.29
-      '@types/tweenjs': registry.npmmirror.com/@types/tweenjs@1.0.4
-    dev: false
-
   registry.npmmirror.com/@types/estree@1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@types/estree/-/estree-1.0.0.tgz}
     name: '@types/estree'
@@ -5936,31 +5920,6 @@ packages:
     resolution: {integrity: sha512-CRpX21/kGdzjOpFsZSkcrXMGIBWMGNIHXXBVFSH+ggkftxg+XYP20TESbh+zFvFj3EQOl5byk0HTRn1IL6hbqg==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@types/node/-/node-18.11.9.tgz}
     name: '@types/node'
     version: 18.11.9
-    dev: false
-
-  registry.npmmirror.com/@types/preloadjs@0.6.32:
-    resolution: {integrity: sha512-vtrFzX5Aba+CYs/niapnQzk9qmJzXmKraV/Vty/T/HWO+gv3BoyDpV+OoEUS76NRnfRYi1kihE0IujiM7MjCQA==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@types/preloadjs/-/preloadjs-0.6.32.tgz}
-    name: '@types/preloadjs'
-    version: 0.6.32
-    dependencies:
-      '@types/createjs-lib': registry.npmmirror.com/@types/createjs-lib@0.0.29
-    dev: false
-
-  registry.npmmirror.com/@types/soundjs@0.6.28:
-    resolution: {integrity: sha512-K3ktwPvYfQrH+qGEe1tgxC5o4rJC7CVxQmL9Cz9tgVq0oW99PmPfRp1F7YXELibCvV3lieD4E0sUZvnDEKWaPg==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@types/soundjs/-/soundjs-0.6.28.tgz}
-    name: '@types/soundjs'
-    version: 0.6.28
-    dependencies:
-      '@types/createjs-lib': registry.npmmirror.com/@types/createjs-lib@0.0.29
-      '@types/preloadjs': registry.npmmirror.com/@types/preloadjs@0.6.32
-    dev: false
-
-  registry.npmmirror.com/@types/tweenjs@1.0.4:
-    resolution: {integrity: sha512-UnGcZRjGYz2w+2LB/70QkzWjtqOcTu4Nxa/Cy9YZ4I8HU44kcayNgbXZYMQu4ll7z+1GP7r1+viqLKNv7+Mrzw==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/@types/tweenjs/-/tweenjs-1.0.4.tgz}
-    name: '@types/tweenjs'
-    version: 1.0.4
-    dependencies:
-      '@types/createjs-lib': registry.npmmirror.com/@types/createjs-lib@0.0.29
     dev: false
 
   registry.npmmirror.com/ansi-styles@3.2.1:
