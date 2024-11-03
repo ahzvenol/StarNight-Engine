@@ -74,7 +74,7 @@
         content: '';
     }
 
-    &:hover::before {
+    &.Save_Load_content_element_hover:hover::before {
         opacity: 0.412;
     }
 }

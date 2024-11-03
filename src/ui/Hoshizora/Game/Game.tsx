@@ -49,11 +49,10 @@ const GameUI: Component = () => {
     )
 }
 
-const Game: Component = () => {
-    return (
-        <Core startAt={1}>
-            <GameUI />
-        </Core>
-    )
-}
+const Game: Component = () => (
+    <Core>
+        <GameUI />
+    </Core>
+)
+
 export default Game

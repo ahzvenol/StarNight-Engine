@@ -1,18 +1,18 @@
+import type { Reactive } from 'micro-reactive'
 import type { Accessor, Component, ParentProps } from 'solid-js'
-import type { LocalSaveData } from '@/store/default'
+import type { GlobalSaveData } from '@/store/default'
 import type { Events, GameContext, Variables } from './type'
 import { useReactive } from 'micro-reactive'
 import { createContext, createEffect, on, onMount, useContext } from 'solid-js'
 import { router } from '@/router'
 import book from '@/store/book'
 import { useStore } from '@/store/context'
-import systemDefaultStore from '@/store/default'
 import { Pages } from '@/ui/Pages'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { runLoop } from './act'
 import { commands, hooks } from './commands'
-import { createEventDispatchers } from './event'
+import { ActivatedEvent, createEventDispatchers, DeactivatedEvent, LeftEvent } from './event'
 import { Timer } from './Timer'
 import { State } from './type'
 
@@ -25,13 +25,12 @@ export const useEvents = () => useContext(EventsContext)!
 export const useState = () => useContext(StateContext)!
 export const useVariables = () => useContext(VariablesContext)!
 
-// Core与UI做存档通信的插槽
-export const slot = useReactive<LocalSaveData>({})
+export const initData = useSignal({ index: 1 })
 
-export const Core: Component<ParentProps<{ startAt: number }>> = (props) => {
-    console.log('Core')
+export const Core: Component<ParentProps> = (props) => {
+    console.log(initData())
 
-    const startAt = props.startAt
+    const startAt = initData().index
     // startAt = 1
     const store = useStore()
 
@@ -50,12 +49,10 @@ export const Core: Component<ParentProps<{ startAt: number }>> = (props) => {
     dispatchs.auto.subscribe(() => state(state() === State.Auto ? State.Normal : State.Auto))
     dispatchs.fast.subscribe(() => state(state() === State.Fast ? State.Normal : State.Fast))
 
-    slot({})
-
     const variables: Variables = {
-        // temp: useReactive<LocalSaveData>({}),
+        temp: useReactive<Record<string, unknown>>({}),
         // local: slot,
-        // global: store.save.global as Reactive<GlobalSaveData>
+        global: store.save.global as Reactive<GlobalSaveData>
     }
 
     const context: GameContext = { variables, store: store }
@@ -67,12 +64,15 @@ export const Core: Component<ParentProps<{ startAt: number }>> = (props) => {
                 if (router.active() === Pages.Title) {
                     log.info('Game:用户回到标题页')
                     hooks.forEach((hook) => hook.onLeft?.(context))
+                    LeftEvent.publish()
                 } else if (router.active() !== Pages.Game) {
                     log.info('Game:用户离开游戏页面')
                     hooks.forEach((hook) => hook.onDeactivated?.(context))
+                    DeactivatedEvent.publish()
                 } else {
                     log.info('Game:用户回到游戏页面')
                     hooks.forEach((hook) => hook.onActivated?.(context))
+                    ActivatedEvent.publish()
                 }
             },
             { defer: true }

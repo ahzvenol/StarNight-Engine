@@ -13,7 +13,6 @@ export const TextBox: Component<{ variables: Variables }> = ({ variables }) => {
                     <span>
                         <span innerHTML={variables.reactive.textView().trim()} />
                         {/* <span class={styles.star_container}> */}
-                        {/* todo:当本条文本完整显示,展示star */}
                         {/* <div class={styles.star} /> */}
                         {/* </span> */}
                     </span>

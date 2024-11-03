@@ -21,15 +21,17 @@ class PromiseX<T> extends Promise<T> {
     public reject!: Parameters<ConstructorParameters<typeof Promise<T>>[0]>[1]
 }
 
-// // 模拟新的?=操作符,这并不好用,唯一的问题是我们无法在外部得知promise的状态,该操作符提供了额外的能力
-// // tag:如果Promise.reject(null) 理所当然的会出些问题
-// async function questionOp<T>(promise: Promise<T>): Promise<[T | null, unknown | null]> {
-//     try {
-//         const result = await promise
-//         return [result, null]
-//     } catch (error) {
-//         return [null, error]
-//     }
-// }
+enum PromiseState {
+    PENDING = 'pending',
+    FULFILLED = 'fulfilled',
+    REJECTED = 'rejected'
+}
 
-export { PromiseX }
+function getState(p: Promise<unknown>) {
+    const t = {}
+    return Promise.race([p, t])
+        .then((v) => (v === t ? PromiseState.PENDING : PromiseState.FULFILLED))
+        .catch(() => PromiseState.REJECTED)
+}
+
+export { PromiseX, PromiseState, getState }

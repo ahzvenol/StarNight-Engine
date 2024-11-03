@@ -41,7 +41,6 @@
   },
   "dependencies": {
     "@solidjs/router": "^0.8.3",
-    "@types/createjs": "^0.0.29",
     "@types/node": "^18.11.9",
     "animejs": "^3.2.2",
     "axios": "^1.2.2",

@@ -8,11 +8,13 @@ import { useSignal } from '@/utils/Reactive'
 // 存在依赖变量的"文字播放速度"
 
 export const textView = useSignal('')
+export const textSave = useSignal('')
 
 const text: CommandRunFunction<{ text: string }> =
     ({ store, timer }) =>
-    ({ text }) =>
-        Y<string, Promise<void>>((rec) => (str) => {
+    ({ text }) => {
+        textSave(text)
+        return Y<string, Promise<void>>((rec) => (str) => {
             return Promise.resolve()
                 .then(() => textView((text) => text + str.substring(0, 1)))
                 .then(() => timer.delay(store.config.TextSpeed * 100))
@@ -21,10 +23,10 @@ const text: CommandRunFunction<{ text: string }> =
                     else textView((text) => text + STAR_MARKER)
                 })
         })(text)
-
+    }
 export const Text = noInit(text)
 
-export const TextHooks = { beforeInit: () => textView(''), beforeActStart: () => textView('') }
+export const TextHooks = { beforeInit: () => (textView(''), textSave('')), beforeActStart: () => textView('') }
 
 export const nameView = useSignal('')
 
@@ -34,6 +36,6 @@ const name: CommandRunFunction<{ name: string }> =
         nameView(name)
     }
 
-export const Name = noInit(name)
+export const Name = name
 
 export const NameHooks = { beforeInit: () => nameView('') }

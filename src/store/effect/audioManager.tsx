@@ -13,7 +13,7 @@ const configVolumeControllerMapPromise = storePromise.then((store) => ({
     UISE: store.config.UISEVolume
 }))
 
-export type AudioTracksType = 'BGM' | 'SE' | 'Clip' | 'UISE'
+export type AudioTracksType = keyof Awaited<typeof configVolumeControllerMapPromise>
 
 export function useAudioConfig(type: AudioTracksType, audio: Howl): Howl {
     configVolumeControllerMapPromise.then((map) => createEffect(() => audio.volume(map[type]())))

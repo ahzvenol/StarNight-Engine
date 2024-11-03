@@ -11,7 +11,6 @@ import Menu from './Menu/Menu'
 import SaveLoad from './SaveAndLoad/SaveLoad'
 import Title from './Title/Title'
 
-// todo:最后让AI去整理import的值和type吧
 const UI: Component = () => (
     <>
         <Dialog />

@@ -8,19 +8,53 @@ import { match, P } from 'ts-pattern'
 import book from '@/store/book'
 import { Y } from '@/utils/FPUtil'
 import { log } from '@/utils/Logger'
-import { PromiseX } from '@/utils/PromiseX'
+import { getState, PromiseState, PromiseX } from '@/utils/PromiseX'
+import { useSignal } from '@/utils/Reactive'
 import { commands, hooks } from './commands'
-import { EventDispatcher } from './EventDispatcher'
+import { onActivated, onDeactivated } from './event'
+import { EventDispatcher, on } from './EventDispatcher'
 import { Async, Await, fork } from './flow'
 import { Timer } from './Timer'
 import { State } from './type'
 
-const actStartEvent = new EventDispatcher<GameRuntimeContext>()
-const actEndEvent = new EventDispatcher<GameRuntimeContext>()
-const actSecondClickEvent = new EventDispatcher<GameRuntimeContext>()
+export const actStartEvent = new EventDispatcher<GameRuntimeContext>()
+export const actEndEvent = new EventDispatcher<GameRuntimeContext>()
+export const actSecondClickEvent = new EventDispatcher<GameRuntimeContext>()
 actStartEvent.subscribe((context) => log.info(`开始执行第${context.index}幕...`))
 actEndEvent.subscribe((context) => log.info(`第${context.index}幕执行结束`))
 actSecondClickEvent.subscribe(() => log.info('一幕内第二次点击,立即执行'))
+export const onActStart = on(actStartEvent)
+export const onActEnd = on(actEndEvent)
+
+// 对外暴露目前的index,目前供存档功能使用
+export const currentIndex = useSignal(0)
+actStartEvent.subscribe((context) => currentIndex(context.index))
+
+// 循环监听Deactivated和Activated事件以暂停/启动timer,直到本幕结束监听取消
+actStartEvent.subscribe(({ timer }) => {
+    Y<void, void>(
+        (rec) => () =>
+            onDeactivated()
+                .then(() => getState(onActEnd()))
+                .then((state) => {
+                    if (state === PromiseState.FULFILLED) {
+                        timer.pause()
+                        rec()
+                    }
+                })
+    )()
+    Y<void, void>(
+        (rec) => () =>
+            onActivated()
+                .then(() => getState(onActEnd()))
+                .then((state) => {
+                    if (state === PromiseState.FULFILLED) {
+                        timer.start()
+                        rec()
+                    }
+                })
+    )()
+})
 
 // 给予全部命令操作actindex的能力是危险的,有几个特殊的命令会影响主循环,可以单独提出
 async function runAct(

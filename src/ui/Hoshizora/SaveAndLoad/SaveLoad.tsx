@@ -1,19 +1,19 @@
 import type { Component } from 'solid-js'
 import dayjs from 'dayjs'
 import { Show } from 'solid-js'
+import { getSave } from '@/core/save'
+import { router } from '@/router'
 import { useStore } from '@/store/context'
 import { Clone, Variable } from '@/ui/Elements'
+import { Pages, restartGame } from '@/ui/Pages'
 import { useSignal } from '@/utils/Reactive'
 import styles from './SaveAndLoad.module.scss'
 
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
     console.log('SaveLoad组件发生函数调用.')
-
     const currentPage = useSignal(0)
-
     const save = useStore().save.local
-    console.log(save())
-
+    const pageElementCount = 9
     return (
         <div class={'Page' + ' ' + styles.Save_Load_container}>
             <div
@@ -46,20 +46,33 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                 </Clone>
             </div>
             <div class={styles.Save_Load_content}>
-                <Variable value={9}>
-                    {(count) => (
-                        <Clone count={count}>
-                            {(i) => (
-                                // todo:!empty时才有:hover和Button行为
-                                <div class={styles.Save_Load_content_element}>
-                                    <div class={styles.Save_Load_content_element_index}>
-                                        {/* 原作从0开始 */}
-                                        No.&nbsp;&nbsp;&nbsp;{i + 1 + currentPage() * count}
-                                    </div>
-                                    <Variable value={save()[i + 1 + currentPage() * count]}>
-                                        {(save) => (
+                <Clone count={pageElementCount}>
+                    {(i) => (
+                        <Variable value={() => i + 1 + currentPage() * pageElementCount}>
+                            {(index) => (
+                                <Variable value={save[index()]}>
+                                    {(save) => (
+                                        // 存档不为空时时才有:hover和Button行为
+                                        <div
+                                            classList={{
+                                                [styles.Save_Load_content_element]: true,
+                                                [styles.Save_Load_content_element_hover]:
+                                                    mode === 'Save' || save() !== undefined
+                                            }}
+                                            onClick={() => {
+                                                if (mode === 'Save') {
+                                                    save(getSave())
+                                                } else if (save() !== undefined) {
+                                                    restartGame(save()!)
+                                                    router.navigate(Pages.Game)
+                                                }
+                                            }}>
+                                            <div class={styles.Save_Load_content_element_index}>
+                                                {/* 原作从0开始 */}
+                                                No.&nbsp;&nbsp;&nbsp;{index()}
+                                            </div>
                                             <Show
-                                                when={save !== undefined}
+                                                when={save() !== undefined}
                                                 fallback={
                                                     <>
                                                         <div class={styles.Save_Load_content_element_empty_image} />
@@ -68,20 +81,20 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                                                 }>
                                                 <div
                                                     class={styles.Save_Load_content_element_image}
-                                                    style={{ 'background-image': `url(${save.image})` }}
+                                                    style={{ 'background-image': `url(${save().image})` }}
                                                 />
                                                 <div class={styles.Save_Load_content_element_date}>
-                                                    {dayjs(save.date).format('YYYY/MM/DD HH:mm:ss')}
+                                                    {dayjs(save().date).format('YYYY/MM/DD HH:mm:ss')}
                                                 </div>
-                                                <div class={styles.Save_Load_content_text}>{save.text}</div>
+                                                <div class={styles.Save_Load_content_text}>{save().text}</div>
                                             </Show>
-                                        )}
-                                    </Variable>
-                                </div>
+                                        </div>
+                                    )}
+                                </Variable>
                             )}
-                        </Clone>
+                        </Variable>
                     )}
-                </Variable>
+                </Clone>
             </div>
         </div>
     )

@@ -13,11 +13,12 @@ export type Events = { click: Function0<void>; fast: Function0<void>; auto: Func
 
 export type Variables = {
     // 临时变量
-    temp: Reactive<LocalSaveData>
+    temp: Reactive<Record<string, unknown>>
     // 全局存档变量
     global: Reactive<GlobalSaveData>
     // 独立存档变量
-    local: Reactive<LocalSaveData>
+    // 独立存档由存档命令在调用存档时从各个命令中获取数据,不通过传入方式按幕更新
+    // local: Reactive<LocalSaveData>
 }
 
 export type GameContext = {

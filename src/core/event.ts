@@ -14,3 +14,12 @@ export function createEventDispatchers() {
 
     return { click: gameClickEvent, fast: fastButtonClickEvent, auto: autoButtonClickEvent, onClick, onFast, onAuto }
 }
+
+export const LeftEvent = new EventDispatcher<void>()
+export const onLeft = on(LeftEvent)
+
+export const DeactivatedEvent = new EventDispatcher<void>()
+export const onDeactivated = on(DeactivatedEvent)
+
+export const ActivatedEvent = new EventDispatcher<void>()
+export const onActivated = on(ActivatedEvent)
