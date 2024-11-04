@@ -38,7 +38,7 @@ export type SingalCommand = Record<string, CommandArg | undefined>
 
 export type CommandOutput = Record<string, unknown> & Partial<{ continue: boolean; jump: number; end: boolean }>
 
-export type RuntimeCommandOutput = Promise<CommandOutput> | Promise<void> | CommandOutput | void
+export type RuntimeCommandOutput = Promise<CommandOutput> | Promise<unknown> | CommandOutput | unknown
 
 export type CommandRunFunction<T extends SingalCommand> = Function1<
     GameRuntimeContext,

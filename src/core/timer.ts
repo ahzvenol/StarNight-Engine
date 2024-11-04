@@ -16,7 +16,6 @@ class TimeoutController {
             callback()
         }
         this.remainingTime = delay
-        this.start()
     }
 
     public start = () => {
@@ -47,6 +46,10 @@ class TimerX {
     public get isImmediate(): boolean {
         return this._isImmediate
     }
+    private _isPaused = false
+    public get isPaused(): boolean {
+        return this._isPaused
+    }
     // public promiseList: Array<Promise<unknown>> = []
     public startList: Array<Function0<void>> = []
     public pauseList: Array<Function0<void>> = []
@@ -62,6 +65,7 @@ class TimerX {
                 this.addResumeMethod(controller.start)
                 this.addPauseMethod(controller.pause)
                 this.addFinalizeMethod(controller.immediateExecution)
+                if (!this.isPaused) controller.start()
             })
             // this.addTrackedPromise(promise)
             return promise
@@ -81,7 +85,8 @@ class TimerX {
         this.startList.push(fn)
     }
     public addPauseMethod = (fn: Function0<void>): void => {
-        if (this.isImmediate) return
+        if (this.isPaused) fn()
+        else if (this.isImmediate) return
         this.pauseList.push(fn)
     }
     // 为外部不可控第三方库的操作添加结束方法,比如tween.setPosition(tween.duration)
@@ -95,7 +100,8 @@ class TimerX {
         this.startList.forEach((e) => e())
     }
     public pause = () => {
-        if (this.isImmediate) return
+        if (this.isImmediate || this.isPaused) return
+        this._isPaused = true
         this.pauseList.forEach((e) => e())
     }
     public toImmediate = () => {

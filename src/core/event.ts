@@ -23,3 +23,6 @@ export const onDeactivated = on(DeactivatedEvent)
 
 export const ActivatedEvent = new EventDispatcher<void>()
 export const onActivated = on(ActivatedEvent)
+
+export const DestoryedEvent = new EventDispatcher<void>()
+export const onDestoryed = on(DestoryedEvent)

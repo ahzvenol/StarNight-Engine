@@ -14,6 +14,11 @@ export type AudioCommandArgs = XOR<
 
 const tracks: Record<string, Howl> = {}
 
+// onDestoryed操作,后续整理
+const beforeInit: CommandLifeCycleFunction = () => {
+    mapValues(tracks, (audio) => audio.unload())
+}
+
 const afterInit: CommandLifeCycleFunction = () => mapValues(tracks, (audio) => audio.load().play())
 
 const beforeActStart: CommandLifeCycleFunction = ({ store: { config } }) => {
@@ -70,4 +75,4 @@ const audio: CommandRunFunction<AudioCommandArgs> =
 
 export const Audio = audio
 
-export const AudioHooks = { afterInit, beforeActStart, onLeft, onActivated }
+export const AudioHooks = { beforeInit, afterInit, beforeActStart, onLeft, onActivated }

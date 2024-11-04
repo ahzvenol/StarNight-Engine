@@ -3,7 +3,7 @@ import type { Accessor, Component, ParentProps } from 'solid-js'
 import type { GlobalSaveData } from '@/store/default'
 import type { Events, GameContext, Variables } from './type'
 import { useReactive } from 'micro-reactive'
-import { createContext, createEffect, on, onMount, useContext } from 'solid-js'
+import { createContext, createEffect, on, onCleanup, onMount, useContext } from 'solid-js'
 import { router } from '@/router'
 import book from '@/store/book'
 import { useStore } from '@/store/context'
@@ -12,7 +12,7 @@ import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { runLoop } from './act'
 import { commands, hooks } from './commands'
-import { ActivatedEvent, createEventDispatchers, DeactivatedEvent, LeftEvent } from './event'
+import { ActivatedEvent, createEventDispatchers, DeactivatedEvent, DestoryedEvent, LeftEvent } from './event'
 import { Timer } from './Timer'
 import { State } from './type'
 
@@ -79,7 +79,13 @@ export const Core: Component<ParentProps> = (props) => {
         )
     )
 
+    onCleanup(() => {
+        log.info('Game:组件销毁')
+        DestoryedEvent.publish()
+    })
+
     onMount(async () => {
+        log.info('Game:组件挂载')
         const timer = new Timer()
         timer.toImmediate()
         hooks.forEach((hook) => hook.beforeInit?.(context))
@@ -90,7 +96,7 @@ export const Core: Component<ParentProps> = (props) => {
             ;(await book.row(i)).forEach((args) =>
                 commands[args['@']]?.({ index: i, timer, state: State.Init, ...context })(args)
             )
-            log.info(`正在初始化第${i}幕`)
+            // log.info(`正在初始化第${i}幕`)
             i += 1
         }
         // 初始化过程中有一些使用了Promise包装的命令,先让它们执行完毕再进行接下来的步骤

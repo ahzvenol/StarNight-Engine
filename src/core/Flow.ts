@@ -1,5 +1,5 @@
 import type { CommandOutput, RuntimeCommandOutput } from '@/core/type'
-import { merge } from 'es-toolkit'
+import { isPlainObject, merge } from 'es-toolkit'
 import { match, P } from 'ts-pattern'
 import { log } from '@/utils/Logger'
 
@@ -49,7 +49,7 @@ const normalize: Function1<MixResolvedCommand, StandardResolvedCommand> = (cmd) 
         Promise.resolve()
             .then(flowWrapedFunction.apply)
             .catch((error) => log.error('命令运行出错:', error))
-            .then((result) => result ?? {})
+            .then((result) => (isPlainObject(result) ? result : {}))
 
     if (flowWrapedFunction instanceof Async) {
         return new Async(asyncNonNullTask)
@@ -70,8 +70,8 @@ const _chain: Function1<Array<StandardResolvedCommand>, NonNullResolvedCommand> 
 
 // 识别Await标识的命令,行为相当于Promise.all(cmd1();await cmd2();cmd3())
 // 完成时间是最后一个Await命令执行完毕之后,还在执行的命令,剩余执行时间最长的那个
-const _fork: Function1<Array<StandardResolvedCommand>, NonNullResolvedCommand> = (array) => () =>
-    array.reduce(
+const _fork: Function1<Array<StandardResolvedCommand>, NonNullResolvedCommand> = (array) => () => {
+    return array.reduce(
         ([context, pre], e) =>
             match(e)
                 .with(P.instanceOf(Await), () =>
@@ -87,7 +87,7 @@ const _fork: Function1<Array<StandardResolvedCommand>, NonNullResolvedCommand> =
                 .exhaustive(),
         [Promise.resolve({}), Promise.resolve({})]
     )[1]
-
+}
 //export的函数自动进行标准化处理方便使用
 
 export const par: Function1<Array<MixResolvedCommand>, NonNullResolvedCommand> = (array) => _par(array.map(normalize))

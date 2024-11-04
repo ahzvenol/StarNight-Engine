@@ -11,7 +11,7 @@ import { log } from '@/utils/Logger'
 import { getState, PromiseState, PromiseX } from '@/utils/PromiseX'
 import { useSignal } from '@/utils/Reactive'
 import { commands, hooks } from './commands'
-import { onActivated, onDeactivated } from './event'
+import { DestoryedEvent, onActivated, onDeactivated, onDestoryed, onLeft } from './event'
 import { EventDispatcher, on } from './EventDispatcher'
 import { Async, Await, fork } from './flow'
 import { Timer } from './Timer'
@@ -32,12 +32,13 @@ actStartEvent.subscribe((context) => currentIndex(context.index))
 
 // 循环监听Deactivated和Activated事件以暂停/启动timer,直到本幕结束监听取消
 actStartEvent.subscribe(({ timer }) => {
+    const onEnd = onActEnd()
     Y<void, void>(
         (rec) => () =>
             onDeactivated()
-                .then(() => getState(onActEnd()))
+                .then(() => getState(onEnd))
                 .then((state) => {
-                    if (state === PromiseState.FULFILLED) {
+                    if (state === PromiseState.PENDING) {
                         timer.pause()
                         rec()
                     }
@@ -46,9 +47,9 @@ actStartEvent.subscribe(({ timer }) => {
     Y<void, void>(
         (rec) => () =>
             onActivated()
-                .then(() => getState(onActEnd()))
+                .then(() => getState(onEnd))
                 .then((state) => {
-                    if (state === PromiseState.FULFILLED) {
+                    if (state === PromiseState.PENDING) {
                         timer.start()
                         rec()
                     }
@@ -80,6 +81,11 @@ async function runAct(
             if (e !== undefined) log.error('Timer.toImmediate出错', e)
         })
     Promise.race([onClick, onFast]).then(immPromise.resolve)
+    // 需要防止异步任务重排到如下顺序
+    // 异步等待命令执行完毕 /Game组件销毁 /新Game实例创建 /后续命令执行
+    // wait([此命令未被取消,因为销毁事件还没到达])[快速读档,Game组件销毁再创建].then([旧实例的命令被释放到了新实例])
+    const snycLockOnDestoryed = useSignal(false)
+    DestoryedEvent.once(() => snycLockOnDestoryed(true))
     // act start
     actStartEvent.publish(context)
     hooks.forEach((hook) => hook.beforeActStart?.(context))
@@ -98,7 +104,12 @@ async function runAct(
                     .with('wait', (sign) => new Await(() => commands[sign](context)(args)))
                     .when(
                         (sign) => sign in commands,
-                        (sign) => new Async(() => commands[sign as keyof typeof commands](context)(args))
+                        (sign) =>
+                            new Async(() => {
+                                if (!snycLockOnDestoryed()) {
+                                    return commands[sign as keyof typeof commands](context)(args)
+                                }
+                            })
                     )
                     .otherwise((sign) => () => log.error(`找不到命令:${sign}`, args))
             )

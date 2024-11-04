@@ -37,7 +37,8 @@ const setImage: CommandRunFunction<SetImageCommandArgs> =
     ({ name, file, ease, duration, x = 0, y = 0, z = 1, w, h }) => {
         const { state } = context
         // tag:unlock cg
-        const array = stageView()!.getElementsByClassName(name)
+        const stage = stageView()!
+        const array = stage.getElementsByClassName(name)
         const bitmap = match(state)
             // @ts-expect-error 类型与属性识别异常
             .with(State.Init, () => <img attr:meta={file} />)
@@ -51,10 +52,10 @@ const setImage: CommandRunFunction<SetImageCommandArgs> =
         const oldBitmap = array[0]
         if (isNotNil(oldBitmap)) {
             Tween(context)({ target: oldBitmap, ease, duration })({ opacity: 0 }).then(() => {
-                stageView()!.removeChild(oldBitmap)
+                stage.removeChild(oldBitmap)
             })
         }
-        stageView()!.insertBefore(bitmap, stageView()!.firstChild)
+        stage.insertBefore(bitmap, stage.firstChild)
     }
 
 export const SetImage = setImage

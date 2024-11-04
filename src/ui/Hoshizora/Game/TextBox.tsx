@@ -1,18 +1,14 @@
 import type { Component } from 'solid-js'
 import { For, Show } from 'solid-js'
-import { nameView, textView } from '@/core/commands/script/textbox'
+import { nameView, textSave, textView } from '@/core/commands/script/textbox'
 import { useStore } from '@/store/context'
 import styles from './TextBox.module.scss'
-
-/* tag:有点想用标记实现一些效果,先这样放着 */
-export const STAR_MARKER = '<star>'
 
 export const TextBox: Component = () => {
     const config = useStore().config
 
     const lines = () =>
         textView()
-            .replace(/<star>$/, '')
             .split('\n')
             .filter((line) => line !== '')
 
@@ -27,7 +23,7 @@ export const TextBox: Component = () => {
                             <>
                                 <div>
                                     {line}
-                                    <Show when={index() === lines().length - 1 && textView().endsWith(STAR_MARKER)}>
+                                    <Show when={index() === lines().length - 1 && textView() === textSave()}>
                                         <span class={styles.Game_TextBox_star} />
                                     </Show>
                                 </div>

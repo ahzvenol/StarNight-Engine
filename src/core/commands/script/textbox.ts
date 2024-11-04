@@ -1,6 +1,5 @@
 import type { CommandRunFunction } from '@/core/type'
 import { noInit } from '@/core/macro'
-import { STAR_MARKER } from '@/ui/Hoshizora/Game/TextBox'
 import { Y } from '@/utils/FPUtil'
 import { useSignal } from '@/utils/Reactive'
 
@@ -15,12 +14,12 @@ const text: CommandRunFunction<{ text: string }> =
     ({ text }) => {
         textSave(text)
         return Y<string, Promise<void>>((rec) => (str) => {
-            return Promise.resolve()
+            return timer
+                .delay(0)
                 .then(() => textView((text) => text + str.substring(0, 1)))
                 .then(() => timer.delay(store.config.TextSpeed * 100))
                 .then(() => {
                     if (str.length >= 1) return rec(str.substring(1))
-                    else textView((text) => text + STAR_MARKER)
                 })
         })(text)
     }
