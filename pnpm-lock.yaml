@@ -23,12 +23,9 @@ dependencies:
   devtools-detector:
     specifier: ^2.0.14
     version: registry.npmmirror.com/devtools-detector@2.0.14
-  dom-to-image:
-    specifier: ^2.6.0
-    version: 2.6.0
   es-toolkit:
-    specifier: ^1.22.0
-    version: 1.22.0
+    specifier: ^1.26.1
+    version: 1.26.1
   howler:
     specifier: ^2.2.4
     version: 2.2.4
@@ -70,9 +67,6 @@ devDependencies:
   '@types/animejs':
     specifier: ^3.1.12
     version: 3.1.12
-  '@types/dom-to-image':
-    specifier: ^2.6.7
-    version: 2.6.7
   '@types/howler':
     specifier: ^2.2.12
     version: 2.2.12
@@ -743,10 +737,6 @@ packages:
   /@types/css-tree@2.3.2:
     resolution: {integrity: sha512-B5nF6h7xxpMLvZ1pzugAYUGj1aw4KgTpXZzOijkDMRzey4SlFi0jVWb3o0SS1CVSxyBciltVgjt67CwrgjmlWA==}
     dev: false
-
-  /@types/dom-to-image@2.6.7:
-    resolution: {integrity: sha512-me5VbCv+fcXozblWwG13krNBvuEOm6kA5xoa4RrjDJCNFOZSWR3/QLtOXimBHk1Fisq69Gx3JtOoXtg1N1tijg==}
-    dev: true
 
   /@types/glob@7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
@@ -1737,10 +1727,6 @@ packages:
       entities: 2.2.0
     dev: true
 
-  /dom-to-image@2.6.0:
-    resolution: {integrity: sha512-Dt0QdaHmLpjURjU7Tnu3AgYSF2LuOmksSGsUcE6ItvJoCWTBEmiMXcqBdNSAm9+QbbwD7JMoVsuuKX6ZVQv1qA==}
-    dev: false
-
   /domelementtype@1.3.1:
     resolution: {integrity: sha512-BSKB+TSpMpFI/HOxCNr1O8aMOTZ8hT3pM3GQ0w/mWRmkhEDSFJkkyzz4XQsBV44BChwGkrDfMyjVD0eA2aFV3w==}
     dev: true
@@ -1812,8 +1798,8 @@ packages:
       is-arrayish: 0.2.1
     dev: true
 
-  /es-toolkit@1.22.0:
-    resolution: {integrity: sha512-0mvZ7as1Irwi+i5BNTM4Lrt5NnZGz4TcMIG8FTUuqI6GswziFGPHrmVlK+kkafSqhofKKVs6gn0GSGZiWVxAHw==}
+  /es-toolkit@1.26.1:
+    resolution: {integrity: sha512-E3H14lHWk8JpupVpIRA1gfNF4r953abHTFW+X1Rp7zl7eG37ksuthfEA4FinyVF/Y807vzzfQS1nubeZk2LTVA==}
     dev: false
 
   /esbuild-android-64@0.14.54:

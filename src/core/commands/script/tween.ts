@@ -8,9 +8,9 @@ import { State } from '@/core/type'
 
 export type TweenCommandArgs = { target: object; ease?: string; duration: number }
 
-const activeTweens = new Map<object, anime.AnimeTimelineInstance>()
+const activeTimelines = new Map<object, anime.AnimeTimelineInstance>()
 
-const beforeActStart = () => activeTweens.clear()
+const beforeActStart = () => activeTimelines.clear()
 
 const tween: Function1<
     GameRuntimeContext,
@@ -19,8 +19,8 @@ const tween: Function1<
     ({ state, timer }) =>
     ({ target, ease, duration }) =>
     async (args) => {
-        if (!activeTweens.has(target)) {
-            activeTweens.set(
+        if (!activeTimelines.has(target)) {
+            activeTimelines.set(
                 target,
                 anime.timeline({
                     targets: target,
@@ -28,15 +28,15 @@ const tween: Function1<
                 })
             )
         }
-        const tween = activeTweens.get(target)!
-        const currentTime = tween.currentTime
-        tween.add({ ...omit(args, ['@']), duration })
+        const sequence = activeTimelines.get(target)!
+        const currentTime = sequence.currentTime
+        sequence.add({ ...omit(args, ['@']), duration })
         // 因为调用add后默认重新从头开始
-        tween.seek(currentTime)
+        sequence.seek(currentTime)
         // queueMicrotask是为了正常触发complete事件
         // 立即结束缓动太过突兀,更好的效果是不管它
-        if (state === State.Init) timer.addFinalizeMethod(() => queueMicrotask(() => tween.seek(tween.duration)))
-        return tween.finished
+        if (state === State.Init) timer.addFinalizeMethod(() => queueMicrotask(() => sequence.seek(sequence.duration)))
+        return sequence.finished
     }
 
 export const Tween = tween
