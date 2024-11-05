@@ -7,6 +7,7 @@ import { Continue, End, Jump } from './script/!'
 import { AudioHooks } from './script/audio'
 import { BacklogHooks } from './script/backlog'
 import { RemoveImage, SetImageHooks, TweenImage } from './script/image'
+import { Sel, SelEnd, SelHooks } from './script/selection'
 import { Punch, Shake } from './script/shake'
 import { NameHooks, TextHooks } from './script/textbox'
 import { TweenHooks } from './script/tween'
@@ -33,7 +34,9 @@ const _commands: Record<string, CommandRunFunction<any>> = {
     close: RemoveImage,
     video: Video,
     shake: Shake,
-    punch: Punch
+    punch: Punch,
+    sel: Sel,
+    selEnd: SelEnd
 }
 
 export const hooks: Array<GameHooks> = [
@@ -43,7 +46,8 @@ export const hooks: Array<GameHooks> = [
     BacklogHooks,
     SetImageHooks,
     TweenHooks,
-    VideoHooks
+    VideoHooks,
+    SelHooks
 ]
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

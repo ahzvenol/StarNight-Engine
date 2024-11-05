@@ -17,6 +17,9 @@ const tracks: Record<string, Howl> = {}
 // onDestoryed操作,后续整理
 const beforeInit: CommandLifeCycleFunction = () => {
     mapValues(tracks, (audio) => audio.unload())
+    for (const key in tracks) {
+        delete tracks[key]
+    }
 }
 
 const afterInit: CommandLifeCycleFunction = () => mapValues(tracks, (audio) => audio.load().play())

@@ -1,5 +1,7 @@
 import type { Component } from 'solid-js'
+import { intersection } from 'es-toolkit'
 import { Show } from 'solid-js'
+import { useStore } from '@/store/context'
 import { Clone, Variable } from '@/ui/Elements'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
@@ -28,11 +30,13 @@ const CG = [
     ['evcg15', 'a'],
     ['evcg16', 'a'],
     ['evcg17', 'a']
-]
+].map((arr) => arr.slice(1).map((id) => arr[0] + id))
 
 const Gallery: Component = () => {
     log.info('Gallery组件发生函数调用')
     const currentPage = useSignal<0 | 1>(0)
+    const cg = useStore().save.global.cg
+    const viewedCG = (index: number) => intersection(CG[index + currentPage() * 16], cg())
     return (
         <div class={'Page' + ' ' + styles.Gallery_container}>
             <div id={styles.Gallery_CG_container} />
@@ -64,7 +68,7 @@ const Gallery: Component = () => {
                                     class={styles.Gallery_content_element + ' ' + styles.Gallery_content_element_empty}
                                 />
                             }>
-                            <Variable value={() => CG[index + currentPage() * 16]}>{CGElement}</Variable>
+                            <CGElement cg={() => viewedCG(index)} />
                         </Show>
                     )}
                 </Clone>

@@ -5,22 +5,25 @@ import { Portal } from 'solid-js/web'
 import { useSignal } from '@/utils/Reactive'
 import styles from './Gallery.module.scss'
 
-export const CGElement: Component<Getter<Array<string>>> = (cg) => {
+export const CGElement: Component<{ cg: Getter<Array<string>> }> = ({ cg }) => {
     const pointer = useSignal(-1)
-    const cover = () => `url(./static/ImageAsset/${cg()[0] + cg()[1]}.png)`
+    const canShow = () => cg().length > 0
+    const cover = () => `url(./static/ImageAsset/${cg()[0]}.png)`
     const isMax = () => pointer() >= cg().length - 1
-    const now = () => `url(./static/ImageAsset/${cg()[0] + cg()[pointer()]}.png)`
-    const next = () => (isMax() ? '' : `,url(./static/ImageAsset/${cg()[0] + cg()[pointer() + 1]}.png)`)
+    const now = () => `url(./static/ImageAsset/${cg()[pointer()]}.png)`
+    const next = () => (isMax() ? '' : `,url(./static/ImageAsset/${cg()[pointer() + 1]}.png)`)
     return (
         <>
             <div
                 class={styles.Gallery_content_element}
                 style={{
-                    'background-image': cover()
+                    'background-image': canShow() ? cover() : `url(./static/Texture2D/gallery_thumb.png)`
                 }}
-                onClick={() => pointer(1)}
+                onClick={() => {
+                    if (canShow()) pointer(0)
+                }}
             />
-            <Show when={pointer() > 0}>
+            <Show when={pointer() >= 0}>
                 <Portal mount={document.getElementById(styles.Gallery_CG_container)!}>
                     <div
                         class={styles.Gallery_CG_view}

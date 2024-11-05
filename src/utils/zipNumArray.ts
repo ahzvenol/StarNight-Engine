@@ -1,11 +1,8 @@
-import { range } from 'es-toolkit'
-
-// 转换数组到数学区间以压缩空间占用
-function arrayToInterval(list: Array<number>): string {
+function arrayToInterval(list: Array<number>): Array<Array<number>> {
     if (list == undefined || list.length === 0) {
-        return '[]'
+        return []
     } else if (list.length === 1) {
-        return JSON.stringify([[list[0], list[0]]])
+        return [[list[0], list[0]]]
     }
     list = [...new Set(list)]
     list.sort((a, b) => a - b)
@@ -20,12 +17,23 @@ function arrayToInterval(list: Array<number>): string {
         }
     }
     collection[i][1] = list[list.length - 1]
-    return JSON.stringify(collection)
+    return collection
 }
 
 // 转换数学区间到数组
-function intervalToArray(str: string): Array<number> {
-    return (JSON.parse(str) as Array<[number, number]>).map((e) => range(e[0], e[1])).flat()
+function intervalToArray(arr: Array<Array<number>>): Array<number> {
+    return arr.flatMap((e) => to(e[0], e[1]))
+}
+
+const to = (start: number, end: number): Array<number> => {
+    const i: Array<number> = []
+    const go = (start: number, end: number) => {
+        i.push(start)
+        if (start === end) return i
+        else go(start + 1, end)
+    }
+    go(start, end)
+    return i
 }
 
 export { arrayToInterval, intervalToArray }

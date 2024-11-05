@@ -1,5 +1,5 @@
 import type { CommandArg, CommandLifeCycleFunction, CommandRunFunction } from '@/core/type'
-import { isNotNil } from 'es-toolkit'
+import { isNotNil, mapValues } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import { State } from '@/core/type'
 import { Y } from '@/utils/FPUtil'
@@ -7,7 +7,7 @@ import { useSignal } from '@/utils/Reactive'
 import { Tween } from './tween'
 
 // 跨幕环境变量file,需要收集副作用
-type SetImageCommandArgs = {
+export type SetImageCommandArgs = {
     name: string
     file: string
     ease?: string
@@ -36,7 +36,6 @@ const setImage: CommandRunFunction<SetImageCommandArgs> =
     (context) =>
     ({ name, file, ease, duration, x = 0, y = 0, z = 1, w, h }) => {
         const { state } = context
-        // tag:unlock cg
         const stage = stageView()!
         const array = stage.getElementsByClassName(name)
         const bitmap = match(state)
@@ -44,8 +43,7 @@ const setImage: CommandRunFunction<SetImageCommandArgs> =
             .with(State.Init, () => <img attr:meta={file} />)
             .otherwise(() => <img src={file} />) as HTMLImageElement
         bitmap.className = name
-        bitmap.style.left = `${x}px`
-        bitmap.style.top = `${y}px`
+        bitmap.style.translate = `${x}px ${y}px`
         bitmap.style.zIndex = `${z}`
         if (w !== undefined) bitmap.style.width = `${w}px`
         if (h !== undefined) bitmap.style.height = `${h}px`
@@ -79,8 +77,9 @@ const tweenImage: CommandRunFunction<TweenImageCommandArgs> =
             args.translateY = args.y
             delete args.y
         }
+
         const tweenTarget = stageView()!.getElementsByClassName(target)[0]
-        Tween(context)({ target: tweenTarget, ease, duration })(args)
+        Tween(context)({ target: tweenTarget, ease, duration })(mapValues(args, (arg) => '+=' + arg))
     }
 
 export const TweenImage = tweenImage

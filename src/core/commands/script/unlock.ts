@@ -6,8 +6,10 @@ import type { CommandRunFunction } from '@/core/type'
 // 或许需要某种方式保证不耦合
 
 // 可以选择此处始终生效,而通过鉴赏页的前置变量&&控制展示
-const unlock: CommandRunFunction<{ file: string }> =
+const unlock: CommandRunFunction<{ name: string }> =
     ({ variables: { global } }) =>
-    ({ file }) => {
-        if (!global.cg().includes(file)) global.cg().push(file)
+    ({ name }) => {
+        if (!global.cg.includes(name)) global.cg([name, ...global.cg()])
     }
+
+export const Unlock = unlock

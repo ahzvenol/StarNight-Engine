@@ -5,8 +5,8 @@ import styles from './Video.module.scss'
 
 export const Video: Component = () => {
     return (
-        <div class={styles.Video_container} style={{ display: 'contents' }}>
-            <Show when={videoView()}>{videoView()}</Show>/
+        <div class={styles.Game_Video_container} style={{ display: 'contents' }}>
+            <Show when={videoView()}>{videoView()}</Show>
         </div>
     )
 }

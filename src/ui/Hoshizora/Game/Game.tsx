@@ -7,6 +7,7 @@ import { useSignal } from '@/utils/Reactive'
 import { useKeyPress } from '@/utils/useKeyPress'
 import { Backlog } from './Backlog'
 import { ControlPanel } from './ControlPanel'
+import { Selection, showSelection } from './Selection'
 import { Stage } from './Stage'
 import { TextBox } from './TextBox'
 import { Video } from './Video'
@@ -38,13 +39,16 @@ const GameUI: Component = () => {
             onClick={() => (showBottomBox() ? click() : showBottomBox(true))}>
             <Stage />
             <Show when={!showBacklog() && showBottomBox()}>
-                <TextBox />
+                <Show when={!showSelection()}>
+                    <TextBox />
+                </Show>
                 <ControlPanel showBacklog={showBacklog} showBottomBox={showBottomBox} />
             </Show>
             <Show when={showBacklog()}>
                 <Backlog showBacklog={showBacklog} />
             </Show>
             <Video />
+            <Selection />
         </div>
     )
 }

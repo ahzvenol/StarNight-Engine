@@ -1,7 +1,9 @@
 import type { Component } from 'solid-js'
 import { For, Show } from 'solid-js'
-import { nameView, textSave, textView } from '@/core/commands/script/textbox'
+import { currentIndex } from '@/core/act'
+import { nameView, textSave, textView, textWasReadView } from '@/core/commands/script/textbox'
 import { useStore } from '@/store/context'
+import { intervalToArray } from '@/utils/zipNumArray'
 import styles from './TextBox.module.scss'
 
 export const TextBox: Component = () => {
@@ -17,7 +19,7 @@ export const TextBox: Component = () => {
             <div class={styles.Game_TextBox_text_container}>
                 {/* 因为透明度继承问题,对背景图片进行分离 */}
                 <div class={styles.Game_TextBox_text_background} style={{ opacity: 1 - config.TextBoxOpacity() }} />
-                <div class={styles.Game_TextBox_text}>
+                <div class={styles.Game_TextBox_text} style={{ color: textWasReadView() ? '#96c7ec' : '#ffffff' }}>
                     <For each={lines()}>
                         {(line, index) => (
                             <>
