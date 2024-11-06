@@ -50,7 +50,7 @@ const setImage: CommandRunFunction<SetImageCommandArgs> =
         const oldBitmap = array[0]
         if (isNotNil(oldBitmap)) {
             Tween(context)({ target: oldBitmap, ease, duration })({ opacity: 0 }).then(() => {
-                stage.removeChild(oldBitmap)
+                oldBitmap.parentNode?.removeChild(oldBitmap)
             })
         }
         stage.insertBefore(bitmap, stage.firstChild)

@@ -2,7 +2,7 @@ import type { Component } from 'solid-js'
 import { intersection } from 'es-toolkit'
 import { Show } from 'solid-js'
 import { useStore } from '@/store/context'
-import { Clone, Variable } from '@/ui/Elements'
+import { Clone } from '@/ui/Elements'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { CGElement } from './CGElement'
@@ -36,7 +36,7 @@ const Gallery: Component = () => {
     log.info('Gallery组件发生函数调用')
     const currentPage = useSignal<0 | 1>(0)
     const cg = useStore().save.global.cg
-    const viewedCG = (index: number) => intersection(CG[index + currentPage() * 16], cg())
+    const viewedCG = (index: number) => intersection(CG[index + currentPage() * 16] || [], cg())
     return (
         <div class={'Page' + ' ' + styles.Gallery_container}>
             <div id={styles.Gallery_CG_container} />

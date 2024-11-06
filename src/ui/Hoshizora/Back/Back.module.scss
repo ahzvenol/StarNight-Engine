@@ -3,9 +3,9 @@
     bottom: 25px;
     width: 88px;
     height: 23px;
-    background-image: url('./static//Texture2D/backlog_back.png');
+    background-image: url('/static/Texture2D/backlog_back.png');
 
     &:hover {
-        background-image: url('./static//Texture2D/backlog_back_ov.png');
+        background-image: url('/static/Texture2D/backlog_back_ov.png');
     }
 }
