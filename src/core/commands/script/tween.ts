@@ -1,6 +1,7 @@
 import type { CommandArg, GameRuntimeContext } from '@/core/type'
 import anime from 'animejs/lib/anime.es.js'
 import { omit } from 'es-toolkit'
+import { ActStartEvent } from '@/core/event'
 import { State } from '@/core/type'
 
 // anime.suspendWhenDocumentHidden = true;
@@ -10,7 +11,7 @@ export type TweenCommandArgs = { target: object; ease?: string; duration: number
 
 const activeTimelines = new Map<object, anime.AnimeTimelineInstance>()
 
-const beforeActStart = () => activeTimelines.clear()
+ActStartEvent.subscribe(() => activeTimelines.clear())
 
 const tween: Function1<
     GameRuntimeContext,
@@ -40,5 +41,3 @@ const tween: Function1<
     }
 
 export const Tween = tween
-
-export const TweenHooks = { beforeActStart }
