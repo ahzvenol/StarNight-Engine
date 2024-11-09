@@ -1,10 +1,10 @@
 import type { CommandRunFunction } from '@/core/type'
 import { noInit } from '@/core/macro'
+import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
 import { PromiseX } from '@/utils/PromiseX'
-import { useSignal } from '@/utils/Reactive'
 import { Continue } from './!'
 
-export const videoView = useSignal<HTMLVideoElement | null>(null)
+export const videoView = useAutoResetSignal<HTMLVideoElement | null>(() => null, Scope.Game)
 
 // 初始化过程中什么都不做
 
@@ -27,5 +27,3 @@ const video: CommandRunFunction<{ file: string }> =
     }
 
 export const Video = noInit(video)
-
-export const VideoHooks = { beforeInit: () => videoView(null) }

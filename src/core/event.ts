@@ -1,7 +1,8 @@
+import type { GameRuntimeContext } from './type'
 import { log } from '@/utils/Logger'
 import { EventDispatcher, on } from './EventDispatcher'
 
-export function createEventDispatchers() {
+export function createButtonEventDispatchers() {
     const gameClickEvent = new EventDispatcher<void>()
     const fastButtonClickEvent = new EventDispatcher<void>()
     const autoButtonClickEvent = new EventDispatcher<void>()
@@ -15,6 +16,12 @@ export function createEventDispatchers() {
     return { click: gameClickEvent, fast: fastButtonClickEvent, auto: autoButtonClickEvent, onClick, onFast, onAuto }
 }
 
+export const PreInitEvent = new EventDispatcher<void>()
+export const onPreInit = on(PreInitEvent)
+
+export const PostInitEvent = new EventDispatcher<void>()
+export const onPostInit = on(PostInitEvent)
+
 export const LeftEvent = new EventDispatcher<void>()
 export const onLeft = on(LeftEvent)
 
@@ -26,3 +33,15 @@ export const onActivated = on(ActivatedEvent)
 
 export const DestoryedEvent = new EventDispatcher<void>()
 export const onDestoryed = on(DestoryedEvent)
+
+export const ActStartEvent = new EventDispatcher<GameRuntimeContext>()
+export const onActStart = on(ActStartEvent)
+
+export const ActEndEvent = new EventDispatcher<GameRuntimeContext>()
+export const onActEnd = on(ActEndEvent)
+
+export const ActSecondClickEvent = new EventDispatcher<GameRuntimeContext>()
+
+ActStartEvent.subscribe((context) => log.info(`开始执行第${context.index}幕...`))
+ActEndEvent.subscribe((context) => log.info(`第${context.index}幕执行结束`))
+ActSecondClickEvent.subscribe(() => log.info('一幕内第二次点击,立即执行'))

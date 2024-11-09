@@ -1,15 +1,15 @@
 import type { CommandRunFunction } from '@/core/type'
 import { noInit } from '@/core/macro'
+import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
 import { Y } from '@/utils/FPUtil'
-import { useSignal } from '@/utils/Reactive'
 import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
 
 // 跨幕环境变量name,无副作用
 // 存在依赖变量的"文字播放速度"
 
-export const textView = useSignal('')
-export const textWasReadView = useSignal(false)
-export const textSave = useSignal('')
+export const textView = useAutoResetSignal(() => '', Scope.Act)
+export const textWasReadView = useAutoResetSignal(() => false, Scope.Act)
+export const textSave = useAutoResetSignal(() => '', Scope.Act)
 
 const text: CommandRunFunction<{ text: string }> =
     ({ index, store, timer, variables: { global } }) =>
@@ -35,12 +35,7 @@ const text: CommandRunFunction<{ text: string }> =
 
 export const Text = noInit(text)
 
-export const TextHooks = {
-    beforeInit: () => (textView(''), textWasReadView(false), textSave('')),
-    beforeActStart: () => (textView(''), textWasReadView(false), textSave(''))
-}
-
-export const nameView = useSignal('')
+export const nameView = useAutoResetSignal(() => '', Scope.Act)
 
 const name: CommandRunFunction<{ name: string }> =
     () =>
@@ -49,5 +44,3 @@ const name: CommandRunFunction<{ name: string }> =
     }
 
 export const Name = name
-
-export const NameHooks = { beforeInit: () => nameView('') }

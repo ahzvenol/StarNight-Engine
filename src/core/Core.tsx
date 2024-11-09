@@ -11,8 +11,16 @@ import { Pages } from '@/ui/Pages'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { runLoop } from './act'
-import { commands, hooks } from './commands'
-import { ActivatedEvent, createEventDispatchers, DeactivatedEvent, DestoryedEvent, LeftEvent } from './event'
+import { commands } from './commands'
+import {
+    ActivatedEvent,
+    createButtonEventDispatchers,
+    DeactivatedEvent,
+    DestoryedEvent,
+    LeftEvent,
+    PostInitEvent,
+    PreInitEvent
+} from './event'
 import { Timer } from './Timer'
 import { State } from './type'
 
@@ -37,7 +45,7 @@ export const Core: Component<ParentProps> = (props) => {
     const index = useSignal(startAt)
     // tag:可能需要一些更复杂的分支预测机制
     // createEffect(() => preLoad(index() + 5))
-    const dispatchs = createEventDispatchers()
+    const dispatchs = createButtonEventDispatchers()
 
     const events: Events = {
         click: dispatchs.click.publish,
@@ -63,15 +71,12 @@ export const Core: Component<ParentProps> = (props) => {
             () => {
                 if (router.active() === Pages.Title) {
                     log.info('Game:用户回到标题页')
-                    hooks.forEach((hook) => hook.onLeft?.(context))
                     LeftEvent.publish()
                 } else if (router.active() !== Pages.Game) {
                     log.info('Game:用户离开游戏页面')
-                    hooks.forEach((hook) => hook.onDeactivated?.(context))
                     DeactivatedEvent.publish()
                 } else {
                     log.info('Game:用户回到游戏页面')
-                    hooks.forEach((hook) => hook.onActivated?.(context))
                     ActivatedEvent.publish()
                 }
             },
@@ -88,7 +93,7 @@ export const Core: Component<ParentProps> = (props) => {
         log.info('Game:组件挂载')
         const timer = new Timer()
         timer.toImmediate()
-        hooks.forEach((hook) => hook.beforeInit?.(context))
+        PreInitEvent.publish()
         // const context = { timer, state: State.Init }
         // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
         let i = 0
@@ -100,7 +105,7 @@ export const Core: Component<ParentProps> = (props) => {
             i += 1
         }
         // 初始化过程中有一些使用了Promise包装的命令,先让它们执行完毕再进行接下来的步骤
-        setTimeout(() => hooks.forEach((hook) => hook.afterInit?.(context)))
+        setTimeout(PostInitEvent.publish)
         // 幕循环的第一次运行没有任何条件,所以不需要推动
         setTimeout(() => runLoop(index, state, store, variables, dispatchs.onClick, dispatchs.onAuto, dispatchs.onFast))
     })

@@ -10,28 +10,26 @@ import { Y } from '@/utils/FPUtil'
 import { log } from '@/utils/Logger'
 import { getState, PromiseState, PromiseX } from '@/utils/PromiseX'
 import { useSignal } from '@/utils/Reactive'
-import { commands, hooks } from './commands'
-import { DestoryedEvent, onActivated, onDeactivated } from './event'
-import { EventDispatcher, on } from './EventDispatcher'
+import { commands } from './commands'
+import {
+    ActEndEvent,
+    ActSecondClickEvent,
+    ActStartEvent,
+    DestoryedEvent,
+    onActEnd,
+    onActivated,
+    onDeactivated
+} from './event'
 import { Async, Await, fork } from './flow'
 import { Timer } from './Timer'
 import { State } from './type'
 
-export const actStartEvent = new EventDispatcher<GameRuntimeContext>()
-export const actEndEvent = new EventDispatcher<GameRuntimeContext>()
-export const actSecondClickEvent = new EventDispatcher<GameRuntimeContext>()
-actStartEvent.subscribe((context) => log.info(`开始执行第${context.index}幕...`))
-actEndEvent.subscribe((context) => log.info(`第${context.index}幕执行结束`))
-actSecondClickEvent.subscribe(() => log.info('一幕内第二次点击,立即执行'))
-export const onActStart = on(actStartEvent)
-export const onActEnd = on(actEndEvent)
-
 // 对外暴露目前的index,目前供存档功能使用
 export const currentIndex = useSignal(0)
-actStartEvent.subscribe((context) => currentIndex(context.index))
+ActStartEvent.subscribe((context) => currentIndex(context.index))
 
 // 循环监听Deactivated和Activated事件以暂停/启动timer,直到本幕结束监听取消
-actStartEvent.subscribe(({ timer }) => {
+ActStartEvent.subscribe(({ timer }) => {
     const onEnd = onActEnd()
     Y<void, void>(
         (rec) => () =>
@@ -74,7 +72,7 @@ async function runAct(
     // 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
     const immPromise = new PromiseX()
     immPromise
-        .then(() => actSecondClickEvent.publish(context))
+        .then(() => ActSecondClickEvent.publish(context))
         .then(timer.toImmediate)
         // 忽略调用reject导致的报错
         .catch((e) => {
@@ -87,8 +85,7 @@ async function runAct(
     const snycLockOnDestoryed = useSignal(false)
     DestoryedEvent.once(() => snycLockOnDestoryed(true))
     // act start
-    actStartEvent.publish(context)
-    hooks.forEach((hook) => hook.beforeActStart?.(context))
+    ActStartEvent.publish(context)
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
     const commandOutput = await fork(
         (await book.row(index))
@@ -116,7 +113,7 @@ async function runAct(
     )()
     // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
     immPromise.reject()
-    actEndEvent.publish(context)
+    ActEndEvent.publish(context)
     return commandOutput
 }
 

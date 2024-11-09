@@ -3,25 +3,25 @@ import { throttle } from 'es-toolkit'
 import { Show } from 'solid-js'
 import { clickState, EventState } from '@/core/commands/script/click'
 import { Core, useEvents } from '@/core/Core'
+import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { useKeyPress } from '@/utils/useKeyPress'
 import { Backlog } from './Backlog'
 import { ControlPanel } from './ControlPanel'
-import { Selection, showSelection } from './Selection'
+import { displaySelection, Selection } from './Selection'
 import { Stage } from './Stage'
 import { TextBox } from './TextBox'
 import { Video } from './Video'
 
 const GameUI: Component = () => {
-    console.log('GameUI组件发生函数调用')
-    const showBacklog = useSignal(false)
-    const showBottomBox = useSignal(true)
-
-    const enable = () => clickState() === EventState.Enabled
+    log.info('GameUI组件发生函数调用')
+    const displayBacklog = useSignal(false)
+    const displayBottomBox = useSignal(true)
 
     // 在两个位置管理用户点击:
     // 设置pointer-events以屏蔽整个GameUI的onClick触发
-    // 在触发click之前判断状态适用于事件被分发到其他按键的情况
+    // 在触发click之前判断状态适用于函数被其他键盘时间调用的情况
+    const enable = () => clickState() === EventState.Enabled
     const click = ((throttledClick) => () => {
         if (enable()) throttledClick()
     })(
@@ -36,16 +36,16 @@ const GameUI: Component = () => {
                 display: 'contents',
                 'pointer-events': enable() ? 'auto' : 'none'
             }}
-            onClick={() => (showBottomBox() ? click() : showBottomBox(true))}>
+            onClick={() => (displayBottomBox() ? click() : displayBottomBox(true))}>
             <Stage />
-            <Show when={!showBacklog() && showBottomBox()}>
-                <Show when={!showSelection()}>
+            <Show when={!displayBacklog() && displayBottomBox()}>
+                <Show when={!displaySelection()}>
                     <TextBox />
                 </Show>
-                <ControlPanel showBacklog={showBacklog} showBottomBox={showBottomBox} />
+                <ControlPanel showBacklog={() => displayBacklog(true)} closeBottomBox={() => displayBottomBox(false)} />
             </Show>
-            <Show when={showBacklog()}>
-                <Backlog showBacklog={showBacklog} />
+            <Show when={displayBacklog()}>
+                <Backlog closeBacklog={() => displayBacklog(false)} />
             </Show>
             <Video />
             <Selection />

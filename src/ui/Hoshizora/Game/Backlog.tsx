@@ -1,16 +1,12 @@
 import type { Component } from 'solid-js'
-import type { Signal } from '@/utils/Reactive'
-import { createEffect, For, Show } from 'solid-js'
+import { For, Show } from 'solid-js'
 import { backlogView } from '@/core/commands/script/backlog'
 import { useAudioConfig } from '@/store/effect/audioManager'
 import Scrollbar from '@/ui/Scrollbar'
 import Back from '../Back/Back'
 import styles from './Backlog.module.scss'
 
-export const Backlog: Component<{ showBacklog: Signal<boolean> }> = ({ showBacklog }) => {
-    createEffect(() => {
-        console.log(backlogView())
-    })
+export const Backlog: Component<{ closeBacklog: Function0<void> }> = ({ closeBacklog }) => {
     return (
         <div style={{ display: 'contents' }} onClick={(event) => event.stopPropagation()}>
             <div class={'Page' + ' ' + styles.Game_Backlog_mask} />
@@ -39,7 +35,7 @@ export const Backlog: Component<{ showBacklog: Signal<boolean> }> = ({ showBackl
                     thumb={<div class={styles.Game_Backlog_Scrollbar_thumb} />}
                     default={1}
                 />
-                <Back onClick={() => showBacklog(false)} />
+                <Back onClick={closeBacklog} />
             </div>
         </div>
     )

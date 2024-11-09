@@ -46,12 +46,3 @@ export type CommandRunFunction<T extends SingalCommand> = Function1<
 >
 
 export type CommandLifeCycleFunction = Function1<GameContext, void>
-
-export type GameHooks = {
-    beforeInit?: CommandLifeCycleFunction
-    afterInit?: CommandLifeCycleFunction
-    beforeActStart?: CommandLifeCycleFunction
-    onLeft?: CommandLifeCycleFunction
-    onActivated?: CommandLifeCycleFunction
-    onDeactivated?: CommandLifeCycleFunction
-}

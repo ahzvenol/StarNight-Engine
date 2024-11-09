@@ -1,9 +1,7 @@
 import type { Component } from 'solid-js'
 import { For, Show } from 'solid-js'
-import { currentIndex } from '@/core/act'
 import { nameView, textSave, textView, textWasReadView } from '@/core/commands/script/textbox'
 import { useStore } from '@/store/context'
-import { intervalToArray } from '@/utils/zipNumArray'
 import styles from './TextBox.module.scss'
 
 export const TextBox: Component = () => {

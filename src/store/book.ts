@@ -2,7 +2,9 @@ import { cloneDeep } from 'es-toolkit'
 import request from '@/utils/request'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const book = request('./static/book.json').then((res) => res.data as Array<Array<Record<string, any>>>)
+type Book = Array<Array<Record<string, any>>>
+
+const book = request<Book>('./static/book.json').then((res) => res.data)
 
 const length = async () => (await book).length
 

@@ -6,11 +6,12 @@ import { router } from '@/router'
 import { useStore } from '@/store/context'
 import { Clone, Variable } from '@/ui/Elements'
 import { Pages, restartGame } from '@/ui/Pages'
+import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import styles from './SaveAndLoad.module.scss'
 
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
-    console.log('SaveLoad组件发生函数调用.')
+    log.info('SaveLoad组件发生函数调用.')
     const currentPage = useSignal(0)
     const save = useStore().save.local
     const pageElementCount = 9

@@ -1,9 +1,10 @@
-import type { CommandArg, CommandLifeCycleFunction, CommandRunFunction } from '@/core/type'
+import type { CommandArg, CommandRunFunction } from '@/core/type'
 import { isNotNil, mapValues } from 'es-toolkit'
 import { match } from 'ts-pattern'
+import { PostInitEvent } from '@/core/event'
 import { State } from '@/core/type'
+import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
 import { Y } from '@/utils/FPUtil'
-import { useSignal } from '@/utils/Reactive'
 import { Tween } from './tween'
 
 // 跨幕环境变量file,需要收集副作用
@@ -19,24 +20,23 @@ export type SetImageCommandArgs = {
     h?: number
 }
 
-export const stageView = useSignal<HTMLDivElement | null>(null)
+export const stageView = useAutoResetSignal<HTMLDivElement>(() => document.createElement('div'), Scope.Game)
 
-const beforeInit: CommandLifeCycleFunction = () => stageView(document.createElement('div'))
-
-const afterInit: CommandLifeCycleFunction = () =>
+PostInitEvent.subscribe(() =>
     Y<Element, void>((rec) => (displayObject) => {
         Array.from(displayObject.children).forEach(rec)
         if (displayObject instanceof HTMLImageElement) {
             displayObject.src = displayObject.getAttribute('meta')!
         }
-    })(stageView()!)
+    })(stageView())
+)
 
 // z,w,h可选,若不设定则默认在最上层,保持图片原宽高
 const setImage: CommandRunFunction<SetImageCommandArgs> =
     (context) =>
     ({ name, file, ease, duration, x = 0, y = 0, z = 1, w, h }) => {
         const { state } = context
-        const stage = stageView()!
+        const stage = stageView()
         const array = stage.getElementsByClassName(name)
         const bitmap = match(state)
             // @ts-expect-error 类型与属性识别异常
@@ -58,8 +58,6 @@ const setImage: CommandRunFunction<SetImageCommandArgs> =
 
 export const SetImage = setImage
 
-export const SetImageHooks = { beforeInit, afterInit }
-
 type TweenImageCommandArgs = {
     target: string
     ease?: string
@@ -78,7 +76,7 @@ const tweenImage: CommandRunFunction<TweenImageCommandArgs> =
             delete args.y
         }
 
-        const tweenTarget = stageView()!.getElementsByClassName(target)[0]
+        const tweenTarget = stageView().getElementsByClassName(target)[0]
         Tween(context)({ target: tweenTarget, ease, duration })(mapValues(args, (arg) => '+=' + arg))
     }
 
@@ -90,10 +88,10 @@ const removeImage: CommandRunFunction<RemoveImageCommandArgs> =
     () =>
     ({ target, exclude }) => {
         if (target) {
-            stageView()!.removeChild(stageView()!.getElementsByClassName(target)[0])
+            stageView().removeChild(stageView().getElementsByClassName(target)[0])
         } else {
-            Array.from(stageView()!.children).forEach((e) => {
-                if (e.className !== exclude) stageView()!.removeChild(e)
+            Array.from(stageView().children).forEach((e) => {
+                if (e.className !== exclude) stageView().removeChild(e)
             })
         }
     }

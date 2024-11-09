@@ -4,11 +4,11 @@ import { selectionView } from '@/core/commands/script/selection'
 import { useSignal } from '@/utils/Reactive'
 import styles from './Selection.module.scss'
 
-export const showSelection = useSignal(false)
+export const displaySelection = useSignal(false)
 
 export const Selection: Component = () => {
     return (
-        <Show when={showSelection()}>
+        <Show when={displaySelection()}>
             <div class={styles.Game_Selection_container} onClick={(event) => event.stopPropagation()}>
                 <For each={selectionView}>
                     {(sel) => (

@@ -1,11 +1,11 @@
 import type { CommandRunFunction } from '@/core/type'
-import { useSignal } from '@/utils/Reactive'
+import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
 
 type BacklogCommandArgs = { text: string; name?: string; file?: string }
 
 type BacklogRowData = { index: number } & BacklogCommandArgs
 
-export const backlogView = useSignal<Array<BacklogRowData>>([])
+export const backlogView = useAutoResetSignal<Array<BacklogRowData>>(() => [], Scope.Game)
 
 const backlog: CommandRunFunction<BacklogCommandArgs> =
     ({ index }) =>
@@ -15,5 +15,3 @@ const backlog: CommandRunFunction<BacklogCommandArgs> =
     }
 
 export const Backlog = backlog
-
-export const BacklogHooks = { beforeInit: () => backlogView([]) }

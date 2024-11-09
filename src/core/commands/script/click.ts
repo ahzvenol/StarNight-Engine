@@ -1,12 +1,12 @@
 import type { CommandRunFunction } from '@/core/type'
-import { useSignal } from '@/utils/Reactive'
+import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
 
 export enum EventState {
     Enabled,
     Disabled
 }
 
-export const clickState = useSignal<EventState>(EventState.Enabled)
+export const clickState = useAutoResetSignal<EventState>(() => EventState.Enabled, Scope.Game)
 
 const click: CommandRunFunction<{ value: boolean }> =
     () =>
@@ -16,5 +16,3 @@ const click: CommandRunFunction<{ value: boolean }> =
     }
 
 export const Click = click
-
-export const UserClickHooks = { beforeInit: () => clickState(EventState.Enabled) }

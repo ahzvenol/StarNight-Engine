@@ -9,9 +9,9 @@ import { Button } from '@/ui/Elements'
 import { Pages, restartGame } from '@/ui/Pages'
 import styles from './ControlPanel.module.scss'
 
-export const ControlPanel: Component<{ showBacklog: Signal<boolean>; showBottomBox: Signal<boolean> }> = ({
+export const ControlPanel: Component<{ showBacklog: Function0<void>; closeBottomBox: Function0<void> }> = ({
     showBacklog,
-    showBottomBox
+    closeBottomBox
 }) => {
     const state = useState()
     const { auto, fast } = useEvents()
@@ -29,7 +29,7 @@ export const ControlPanel: Component<{ showBacklog: Signal<boolean>; showBottomB
             </div>
             <div class={styles.Game_ControlPanel_group_2}>
                 <Button class={styles.Game_ControlPanel_config} onClick={() => router.navigate(Pages.Config)} />
-                <Button class={styles.Game_ControlPanel_backlog} onClick={() => showBacklog(true)} />
+                <Button class={styles.Game_ControlPanel_backlog} onClick={showBacklog} />
                 <Button
                     class={styles.Game_ControlPanel_auto}
                     style={{ filter: state() === State.Auto ? 'brightness(60%)' : '' }}
@@ -40,7 +40,7 @@ export const ControlPanel: Component<{ showBacklog: Signal<boolean>; showBottomB
                     style={{ filter: state() === State.Fast ? 'brightness(60%)' : '' }}
                     onClick={fast}
                 />
-                <Button class={styles.Game_ControlPanel_hidden} onClick={() => showBottomBox(false)} />
+                <Button class={styles.Game_ControlPanel_hidden} onClick={closeBottomBox} />
             </div>
         </div>
     )

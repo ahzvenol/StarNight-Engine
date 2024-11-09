@@ -11,18 +11,18 @@ import { log } from './utils/Logger'
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false
 
-if (import.meta.env.DEV !== true) {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker
-            .register('/service-worker.js')
-            .then((registration) => {
-                log.info('ServiceWorker registration successful with scope: ' + registration.scope)
-            })
-            .catch((error) => {
-                log.error('ServiceWorker registration failed: ' + error)
-            })
-    }
-}
+// if (import.meta.env.DEV !== true) {
+//     if ('serviceWorker' in navigator) {
+//         navigator.serviceWorker
+//             .register('/service-worker.js')
+//             .then((registration) => {
+//                 log.info('ServiceWorker registration successful with scope: ' + registration.scope)
+//             })
+//             .catch((error) => {
+//                 log.error('ServiceWorker registration failed: ' + error)
+//             })
+//     }
+// }
 
 // 整个配置文件在这里分发
 const App: Component = () => (

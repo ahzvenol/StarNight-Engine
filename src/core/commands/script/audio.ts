@@ -1,6 +1,6 @@
-import type { CommandLifeCycleFunction, CommandRunFunction } from '@/core/type'
+import type { CommandRunFunction } from '@/core/type'
 import type { AudioTracksType } from '@/store/effect/audioManager'
-import { mapValues } from 'es-toolkit'
+import { ActivatedEvent, ActStartEvent, LeftEvent, PostInitEvent, PreInitEvent } from '@/core/event'
 import { State } from '@/core/type'
 import { useAudioConfig } from '@/store/effect/audioManager'
 
@@ -12,28 +12,26 @@ export type AudioCommandArgs = XOR<
     duration?: number
 }
 
-const tracks: Record<string, Howl> = {}
+const tracks = new Map<string, Howl>()
 
-// onDestoryed操作,后续整理
-const beforeInit: CommandLifeCycleFunction = () => {
-    mapValues(tracks, (audio) => audio.unload())
-    for (const key in tracks) {
-        delete tracks[key]
-    }
-}
+PreInitEvent.subscribe(() => () => {
+    tracks.forEach((audio) => audio.unload())
+    tracks.clear()
+})
 
-const afterInit: CommandLifeCycleFunction = () => mapValues(tracks, (audio) => audio.load().play())
+PostInitEvent.subscribe(() => tracks.forEach((audio) => audio.load().play()))
 
-const beforeActStart: CommandLifeCycleFunction = ({ store: { config } }) => {
-    if (config.InterruptClip) tracks['Clip']?.stop()
-}
+ActStartEvent.subscribe(({ store: { config } }) => {
+    if (config.InterruptClip) tracks.get('Clip')?.stop()
+})
 
-const onLeft: CommandLifeCycleFunction = () => mapValues(tracks, (audio) => audio.pause())
+LeftEvent.subscribe(() => tracks.forEach((audio) => audio.pause()))
 
-const onActivated: CommandLifeCycleFunction = () =>
-    mapValues(tracks, (audio) => {
+ActivatedEvent.subscribe(() =>
+    tracks.forEach((audio) => {
         if (!audio.playing()) audio.play()
     })
+)
 
 const audio: CommandRunFunction<AudioCommandArgs> =
     ({ state, timer }) =>
@@ -43,9 +41,9 @@ const audio: CommandRunFunction<AudioCommandArgs> =
         // 根据名称设置音轨
         if (name !== undefined) {
             // 如果此名称下已有音频,清理它
-            const oldAudio = tracks[name]
-            if (oldAudio && duration) oldAudio.fade(oldAudio.volume(), 0, duration)
-            timer.delay(duration).then(() => oldAudio?.stop())
+            const oldAudio = tracks.get(name)
+            if (oldAudio && duration)
+                oldAudio.fade(oldAudio.volume(), 0, duration).once('fade', () => oldAudio.unload())
             // 挂载新音频
             const audio = useAudioConfig(
                 type as AudioTracksType,
@@ -56,9 +54,9 @@ const audio: CommandRunFunction<AudioCommandArgs> =
                     preload: state !== State.Init
                 })
             )
-            tracks[name] = audio
-            // 由于无从得知audio是否播放完毕,重复调用play()会导致重复播放,所以在audio播放完毕的时候销毁它
-            audio.on('end', () => audio.unload())
+            tracks.set(name, audio)
+            // 如果音频不是循环的,就不希望它播放完毕之后再被其他事件调用play()了
+            if (!loop) audio.on('end', () => audio.unload())
             if (duration) timer.delay(duration).then(() => audio.fade(0, audio.volume(), duration))
             // 自动模式需要对audio计时
             if (state === State.Auto && type === 'Clip')
@@ -66,16 +64,13 @@ const audio: CommandRunFunction<AudioCommandArgs> =
         } // 根据名称关闭音轨
         else {
             // 如果省略了target,关闭全部轨道
-            const targets = target === undefined ? Object.keys(tracks) : [target]
+            const targets = target === undefined ? tracks.keys() : [target]
             for (const key of targets) {
-                const audio = tracks[key]
-                delete tracks[key]
-                if (duration) audio?.fade(audio.volume(), 0, duration)
-                timer.delay(duration).then(() => audio?.stop())
+                const audio = tracks.get(key)
+                tracks.delete(key)
+                if (duration) audio?.fade(audio.volume(), 0, duration).once('fade', () => audio.unload())
             }
         }
     }
 
 export const Audio = audio
-
-export const AudioHooks = { beforeInit, afterInit, beforeActStart, onLeft, onActivated }
