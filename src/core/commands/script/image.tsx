@@ -1,11 +1,11 @@
-import type { CommandArg, CommandRunFunction } from '@/core/type'
+import type { CommandArg, DynamicCommand, NonBlockingCommand } from '../../type'
 import { isNotNil, mapValues } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import { PostInitEvent } from '@/core/event'
 import { State } from '@/core/type'
 import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
 import { Y } from '@/utils/FPUtil'
-import { Tween } from './tween'
+import { tween } from './tween'
 
 // 跨幕环境变量file,需要收集副作用
 export type SetImageCommandArgs = {
@@ -32,9 +32,8 @@ PostInitEvent.subscribe(() =>
 )
 
 // z,w,h可选,若不设定则默认在最上层,保持图片原宽高
-const setImage: CommandRunFunction<SetImageCommandArgs> =
-    (context) =>
-    ({ name, file, ease, duration, x = 0, y = 0, z = 1, w, h }) => {
+export const setImage: DynamicCommand<SetImageCommandArgs> = (context) =>
+    function* ({ name, file, ease, duration, x = 0, y = 0, z = 1, w, h }) {
         const { state } = context
         const stage = stageView()
         const array = stage.getElementsByClassName(name)
@@ -48,25 +47,24 @@ const setImage: CommandRunFunction<SetImageCommandArgs> =
         if (w !== undefined) bitmap.style.width = `${w}px`
         if (h !== undefined) bitmap.style.height = `${h}px`
         const oldBitmap = array[0]
-        if (isNotNil(oldBitmap)) {
-            Tween(context)({ target: oldBitmap, ease, duration })({ opacity: 0 }).then(() => {
-                oldBitmap.parentNode?.removeChild(oldBitmap)
-            })
-        }
         stage.insertBefore(bitmap, stage.firstChild)
+        if (isNotNil(oldBitmap)) {
+            if (state !== State.Init) {
+                const sequence = tween({ target: oldBitmap, ease, duration })({ opacity: 0 })
+                yield sequence.finished
+            }
+            oldBitmap.parentNode?.removeChild(oldBitmap)
+        }
     }
 
-export const SetImage = setImage
-
-type TweenImageCommandArgs = {
+export type TweenImageCommandArgs = {
     target: string
     ease?: string
     duration: number
 } & Record<string, CommandArg>
 
-const tweenImage: CommandRunFunction<TweenImageCommandArgs> =
-    (context) =>
-    ({ target, ease, duration, ...args }) => {
+export const tweenImage: DynamicCommand<TweenImageCommandArgs> = () =>
+    function* ({ target, ease, duration, ...args }) {
         if (args.x !== undefined) {
             args.translateX = args.x
             delete args.x
@@ -77,14 +75,14 @@ const tweenImage: CommandRunFunction<TweenImageCommandArgs> =
         }
 
         const tweenTarget = stageView().getElementsByClassName(target)[0]
-        Tween(context)({ target: tweenTarget, ease, duration })(mapValues(args, (arg) => '+=' + arg))
+        const sequence = tween({ target: tweenTarget, ease, duration })(mapValues(args, (arg) => '+=' + arg))
+        yield sequence.finished
+        sequence.seek(sequence.duration)
     }
 
-export const TweenImage = tweenImage
+export type RemoveImageCommandArgs = XOR<{ target: string }, { exclude: string }>
 
-type RemoveImageCommandArgs = XOR<{ target: string }, { exclude: string }>
-
-const removeImage: CommandRunFunction<RemoveImageCommandArgs> =
+export const removeImage: NonBlockingCommand<RemoveImageCommandArgs> =
     () =>
     ({ target, exclude }) => {
         if (target) {
@@ -95,5 +93,3 @@ const removeImage: CommandRunFunction<RemoveImageCommandArgs> =
             })
         }
     }
-
-export const RemoveImage = removeImage

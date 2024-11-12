@@ -1,7 +1,9 @@
-import { warp } from '@/core/macro'
-import { Video as BaseVideo } from '../script/video'
+import type { Macro, MacroCommand } from '../macro'
+import type { VideoCommandArgs } from '../script/video'
 
-export const Video = warp(BaseVideo)((args) => {
+export const video: Macro<VideoCommandArgs> = (args) => {
+    const array = Array<MacroCommand>()
     args.file = `./static/${args.file}.mp4`
-    return args
-})
+    array.push(['video', args])
+    return array
+}

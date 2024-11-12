@@ -21,6 +21,7 @@ import {
     PostInitEvent,
     PreInitEvent
 } from './event'
+import { row } from './row'
 import { Timer } from './Timer'
 import { State } from './type'
 
@@ -98,9 +99,7 @@ export const Core: Component<ParentProps> = (props) => {
         // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
         let i = 0
         while (i < startAt) {
-            ;(await book.row(i)).forEach((args) =>
-                commands[args['@']]?.({ index: i, timer, state: State.Init, ...context })(args)
-            )
+            ;(await row(i)).forEach((e) => e({ index: i, timer, state: State.Init, ...context }).apply())
             // log.info(`正在初始化第${i}幕`)
             i += 1
         }

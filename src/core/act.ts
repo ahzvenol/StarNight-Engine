@@ -2,25 +2,25 @@ import type { ReactiveType } from 'micro-reactive'
 import type { ReactiveStore } from '@/store/default'
 import type { Signal } from '@/utils/Reactive'
 import type { GameRuntimeContext, Variables } from './type'
-import { delay, mapValues } from 'es-toolkit'
-import Mustache from 'mustache'
-import { match, P } from 'ts-pattern'
+import { delay } from 'es-toolkit'
+import { match } from 'ts-pattern'
 import book from '@/store/book'
 import { Y } from '@/utils/FPUtil'
 import { log } from '@/utils/Logger'
-import { getState, PromiseState, PromiseX } from '@/utils/PromiseX'
+import { PromiseX } from '@/utils/PromiseX'
 import { useSignal } from '@/utils/Reactive'
-import { commands } from './commands'
 import {
     ActEndEvent,
+    ActivatedEvent,
     ActSecondClickEvent,
     ActStartEvent,
+    DeactivatedEvent,
     DestoryedEvent,
     onActEnd,
-    onActivated,
-    onDeactivated
+    onDestoryed
 } from './event'
-import { Async, Await, fork } from './flow'
+import { fork } from './flow'
+import { row } from './row'
 import { Timer } from './Timer'
 import { State } from './type'
 
@@ -30,29 +30,12 @@ ActStartEvent.subscribe((context) => currentIndex(context.index))
 
 // 循环监听Deactivated和Activated事件以暂停/启动timer,直到本幕结束监听取消
 ActStartEvent.subscribe(({ timer }) => {
-    const onEnd = onActEnd()
-    Y<void, void>(
-        (rec) => () =>
-            onDeactivated()
-                .then(() => getState(onEnd))
-                .then((state) => {
-                    if (state === PromiseState.PENDING) {
-                        timer.pause()
-                        rec()
-                    }
-                })
-    )()
-    Y<void, void>(
-        (rec) => () =>
-            onActivated()
-                .then(() => getState(onEnd))
-                .then((state) => {
-                    if (state === PromiseState.PENDING) {
-                        timer.start()
-                        rec()
-                    }
-                })
-    )()
+    const id1 = DeactivatedEvent.subscribe(timer.pause)
+    const id2 = ActivatedEvent.subscribe(timer.start)
+    Promise.race([onActEnd(), onDestoryed()]).then(() => {
+        DeactivatedEvent.unsubscribe(id1)
+        ActivatedEvent.unsubscribe(id2)
+    })
 })
 
 // 给予全部命令操作actindex的能力是危险的,有几个特殊的命令会影响主循环,可以单独提出
@@ -87,30 +70,7 @@ async function runAct(
     // act start
     ActStartEvent.publish(context)
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-    const commandOutput = await fork(
-        (await book.row(index))
-            .map((args) =>
-                mapValues(args, (value) =>
-                    match(value)
-                        .with(P.string, (value) => Mustache.render(value, context))
-                        .otherwise((value) => value)
-                )
-            )
-            .map((args) =>
-                match(args['@'])
-                    .with('wait', (sign) => new Await(() => commands[sign](context)(args)))
-                    .when(
-                        (sign) => sign in commands,
-                        (sign) =>
-                            new Async(() => {
-                                if (!snycLockOnDestoryed()) {
-                                    return commands[sign as keyof typeof commands](context)(args)
-                                }
-                            })
-                    )
-                    .otherwise((sign) => () => log.error(`找不到命令:${sign}`, args))
-            )
-    )()
+    const commandOutput = await fork((await row(index)).map((e) => e(context))).apply()
     // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
     immPromise.reject()
     ActEndEvent.publish(context)
@@ -122,9 +82,9 @@ function runLoop(
     state: Signal<State>,
     store: ReactiveStore,
     variables: Variables,
-    onClick: () => Promise<void>,
-    onAuto: () => Promise<void>,
-    onFast: () => Promise<void>
+    onClick: Function0<Promise<void>>,
+    onAuto: Function0<Promise<void>>,
+    onFast: Function0<Promise<void>>
 ) {
     return Y<void, Promise<void>>((rec) => async () => {
         // 幕运行过程中不会操作任何状态,但可以操作variables

@@ -14,7 +14,13 @@ class EventDispatcher<T> {
         this.callbacks.forEach((fn) => tryFn(() => fn(e)))
     }
     public subscribe = (callback: EventHandler<T>) => {
-        this.callbacks.set(Symbol(), callback)
+        const uuid = Symbol()
+        this.callbacks.set(uuid, callback)
+        return uuid
+    }
+
+    public unsubscribe = (id: symbol) => {
+        this.callbacks.delete(id)
     }
 
     public once = (callback: EventHandler<T>) => {

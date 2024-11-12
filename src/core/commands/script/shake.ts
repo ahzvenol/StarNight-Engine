@@ -1,15 +1,14 @@
-import type { GameRuntimeContext } from '@/core/type'
+import type { DynamicCommand } from '../../type'
 import anime from 'animejs'
 import { State } from '@/core/type'
 import { stageView } from './image'
 
-export type shakeCommandArgs = { target: string; x: number; y: number; duration: number; iteration?: number }
+export type ShakePunchCommandArgs = { target: string; x: number; y: number; duration: number; iteration?: number }
 
 // 因为image命令使用translate参数,这里使用left和top避免冲突
 
-const shake: Function1<GameRuntimeContext, Function1<shakeCommandArgs, Promise<void> | void>> =
-    ({ state }) =>
-    ({ target, x, y, duration, iteration = 5 }) => {
+export const shake: DynamicCommand<ShakePunchCommandArgs> = ({ state }) =>
+    function* ({ target, x, y, duration, iteration = 5 }) {
         if (state === State.Init || state === State.Fast) return
         const realTarget = stageView()!.getElementsByClassName(target)[0]
         const originX = 0
@@ -25,12 +24,11 @@ const shake: Function1<GameRuntimeContext, Function1<shakeCommandArgs, Promise<v
             sequence.add({ left: nextX, top: nextY, duration: dur, direction: 'alternate' })
         }
         sequence.add({ left: originX, top: originY, duration: dur, direction: 'alternate' })
-        return sequence.finished
+        yield sequence.finished
     }
 
-const punch: Function1<GameRuntimeContext, Function1<shakeCommandArgs, Promise<void> | void>> =
-    ({ state }) =>
-    ({ target, x, y, duration, iteration = 5 }) => {
+export const punch: DynamicCommand<ShakePunchCommandArgs> = ({ state }) =>
+    function* ({ target, x, y, duration, iteration = 5 }) {
         if (state === State.Init || state === State.Fast) return
         const realTarget = stageView()!.getElementsByClassName(target)[0]
         const originX = 0
@@ -47,9 +45,5 @@ const punch: Function1<GameRuntimeContext, Function1<shakeCommandArgs, Promise<v
             sequence.add({ left: nextX, top: nextY, duration: dur, direction: 'alternate' })
         }
         sequence.add({ left: originX, top: originY, duration: dur, direction: 'alternate' })
-        return sequence.finished
+        yield sequence.finished
     }
-
-export const Shake = shake
-
-export const Punch = punch

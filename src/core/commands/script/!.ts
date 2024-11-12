@@ -1,15 +1,9 @@
-const toContinue = () => () => ({ continue: true })
+export const Continue = () => () => ({ continue: true })
 
-export const Continue = toContinue
-
-const jump =
+export const Jump =
     () =>
     ({ target }: { target: number }) => ({ jump: target, continue: true })
 
-export const Jump = jump
-
-const end = () => () => ({ end: true })
-
-export const End = end
+export const End = () => () => ({ end: true })
 
 // const sign = (context) => ({ name }) => jumpMap[name] = index

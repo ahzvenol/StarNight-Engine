@@ -3,17 +3,17 @@ import { log } from '@/utils/Logger'
 import { EventDispatcher, on } from './EventDispatcher'
 
 export function createButtonEventDispatchers() {
-    const gameClickEvent = new EventDispatcher<void>()
+    const primaryClickEvent = new EventDispatcher<void>()
     const fastButtonClickEvent = new EventDispatcher<void>()
     const autoButtonClickEvent = new EventDispatcher<void>()
-    const onClick = on(gameClickEvent)
+    const onClick = on(primaryClickEvent)
     const onFast = on(fastButtonClickEvent)
     const onAuto = on(autoButtonClickEvent)
-    gameClickEvent.subscribe(() => log.info('触发点击事件'))
+    primaryClickEvent.subscribe(() => log.info('触发点击事件'))
     fastButtonClickEvent.subscribe(() => log.info('触发快进事件'))
     autoButtonClickEvent.subscribe(() => log.info('触发自动事件'))
 
-    return { click: gameClickEvent, fast: fastButtonClickEvent, auto: autoButtonClickEvent, onClick, onFast, onAuto }
+    return { click: primaryClickEvent, fast: fastButtonClickEvent, auto: autoButtonClickEvent, onClick, onFast, onAuto }
 }
 
 export const PreInitEvent = new EventDispatcher<void>()
@@ -41,6 +41,7 @@ export const ActEndEvent = new EventDispatcher<GameRuntimeContext>()
 export const onActEnd = on(ActEndEvent)
 
 export const ActSecondClickEvent = new EventDispatcher<GameRuntimeContext>()
+export const onActSecondClick = on(ActEndEvent)
 
 ActStartEvent.subscribe((context) => log.info(`开始执行第${context.index}幕...`))
 ActEndEvent.subscribe((context) => log.info(`第${context.index}幕执行结束`))

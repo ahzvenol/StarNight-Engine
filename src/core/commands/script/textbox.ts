@@ -1,8 +1,9 @@
-import type { CommandRunFunction } from '@/core/type'
-import { noInit } from '@/core/macro'
+import type { DynamicCommand, NonBlockingCommand } from '../../type'
+import { inRange } from 'es-toolkit'
 import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
 import { Y } from '@/utils/FPUtil'
 import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
+import { State } from '../../type'
 
 // 跨幕环境变量name,无副作用
 // 存在依赖变量的"文字播放速度"
@@ -11,36 +12,31 @@ export const textView = useAutoResetSignal(() => '', Scope.Act)
 export const textWasReadView = useAutoResetSignal(() => false, Scope.Act)
 export const textSave = useAutoResetSignal(() => '', Scope.Act)
 
-const text: CommandRunFunction<{ text: string }> =
-    ({ index, store, timer, variables: { global } }) =>
-    ({ text }) => {
+export const text: DynamicCommand<{ text: string }> = ({ index, timer, state, store, variables: { global } }) =>
+    function* ({ text }) {
+        if (state === State.Init) return
         textSave(text)
-        const origin = intervalToArray(global.segment())
-        if (!origin.includes(index)) {
-            global.segment(arrayToInterval([...origin, index]))
-        } else {
+
+        if (global.segment().some((i) => inRange(index, i[0], i[1] + 1))) {
             textWasReadView(true)
+        } else {
+            global.segment(arrayToInterval([...intervalToArray(global.segment()), index]))
         }
-
-        return Y<string, Promise<void>>((rec) => (str) => {
-            return timer
-                .delay(0)
-                .then(() => textView((text) => text + str.substring(0, 1)))
-                .then(() => timer.delay(store.config.TextSpeed * 100))
-                .then(() => {
-                    if (str.length >= 1) return rec(str.substring(1))
-                })
-        })(text)
+        yield* Y<string, Generator<Promise<void>, void, void>>(
+            (rec) =>
+                function* (str): Generator<Promise<void>, void, void> {
+                    yield timer.delay(store.config.TextSpeed * 100)
+                    textView((text) => text + str.charAt(0))
+                    console.log(str)
+                    if (str.length >= 1) yield* rec(str.slice(1))
+                }
+        )(text)
     }
-
-export const Text = noInit(text)
 
 export const nameView = useAutoResetSignal(() => '', Scope.Act)
 
-const name: CommandRunFunction<{ name: string }> =
+export const name: NonBlockingCommand<{ name: string }> =
     () =>
     ({ name }) => {
         nameView(name)
     }
-
-export const Name = name

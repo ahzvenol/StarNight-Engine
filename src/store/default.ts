@@ -27,7 +27,7 @@ const systemDefaultStore = {
         Language: 'zh-CN' as keyof typeof language
     },
     save: {
-        global: { cg: Array<string>(), segment: Array<Array<number>>() },
+        global: { cg: Array<string>(), segment: Array<[number, number]>() },
         local: {} as Record<number, LocalSaveData>
     },
     user: {}
