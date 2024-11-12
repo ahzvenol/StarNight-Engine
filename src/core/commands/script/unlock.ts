@@ -1,4 +1,4 @@
-import type { CommandRunFunction } from '@/core/type'
+import type { NonBlockingCommand } from '../../type'
 
 // 通过更改响应式(或许也可以是非响应式)的变量,在鉴赏页展示对应的cg
 // 如果设置为自动解锁,此命令失效
@@ -6,10 +6,8 @@ import type { CommandRunFunction } from '@/core/type'
 // 或许需要某种方式保证不耦合
 
 // 可以选择此处始终生效,而通过鉴赏页的前置变量&&控制展示
-const unlock: CommandRunFunction<{ name: string }> =
+export const unlock: NonBlockingCommand<{ name: string }> =
     ({ variables: { global } }) =>
     ({ name }) => {
         if (!global.cg.includes(name)) global.cg([name, ...global.cg()])
     }
-
-export const Unlock = unlock

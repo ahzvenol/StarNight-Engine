@@ -1,11 +1,9 @@
-import type { CommandArg, CommandRunFunction, Variables } from '@/core/type'
+import type { CommandArg, NonBlockingCommand, Variables } from '../../type'
 
-type VariableCommandArgs = { name: string; type: keyof Variables; value: CommandArg }
+export type VariableCommandArgs = { name: string; type: keyof Variables; value: CommandArg }
 
-const variable: CommandRunFunction<VariableCommandArgs> =
+export const variable: NonBlockingCommand<VariableCommandArgs> =
     ({ variables }) =>
     ({ name, type, value }) => {
         variables[type][name](value)
     }
-
-export const Variable = variable

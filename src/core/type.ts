@@ -1,5 +1,5 @@
 import type { Reactive, ReactiveType } from 'micro-reactive'
-import type { GlobalSaveData, LocalSaveData, ReactiveStore } from '@/store/default'
+import type { GlobalSaveData, ReactiveStore } from '@/store/default'
 import type { Timer } from './Timer'
 
 export enum State {
@@ -34,15 +34,25 @@ export type GameRuntimeContext = {
 
 export type CommandArg = string | number | boolean
 
-export type SingalCommand = Record<string, CommandArg | undefined>
+export type RuntimeCommandArgs = Record<string, CommandArg | undefined> | void
 
 export type CommandOutput = Record<string, unknown> & Partial<{ continue: boolean; jump: number; end: boolean }>
 
-export type RuntimeCommandOutput = Promise<CommandOutput> | Promise<unknown> | CommandOutput | unknown
+export type RuntimeCommandOutput = CommandOutput | unknown
 
-export type CommandRunFunction<T extends SingalCommand> = Function1<
+export type DynamicCommandReturnType = Generator<Promise<void>, RuntimeCommandOutput, void>
+
+export type DynamicCommand<T extends RuntimeCommandArgs = void> = Function1<
+    GameRuntimeContext,
+    Function1<T, DynamicCommandReturnType>
+>
+
+export type NonBlockingCommand<T extends RuntimeCommandArgs = void> = Function1<
     GameRuntimeContext,
     Function1<T, RuntimeCommandOutput>
 >
 
-export type CommandLifeCycleFunction = Function1<GameContext, void>
+export type BlockingCommand<T extends RuntimeCommandArgs = void> = Function1<
+    GameRuntimeContext,
+    Function1<T, Promise<RuntimeCommandOutput>>
+>

@@ -1,4 +1,4 @@
-function arrayToInterval(list: Array<number>): Array<Array<number>> {
+function arrayToInterval(list: Array<number>): Array<[number, number]> {
     if (list == undefined || list.length === 0) {
         return []
     } else if (list.length === 1) {
@@ -6,7 +6,7 @@ function arrayToInterval(list: Array<number>): Array<Array<number>> {
     }
     list = [...new Set(list)]
     list.sort((a, b) => a - b)
-    const collection = []
+    const collection: Array<[number, number]> = []
     collection.push([list[0], list[0]])
     let i = 0
     for (let x = 1; x < list.length; x++) {
@@ -21,7 +21,7 @@ function arrayToInterval(list: Array<number>): Array<Array<number>> {
 }
 
 // 转换数学区间到数组
-function intervalToArray(arr: Array<Array<number>>): Array<number> {
+function intervalToArray(arr: Array<[number, number]>): Array<number> {
     return arr.flatMap((e) => to(e[0], e[1]))
 }
 

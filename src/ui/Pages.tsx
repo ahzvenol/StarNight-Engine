@@ -16,11 +16,11 @@ enum Pages {
     'Gallery' = 'Gallery'
 }
 
-const Title: Component<ParentProps<{ bgm: string }>> = (props) => {
+const Title: Component<ParentProps> = (props) => {
     const TitleBGM = useAudioConfig(
         'BGM',
         new Howl({
-            src: props.bgm
+            src: '/static/AudioClip/bgm01.wav'
         })
     )
     createEffect(
