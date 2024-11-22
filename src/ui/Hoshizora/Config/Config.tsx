@@ -9,7 +9,7 @@ import styles from './Config.module.scss'
 import Slider from './Slider'
 
 const Config: Component = () => {
-    log.info('Config组件发生函数调用')
+    log.info('Config组件函数被调用')
     const config = useStore().config
     return (
         <div class={'Page' + ' ' + styles.Config_container}>

@@ -1,5 +1,5 @@
 import type { CommandArg } from '@/core/type'
-import anime from 'animejs/lib/anime.es.js'
+import anime from 'animejs'
 import { ActStartEvent } from '@/core/event'
 
 // anime.suspendWhenDocumentHidden = true;
