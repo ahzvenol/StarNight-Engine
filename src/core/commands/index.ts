@@ -1,3 +1,4 @@
+import type { State } from '../type'
 import { Continue, End, Jump } from './script/!'
 import { audio } from './script/audio'
 import { backlog } from './script/backlog'
@@ -31,11 +32,14 @@ export const commands = {
     punch
 } as const
 
+export const map: Partial<Record<CommandKeys, Array<State>>> = {}
+
 export type Commands = typeof commands
 
 export type CommandKeys = keyof Commands
 
-export type CommandArgs<T extends CommandKeys> = Parameters<ReturnType<Commands[T]>>[0]
+export type CommandArgs<T extends CommandKeys> = Parameters<ReturnType<Commands[T]['apply']>>[0]
+
 // 文本:text
 // 名称:name
 // 目标:target

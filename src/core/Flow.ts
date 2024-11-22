@@ -1,8 +1,18 @@
-import type { CommandOutput, RuntimeCommandOutput } from '@/core/type'
+import type {
+    BlockingCommand,
+    CommandOutput,
+    DynamicCommand,
+    IBlockingCommand,
+    IDynamicCommand,
+    INonBlockingCommand,
+    NonBlockingCommand,
+    RuntimeCommandArgs,
+    RuntimeCommandOutput
+} from '@/core/type'
 import { merge } from 'es-toolkit'
 import { match, P } from 'ts-pattern'
+import { Command, State } from '@/core/type'
 import { Y } from '@/utils/FPUtil'
-import { onActSecondClick, onDestoryed } from './event'
 
 // 有两种方式可以实现异步流控制,使用程序编写的代码可以直接使用await,而文字剧本则需要经过二次转换
 
@@ -44,18 +54,55 @@ export type StandardResolvedCommand = Flow<NonNullResolvedCommand>
 // 标准化处理过程中可能遇到的命令类型
 export type MixResolvedCommand = ResolvedCommand | Flow<ResolvedCommand> | StandardResolvedCommand
 
-export function auto<TRetrun>(generator: Generator<Promise<void>, TRetrun, void>): Promise<TRetrun> {
-    let flag = false
-    const onFastForward = onActSecondClick()
-    onFastForward.then(() => (flag = true))
-    onDestoryed().then(() => generator.throw(new Error('Destoryed')))
-    return Y<void, Promise<TRetrun>>((rec) => async () => {
+export function ActScope<T extends RuntimeCommandArgs>(fn: DynamicCommand<T>): DynamicCommand<T>
+export function ActScope<T extends RuntimeCommandArgs>(fn: NonBlockingCommand<T>): NonBlockingCommand<T>
+export function ActScope<T extends RuntimeCommandArgs>(
+    fn: DynamicCommand<T> | NonBlockingCommand<T>
+): DynamicCommand<T> | NonBlockingCommand<T> {
+    return (context) => (args) => {
+        if (context.state !== State.Init) return fn(context)(args)
+    }
+}
+
+export function Dynamic<T extends RuntimeCommandArgs = void>(fn: DynamicCommand<T>): IDynamicCommand<T> {
+    return {
+        type: Command.Dynamic,
+        apply: fn
+    }
+}
+
+export function NonBlocking<T extends RuntimeCommandArgs = void>(fn: NonBlockingCommand<T>): INonBlockingCommand<T> {
+    return {
+        type: Command.NonBlocking,
+        apply: fn
+    }
+}
+
+export function Blocking<T extends RuntimeCommandArgs = void>(fn: BlockingCommand<T>): IBlockingCommand<T> {
+    return {
+        type: Command.Blocking,
+        apply: fn
+    }
+}
+
+export function auto<TRetrun>(
+    generator: Generator<Promise<void>, TRetrun, void>,
+    {
+        imm,
+        onFastForward,
+        onDestory
+    }: XOR<{ imm?: boolean }, { onFastForward?: Promise<void>; onDestory?: Promise<void> }>
+): Promise<TRetrun> {
+    onDestory?.then(() => generator.throw(new Error('Destoryed')))
+    return Y<boolean, Promise<TRetrun>>((rec) => async (flag) => {
         const { value, done } = generator.next()
         if (!done) {
-            if (flag) return rec()
-            else return Promise.race([onFastForward, value]).then(() => rec())
+            if (flag) return rec(true)
+            else if (onFastForward !== undefined) {
+                return Promise.race([onFastForward.then(() => true), value.then(() => false)]).then((flag) => rec(flag))
+            } else return value.then(() => rec(false))
         } else return value
-    })()
+    })(imm || false)
 }
 
 // 并行执行接收到全部命令,无论Flow的具体类型

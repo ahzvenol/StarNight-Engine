@@ -1,72 +1,84 @@
 import type { CommandArgs, CommandKeys } from './commands'
 import type { StandardResolvedCommand } from './flow'
-import type { DynamicCommandReturnType, GameRuntimeContext, RuntimeCommandOutput } from './type'
+import type { GameRuntimeContext, RuntimeCommandOutput } from './type'
 import { isPlainObject, mapValues, omit } from 'es-toolkit'
 import Mustache from 'mustache'
 import { match, P } from 'ts-pattern'
 import book from '@/store/book'
+import { isGenerator } from '@/utils/isGenerator'
 import { log } from '@/utils/Logger'
 import { commands } from './commands'
-import { macros } from './commands/macro'
+import { CommandEntity, macros } from './commands/macro'
+import { onActSecondClick, onDestoryed } from './event'
 import { Async, auto, Await } from './flow'
+import { State } from './type'
 
 export const row = (index: number): Promise<Array<Function1<GameRuntimeContext, StandardResolvedCommand>>> =>
     book.row(index).then((res) =>
         res
-            .map((line) => [line['@'], omit(line, ['@'])] as const)
-            .flatMap(([sign, args]) => {
-                if (sign in macros) {
+            .map((line) => CommandEntity.from(line['@'], omit(line, ['@'])))
+            .flatMap((line) => {
+                if (line.sign in macros) {
                     try {
-                        return macros[sign as keyof typeof macros](args as unknown as never)
+                        return macros[line.sign as keyof typeof macros](line.args as unknown as never)
                     } catch (e) {
-                        log.error('macro转换出错:', args, e)
+                        log.error('macro转换出错:', line.args, e)
                         return []
                     }
                 } else {
-                    return [[sign, args]]
+                    return [line]
                 }
             })
-            .filter(([sign, args]) => {
-                if (sign in commands) {
+            .filter((line) => {
+                if (line.sign in commands) {
                     return true
                 } else {
-                    log.warn(`找不到命令:${sign}`, args)
+                    log.warn(`找不到命令:${line.sign}`, line.args)
                     return false
                 }
             })
             .map(
-                ([sign, args]) =>
-                    (context: GameRuntimeContext) =>
-                        [
-                            sign as CommandKeys,
-                            mapValues(args, (value) =>
-                                match(value)
-                                    .with(P.string, (value) => Mustache.render(value, context))
-                                    .otherwise((value) => value)
-                            ) as CommandArgs<CommandKeys>
-                        ] as const
+                (line) => (context: GameRuntimeContext) =>
+                    CommandEntity.from(
+                        line.sign as CommandKeys,
+                        mapValues(line.args as object, (value) =>
+                            match(value)
+                                .with(P.string, (value) => Mustache.render(value, context))
+                                .otherwise((value) => value)
+                        ) as CommandArgs<CommandKeys>
+                    )
             )
             .map((line) => (context: GameRuntimeContext) => {
-                const [sign, args] = line(context)
+                const { sign, args } = line(context)
                 const cmd = commands[sign](context)
-                const Flow = match(cmd.constructor.name)
-                    .with('AsyncFunction', () => Await)
-                    .with('Function', () => Async)
-                    .with('GeneratorFunction', () => Async)
-                    .otherwise(() => Await)
+                // async标记影响Flow,function*标记影响返回值处理方式
+                // 前者尽量在调用前获知,后者可以包装在函数中
+                const Flow = cmd.constructor.name === 'AsyncFunction' ? Await : Async
 
-                const promise = () => {
+                const onFastForward = onActSecondClick().then(() => {})
+                const onDestory = onDestoryed().then(() => {})
+
+                const imm = context.state === State.Init ? true : false
+                const task = () => {
                     const output = cmd(args as unknown as never)
-                    if (cmd.constructor.name === 'GeneratorFunction') {
-                        return auto(output as DynamicCommandReturnType)
+                    console.log(sign, output, isGenerator(output))
+
+                    if (isGenerator(output)) {
+                        return auto(output as Generator<Promise<void>, unknown, void>, {
+                            imm,
+                            onFastForward,
+                            onDestory
+                        })
                     } else {
                         return Promise.resolve(output) as Promise<RuntimeCommandOutput>
                     }
                 }
-                return new Flow(() =>
-                    promise()
+
+                const nonNullTask = () =>
+                    task()
                         .catch((error) => log.error('命令运行出错:', error))
                         .then((result) => (isPlainObject(result) ? result : {}))
-                )
+
+                return new Flow(nonNullTask)
             })
     )

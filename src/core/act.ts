@@ -1,5 +1,5 @@
 import type { ReactiveType } from 'micro-reactive'
-import type { ReactiveStore } from '@/store/default'
+import type { ReactiveStore, Store } from '@/store/default'
 import type { Signal } from '@/utils/Reactive'
 import type { GameRuntimeContext, Variables } from './type'
 import { delay } from 'es-toolkit'
@@ -15,7 +15,6 @@ import {
     ActSecondClickEvent,
     ActStartEvent,
     DeactivatedEvent,
-    DestoryedEvent,
     onActEnd,
     onDestoryed
 } from './event'
@@ -42,7 +41,7 @@ ActStartEvent.subscribe(({ timer }) => {
 async function runAct(
     index: number,
     state: State,
-    store: ReactiveType<ReactiveStore>,
+    store: Store,
     variables: Variables,
     onClick: Promise<void>,
     onFast: Promise<void>
@@ -62,11 +61,6 @@ async function runAct(
             if (e !== undefined) log.error('Timer.toImmediate出错', e)
         })
     Promise.race([onClick, onFast]).then(immPromise.resolve)
-    // 需要防止异步任务重排到如下顺序
-    // 异步等待命令执行完毕 /Game组件销毁 /新Game实例创建 /后续命令执行
-    // wait([此命令未被取消,因为销毁事件还没到达])[快速读档,Game组件销毁再创建].then([旧实例的命令被释放到了新实例])
-    const snycLockOnDestoryed = useSignal(false)
-    DestoryedEvent.once(() => snycLockOnDestoryed(true))
     // act start
     ActStartEvent.publish(context)
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue

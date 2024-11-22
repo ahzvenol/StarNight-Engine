@@ -1,4 +1,4 @@
-import type { NonBlockingCommand } from '../../type'
+import { NonBlocking } from '@/core/flow'
 import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
 
 export enum EventState {
@@ -8,9 +8,7 @@ export enum EventState {
 
 export const clickState = useAutoResetSignal<EventState>(() => EventState.Enabled, Scope.Game)
 
-export const click: NonBlockingCommand<{ value: boolean }> =
-    () =>
-    ({ value = true }) => {
-        if (value) clickState(EventState.Enabled)
-        else clickState(EventState.Disabled)
-    }
+export const click = NonBlocking<{ value: boolean }>(() => ({ value = true }) => {
+    if (value) clickState(EventState.Enabled)
+    else clickState(EventState.Disabled)
+})

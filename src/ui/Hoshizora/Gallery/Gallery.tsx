@@ -33,7 +33,7 @@ const CG = [
 ].map((arr) => arr.slice(1).map((id) => arr[0] + id))
 
 const Gallery: Component = () => {
-    log.info('Gallery组件发生函数调用')
+    log.info('Gallery组件函数被调用')
     const currentPage = useSignal<0 | 1>(0)
     const cg = useStore().save.global.cg
     const viewedCG = (index: number) => intersection(CG[index + currentPage() * 16] || [], cg())

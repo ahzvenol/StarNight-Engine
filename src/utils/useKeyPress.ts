@@ -16,7 +16,7 @@ export function useKeyPress(key: string, listener: EventListener, options: UseEv
     const moveKeyUpListener = useEventListener(
         'keyup',
         (event) => {
-            if (event.code === key) {
+            if (event.key === key) {
                 pressed = false
             }
         },
