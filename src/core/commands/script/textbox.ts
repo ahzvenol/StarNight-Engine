@@ -3,10 +3,7 @@ import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
 import { Y } from '@/utils/FPUtil'
 import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
 import { ActScope, Dynamic, NonBlocking } from '../../flow'
-import { wait } from './wait'
-
-// 跨幕环境变量name,无副作用
-// 存在依赖变量的"文字播放速度"
+import { _wait } from './abstract/wait'
 
 export const textView = useAutoResetSignal(() => '', Scope.Act)
 export const textWasReadView = useAutoResetSignal(() => false, Scope.Act)
@@ -27,7 +24,7 @@ export const text = Dynamic<{ text: string }>(
                 yield* Y<string, Generator<Promise<void>, void, void>>(
                     (rec) =>
                         function* (str): Generator<Promise<void>, void, void> {
-                            yield wait.apply()({ duration: store.config.TextSpeed * 100 })
+                            yield _wait(timer)(store.config.TextSpeed * 100)
                             textView((text) => text + str.charAt(0))
                             if (str.length >= 1) yield* rec(str.slice(1))
                         }

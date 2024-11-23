@@ -1,4 +1,3 @@
-import type { BlockingCommand, Command, NonBlockingCommand } from '../../type'
 import { PreInitEvent } from '@/core/event'
 import { Blocking, NonBlocking } from '@/core/flow'
 import { displaySelection } from '@/ui/Hoshizora/Game/Selection'
@@ -32,12 +31,12 @@ export const selection = NonBlocking<{ name: string; target: number; disable?: b
 )
 
 export const selEnd = Blocking(
-    () =>
+    (context) =>
         async function () {
             displaySelection(true)
             const num = await Promise.race(promises)
             selectionView.length = 0
             displaySelection(false)
-            return Jump.apply()({ target: num })
+            return Jump.apply(context)({ target: num })
         }
 )
