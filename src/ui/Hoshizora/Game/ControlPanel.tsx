@@ -1,5 +1,4 @@
 import type { Component } from 'solid-js'
-import type { Signal } from '@/utils/Reactive'
 import { useEvents, useState } from '@/core/Core'
 import { getSave } from '@/core/save'
 import { State } from '@/core/type'

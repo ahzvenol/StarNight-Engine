@@ -1,6 +1,6 @@
 import type { CommandsKeys } from './commands'
 import type { StandardResolvedCommand } from './flow'
-import type { GameRuntimeContext, RuntimeCommandOutput } from './type'
+import type { CommandOutput, GameRuntimeContext, RuntimeCommandOutput } from './type'
 import { isPlainObject, mapValues, omit } from 'es-toolkit'
 import Mustache from 'mustache'
 import { match, P } from 'ts-pattern'
@@ -60,8 +60,7 @@ export const row = async (index: number, context: GameRuntimeContext): Promise<A
 
             const onFastForward = onActSecondClick()
             const onDestory = onDestoryed()
-
-            const task = () => {
+            const task: Function0<Promise<RuntimeCommandOutput>> = () => {
                 if (cmd.type === Command.Dynamic) {
                     // @ts-expect-error 不能将类型“CommandArgs”分配给类型“never”。
                     const output = cmd.apply(context)(args)
@@ -73,11 +72,11 @@ export const row = async (index: number, context: GameRuntimeContext): Promise<A
                 } else {
                     // @ts-expect-error 不能将类型“CommandArgs”分配给类型“never”。
                     const output = cmd.apply(context)(args)
-                    return Promise.resolve(output) as Promise<RuntimeCommandOutput>
+                    return Promise.resolve(output)
                 }
             }
 
-            const nonNullTask = () =>
+            const nonNullTask: Function0<Promise<CommandOutput>> = () =>
                 task()
                     .catch((error) => log.error('命令运行出错:', error))
                     .then((result) => (isPlainObject(result) ? result : {}))

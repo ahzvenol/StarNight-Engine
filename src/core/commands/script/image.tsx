@@ -45,7 +45,8 @@ export const setImage = Dynamic<SetImageCommandArgs>(
                 .otherwise(() => <img src={file} />) as HTMLImageElement
             const oldBitmap = array[0] as HTMLImageElement | null
             bitmap.className = name
-            bitmap.style.translate = x && y ? `${x}px ${y}px` : oldBitmap?.style?.translate || ''
+            bitmap.style.translate =
+                x !== undefined && y !== undefined ? `${x}px ${y}px` : oldBitmap?.style?.translate || ''
             bitmap.style.zIndex = `${z}`
             if (w !== undefined) bitmap.style.width = `${w}px`
             if (h !== undefined) bitmap.style.height = `${h}px`

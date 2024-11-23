@@ -10,7 +10,6 @@ import type {
     RuntimeCommandOutput
 } from '@/core/type'
 import { merge } from 'es-toolkit'
-import { match, P } from 'ts-pattern'
 import { Command, State } from '@/core/type'
 import { Y } from '@/utils/FPUtil'
 
@@ -120,23 +119,17 @@ export const chain: Function1<Array<StandardResolvedCommand>, NonNullResolvedCom
 // 识别Await标识的命令,行为相当于Promise.all(cmd1();await cmd2();cmd3())
 // 完成时间是最后一个Await命令执行完毕之后,还在执行的命令,剩余执行时间最长的那个
 export const fork: Function1<Array<StandardResolvedCommand>, StandardResolvedCommand> = (array) => {
-    return new Async(
-        () =>
-            array.reduce(
-                ([context, pre], e) =>
-                    match(e)
-                        .with(P.instanceOf(Await), () =>
-                            ((currentConext) => [
-                                currentConext,
-                                pre.then((all) => currentConext.then((result) => merge(all, result)))
-                            ])(context.then(() => e.apply()))
-                        )
-                        .with(P.instanceOf(Async), () => [
-                            context,
-                            pre.then((all) => context.then(() => e.apply().then((result) => merge(all, result))))
-                        ])
-                        .exhaustive(),
-                [Promise.resolve({}), Promise.resolve({})]
-            )[1]
-    )
+    return new Async(async () => {
+        const promises = new Array<Promise<CommandOutput>>()
+        for (const cmd of array) {
+            if (cmd instanceof Await) {
+                const promise = cmd.apply()
+                await promise
+                promises.push(promise)
+            } else if (cmd instanceof Async) {
+                promises.push(cmd.apply())
+            }
+        }
+        return Promise.all(promises).then((results) => results.reduce(merge, {}))
+    })
 }

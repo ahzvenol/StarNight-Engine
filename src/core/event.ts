@@ -41,7 +41,7 @@ export const ActEndEvent = new EventDispatcher<GameRuntimeContext>()
 export const onActEnd = on(ActEndEvent)
 
 export const ActSecondClickEvent = new EventDispatcher<GameRuntimeContext>()
-export const onActSecondClick = on(ActEndEvent)
+export const onActSecondClick = on(ActSecondClickEvent)
 
 ActStartEvent.subscribe((context) => log.info(`开始执行第${context.index}幕...`))
 ActEndEvent.subscribe((context) => log.info(`第${context.index}幕执行结束`))

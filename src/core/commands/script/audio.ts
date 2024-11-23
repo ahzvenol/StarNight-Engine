@@ -57,7 +57,7 @@ export const audio = Dynamic<AudioCommandArgs>(
                 // 如果此名称下已有音频,清理它
                 if (oldAudio && duration) {
                     oldAudio.fade(oldAudio.volume(), 0, duration)
-                    yield new Promise((res) => oldAudio.once('fade', res))
+                    yield new Promise((res) => oldAudio.once('fade', () => res()))
                     // 放弃缓动直接卸载音频是必须的,否则同时运行多个音频会很糟糕
                     oldAudio.unload()
                 }
