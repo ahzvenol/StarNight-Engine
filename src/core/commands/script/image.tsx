@@ -6,7 +6,7 @@ import { Dynamic, NonBlocking } from '@/core/flow'
 import { State } from '@/core/type'
 import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
 import { Y } from '@/utils/FPUtil'
-import { tween } from './abstract/tween'
+import { _tween } from './abstract/tween'
 
 // 跨幕环境变量file,需要收集副作用
 export type SetImageCommandArgs = {
@@ -52,7 +52,7 @@ export const setImage = Dynamic<SetImageCommandArgs>(
             stage.insertBefore(bitmap, stage.firstChild)
             if (isNotNil(oldBitmap)) {
                 if (state !== State.Init) {
-                    const sequence = tween({ target: oldBitmap, ease, duration })({ opacity: 0 })
+                    const sequence = _tween({ target: oldBitmap, ease, duration })({ opacity: 0 })
                     yield sequence.finished
                 }
                 oldBitmap.parentNode?.removeChild(oldBitmap)
@@ -79,7 +79,7 @@ export const tweenImage = Dynamic<TweenImageCommandArgs>(
             }
 
             const tweenTarget = stageView().getElementsByClassName(target)[0]
-            const sequence = tween({ target: tweenTarget, ease, duration })(mapValues(args, (arg) => '+=' + arg))
+            const sequence = _tween({ target: tweenTarget, ease, duration })(mapValues(args, (arg) => '+=' + arg))
             yield sequence.finished
             sequence.seek(sequence.duration)
         }

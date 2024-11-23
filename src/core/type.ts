@@ -1,7 +1,6 @@
 import type { Reactive, ReactiveType } from 'micro-reactive'
 import type { GlobalSaveData, ReactiveStore } from '@/store/default'
 import type { Timer } from './Timer'
-import { initData } from './Core'
 
 export enum State {
     Init,
@@ -35,15 +34,15 @@ export type GameRuntimeContext = {
 
 export type CommandArg = string | number | boolean
 
-export type RuntimeCommandArgs = Record<string, CommandArg | undefined> | void
+export type CommandArgs = Record<string, CommandArg | undefined>
 
-export type CommandOutput = Record<string, unknown> & Partial<{ continue: boolean; jump: number; end: boolean }>
+export interface CommandOutput {
+    continue?: boolean
+    jump?: number
+    end?: boolean
+}
 
-type Ignore = unknown
-
-export type RuntimeCommandOutput = CommandOutput | Ignore
-
-export type DynamicCommandReturnType = Generator<Promise<Ignore>, RuntimeCommandOutput, Ignore>
+export type RuntimeCommandOutput = unknown | CommandOutput
 
 export enum Command {
     Dynamic,
@@ -51,30 +50,30 @@ export enum Command {
     Blocking
 }
 
-export type DynamicCommand<T extends RuntimeCommandArgs = void> = Function1<
+export type DynamicCommandFunction<T extends CommandArgs = CommandArgs> = Function1<
     GameRuntimeContext,
-    Function1<T, DynamicCommandReturnType>
+    Function1<T, Generator<Promise<void>, RuntimeCommandOutput, void>>
 >
 
-export type NonBlockingCommand<T extends RuntimeCommandArgs = void> = Function1<
+export type NonBlockingCommandFunction<T extends CommandArgs = CommandArgs> = Function1<
     GameRuntimeContext,
     Function1<T, RuntimeCommandOutput>
 >
 
-export type BlockingCommand<T extends RuntimeCommandArgs = void> = Function1<
+export type BlockingCommandFunction<T extends CommandArgs = CommandArgs> = Function1<
     GameRuntimeContext,
     Function1<T, Promise<RuntimeCommandOutput>>
 >
 
-export type IDynamicCommand<T extends RuntimeCommandArgs = void> = {
+export interface DynamicCommand<T extends CommandArgs = CommandArgs> {
     type: Command.Dynamic
-    apply: DynamicCommand<T>
+    apply: DynamicCommandFunction<T>
 }
-export type INonBlockingCommand<T extends RuntimeCommandArgs = void> = {
+export interface NonBlockingCommand<T extends CommandArgs = CommandArgs> {
     type: Command.NonBlocking
-    apply: NonBlockingCommand<T>
+    apply: NonBlockingCommandFunction<T>
 }
-export type IBlockingCommand<T extends RuntimeCommandArgs = void> = {
-    type: Command.Dynamic
-    apply: BlockingCommand<T>
+export interface BlockingCommand<T extends CommandArgs = CommandArgs> {
+    type: Command.Blocking
+    apply: BlockingCommandFunction<T>
 }

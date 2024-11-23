@@ -2,17 +2,17 @@
 import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
 import { PromiseX } from '@/utils/PromiseX'
 import { ActScope, Dynamic } from '../../flow'
-import { Continue } from './!'
+import { _continue } from './abstract/flow'
 
 export const videoView = useAutoResetSignal<HTMLVideoElement | null>(() => null, Scope.Game)
 
 export type VideoCommandArgs = { file: string }
-// 初始化过程中什么都不做
-// video效果只能由系统提供,能做到的事情还很少
+
 export const video = Dynamic<VideoCommandArgs>(
     ActScope(
-        ({ timer, store }) =>
+        (context) =>
             function* ({ file }) {
+                const { timer, store } = context
                 const promise = new PromiseX<void>()
                 const videoElement = (
                     <video src={file} autoplay onEnded={() => promise.resolve()} />
@@ -24,7 +24,7 @@ export const video = Dynamic<VideoCommandArgs>(
                 yield promise
                 videoElement.pause()
                 videoView(null)
-                return Continue.apply()()
+                return _continue()
             }
     )
 )

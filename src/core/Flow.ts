@@ -1,12 +1,12 @@
 import type {
     BlockingCommand,
+    BlockingCommandFunction,
+    CommandArgs,
     CommandOutput,
     DynamicCommand,
-    IBlockingCommand,
-    IDynamicCommand,
-    INonBlockingCommand,
+    DynamicCommandFunction,
     NonBlockingCommand,
-    RuntimeCommandArgs,
+    NonBlockingCommandFunction,
     RuntimeCommandOutput
 } from '@/core/type'
 import { merge } from 'es-toolkit'
@@ -54,31 +54,33 @@ export type StandardResolvedCommand = Flow<NonNullResolvedCommand>
 // 标准化处理过程中可能遇到的命令类型
 export type MixResolvedCommand = ResolvedCommand | Flow<ResolvedCommand> | StandardResolvedCommand
 
-export function ActScope<T extends RuntimeCommandArgs>(fn: DynamicCommand<T>): DynamicCommand<T>
-export function ActScope<T extends RuntimeCommandArgs>(fn: NonBlockingCommand<T>): NonBlockingCommand<T>
-export function ActScope<T extends RuntimeCommandArgs>(
-    fn: DynamicCommand<T> | NonBlockingCommand<T>
-): DynamicCommand<T> | NonBlockingCommand<T> {
+export function ActScope<T extends CommandArgs>(fn: DynamicCommandFunction<T>): DynamicCommandFunction<T>
+export function ActScope<T extends CommandArgs>(fn: NonBlockingCommandFunction<T>): NonBlockingCommandFunction<T>
+export function ActScope<T extends CommandArgs>(
+    fn: DynamicCommandFunction<T> | NonBlockingCommandFunction<T>
+): DynamicCommandFunction<T> | NonBlockingCommandFunction<T> {
     return (context) => (args) => {
         if (context.state !== State.Init) return fn(context)(args)
     }
 }
 
-export function Dynamic<T extends RuntimeCommandArgs = void>(fn: DynamicCommand<T>): IDynamicCommand<T> {
+export function Dynamic<T extends CommandArgs = CommandArgs>(fn: DynamicCommandFunction<T>): DynamicCommand<T> {
     return {
         type: Command.Dynamic,
         apply: fn
     }
 }
 
-export function NonBlocking<T extends RuntimeCommandArgs = void>(fn: NonBlockingCommand<T>): INonBlockingCommand<T> {
+export function NonBlocking<T extends CommandArgs = CommandArgs>(
+    fn: NonBlockingCommandFunction<T>
+): NonBlockingCommand<T> {
     return {
         type: Command.NonBlocking,
         apply: fn
     }
 }
 
-export function Blocking<T extends RuntimeCommandArgs = void>(fn: BlockingCommand<T>): IBlockingCommand<T> {
+export function Blocking<T extends CommandArgs = CommandArgs>(fn: BlockingCommandFunction<T>): BlockingCommand<T> {
     return {
         type: Command.Blocking,
         apply: fn
@@ -91,7 +93,7 @@ export function auto<TRetrun>(
         imm,
         onFastForward,
         onDestory
-    }: XOR<{ imm?: boolean }, { onFastForward?: Promise<void>; onDestory?: Promise<void> }>
+    }: XOR<{ imm: true }, { onFastForward?: Promise<unknown>; onDestory?: Promise<unknown> }>
 ): Promise<TRetrun> {
     onDestory?.then(() => generator.throw(new Error('Destoryed')))
     return Y<boolean, Promise<TRetrun>>((rec) => async (flag) => {

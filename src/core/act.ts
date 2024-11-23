@@ -1,4 +1,3 @@
-import type { ReactiveType } from 'micro-reactive'
 import type { ReactiveStore, Store } from '@/store/default'
 import type { Signal } from '@/utils/Reactive'
 import type { GameRuntimeContext, Variables } from './type'
@@ -64,7 +63,7 @@ async function runAct(
     // act start
     ActStartEvent.publish(context)
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-    const commandOutput = await fork((await row(index)).map((e) => e(context))).apply()
+    const commandOutput = await fork(await row(index, context)).apply()
     // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
     immPromise.reject()
     ActEndEvent.publish(context)

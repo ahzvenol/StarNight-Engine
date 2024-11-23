@@ -32,13 +32,13 @@ export const commands = {
     punch
 } as const
 
-export const map: Partial<Record<CommandKeys, Array<State>>> = {}
+export const map: Partial<Record<CommandsKeys, Array<State>>> = {}
 
 export type Commands = typeof commands
 
-export type CommandKeys = keyof Commands
+export type CommandsKeys = keyof Commands
 
-export type CommandArgs<T extends CommandKeys> = Parameters<ReturnType<Commands[T]['apply']>>[0]
+export type CommandsArgs<T extends CommandsKeys> = Parameters<ReturnType<Commands[T]['apply']>>[0]
 
 // 文本:text
 // 名称:name

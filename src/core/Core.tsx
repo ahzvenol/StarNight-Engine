@@ -5,13 +5,11 @@ import type { Events, GameContext, Variables } from './type'
 import { useReactive } from 'micro-reactive'
 import { createContext, createEffect, on, onCleanup, onMount, useContext } from 'solid-js'
 import { router } from '@/router'
-import book from '@/store/book'
 import { useStore } from '@/store/context'
 import { Pages } from '@/ui/Pages'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'
 import { runLoop } from './act'
-import { commands } from './commands'
 import {
     ActivatedEvent,
     createButtonEventDispatchers,
@@ -99,7 +97,7 @@ export const Core: Component<ParentProps> = (props) => {
         // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
         let i = 0
         while (i < startAt) {
-            ;(await row(i)).forEach((e) => e({ index: i, timer, state: State.Init, ...context }).apply())
+            ;(await row(i, { index: i, timer, state: State.Init, ...context })).forEach((e) => e.apply())
             // log.info(`正在初始化第${i}幕`)
             i += 1
         }

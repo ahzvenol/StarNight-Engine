@@ -12,7 +12,7 @@ const activeTimelines = new Map<object, anime.AnimeTimelineInstance>()
 ActStartEvent.subscribe(() => activeTimelines.clear())
 
 // 不同命令对于Fast模式的行为不同,这里只保证同一个物体的缓动被顺序应用
-export const tween: Function1<TweenCommandArgs, Function1<Record<string, CommandArg>, anime.AnimeTimelineInstance>> =
+export const _tween: Function1<TweenCommandArgs, Function1<Record<string, CommandArg>, anime.AnimeTimelineInstance>> =
     ({ target, ease, duration }) =>
     (args) => {
         if (!activeTimelines.has(target)) {
