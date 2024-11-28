@@ -6,6 +6,7 @@ import type { language } from '@/store/effect/translations'
 const systemDefaultStore = {
     system: {
         name: 'StarNight Engine',
+        key: 'StarNight Engine',
         version: '0.0.1',
         width: 2560,
         height: 1440,
