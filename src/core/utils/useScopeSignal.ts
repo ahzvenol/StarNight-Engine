@@ -1,5 +1,5 @@
 import { useSignal } from '@/utils/Reactive'
-import { ActStartEvent, PreInitEvent } from './event'
+import { ActStartEvent, PreInitEvent } from '../event'
 
 export enum Scope {
     Game,
