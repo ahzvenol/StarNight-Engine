@@ -13,7 +13,7 @@ const createStore = async () => {
 
     const userDefaultStore = toMerged(systemDefaultStore, userConfig)
 
-    localforage.config({ name: userDefaultStore.system.name })
+    localforage.config({ name: userDefaultStore.system.key })
 
     // 提前初始化storage避免getItem返回null的方法并不可行,因为setItem也是异步操作
 

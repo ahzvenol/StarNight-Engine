@@ -1,10 +1,7 @@
 import type { Howl } from 'howler'
-import { Howler } from 'howler'
 import { createEffect } from 'solid-js'
 import { useEventListener } from '@/utils/useEventListener'
 import { storePromise } from '../store'
-
-storePromise.then((store) => createEffect(() => Howler.volume(store.config.GolbalVolume())))
 
 const configVolumeControllerMapPromise = storePromise.then((store) => ({
     BGM: store.config.BGMVolume,

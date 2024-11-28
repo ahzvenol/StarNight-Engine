@@ -1,8 +1,8 @@
-import type { AudioTracksType } from '@/store/effect/audioManager'
+import type { AudioTracksType } from '@/store/hook/useAudioConfig'
 import { ActivatedEvent, ActStartEvent, LeftEvent, PostInitEvent, PreInitEvent } from '@/core/event'
 import { Dynamic, NonBlocking } from '@/core/flow'
 import { State } from '@/core/type'
-import { useAudioConfig } from '@/store/effect/audioManager'
+import { useAudioConfig } from '@/store/hook/useAudioConfig'
 
 // 跨幕环境变量file,需要收集副作用
 export type SetAudioCommandArgs = {
