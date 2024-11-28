@@ -6,6 +6,6 @@ import { NonBlocking } from '@/core/flow'
 // 或许需要某种方式保证不耦合
 
 // 可以选择此处始终生效,而通过鉴赏页的前置变量&&控制展示
-export const unlock = NonBlocking<{ name: string }>(({ variables: { global } }) => ({ name }) => {
-    if (!global.cg.includes(name)) global.cg([name, ...global.cg()])
+export const unlock = NonBlocking<{ file: string }>(({ variables: { global } }) => ({ file }) => {
+    if (!global.cg.includes(file)) global.cg([file, ...global.cg()])
 })

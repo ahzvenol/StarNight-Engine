@@ -1,8 +1,8 @@
 import type { State } from '../type'
 import { Continue, End, Jump } from './script/!'
-import { audio } from './script/audio'
+import { closeAudio, setAudio } from './script/audio'
 import { backlog } from './script/backlog'
-import { removeImage, setImage, tweenImage } from './script/image'
+import { closeImage, setImage, tweenImage } from './script/image'
 import { selection, selEnd } from './script/selection'
 import { punch, shake } from './script/shake'
 import { name, text } from './script/textbox'
@@ -18,14 +18,15 @@ export const commands = {
     var: variable,
     image: setImage,
     tween: tweenImage,
-    close: removeImage,
+    closeI: closeImage,
+    audio: setAudio,
+    closeA: closeAudio,
     sel: selection,
     selEnd,
     wait,
     backlog,
     name,
     text,
-    audio,
     video,
     unlock,
     shake,

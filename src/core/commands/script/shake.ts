@@ -3,14 +3,14 @@ import { State } from '@/core/type'
 import { ActScope, Dynamic } from '../../flow'
 import { stageView } from './image'
 
-export type ShakePunchCommandArgs = { target: string; x: number; y: number; duration: number; iteration?: number }
+export type ShakePunchCommandArgs = { target: string; x?: number; y?: number; duration: number; iteration?: number }
 
 // 因为image命令使用translate参数,这里使用left和top避免冲突
 
 export const shake = Dynamic<ShakePunchCommandArgs>(
     ActScope(
         ({ state }) =>
-            function* ({ target, x, y, duration, iteration = 5 }) {
+            function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
                 if (state === State.Fast) return
                 const realTarget = stageView()!.getElementsByClassName(target)[0]
                 const originX = 0
@@ -34,7 +34,7 @@ export const shake = Dynamic<ShakePunchCommandArgs>(
 export const punch = Dynamic<ShakePunchCommandArgs>(
     ActScope(
         ({ state }) =>
-            function* ({ target, x, y, duration, iteration = 5 }) {
+            function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
                 if (state === State.Init || state === State.Fast) return
                 const realTarget = stageView()!.getElementsByClassName(target)[0]
                 const originX = 0

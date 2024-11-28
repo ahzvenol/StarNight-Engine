@@ -8,6 +8,6 @@ export const setImage: Macro<SetImageCommandArgs> = (args) => {
     args.ease = 'easeInQuad'
     if (args.name !== 'BG') args.duration = 175
     array.push(CommandEntity.from('image', args))
-    array.push(CommandEntity.from('unlock', { name: args.file }))
+    array.push(CommandEntity.from('unlock', { file: args.file }))
     return array
 }

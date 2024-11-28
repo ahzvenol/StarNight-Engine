@@ -8,7 +8,7 @@ export const say: Macro<SayCommandArgs> = ({ text, name, file: rawfile }) => {
     const file = rawfile ? `./static/AudioClip/${rawfile}.wav` : undefined
     array.push(CommandEntity.from('text', { text }))
     if (name !== undefined) array.push(CommandEntity.from('name', { name }))
-    if (file !== undefined) array.push(CommandEntity.from('audio', { name: 'Clip', file }))
+    if (file !== undefined) array.push(CommandEntity.from('audio', { type: 'Clip', file }))
     array.push(CommandEntity.from('backlog', { text, name, file }))
     return array
 }
