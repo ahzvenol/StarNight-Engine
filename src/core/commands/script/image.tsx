@@ -1,10 +1,10 @@
-import type { CommandArg } from '../../type'
+import type { CommandArg } from '@/core/types/Command'
 import { isNotNil, mapValues } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import { PostInitEvent } from '@/core/event'
 import { Dynamic, NonBlocking } from '@/core/flow'
-import { State } from '@/core/type'
-import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
+import { State } from '@/core/types/Game'
+import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
 import { Y } from '@/utils/FPUtil'
 import { _tween } from './abstract/tween'
 

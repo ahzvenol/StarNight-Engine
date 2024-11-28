@@ -1,6 +1,6 @@
-import type { GameRuntimeContext } from './type'
+import type { GameRuntimeContext } from './types/Game'
 import { log } from '@/utils/Logger'
-import { EventDispatcher, on } from './EventDispatcher'
+import { EventDispatcher, on } from './utils/EventDispatcher'
 
 export function createButtonEventDispatchers() {
     const primaryClickEvent = new EventDispatcher<void>()

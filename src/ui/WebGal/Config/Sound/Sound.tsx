@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js'
 import { useStore } from '@/store/context'
-import { translation } from '@/store/effect/translations'
+import { translation } from '@/store/effects/translations'
 import { Clone, Variable } from '@/ui/Elements'
 import { useSignal } from '@/utils/Reactive'
 import Button from '../Button'

@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { For, Show } from 'solid-js'
 import { backlogView } from '@/core/commands/script/backlog'
-import { useAudioConfig } from '@/store/hook/useAudioConfig'
+import { useAudioConfig } from '@/store/hooks/useAudioConfig'
 import Scrollbar from '@/ui/Scrollbar'
 import Back from '../Back/Back'
 import styles from './Backlog.module.scss'

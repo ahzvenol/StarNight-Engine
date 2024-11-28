@@ -2,56 +2,23 @@ import type {
     BlockingCommand,
     BlockingCommandFunction,
     CommandArgs,
-    CommandOutput,
     DynamicCommand,
     DynamicCommandFunction,
     NonBlockingCommand,
-    NonBlockingCommandFunction,
-    RuntimeCommandOutput
-} from '@/core/type'
+    NonBlockingCommandFunction
+} from './types/Command'
+import type { NonNullResolvedCommand, ResolvedCommand, StandardResolvedCommand } from './types/Flow'
 import { merge } from 'es-toolkit'
-import { Command, State } from '@/core/type'
 import { Y } from '@/utils/FPUtil'
+import { PromiseX } from '@/utils/PromiseX'
+import { Command } from './types/Command'
+import { FlowEnum } from './types/Flow'
+import { State } from './types/Game'
 
 // 有两种方式可以实现异步流控制,使用程序编写的代码可以直接使用await,而文字剧本则需要经过二次转换
 
-export type Flow<T extends Function0<ReturnType<T>>> = Await<T> | Async<T>
-
-// 标识异步流处理方式的类,实现代码与行为的分离
-abstract class AbstractFlow<T extends Function0<ReturnType<T>>> {
-    constructor(protected value: T) {}
-    public apply = () => this.value()
-    public abstract map<R extends Function0<ReturnType<R>>>(fn: Function1<T, R>): Flow<R>
-}
-
-export class Await<T extends Function0<ReturnType<T>>> extends AbstractFlow<T> {
-    constructor(value: T) {
-        super(value)
-    }
-    public map = <R extends Function0<ReturnType<R>>>(fn: Function1<T, R>): Flow<R> => new Await(fn(this.value))
-}
-
-export class Async<T extends Function0<ReturnType<T>>> extends AbstractFlow<T> {
-    constructor(value: T) {
-        super(value)
-    }
-    public map = <R extends Function0<ReturnType<R>>>(fn: Function1<T, R>): Flow<R> => new Async(fn(this.value))
-}
-
-// 表示异步任务的通用类型
-export type AsyncTask<T> = Function0<Promise<T>>
-
-// 已经传入运行所需参数的命令
-export type ResolvedCommand = Function0<RuntimeCommandOutput>
-
-// 经过async和catch,返回值为Promise<Record>的命令
-export type NonNullResolvedCommand = AsyncTask<CommandOutput>
-
-// 包装了Async或Await类型,可以被流控函数处理的命令
-export type StandardResolvedCommand = Flow<NonNullResolvedCommand>
-
 // 标准化处理过程中可能遇到的命令类型
-export type MixResolvedCommand = ResolvedCommand | Flow<ResolvedCommand> | StandardResolvedCommand
+export type MixResolvedCommand = ResolvedCommand | StandardResolvedCommand
 
 export function ActScope<T extends CommandArgs>(fn: DynamicCommandFunction<T>): DynamicCommandFunction<T>
 export function ActScope<T extends CommandArgs>(fn: NonBlockingCommandFunction<T>): NonBlockingCommandFunction<T>
@@ -63,27 +30,25 @@ export function ActScope<T extends CommandArgs>(
     }
 }
 
-export function Dynamic<T extends CommandArgs = CommandArgs>(fn: DynamicCommandFunction<T>): DynamicCommand<T> {
+export function Dynamic<T extends CommandArgs = CommandArgs>(fn: DynamicCommandFunction<T>) {
     return {
-        type: Command.Dynamic,
+        commandType: Command.Dynamic,
         apply: fn
-    }
+    } as DynamicCommand<T>
 }
 
-export function NonBlocking<T extends CommandArgs = CommandArgs>(
-    fn: NonBlockingCommandFunction<T>
-): NonBlockingCommand<T> {
+export function NonBlocking<T extends CommandArgs = CommandArgs>(fn: NonBlockingCommandFunction<T>) {
     return {
-        type: Command.NonBlocking,
+        commandType: Command.NonBlocking,
         apply: fn
-    }
+    } as NonBlockingCommand<T>
 }
 
-export function Blocking<T extends CommandArgs = CommandArgs>(fn: BlockingCommandFunction<T>): BlockingCommand<T> {
+export function Blocking<T extends CommandArgs = CommandArgs>(fn: BlockingCommandFunction<T>) {
     return {
-        type: Command.Blocking,
+        commandType: Command.Blocking,
         apply: fn
-    }
+    } as BlockingCommand<T>
 }
 
 export function auto<TRetrun>(
@@ -118,18 +83,27 @@ export const chain: Function1<Array<StandardResolvedCommand>, NonNullResolvedCom
 
 // 识别Await标识的命令,行为相当于Promise.all(cmd1();await cmd2();cmd3())
 // 完成时间是最后一个Await命令执行完毕之后,还在执行的命令,剩余执行时间最长的那个
-export const fork: Function1<Array<StandardResolvedCommand>, StandardResolvedCommand> = (array) => {
-    return new Async(async () => {
-        const promises = new Array<Promise<CommandOutput>>()
-        for (const cmd of array) {
-            if (cmd instanceof Await) {
-                const promise = cmd.apply()
-                await promise
-                promises.push(promise)
-            } else if (cmd instanceof Async) {
-                promises.push(cmd.apply())
+export const fork: Function1<Array<StandardResolvedCommand>, NonNullResolvedCommand> = (array) => {
+    return async () => {
+        const effects = array.map((e) => ({ flowType: e.flowType, ...splitEffect(e.apply) }))
+        for (const effect of effects) {
+            if (effect.flowType === FlowEnum.Await) {
+                await effect.execute()
+            } else if (effect.flowType === FlowEnum.Async) {
+                effect.execute()
             }
         }
-        return Promise.all(promises).then((results) => results.reduce(merge, {}))
-    })
+        return Promise.all(effects.map((e) => e.result)).then((results) => results.reduce(merge, {}))
+    }
+}
+
+interface Effect<T> {
+    execute: Function0<Promise<void>>
+    result: Promise<T>
+}
+
+// 分离副作用的实际执行与结果获取
+function splitEffect<T>(executor: Function0<Promise<T>>): Effect<T> {
+    const promise = new PromiseX<T>()
+    return { execute: () => executor().then(promise.resolve), result: promise }
 }

@@ -1,5 +1,5 @@
 import anime from 'animejs'
-import { State } from '@/core/type'
+import { State } from '@/core/types/Game'
 import { ActScope, Dynamic } from '../../flow'
 import { stageView } from './image'
 

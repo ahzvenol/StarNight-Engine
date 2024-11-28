@@ -1,7 +1,7 @@
 import type { Reactive } from 'micro-reactive'
 import type { Accessor, Component, ParentProps } from 'solid-js'
 import type { GlobalSaveData } from '@/store/default'
-import type { Events, GameContext, Variables } from './type'
+import type { Events, GameContext, Variables } from './types/Game'
 import { useReactive } from 'micro-reactive'
 import { createContext, createEffect, on, onCleanup, onMount, useContext } from 'solid-js'
 import { router } from '@/router'
@@ -20,8 +20,8 @@ import {
     PreInitEvent
 } from './event'
 import { row } from './row'
-import { Timer } from './Timer'
-import { State } from './type'
+import { State } from './types/Game'
+import { Timer } from './utils/Timer'
 
 // export type GameUIElement = Function0<JSX.Element>
 

@@ -4,7 +4,7 @@ import { range } from 'es-toolkit'
 import { For, splitProps } from 'solid-js'
 import click from '@/assets/mouse_click_1.wav'
 import hover from '@/assets/mouse_hover_1.wav'
-import { useAudioConfig } from '@/store/hook/useAudioConfig'
+import { useAudioConfig } from '@/store/hooks/useAudioConfig'
 import Scale from './Scale'
 
 //横行竖列

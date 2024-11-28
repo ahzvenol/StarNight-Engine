@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js'
 import { createEffect, Match, Switch } from 'solid-js'
-import { translation } from '@/store/effect/translations'
+import { translation } from '@/store/effects/translations'
 import { Button, Clone } from '@/ui/Elements'
 import { log } from '@/utils/Logger'
 import { useSignal } from '@/utils/Reactive'

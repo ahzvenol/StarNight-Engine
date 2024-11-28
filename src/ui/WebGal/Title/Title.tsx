@@ -1,5 +1,5 @@
 import type { Component } from 'solid-js'
-import { translation } from '@/store/effect/translations'
+import { translation } from '@/store/effects/translations'
 import { Button, Clone } from '@/ui/Elements'
 import { router } from '../../../router'
 import styles from './Title.module.scss'

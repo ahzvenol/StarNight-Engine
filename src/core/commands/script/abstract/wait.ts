@@ -1,4 +1,4 @@
-import type { Timer } from '@/core/Timer'
+import type { Timer } from '@/core/utils/Timer'
 import { TimeoutController } from '@/utils/TimeoutController'
 
 export const _wait = (timer: Timer) => (duration: number) => {

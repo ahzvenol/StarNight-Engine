@@ -1,4 +1,4 @@
-import type { CommandArg } from '@/core/type'
+import type { CommandArg } from '@/core/types/Command'
 import anime from 'animejs'
 import { ActStartEvent } from '@/core/event'
 

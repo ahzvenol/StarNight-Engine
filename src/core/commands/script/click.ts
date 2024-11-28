@@ -1,5 +1,5 @@
 import { NonBlocking } from '@/core/flow'
-import { Scope, useAutoResetSignal } from '@/core/useScopeSignal'
+import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
 
 export enum EventState {
     Enabled,

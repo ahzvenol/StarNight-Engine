@@ -1,6 +1,6 @@
 import type { ReactiveStore, Store } from '@/store/default'
 import type { Signal } from '@/utils/Reactive'
-import type { GameRuntimeContext, Variables } from './type'
+import type { GameRuntimeContext, Variables } from './types/Game'
 import { delay } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import book from '@/store/book'
@@ -19,8 +19,8 @@ import {
 } from './event'
 import { fork } from './flow'
 import { row } from './row'
-import { Timer } from './Timer'
-import { State } from './type'
+import { State } from './types/Game'
+import { Timer } from './utils/Timer'
 
 // 对外暴露目前的index,目前供存档功能使用
 export const currentIndex = useSignal(0)
@@ -63,7 +63,7 @@ async function runAct(
     // act start
     ActStartEvent.publish(context)
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-    const commandOutput = await fork(await row(index, context)).apply()
+    const commandOutput = await fork(await row(index, context))()
     // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
     immPromise.reject()
     ActEndEvent.publish(context)

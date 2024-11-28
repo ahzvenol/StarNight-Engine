@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { For } from 'solid-js'
 import { useStore } from '@/store/context'
-import { description, language, translation } from '@/store/effect/translations'
+import { description, language, translation } from '@/store/effects/translations'
 import { clearSave, clearStorage, resetConfig } from '@/store/store'
 import { Clone, Variable } from '@/ui/Elements'
 import { useDialog } from '@/ui/GlobalDialog/GlobalDialog'

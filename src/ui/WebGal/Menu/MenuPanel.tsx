@@ -1,5 +1,5 @@
 import { router } from '@/router'
-import { translation } from '@/store/effect/translations'
+import { translation } from '@/store/effects/translations'
 import { Button } from '@/ui/Elements'
 import { useDialog } from '../GlobalDialog/GlobalDialog'
 import { FolderOpen, Home, Logout, Save, Setting } from './MenuIcon'

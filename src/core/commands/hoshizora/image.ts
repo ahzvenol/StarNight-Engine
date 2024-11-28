@@ -1,9 +1,9 @@
-import type { Macro, MacroCommand } from '../macro'
+import type { MacroAble, MacroFunction } from '@/core/types/Marco'
 import type { SetImageCommandArgs } from '../script/image'
-import { CommandEntity } from '../macro'
+import { CommandEntity } from '@/core/types/Command'
 
-export const setImage: Macro<SetImageCommandArgs> = (args) => {
-    const array = Array<MacroCommand>()
+export const setImage: MacroFunction<SetImageCommandArgs> = (args) => {
+    const array = Array<MacroAble>()
     args.file = `./static/ImageAsset/${args.file}.png`
     args.ease = 'easeInQuad'
     if (args.name !== 'BG') args.duration = 175

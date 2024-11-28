@@ -1,14 +1,7 @@
-import type { Macro, MacroCommand } from '../macro'
-import { CommandEntity } from '../macro'
+import type { MacroFunction } from '@/core/types/Marco'
+import type { SayCommandArgs } from '../macro/say'
+import { say as _say } from '../macro/say'
 
-type SayCommandArgs = { text: string; name?: string; file?: string }
-
-export const say: Macro<SayCommandArgs> = ({ text, name, file: rawfile }) => {
-    const array = Array<MacroCommand>()
-    const file = rawfile ? `./static/AudioClip/${rawfile}.wav` : undefined
-    array.push(CommandEntity.from('text', { text }))
-    if (name !== undefined) array.push(CommandEntity.from('name', { name }))
-    if (file !== undefined) array.push(CommandEntity.from('audio', { type: 'Clip', file }))
-    array.push(CommandEntity.from('backlog', { text, name, file }))
-    return array
+export const say: MacroFunction<SayCommandArgs> = ({ text, name, file }) => {
+    return _say({ text, name, file: file ? `./static/AudioClip/${file}.wav` : undefined })
 }

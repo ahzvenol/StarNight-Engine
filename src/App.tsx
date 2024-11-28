@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { Match, Switch } from 'solid-js'
 import { KeepAliveProvider } from 'solid-keep-alive'
-import '@/store/effect/index'
+import '@/store/effects/index'
 import { Context } from './store/context'
 import store from './store/store'
 import { Graphic } from './ui/Elements'
