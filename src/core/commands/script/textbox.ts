@@ -5,15 +5,21 @@ import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
 import { ActScope, Dynamic, NonBlocking } from '../../flow'
 import { _wait } from './abstract/wait'
 
-export const textView = useAutoResetSignal(() => '', Scope.Act)
-export const textWasReadView = useAutoResetSignal(() => false, Scope.Act)
-export const textSave = useAutoResetSignal(() => '', Scope.Act)
+export const textPreview = useAutoResetSignal(() => '', Scope.Act)
+export const preview = NonBlocking<{ text: string }>(
+    ActScope(() => ({ text }) => {
+        textPreview(text)
+    })
+)
 
+export const textView = useAutoResetSignal(() => '', Scope.Act)
+export const fullTextView = useAutoResetSignal(() => '', Scope.Act)
+export const textWasReadView = useAutoResetSignal(() => false, Scope.Act)
 export const text = Dynamic<{ text: string }>(
     ActScope(
         ({ index, timer, store, variables: { global } }) =>
             function* ({ text }) {
-                textSave(text)
+                fullTextView(text)
 
                 if (global.segment().some((i) => inRange(index, i[0], i[1] + 1))) {
                     textWasReadView(true)

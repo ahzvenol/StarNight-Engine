@@ -1,7 +1,7 @@
 import type { AudioTracksType } from '@/store/hooks/useAudioConfig'
 import { ActivatedEvent, ActStartEvent, LeftEvent, PostInitEvent, PreInitEvent } from '@/core/event'
 import { Dynamic, NonBlocking } from '@/core/flow'
-import { State } from '@/core/types/Game'
+import { GameState } from '@/core/types/Game'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
 
 // 跨幕环境变量file,需要收集副作用
@@ -38,7 +38,7 @@ export const setAudio = Dynamic<SetAudioCommandArgs>(
     ({ state }) =>
         function* ({ type, name = type, file, loop = false, duration = 0 }) {
             // Clip的生命周期是幕,所以不用初始化
-            if ((state === State.Init || state === State.Fast) && type === 'Clip') return
+            if ((state === GameState.Init || state === GameState.Fast) && type === 'Clip') return
             // 根据名称设置音轨
             const oldAudio = tracks.get(name)
             // 挂载新音频
@@ -48,7 +48,7 @@ export const setAudio = Dynamic<SetAudioCommandArgs>(
                     src: file,
                     autoplay: true,
                     loop: loop,
-                    preload: state !== State.Init
+                    preload: state !== GameState.Init
                 })
             )
             // 如果音频不是循环的,就不希望它播放完毕之后再被其他事件调用play()了
