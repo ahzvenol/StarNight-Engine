@@ -4,7 +4,7 @@ import { backlog } from './script/backlog'
 import { closeImage, setImage, tweenImage } from './script/image'
 import { selection, selEnd } from './script/selection'
 import { punch, shake } from './script/shake'
-import { name, text } from './script/textbox'
+import { name, preview, text } from './script/textbox'
 import { unlock } from './script/unlock'
 import { variable } from './script/variable'
 import { video } from './script/video'
@@ -29,7 +29,8 @@ export const commands = {
     video,
     unlock,
     shake,
-    punch
+    punch,
+    preview
 } as const
 
 // 文本:text

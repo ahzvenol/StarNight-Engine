@@ -34,6 +34,11 @@ export type BlockingCommandFunction<T extends CommandArgs = CommandArgs> = Funct
     Function1<T, Promise<RuntimeCommandOutput>>
 >
 
+export interface StandardCommand<T extends CommandArgs = CommandArgs> {
+    commandType: Command
+    apply: Function1<GameRuntimeContext, Function1<T, Promise<CommandOutput>>>
+}
+
 export interface DynamicCommand<T extends CommandArgs = CommandArgs> {
     commandType: Command.Dynamic
     apply: DynamicCommandFunction<T>

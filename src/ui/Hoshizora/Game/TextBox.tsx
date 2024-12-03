@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js'
 import { For, Show } from 'solid-js'
-import { nameView, textSave, textView, textWasReadView } from '@/core/commands/script/textbox'
+import { fullTextView, nameView, textView, textWasReadView } from '@/core/commands/script/textbox'
 import { useStore } from '@/store/context'
 import styles from './TextBox.module.scss'
 
@@ -23,7 +23,7 @@ export const TextBox: Component = () => {
                             <>
                                 <div>
                                     {line}
-                                    <Show when={index() === lines().length - 1 && textView() === textSave()}>
+                                    <Show when={index() === lines().length - 1 && textView() === fullTextView()}>
                                         <span class={styles.Game_TextBox_star} />
                                     </Show>
                                 </div>

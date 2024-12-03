@@ -20,13 +20,13 @@ import {
     PreInitEvent
 } from './event'
 import { row } from './row'
-import { State } from './types/Game'
+import { GameState } from './types/Game'
 import { Timer } from './utils/Timer'
 
 // export type GameUIElement = Function0<JSX.Element>
 
 const EventsContext = createContext<Events>()
-const StateContext = createContext<Accessor<State>>()
+const StateContext = createContext<Accessor<GameState>>()
 const VariablesContext = createContext<Variables>()
 export const useEvents = () => useContext(EventsContext)!
 export const useState = () => useContext(StateContext)!
@@ -52,9 +52,9 @@ export const Core: Component<ParentProps> = (props) => {
         auto: dispatchs.auto.publish
     }
 
-    const state = useSignal(State.Normal)
-    dispatchs.auto.subscribe(() => state(state() === State.Auto ? State.Normal : State.Auto))
-    dispatchs.fast.subscribe(() => state(state() === State.Fast ? State.Normal : State.Fast))
+    const state = useSignal(GameState.Normal)
+    dispatchs.auto.subscribe(() => state(state() === GameState.Auto ? GameState.Normal : GameState.Auto))
+    dispatchs.fast.subscribe(() => state(state() === GameState.Fast ? GameState.Normal : GameState.Fast))
 
     const variables: Variables = {
         temp: useReactive<Record<string, unknown>>({}),
@@ -97,7 +97,7 @@ export const Core: Component<ParentProps> = (props) => {
         // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
         let i = 0
         while (i < startAt) {
-            ;(await row(i, { index: i, timer, state: State.Init, ...context })).forEach((e) => e.apply())
+            ;(await row(i, { index: i, timer, state: GameState.Init, ...context })).forEach((e) => e.apply())
             // log.info(`正在初始化第${i}幕`)
             i += 1
         }

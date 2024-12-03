@@ -7,10 +7,10 @@ export type Task<T> = Function0<Promise<T>>
 export type ResolvedCommand = Function0<RuntimeCommandOutput>
 
 // 经过async和catch,返回值为Promise<Record>的命令
-export type NonNullResolvedCommand = Task<CommandOutput>
+export type StandardResolvedCommand = Task<CommandOutput>
 
 // 包装了Async或Await类型,可以被流控函数处理的命令
-export type StandardResolvedCommand = Flow<CommandOutput>
+export type FlowStandardResolvedCommand = Flow<CommandOutput>
 
 export enum FlowEnum {
     Await,

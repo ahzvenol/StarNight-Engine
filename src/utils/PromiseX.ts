@@ -19,19 +19,19 @@ class PromiseX<T> extends Promise<T> {
     }
     public resolve!: Parameters<ConstructorParameters<typeof Promise<T>>[0]>[0]
     public reject!: Parameters<ConstructorParameters<typeof Promise<T>>[0]>[1]
+
+    public static status = (p: Promise<unknown>) => {
+        const t = {}
+        return Promise.race([p, t])
+            .then((v) => (v === t ? PromiseState.Pending : PromiseState.Fulfilled))
+            .catch(() => PromiseState.Rejected)
+    }
 }
 
 enum PromiseState {
-    PENDING = 'pending',
-    FULFILLED = 'fulfilled',
-    REJECTED = 'rejected'
+    Pending,
+    Fulfilled,
+    Rejected
 }
 
-function getState(p: Promise<unknown>) {
-    const t = {}
-    return Promise.race([p, t])
-        .then((v) => (v === t ? PromiseState.PENDING : PromiseState.FULFILLED))
-        .catch(() => PromiseState.REJECTED)
-}
-
-export { PromiseX, PromiseState, getState }
+export { PromiseX, PromiseState }

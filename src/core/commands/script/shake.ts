@@ -1,5 +1,5 @@
 import anime from 'animejs'
-import { State } from '@/core/types/Game'
+import { GameState } from '@/core/types/Game'
 import { ActScope, Dynamic } from '../../flow'
 import { stageView } from './image'
 
@@ -11,7 +11,7 @@ export const shake = Dynamic<ShakePunchCommandArgs>(
     ActScope(
         ({ state }) =>
             function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
-                if (state === State.Fast) return
+                if (state === GameState.Fast) return
                 const realTarget = stageView()!.getElementsByClassName(target)[0]
                 const originX = 0
                 const originY = 0
@@ -35,7 +35,7 @@ export const punch = Dynamic<ShakePunchCommandArgs>(
     ActScope(
         ({ state }) =>
             function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
-                if (state === State.Init || state === State.Fast) return
+                if (state === GameState.Init || state === GameState.Fast) return
                 const realTarget = stageView()!.getElementsByClassName(target)[0]
                 const originX = 0
                 const originY = 0

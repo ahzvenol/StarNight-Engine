@@ -3,7 +3,7 @@ import { isNotNil, mapValues } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import { PostInitEvent } from '@/core/event'
 import { Dynamic, NonBlocking } from '@/core/flow'
-import { State } from '@/core/types/Game'
+import { GameState } from '@/core/types/Game'
 import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
 import { Y } from '@/utils/FPUtil'
 import { _tween } from './abstract/tween'
@@ -41,7 +41,7 @@ export const setImage = Dynamic<SetImageCommandArgs>(
             const array = stage.getElementsByClassName(name)
             const bitmap = match(state)
                 // @ts-expect-error 类型“ImgHTMLAttributes<HTMLImageElement>”上不存在属性“attr:meta”
-                .with(State.Init, () => <img attr:meta={file} />)
+                .with(GameState.Init, () => <img attr:meta={file} />)
                 .otherwise(() => <img src={file} />) as HTMLImageElement
             const oldBitmap = array[0] as HTMLImageElement | null
             bitmap.className = name
@@ -52,7 +52,7 @@ export const setImage = Dynamic<SetImageCommandArgs>(
             if (h !== undefined) bitmap.style.height = `${h}px`
             stage.insertBefore(bitmap, stage.firstChild)
             if (isNotNil(oldBitmap)) {
-                if (state !== State.Init) {
+                if (state !== GameState.Init) {
                     const sequence = _tween({ target: oldBitmap, ease, duration })({ opacity: 0 })
                     yield sequence.finished
                 }

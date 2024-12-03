@@ -19,7 +19,7 @@ import {
 } from './event'
 import { fork } from './flow'
 import { row } from './row'
-import { State } from './types/Game'
+import { GameState } from './types/Game'
 import { Timer } from './utils/Timer'
 
 // 对外暴露目前的index,目前供存档功能使用
@@ -39,7 +39,7 @@ ActStartEvent.subscribe(({ timer }) => {
 // 给予全部命令操作actindex的能力是危险的,有几个特殊的命令会影响主循环,可以单独提出
 async function runAct(
     index: number,
-    state: State,
+    state: GameState,
     store: Store,
     variables: Variables,
     onClick: Promise<void>,
@@ -47,8 +47,8 @@ async function runAct(
 ) {
     const timer = new Timer()
     // 如果现在是快进状态,直接把timer设置到立即执行
-    if (state == State.Fast) timer.toImmediate()
-    const context: GameRuntimeContext = { timer, state, store, variables, index }
+    if (state == GameState.Fast) timer.toImmediate()
+    const context: GameRuntimeContext = { timer, state, store, variables, index, destory: onDestoryed() }
     // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕,通过timer立即执行全部效果
     // 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
     const immPromise = new PromiseX()
@@ -72,7 +72,7 @@ async function runAct(
 
 function runLoop(
     index: Signal<number>,
-    state: Signal<State>,
+    state: Signal<GameState>,
     store: ReactiveStore,
     variables: Variables,
     onClick: Function0<Promise<void>>,
@@ -89,8 +89,8 @@ function runLoop(
             // auto的话,不需要去加速正在运行的幕,但是需要去推动已经停止的循环
             // 像是选项要卡死幕循环的情况,使用不在timer控制范围内的await就可以
             await match(state())
-                .with(State.Fast, () => delay(100))
-                .with(State.Auto, () => delay(2000 - store.config.AutoReadSpeed() * 2000))
+                .with(GameState.Fast, () => delay(100))
+                .with(GameState.Auto, () => delay(2000 - store.config.AutoReadSpeed() * 2000))
                 .otherwise(() => Promise.race([onClick(), onAuto(), onFast()]))
             log.info('已受到推动并结束等待')
         }

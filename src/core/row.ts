@@ -1,17 +1,14 @@
-import type { CommandOutput, CommandsKeys, RuntimeCommandOutput } from './types/Command'
+import type { CommandsKeys, StandardCommand } from './types/Command'
 import type { GameRuntimeContext } from './types/Game'
-import { isPlainObject, mapValues, omit } from 'es-toolkit'
+import { mapValues, omit } from 'es-toolkit'
 import Mustache from 'mustache'
 import { match, P } from 'ts-pattern'
 import book from '@/store/book'
 import { log } from '@/utils/Logger'
 import { commands } from './commands'
-import { macros } from './commands/macro'
-import { onActSecondClick, onDestoryed } from './event'
-import { auto } from './flow'
+import { macros } from './commands/macros'
 import { Command, CommandEntity } from './types/Command'
 import { FlowEnum } from './types/Flow'
-import { State } from './types/Game'
 
 export const row = async (index: number, context: GameRuntimeContext) => {
     const row = await book.row(index)
@@ -30,6 +27,7 @@ export const row = async (index: number, context: GameRuntimeContext) => {
                 return false
             }
         }) as Array<CommandEntity<CommandsKeys>>
+
     const resolvedCommands = commandArray
         // 变量插值
         .map((line) =>
@@ -44,35 +42,10 @@ export const row = async (index: number, context: GameRuntimeContext) => {
         )
         .map(({ sign, args }) => {
             const cmd = commands[sign]
-            const flowType = Command.Blocking ? FlowEnum.Await : FlowEnum.Async
-
-            const onFastForward = onActSecondClick()
-            const onDestory = onDestoryed()
-            const task: Function0<Promise<RuntimeCommandOutput>> = () => {
-                if (cmd.commandType === Command.Dynamic) {
-                    // @ts-expect-error 不能将类型“CommandArgs”分配给类型“never”。
-                    const output = cmd.apply(context)(args)
-                    if (context.state === State.Init) {
-                        return auto(output, { imm: true })
-                    } else {
-                        return auto(output, { onFastForward, onDestory })
-                    }
-                } else {
-                    // @ts-expect-error 不能将类型“CommandArgs”分配给类型“never”。
-                    const output = cmd.apply(context)(args)
-                    return Promise.resolve(output)
-                }
-            }
-
-            const nonNullTask: Function0<Promise<CommandOutput>> = () =>
-                task()
-                    .catch((error) => log.error('命令运行出错:', error))
-                    .then((result) => (isPlainObject(result) ? result : {}))
-
             return {
                 commandType: cmd.commandType,
-                flowType: flowType,
-                apply: nonNullTask
+                flowType: cmd.commandType === Command.Blocking ? FlowEnum.Await : FlowEnum.Async,
+                apply: () => (cmd as StandardCommand).apply(context)(args)
             } as const
         })
 

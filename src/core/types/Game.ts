@@ -2,11 +2,17 @@ import type { Reactive, ReactiveType } from 'micro-reactive'
 import type { GlobalSaveData, ReactiveStore } from '@/store/default'
 import type { Timer } from '../utils/Timer'
 
-export enum State {
+export enum GameState {
     Init,
     Normal,
     Fast,
     Auto
+}
+
+export enum RunState {
+    Normal,
+    Fast,
+    Destroy
 }
 
 export type Events = { click: Function0<void>; fast: Function0<void>; auto: Function0<void> }
@@ -28,6 +34,7 @@ export type GameContext = {
 
 export type GameRuntimeContext = {
     timer: Timer
-    state: State
+    state: GameState
     index: number
+    destory?: Promise<void>
 } & GameContext

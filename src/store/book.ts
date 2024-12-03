@@ -6,7 +6,7 @@ type Book = Array<Array<Record<string, any>>>
 
 const book = request<Book>('./static/book.json').then((res) => res.data)
 
-const length = async () => (await book).length
+const length = () => book.then((res) => res.length)
 
 const row = (index: number) => book.then((res) => cloneDeep(res[index]))
 

@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { useEvents, useState } from '@/core/Core'
 import { getSave } from '@/core/save'
-import { State } from '@/core/type'
+import { GameState } from '@/core/types/Game'
 import { router } from '@/router'
 import { useStore } from '@/store/context'
 import { Button } from '@/ui/Elements'
@@ -31,12 +31,12 @@ export const ControlPanel: Component<{ showBacklog: Function0<void>; closeBottom
                 <Button class={styles.Game_ControlPanel_backlog} onClick={showBacklog} />
                 <Button
                     class={styles.Game_ControlPanel_auto}
-                    style={{ filter: state() === State.Auto ? 'brightness(60%)' : '' }}
+                    style={{ filter: state() === GameState.Auto ? 'brightness(60%)' : '' }}
                     onClick={auto}
                 />
                 <Button
                     class={styles.Game_ControlPanel_fast}
-                    style={{ filter: state() === State.Fast ? 'brightness(60%)' : '' }}
+                    style={{ filter: state() === GameState.Fast ? 'brightness(60%)' : '' }}
                     onClick={fast}
                 />
                 <Button class={styles.Game_ControlPanel_hidden} onClick={closeBottomBox} />

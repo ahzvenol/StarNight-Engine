@@ -6,7 +6,7 @@ export const _wait = (timer: Timer) => (duration: number) => {
         const controller = new TimeoutController(res, duration)
         timer.addResumeMethod(controller.start)
         timer.addPauseMethod(controller.pause)
-        timer.addFinalizeMethod(controller.immediateExecution)
+        // timer.addFinalizeMethod(controller.immediateExecution)
         if (!timer.isPaused) controller.start()
     })
 }
