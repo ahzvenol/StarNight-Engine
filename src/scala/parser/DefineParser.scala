@@ -35,11 +35,11 @@ class DefineParser extends StarNightScriptParser {
 
   case class Placeholder(value: String)
 
-  def commandKeyInterpolationValuePair: Parser[Map[String, Any]] = (key <~ ":") ~ ("{" ~> key <~ "}") ^^ {
-    case k ~ v => Map(k -> Placeholder(v))
+  def commandKeyInterpolationValuePair: Parser[(String, Placeholder)] = (key <~ ":") ~ ("{" ~> key <~ "}") ^^ {
+    case k ~ v => (k, Placeholder(v))
   }
 
-  def commandKeyInterpolationValueAbbreviation: Parser[Map[String, Any]] = key ^^ (e => Map(e -> Placeholder(e)))
+  def commandKeyInterpolationValueAbbreviation: Parser[(String, Placeholder)] = key ^^ (e => (e, Placeholder(e)))
 
   def defineFrom: Parser[(String, List[(String, Boolean)])] = {
     commandSign ~ rep(key ~ "\\??".r <~ "\\s+".r) ^^ {
@@ -51,7 +51,7 @@ class DefineParser extends StarNightScriptParser {
 
   def defineTo: Parser[List[Map[String, Any]]] = {
     rep1(commandSign ~ rep((commandKeyValuePair | commandKeyInterpolationValuePair | commandKeyInterpolationValueAbbreviation) <~ "\\s*".r) ^^ {
-      case k ~ l => Map("@" -> k) ++ l.foldLeft(Map[String, Any]())((m, e) => m ++ e)
+      case k ~ l => Map("@" -> k) ++ l.toMap
     })
   }
 

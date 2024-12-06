@@ -1,5 +1,6 @@
 import { resolve } from 'path'
 import type { PluginOption } from 'vite'
+import scalaJSPlugin from '@scala-js/vite-plugin-scalajs'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
 import importToCDN from 'vite-plugin-cdn-import'
@@ -24,6 +25,7 @@ export default defineConfig(({ command }) => ({
                 }
             ]
         }),
+        scalaJSPlugin() as PluginOption,
         visualizer({
             filename: 'stats.html' // 默认在项目根目录下生成stats.html文件，可自定义
             // open: true //生成后自动打开浏览器查看
