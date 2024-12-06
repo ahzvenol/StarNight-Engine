@@ -13,6 +13,7 @@
     "lint:all": "concurrently \"pnpm run lint:prettier\" \"pnpm run lint:style\" \"pnpm run lint:fix\""
   },
   "devDependencies": {
+    "@scala-js/vite-plugin-scalajs": "^1.0.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
     "@types/animejs": "^3.1.12",
     "@types/howler": "^2.2.12",
@@ -45,7 +46,7 @@
     "axios": "^1.2.2",
     "dayjs": "^1.11.13",
     "devtools-detector": "^2.0.14",
-    "es-toolkit": "^1.26.1",
+    "es-toolkit": "^1.29.0",
     "howler": "^2.2.4",
     "js-ini": "^1.6.0",
     "localforage": "^1.10.0",

@@ -23,6 +23,7 @@ class StarNightScriptParser extends JavaTokenParsers {
     .replaceAll("""\\n""", "\n")
     .replaceAll("""\\r""", "\r")
     .replaceAll("""\\t""", "\t")
+    .replaceAll("""\\\\""", "\\")
   // issue:"\"要不要强制写成"\\"?
 
   def key: Parser[String] = """[\u4e00-\u9fa5_a-zA-Z0-9]+""".r
@@ -39,13 +40,13 @@ class StarNightScriptParser extends JavaTokenParsers {
 
   def commandSign: Parser[String] = "@" ~> key <~ "\\s+".r
 
-  def commandKeyValuePair: Parser[Map[String, Any]] = (key <~ ":") ~ value ^^ {
-    case k ~ v => Map(k -> v)
+  def commandKeyValuePair: Parser[(String, Any)] = (key <~ ":") ~ value ^^ {
+    case k ~ v => (k, v)
   }
 
   def command: Parser[Map[String, Any]] = {
     commandSign ~ rep(commandKeyValuePair <~ "\\s*".r) ^^ {
-      case k ~ l => Map("@" -> k) ++ l.foldLeft(Map[String, Any]())((m, e) => m ++ e)
+      case k ~ l => Map("@" -> k) ++ l.toMap
     }
   }
 

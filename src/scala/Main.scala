@@ -1,15 +1,12 @@
 import parser.{ChineseCharacterParser, CommentParser, DefineParser, StarNightScriptParser}
 import util.Cache
-import xml.XmlParser
 
-import scala.concurrent.Future
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters._
-import scala.scalajs.js.Promise
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 object Main {
-  implicit class Pipe[A](any: A) {
+  extension[A] (any: A) {
     def |>[B](f: Function[A, B]): B = f(any)
   }
 
@@ -18,23 +15,18 @@ object Main {
     any
   }
 
-  @JSExportTopLevel("translate")
-  def translate(define: String, target: String): js.Function1[Int, js.Array[js.Dictionary[Any]]] = {
+  @JSExportTopLevel("compile")
+  def compile(define: String, target: String): js.Function1[Int, js.Array[js.Dictionary[Any]]] = {
     val macroConverter = define
-      .|>(CommentParser.parse)
-      .|>(DefineParser.parse)
+      |> CommentParser.parse
+      |> DefineParser.parse
 
     val rawBook = target
-      .|>(ChineseCharacterParser.parse)
-      .|>(CommentParser.parse)
-      .|>(StarNightScriptParser.parse)
+      |> ChineseCharacterParser.parse
+      |> CommentParser.parse
+      |> StarNightScriptParser.parse
 
     (i: Int) => rawBook.map(e => Cache(e.flatMap(macroConverter(_)).map(_.toJSDictionary).toJSArray))(i)()
-  }
-
-  @JSExportTopLevel("translate2")
-  def translate2(xml: String): Unit = {
-    XmlParser.test(XmlParser.variableExample)
   }
 
   //  def main(args: Array[String]): Unit = {
