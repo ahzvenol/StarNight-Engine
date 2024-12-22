@@ -28,18 +28,15 @@
     transition:
         text-shadow 0.7s,
         background-color 0.7s;
-}
 
-.MenuPanel_button:last-child {
-    margin-right: 0;
-}
+    &:last-child {
+        margin-right: 0;
+        border-right: none;
+    }
 
-.MenuPanel_button:hover {
-    background-color: rgb(245 246 247 / 15%);
-}
-
-.MenuPanel_button:last-child {
-    border-right: none;
+    &:hover {
+        background-color: rgb(245 246 247 / 15%);
+    }
 }
 
 .MenuPanel_button_icon {
