@@ -1,4 +1,5 @@
 import type { Component } from 'solid-js'
+import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { Show } from 'solid-js'
 import { getSave } from '@/core/save'
@@ -55,11 +56,10 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                                     {(save) => (
                                         // 存档不为空时时才有:hover和Button行为
                                         <div
-                                            classList={{
-                                                [styles.Save_Load_content_element]: true,
+                                            class={clsx(styles.Save_Load_content_element, {
                                                 [styles.Save_Load_content_element_hover]:
                                                     mode === 'Save' || save() !== undefined
-                                            }}
+                                            })}
                                             onClick={() => {
                                                 if (mode === 'Save') {
                                                     save(getSave())

@@ -1,4 +1,5 @@
 import type { Component } from 'solid-js'
+import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { Show } from 'solid-js'
 import { useStore } from '@/store/context'
@@ -25,12 +26,11 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                         {(i) => (
                             <Button
                                 onClick={() => currentPage(i)}
-                                classList={{
-                                    [styles.Save_Load_top_button]: true,
+                                class={clsx(styles.Save_Load_top_button, {
                                     [styles.Save_Load_top_button_on]: currentPage() === i,
                                     [styles.Load_top_button]: mode === 'Load',
                                     [styles.Load_top_button_on]: mode === 'Load' && currentPage() === i
-                                }}>
+                                })}>
                                 <div class={styles.Save_Load_top_button_text}>{i + 1}</div>
                             </Button>
                         )}
@@ -46,17 +46,15 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                             <Show when={save()[i]} fallback={<div />}>
                                 <div class={styles.Save_Load_content_element_top}>
                                     <div
-                                        classList={{
-                                            [styles.Save_Load_content_element_top_index]: true,
+                                        class={clsx(styles.Save_Load_content_element_top_index, {
                                             [styles.Load_content_element_top_index]: mode === 'Load'
-                                        }}>
+                                        })}>
                                         {i + 1 + currentPage() * 10}
                                     </div>
                                     <div
-                                        classList={{
-                                            [styles.Save_Load_content_element_top_date]: true,
+                                        class={clsx(styles.Save_Load_content_element_top_date, {
                                             [styles.Load_content_element_top_date]: mode === 'Load'
-                                        }}>
+                                        })}>
                                         {dayjs().format('MM-DD HH:mm:ss')}
                                     </div>
                                 </div>
@@ -65,10 +63,9 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                                 </div>
                                 <div class={styles.Save_Load_content_text}>
                                     <div
-                                        classList={{
-                                            [styles.Save_Load_content_speaker]: true,
+                                        class={clsx(styles.Save_Load_content_speaker, {
                                             [styles.Load_content_speaker]: mode === 'Load'
-                                        }}>
+                                        })}>
                                         {'咸鱼'}
                                     </div>
                                     <div class={styles.Save_Load_content_text_padding}>{'摸鱼'}</div>

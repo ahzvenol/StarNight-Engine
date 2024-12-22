@@ -1,4 +1,5 @@
 import type { Component } from 'solid-js'
+import clsx from 'clsx'
 import { intersection } from 'es-toolkit'
 import { Show } from 'solid-js'
 import { useStore } from '@/store/context'
@@ -41,20 +42,16 @@ const Gallery: Component = () => {
         <div class={'Page' + ' ' + styles.Gallery_container}>
             <div id={styles.Gallery_CG_container} />
             <div
-                classList={{
-                    [styles.Gallery_switch]: true,
-                    [styles.Gallery_switch_1]: true,
+                class={clsx(styles.Gallery_switch, styles.Gallery_switch_1, {
                     [styles.Gallery_switch_hover]: currentPage() !== 0
-                }}
+                })}
                 onClick={() => currentPage(0)}>
                 1
             </div>
             <div
-                classList={{
-                    [styles.Gallery_switch]: true,
-                    [styles.Gallery_switch_2]: true,
+                class={clsx(styles.Gallery_switch, styles.Gallery_switch_2, {
                     [styles.Gallery_switch_hover]: currentPage() !== 1
-                }}
+                })}
                 onClick={() => currentPage(1)}>
                 2
             </div>

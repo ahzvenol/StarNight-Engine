@@ -13,14 +13,15 @@
     "lint:all": "concurrently \"pnpm run lint:prettier\" \"pnpm run lint:style\" \"pnpm run lint:fix\""
   },
   "devDependencies": {
-    "@scala-js/vite-plugin-scalajs": "^1.0.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
+    "@scala-js/vite-plugin-scalajs": "^1.0.0",
     "@types/animejs": "^3.1.12",
     "@types/howler": "^2.2.12",
     "@types/mustache": "^4.2.5",
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-clsx": "^0.0.9",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-solid": "^0.14.3",
     "postcss-scss": "^4.0.9",
@@ -37,13 +38,14 @@
     "stylelint-scss": "^5.3.2",
     "typescript": "^5.6.2",
     "typescript-plugin-css-modules": "^5.1.0",
-    "vite": "^5.4.10",
+    "vite": "^5.4.11",
     "vite-plugin-cdn-import": "^1.0.1"
   },
   "dependencies": {
     "@solidjs/router": "^0.8.3",
     "animejs": "^3.2.2",
     "axios": "^1.2.2",
+    "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "devtools-detector": "^2.0.14",
     "es-toolkit": "^1.29.0",
@@ -57,6 +59,6 @@
     "solid-keep-alive": "^0.2.3",
     "solid-styled": "^0.9.0",
     "ts-pattern": "^5.3.1",
-    "vite-plugin-solid": "^2.3.0"
+    "vite-plugin-solid": "^2.11.0"
   }
 }

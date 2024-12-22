@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { router } from '@/router'
 import { translation } from '@/store/effects/translations'
 import { Button } from '@/ui/Elements'
@@ -15,8 +16,7 @@ export const MenuPanel = () => {
     return (
         <div class={styles.MenuPanel_main}>
             <Button
-                class={styles.MenuPanel_button}
-                classList={{ [styles.MenuPanel_button_hl]: router.active() === 'Save' }}
+                class={clsx(styles.MenuPanel_button, { [styles.MenuPanel_button_hl]: router.active() === 'Save' })}
                 onClick={() => router.navigate('Save', true)}
                 style={{
                     color: router.active() === 'Save' ? `rgba(74, 34, 93, 0.9)` : `rgba(123,144,169,1)`
@@ -27,8 +27,7 @@ export const MenuPanel = () => {
                 {t.saving.title()}
             </Button>
             <Button
-                class={styles.MenuPanel_button}
-                classList={{ [styles.MenuPanel_button_hl]: router.active() === 'Load' }}
+                class={clsx(styles.MenuPanel_button, { [styles.MenuPanel_button_hl]: router.active() === 'Load' })}
                 onClick={() => router.navigate('Load', true)}
                 style={{
                     color: router.active() === 'Load' ? `rgba(11, 52, 110, 0.9)` : `rgba(123,144,169,1)`
@@ -55,8 +54,7 @@ export const MenuPanel = () => {
                 {t.title.title()}
             </Button>
             <Button
-                class={styles.MenuPanel_button}
-                classList={{ [styles.MenuPanel_button_hl]: router.active() === 'Config' }}
+                class={clsx(styles.MenuPanel_button, { [styles.MenuPanel_button_hl]: router.active() === 'Config' })}
                 onClick={() => router.navigate('Config', true)}
                 style={{
                     'margin-left': 'auto',

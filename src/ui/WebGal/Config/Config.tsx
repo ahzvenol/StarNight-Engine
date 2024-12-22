@@ -1,4 +1,5 @@
 import type { Component } from 'solid-js'
+import clsx from 'clsx'
 import { createEffect, Match, Switch } from 'solid-js'
 import { translation } from '@/store/effects/translations'
 import { Button, Clone } from '@/ui/Elements'
@@ -32,11 +33,10 @@ const Config: Component = () => {
                     <Clone count={3}>
                         {(i) => (
                             <Button
-                                classList={{
-                                    [styles.Options_page_button]: true,
+                                class={clsx(styles.Options_page_button, {
                                     [styles.Options_page_button_active]:
                                         currentPage() === [Page.System, Page.Display, Page.Sound][i]
-                                }}
+                                })}
                                 onClick={() => currentPage([Page.System, Page.Display, Page.Sound][i])}>
                                 {t.pages[(['system', 'display', 'sound'] as const)[i]].title()}
                             </Button>
