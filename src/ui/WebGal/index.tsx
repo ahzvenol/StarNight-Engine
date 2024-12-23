@@ -2,8 +2,9 @@ import type { Component } from 'solid-js'
 import LXGWWenKai_Regular from '@/assets/LXGWWenKai-Regular.ttf'
 import OPPOSans_R from '@/assets/OPPOSans-R.ttf'
 import SourceHanSerifCN_Regular from '@/assets/SourceHanSerifCN-Regular.ttf'
-import Game from '@/core/Game'
+// import Game from '@/core/Game'
 import { Route, router } from '../../router'
+import { Graphic } from '../Elements'
 import Config from './Config/Config'
 import Gallery from './Gallery/Gallery'
 import Dialog from './GlobalDialog/GlobalDialog'
@@ -12,14 +13,12 @@ import SaveLoad from './SaveAndLoad/SaveLoad'
 import Title from './Title/Title'
 
 const UI: Component = () => (
-    <>
+    <Graphic width={2560} height={1440} mode="auto">
         <Dialog />
         <Route path="">
             <Title />
         </Route>
-        <Route path="Game">
-            <Game />
-        </Route>
+        <Route path="Game">{/* <Game /> */}</Route>
         <div onContextMenu={router.back}>
             <Route when={(path) => path === 'Config' || path === 'Load' || path === 'Save'}>
                 <Menu>
@@ -64,7 +63,7 @@ const UI: Component = () => (
                 }
             `}
         </style>
-    </>
+    </Graphic>
 )
 
 export default UI

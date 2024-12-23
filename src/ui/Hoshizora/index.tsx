@@ -2,6 +2,7 @@ import type { Component } from 'solid-js'
 import { Show } from 'solid-js'
 import jcyt500W from '@/assets/jcyt500W.ttf'
 import { Route, router } from '../../router'
+import { Graphic } from '../Elements'
 import { Game, Title } from '../Pages'
 import Back from './Back/Back'
 import Config from './Config/Config'
@@ -12,7 +13,7 @@ import SaveLoad from './SaveAndLoad/SaveLoad'
 import TitleImpl from './Title/Title'
 
 const UI: Component = () => (
-    <>
+    <Graphic width={1280} height={720} mode="auto">
         <Show when={import.meta.env.DEV === true || isEnter()} fallback={<LandingPage />}>
             <Title>
                 <TitleImpl />
@@ -59,7 +60,7 @@ const UI: Component = () => (
                 }
             `}
         </style>
-    </>
+    </Graphic>
 )
 
 export default UI

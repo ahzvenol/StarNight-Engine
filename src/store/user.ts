@@ -7,9 +7,7 @@ import request from '@/utils/request'
 export const getUserConfig = async () => {
     const ini = (await request('./config.ini').then((res) => INI.parse(res.data))) as Record<string, IniKV>
 
-    const { info = {}, graphic = {}, config = {}, user = {} } = ini
-
-    const system = { ...info, ...graphic }
+    const { system = {}, config = {}, user = {} } = ini
 
     log.info('配置文件解析完毕:', ini)
 
