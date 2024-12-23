@@ -1,27 +1,29 @@
-import type { Component, ParentProps } from 'solid-js'
+import type { Accessor, Component, ParentProps } from 'solid-js'
 import type { Signal } from './Reactive'
 import { createEffect, on, runWithOwner, Show } from 'solid-js'
 import { KeepAlive, useKeepAlive } from 'solid-keep-alive'
 import { useSignal } from './Reactive'
 
-const efftct = new Map<string, Signal<number>>()
+const signals = new Map<string, Signal<number>>()
 
-const KeepAliveX: Component<ParentProps<{ id: string; key: Signal<number> }>> = (props) => {
+const KeepAliveX: Component<ParentProps<{ id: string; key: Accessor<number> }>> = (props) => {
     const { removeElement } = useKeepAlive()[1]
-    if (!efftct.has(props.id)) {
-        efftct.set(props.id, useSignal(1))
+    if (!signals.has(props.id)) {
+        const refresh = useSignal(1)
+        signals.set(props.id, refresh)
         // 在实际使用中这个组件会因为上层Show组件开关反复运行
-        // 不希望它在初始化时运行effect,也不希望在它销毁时effect监听取消
+        // 不希望它在初始化时运行effect,也不希望在它销毁时取消effect监听
         runWithOwner(null, () =>
             createEffect(
                 on(
                     props.key,
                     () => {
                         removeElement(props.id)
-                        efftct.get(props.id)!(0)
-                        setTimeout(() => {
-                            efftct.get(props.id)!(1)
-                        })
+                        if (refresh() === 1) {
+                            refresh(-1)
+                        } else {
+                            refresh(1)
+                        }
                     },
                     { defer: true }
                 )
@@ -29,7 +31,7 @@ const KeepAliveX: Component<ParentProps<{ id: string; key: Signal<number> }>> = 
         )
     }
     return (
-        <Show when={efftct.get(props.id)!() === 1}>
+        <Show when={signals.get(props.id)!()} keyed>
             {/* @ts-expect-error  返回类型 "() => Element" 不是有效的 JSX 元素。*/}
             <KeepAlive id={props.id}>{props.children}</KeepAlive>
         </Show>
