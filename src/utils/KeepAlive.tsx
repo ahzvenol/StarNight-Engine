@@ -1,8 +1,9 @@
 import type { Accessor, Component, ParentProps } from 'solid-js'
 import type { Signal } from './Reactive'
-import { createEffect, on, runWithOwner, Show } from 'solid-js'
+import { createEffect, on, runWithOwner } from 'solid-js'
 import { KeepAlive, useKeepAlive } from 'solid-keep-alive'
 import { useSignal } from './Reactive'
+import { ReRender } from './ReRender'
 
 const signals = new Map<string, Signal<number>>()
 
@@ -31,10 +32,10 @@ const KeepAliveX: Component<ParentProps<{ id: string; key: Accessor<number> }>> 
         )
     }
     return (
-        <Show when={signals.get(props.id)!()} keyed>
+        <ReRender key={signals.get(props.id)!}>
             {/* @ts-expect-error  返回类型 "() => Element" 不是有效的 JSX 元素。*/}
             <KeepAlive id={props.id}>{props.children}</KeepAlive>
-        </Show>
+        </ReRender>
     )
 }
 
