@@ -17,7 +17,7 @@ const Display: Component = () => {
                         <Clone count={2}>
                             {(i) => (
                                 // todo:变量绑定
-                                <Button key={i} signal={val} onClick={() => {}}>
+                                <Button key={i} signal={val} onClick={noop}>
                                     {t.fullScreen.options[(['on', 'off'] as const)[i]]()}
                                 </Button>
                             )}
@@ -31,7 +31,7 @@ const Display: Component = () => {
                         <Clone count={3}>
                             {(i) => (
                                 // todo:变量绑定
-                                <Button key={i} signal={val} onClick={() => {}}>
+                                <Button key={i} signal={val} onClick={noop}>
                                     {t.textSpeed.options[(['slow', 'medium', 'fast'] as const)[i]]()}
                                 </Button>
                             )}
@@ -45,7 +45,7 @@ const Display: Component = () => {
                         <Clone count={3}>
                             {(i) => (
                                 // todo:变量绑定
-                                <Button key={i} signal={val} onClick={() => {}}>
+                                <Button key={i} signal={val} onClick={noop}>
                                     {t.textSize.options[(['small', 'medium', 'large'] as const)[i]]()}
                                 </Button>
                             )}
@@ -59,7 +59,7 @@ const Display: Component = () => {
                         <Clone count={3}>
                             {(i) => (
                                 // todo:变量绑定
-                                <Button key={i} signal={val} onClick={() => {}}>
+                                <Button key={i} signal={val} onClick={noop}>
                                     {t.textFont.options[(['siYuanSimSun', 'SimHei', 'lxgw'] as const)[i]]()}
                                 </Button>
                             )}

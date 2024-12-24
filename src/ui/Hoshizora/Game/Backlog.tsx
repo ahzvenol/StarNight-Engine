@@ -1,4 +1,5 @@
 import type { Component } from 'solid-js'
+import clsx from 'clsx'
 import { For, Show } from 'solid-js'
 import { backlogView } from '@/core/commands/script/backlog'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
@@ -9,8 +10,8 @@ import styles from './Backlog.module.scss'
 export const Backlog: Component<{ closeBacklog: Function0<void> }> = ({ closeBacklog }) => {
     return (
         <div style={{ display: 'contents' }} onClick={(event) => event.stopPropagation()}>
-            <div class={'Page' + ' ' + styles.Game_Backlog_mask} />
-            <div class={'Page' + ' ' + styles.Game_Backlog_container}>
+            <div class={clsx('Page', styles.Game_Backlog_mask)} />
+            <div class={clsx('Page', styles.Game_Backlog_container)}>
                 <Scrollbar
                     container={<div class={styles.Game_Backlog_content} />}
                     content={

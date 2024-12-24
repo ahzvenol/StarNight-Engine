@@ -1,4 +1,5 @@
 import type { Component } from 'solid-js'
+import clsx from 'clsx'
 import { useSignal } from '@/utils/Reactive'
 import styles from './LandingPage.module.scss'
 
@@ -17,7 +18,7 @@ const LandingPage: Component = () => {
     }
 
     return (
-        <div class={'Page' + ' ' + styles.LandingPage_container} style={{ opacity: opacity() }} onClick={onClick}>
+        <div class={clsx('Page', styles.LandingPage_container)} style={{ opacity: opacity() }} onClick={onClick}>
             <link rel="preload" href="/static/Texture2D/title_bg.png" as="image" />
             <link rel="preload" href="/static/AudioClip/bgm01.wav" as="audio" />
             <div class={styles.LandingPage_tip}>PRESS THE SCREEN TO START</div>

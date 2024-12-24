@@ -23,7 +23,7 @@ export const ControlPanel: Component<{ showBacklog: Function0<void>; closeBottom
                 <Button class={styles.Game_ControlPanel_quicksave} onClick={() => quickSave(getSave())} />
                 <Button
                     class={styles.Game_ControlPanel_quickload}
-                    onclick={() => quickSave() && restartGame(quickSave()!)}
+                    onClick={() => quickSave() && restartGame(quickSave()!)}
                 />
             </div>
             <div class={styles.Game_ControlPanel_group_2}>

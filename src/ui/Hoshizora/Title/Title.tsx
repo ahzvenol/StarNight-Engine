@@ -1,4 +1,5 @@
 import type { Component } from 'solid-js'
+import clsx from 'clsx'
 import { router } from '@/router'
 import { Button, Clone, line, Variable } from '@/ui/Elements'
 import { Pages, restartGame } from '@/ui/Pages'
@@ -8,7 +9,7 @@ import styles from './Title.module.scss'
 const Title: Component = () => {
     log.info('Title组件函数被调用')
     return (
-        <div class={'Page' + ' ' + styles.Title_container}>
+        <div class={clsx('Page', styles.Title_container)}>
             <Clone count={4}>
                 {(index) => (
                     <Variable value={['01start', '02load', '03config', '04gallery'][index]}>

@@ -39,7 +39,7 @@ const Gallery: Component = () => {
     const cg = useStore().save.global.cg
     const viewedCG = (index: number) => intersection(CG[index + currentPage() * 16] || [], cg())
     return (
-        <div class={'Page' + ' ' + styles.Gallery_container}>
+        <div class={clsx('Page', styles.Gallery_container)}>
             <div id={styles.Gallery_CG_container} />
             <div
                 class={clsx(styles.Gallery_switch, styles.Gallery_switch_1, {
@@ -62,7 +62,7 @@ const Gallery: Component = () => {
                             when={!(currentPage() === 1 && index + 1 > 5)}
                             fallback={
                                 <div
-                                    class={styles.Gallery_content_element + ' ' + styles.Gallery_content_element_empty}
+                                    class={clsx(styles.Gallery_content_element, styles.Gallery_content_element_empty)}
                                 />
                             }>
                             <CGElement cg={() => viewedCG(index)} />

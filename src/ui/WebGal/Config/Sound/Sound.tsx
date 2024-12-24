@@ -35,7 +35,7 @@ const Sound: Component = () => {
                         <Clone count={2}>
                             {(i) => (
                                 // todo:变量绑定
-                                <Button key={i} signal={val} onClick={() => {}}>
+                                <Button key={i} signal={val} onClick={noop}>
                                     {t[(['voiceStop', 'voiceContinue'] as const)[i]].title()}
                                 </Button>
                             )}
