@@ -1,4 +1,5 @@
 import type { Component } from 'solid-js'
+import clsx from 'clsx'
 import { router } from '@/router'
 import { useStore } from '@/store/context'
 import { resetConfig } from '@/store/store'
@@ -12,8 +13,8 @@ const Config: Component = () => {
     log.info('Config组件函数被调用')
     const config = useStore().config
     return (
-        <div class={'Page' + ' ' + styles.Config_container}>
-            <div class={styles.Config_cell + ' ' + styles.Config_cell_left} style={{ bottom: `${110 + 75 * 5}px` }}>
+        <div class={clsx('Page', styles.Config_container)}>
+            <div class={clsx(styles.Config_cell, styles.Config_cell_left)} style={{ bottom: `${110 + 75 * 5}px` }}>
                 <div class={styles.Config_cell_text}>全屏</div>
                 <BinaryButton signal={config.FullScreen} />
             </div>
@@ -23,7 +24,7 @@ const Config: Component = () => {
                         value={config[(['InterruptClip', 'FastForwardUnread', 'StopFastOnSelection'] as const)[index]]}>
                         {(item) => (
                             <div
-                                class={styles.Config_cell + ' ' + styles.Config_cell_left}
+                                class={clsx(styles.Config_cell, styles.Config_cell_left)}
                                 style={{ bottom: `${110 + 75 * (4 - (index + 1) + 1)}px` }}>
                                 <div class={styles.Config_cell_text}>
                                     {['单击停止语音播放', '快进未读文本', '在选项处解除快进'][index]}
@@ -34,7 +35,7 @@ const Config: Component = () => {
                     </Variable>
                 )}
             </Clone>
-            <div class={styles.Config_cell + ' ' + styles.Config_cell_left} style={{ bottom: `185px` }}>
+            <div class={clsx(styles.Config_cell, styles.Config_cell_left)} style={{ bottom: `185px` }}>
                 <div class={styles.Config_cell_text}>窗口透明度</div>
                 <Slider signal={config.TextBoxOpacity} />
             </div>
@@ -42,7 +43,7 @@ const Config: Component = () => {
                 {(index) => (
                     <>
                         <div
-                            class={styles.Config_cell + ' ' + styles.Config_cell_right}
+                            class={clsx(styles.Config_cell, styles.Config_cell_right)}
                             style={{ bottom: `${110 + 75 * (6 - (index + 1))}px` }}>
                             <div class={styles.Config_cell_text}>
                                 {['全体', 'BGM', 'SE', '语音', '正常文字显示速度', '自动阅读速度'][index]}
