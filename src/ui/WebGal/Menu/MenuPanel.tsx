@@ -8,7 +8,6 @@ import styles from './MenuPanel.module.scss'
 
 /**
  * Menu页的底栏
- * @constructor
  */
 export const MenuPanel = () => {
     const t = translation.menu

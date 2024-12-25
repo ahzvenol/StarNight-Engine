@@ -1,4 +1,5 @@
 import type { CommandOutput, RuntimeCommandOutput } from './Command'
+import type { MetaFunction } from './Meta'
 
 // 表示异步任务的通用类型
 export type Task<T> = Function0<Promise<T>>
@@ -10,20 +11,30 @@ export type ResolvedCommand = Function0<RuntimeCommandOutput>
 export type StandardResolvedCommand = Task<CommandOutput>
 
 // 包装了Async或Await类型,可以被流控函数处理的命令
-export type FlowStandardResolvedCommand = Flow<CommandOutput>
+export type FlowStandardResolvedCommand = IFlow<CommandOutput>
 
-export enum FlowEnum {
+export enum Flow {
     Await,
     Async
 }
 
-export type Flow<T> = Await<T> | Async<T>
-
-export interface Await<T> {
-    flowType: FlowEnum.Await
+interface IFlow<T> extends MetaFunction {
+    meta: {
+        flow: Flow
+    }
     apply: Task<T>
 }
-export interface Async<T> {
-    flowType: FlowEnum.Async
+
+export interface Await<T> extends IFlow<T> {
+    meta: {
+        flow: Flow.Await
+    }
+    apply: Task<T>
+}
+
+export interface Async<T> extends IFlow<T> {
+    meta: {
+        flow: Flow.Async
+    }
     apply: Task<T>
 }

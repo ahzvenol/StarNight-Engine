@@ -1,4 +1,5 @@
 import type { Component } from 'solid-js'
+import { noop } from 'es-toolkit'
 import { translation } from '@/store/effects/translations'
 import { Button, Clone } from '@/ui/Elements'
 import { router } from '../../../router'
@@ -15,7 +16,7 @@ const Title: Component = () => {
             <div
                 class={styles.Title_main}
                 style={{
-                    'background-image': 'url(./Texture2D/title_bg.png)',
+                    'background-image': 'url(./static/Texture2D/title_bg.png)',
                     'background-size': 'cover'
                 }}>
                 <div class={styles.Title_buttonList}>
@@ -25,8 +26,8 @@ const Title: Component = () => {
                                 class={styles.Title_button}
                                 onClick={
                                     [
-                                        () => {},
-                                        () => {},
+                                        noop,
+                                        noop,
                                         () => router.navigate('Config'),
                                         () => router.navigate('Load'),
                                         () => router.navigate('Gallery')

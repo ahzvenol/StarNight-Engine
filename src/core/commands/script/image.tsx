@@ -5,7 +5,7 @@ import { PostInitEvent } from '@/core/event'
 import { Dynamic, NonBlocking } from '@/core/flow'
 import { GameState } from '@/core/types/Game'
 import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
-import { Y } from '@/utils/FPUtil'
+import { Y } from '@/utils/fp'
 import { _tween } from './abstract/tween'
 
 // 跨幕环境变量file,需要收集副作用

@@ -3,7 +3,7 @@ import { useEventListener } from './useEventListener'
 
 export function useKeyPress(key: string, listener: EventListener, options: UseEventListenerOptions = {}) {
     let pressed = false
-    const moveKeyDownListener = useEventListener(
+    const removeKeyDownListener = useEventListener(
         'keydown',
         (event) => {
             if (event.code === key && !pressed) {
@@ -13,7 +13,7 @@ export function useKeyPress(key: string, listener: EventListener, options: UseEv
         },
         options
     )
-    const moveKeyUpListener = useEventListener(
+    const removeKeyUpListener = useEventListener(
         'keyup',
         (event) => {
             if (event.key === key) {
@@ -23,10 +23,10 @@ export function useKeyPress(key: string, listener: EventListener, options: UseEv
         options
     )
 
-    const move = () => {
-        moveKeyDownListener()
-        moveKeyUpListener()
+    const remove = () => {
+        removeKeyDownListener()
+        removeKeyUpListener()
     }
 
-    return move
+    return remove
 }

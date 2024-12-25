@@ -1,7 +1,7 @@
 import type { Component, ParentProps } from 'solid-js'
 import { children, onCleanup } from 'solid-js'
 
-const Scale: Component<ParentProps<{ width: number; height: number; mode: 'auto' | 'full' | unknown }>> = (props) => {
+const Scale: Component<ParentProps<{ width: number; height: number; mode: 'auto' | 'full' }>> = (props) => {
     let intervalId!: NodeJS.Timer
     const resolved = children(() => props.children)
     const array = resolved.toArray()
@@ -23,10 +23,8 @@ const Scale: Component<ParentProps<{ width: number; height: number; mode: 'auto'
                     const scale = width / props.width
                     slot.style.transform = `scale(${scale}) translate(0,${(height - props.height * scale) / 2 / scale}px)`
                 }
-            } else if (props.mode == 'full') {
-                slot.style.transform = `scale(${width / props.width},${height / props.height})`
             } else {
-                throw Error("mode应该是'auto'或'full'")
+                slot.style.transform = `scale(${width / props.width},${height / props.height})`
             }
         }
         resize()

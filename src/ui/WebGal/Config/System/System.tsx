@@ -4,8 +4,8 @@ import { useStore } from '@/store/context'
 import { description, language, translation } from '@/store/effects/translations'
 import { clearSave, clearStorage, resetConfig } from '@/store/store'
 import { Clone, Variable } from '@/ui/Elements'
-import { useDialog } from '@/ui/GlobalDialog/GlobalDialog'
 import { useSignal } from '@/utils/Reactive'
+import { useDialog } from '../../GlobalDialog/GlobalDialog'
 import Button from '../Button'
 import Cell from '../Cell'
 import styles from '../Config.module.scss'
@@ -24,7 +24,7 @@ const System: Component = () => {
                         <Clone count={3}>
                             {(i) => (
                                 // todo:变量绑定
-                                <Button key={i} signal={val} onClick={() => {}}>
+                                <Button key={i} signal={val} onClick={noop}>
                                     {t.autoSpeed.options[(['slow', 'medium', 'fast'] as const)[i]]()}
                                 </Button>
                             )}

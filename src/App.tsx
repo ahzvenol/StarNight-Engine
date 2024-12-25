@@ -4,7 +4,6 @@ import { KeepAliveProvider } from 'solid-keep-alive'
 import '@/store/effects/index'
 import { Context } from './store/context'
 import store from './store/store'
-import { Graphic } from './ui/Elements'
 import UI from './ui/Hoshizora'
 import { log } from './utils/Logger'
 
@@ -33,9 +32,7 @@ const App: Component = () => (
         <Match when={store.state === 'ready'}>
             <Context environment={store()!}>
                 <KeepAliveProvider maxElements={1}>
-                    <Graphic config={store()!.system}>
-                        <UI />
-                    </Graphic>
+                    <UI />
                 </KeepAliveProvider>
             </Context>
         </Match>

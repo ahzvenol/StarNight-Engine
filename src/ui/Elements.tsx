@@ -24,15 +24,14 @@ const ClickSE = useAudioConfig('UISE', new Howl({ src: click }))
 const HoverSE = useAudioConfig('UISE', new Howl({ src: hover }))
 
 const Button: Component<
-    JSX.HTMLAttributes<HTMLDivElement> & {
+    Omit<Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onclick'>, 'onmouseenter'> & {
         onClick?: Function0<void>
         onMouseEnter?: Function0<void>
     }
 > = (props) => {
-    const [local, others] = splitProps(props, ['classList', 'onClick', 'onMouseEnter'])
+    const [local, others] = splitProps(props, ['onClick', 'onMouseEnter'])
     return (
         <div
-            classList={{ ...local.classList }}
             onClick={(e) => {
                 e.stopPropagation()
                 ClickSE.play()
