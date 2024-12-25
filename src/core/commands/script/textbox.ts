@@ -1,6 +1,6 @@
 import { inRange } from 'es-toolkit'
 import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
-import { Y } from '@/utils/FPUtil'
+import { Y } from '@/utils/fp'
 import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
 import { ActScope, Dynamic, NonBlocking } from '../../flow'
 import { _wait } from './abstract/wait'

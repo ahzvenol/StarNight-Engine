@@ -1,5 +1,6 @@
 import type { commands } from '../commands'
 import type { GameRuntimeContext } from './Game'
+import type { MetaFunction } from './Meta'
 
 export type CommandArg = string | number | boolean
 
@@ -19,37 +20,44 @@ export enum Command {
     Blocking
 }
 
+export type SocpedCommandFunction<T extends CommandArgs = CommandArgs> = Function1<
+    GameRuntimeContext,
+    Function1<T, undefined>
+>
 export type DynamicCommandFunction<T extends CommandArgs = CommandArgs> = Function1<
     GameRuntimeContext,
     Function1<T, Generator<Promise<void>, RuntimeCommandOutput, void>>
 >
-
 export type NonBlockingCommandFunction<T extends CommandArgs = CommandArgs> = Function1<
     GameRuntimeContext,
     Function1<T, RuntimeCommandOutput>
 >
-
 export type BlockingCommandFunction<T extends CommandArgs = CommandArgs> = Function1<
     GameRuntimeContext,
     Function1<T, Promise<RuntimeCommandOutput>>
 >
 
-export interface StandardCommand<T extends CommandArgs = CommandArgs> {
-    commandType: Command
+export interface StandardCommand<T extends CommandArgs = CommandArgs> extends MetaFunction {
+    meta: {
+        command: Command
+    }
     apply: Function1<GameRuntimeContext, Function1<T, Promise<CommandOutput>>>
 }
 
-export interface DynamicCommand<T extends CommandArgs = CommandArgs> {
-    commandType: Command.Dynamic
-    apply: DynamicCommandFunction<T>
+export interface DynamicCommand extends MetaFunction {
+    meta: {
+        command: Command.Dynamic
+    }
 }
-export interface NonBlockingCommand<T extends CommandArgs = CommandArgs> {
-    commandType: Command.NonBlocking
-    apply: NonBlockingCommandFunction<T>
+export interface NonBlockingCommand extends MetaFunction {
+    meta: {
+        command: Command.NonBlocking
+    }
 }
-export interface BlockingCommand<T extends CommandArgs = CommandArgs> {
-    commandType: Command.Blocking
-    apply: BlockingCommandFunction<T>
+export interface BlockingCommand extends MetaFunction {
+    meta: {
+        command: Command.Blocking
+    }
 }
 
 export type Commands = typeof commands

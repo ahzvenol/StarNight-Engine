@@ -25,14 +25,14 @@ export function useEventListener(type: string, listener: EventListener, options:
         attached = true
     }
 
-    const move = () => {
+    const remove = () => {
         if (target && attached) {
             target.removeEventListener(type, listener, capture)
             attached = false
         }
     }
 
-    onCleanup(move)
+    onCleanup(remove)
 
-    return move
+    return remove
 }

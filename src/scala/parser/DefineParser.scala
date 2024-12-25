@@ -50,7 +50,7 @@ class DefineParser extends StarNightScriptParser {
   }
 
   def defineTo: Parser[List[Map[String, Any]]] = {
-    rep1(commandSign ~ rep((commandKeyValuePair | commandKeyInterpolationValuePair | commandKeyInterpolationValueAbbreviation) <~ "\\s*".r) ^^ {
+    rep1(commandSign ~ rep((commandArg | commandKeyInterpolationValuePair | commandKeyInterpolationValueAbbreviation) <~ "\\s*".r) ^^ {
       case k ~ l => Map("@" -> k) ++ l.toMap
     })
   }

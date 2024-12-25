@@ -54,7 +54,7 @@ const Game: Component<ParentProps> = (props) => {
 
 export const restartGame = (data = { index: 1 }) => {
     initData(data)
-    key((i) => i + 1)
+    key(Date.now())
 }
 
 export { Game, Pages, Title }

@@ -1,11 +1,11 @@
-// Promise.withResolvers是2024年的新特性,需要的浏览器版本太高了,目前不用
+import { noop } from 'es-toolkit'
 
 type PromiseConstructorType<T> = ConstructorParameters<typeof Promise<T>>[0]
 type ResolveType<T> = Parameters<PromiseConstructorType<T>>[0]
 type RejectType<T> = Parameters<PromiseConstructorType<T>>[1]
 
 class PromiseX<T> extends Promise<T> {
-    public constructor(executor: PromiseConstructorType<T> = () => {}) {
+    public constructor(executor: PromiseConstructorType<T> = noop) {
         let resolver!: ResolveType<T>
         let rejector!: RejectType<T>
         super((resolve, reject) => {

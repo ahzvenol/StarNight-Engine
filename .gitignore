@@ -1,5 +1,7 @@
 .idea/
 
+.bsp/
+
 node_modules/
 
 dist/
