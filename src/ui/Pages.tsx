@@ -3,9 +3,9 @@ import { createEffect, on } from 'solid-js'
 import { initData } from '@/core/Core'
 import { Route, router } from '@/router'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
-import { KeepAlive } from '@/utils/KeepAlive'
-import { log } from '@/utils/Logger'
+import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
+import { KeepAlive } from '@/utils/ui/KeepAlive'
 
 enum Pages {
     'Title' = '',

@@ -4,7 +4,7 @@ import { cloneDeep, debounce, toMerged } from 'es-toolkit'
 import localforage from 'localforage'
 import { useReactive } from 'micro-reactive'
 import { createEffect, createResource, on } from 'solid-js'
-import { log } from '@/utils/Logger'
+import { log } from '@/utils/logger'
 import systemDefaultStore from './default'
 import { getUserConfig } from './user'
 

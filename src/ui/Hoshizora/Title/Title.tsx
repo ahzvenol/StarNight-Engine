@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { router } from '@/router'
 import { Button, Clone, line, Variable } from '@/ui/Elements'
 import { Pages, restartGame } from '@/ui/Pages'
-import { log } from '@/utils/Logger'
+import { log } from '@/utils/logger'
 import styles from './Title.module.scss'
 
 const Title: Component = () => {
