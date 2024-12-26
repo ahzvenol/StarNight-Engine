@@ -15,19 +15,19 @@ const Sound: Component = () => {
     return (
         <div class={styles.Options_main_content_half}>
             <Cell title={t.volumeMain.title}>
-                <Slider signal={config.GolbalVolume} />
+                <Slider signal={config.golbalvolume} />
             </Cell>
             <Cell title={t.vocalVolume.title}>
-                <Slider signal={config.ClipVolume} />
+                <Slider signal={config.clipvolume} />
             </Cell>
             <Cell title={t.bgmVolume.title}>
-                <Slider signal={config.BGMVolume} />
+                <Slider signal={config.bgmvolume} />
             </Cell>
             <Cell title={t.seVolume.title}>
-                <Slider signal={config.SEVolume} />
+                <Slider signal={config.sevolume} />
             </Cell>
             <Cell title={t.uiSeVolume.title}>
-                <Slider signal={config.UISEVolume} />
+                <Slider signal={config.uisevolume} />
             </Cell>
             <Cell title={t.voiceOption.title}>
                 <Variable value={useSignal(0)}>

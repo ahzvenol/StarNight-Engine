@@ -23,7 +23,7 @@ PreInitEvent.subscribe(() => () => {
 PostInitEvent.subscribe(() => tracks.forEach((audio) => audio.load().play()))
 
 ActStartEvent.subscribe(({ store: { config } }) => {
-    if (config.InterruptClip) tracks.get('Clip')?.stop()
+    if (config.interruptclip) tracks.get('Clip')?.stop()
 })
 
 LeftEvent.subscribe(() => tracks.forEach((audio) => audio.pause()))

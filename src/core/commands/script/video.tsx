@@ -17,7 +17,7 @@ export const video = Dynamic<VideoCommandArgs>(
                 const videoElement = (
                     <video src={file} autoplay onEnded={() => promise.resolve()} />
                 ) as HTMLVideoElement
-                videoElement.volume = store.config.GolbalVolume
+                videoElement.volume = store.config.golbalvolume
                 videoView(videoElement)
                 timer.addPauseMethod(videoElement.pause)
                 timer.addResumeMethod(videoElement.play)

@@ -10,19 +10,19 @@ const systemDefaultStore = {
         version: '0.0.1'
     },
     config: {
-        FullScreen: false,
-        InterruptClip: true,
-        FastForwardUnread: false,
-        StopFastOnSelection: true,
-        GolbalVolume: 1,
-        BGMVolume: 1,
-        SEVolume: 1,
-        ClipVolume: 1,
-        UISEVolume: 1,
-        TextSpeed: 1,
-        AutoReadSpeed: 1,
-        TextBoxOpacity: 1,
-        Language: 'zh-CN' as keyof typeof language
+        fullscreen: false,
+        interruptclip: true,
+        fastforwardunread: false,
+        stopfastonselection: true,
+        golbalvolume: 1,
+        bgmvolume: 1,
+        sevolume: 1,
+        clipvolume: 1,
+        uisevolume: 1,
+        textspeed: 1,
+        autoreadspeed: 1,
+        textboxopacity: 1,
+        language: 'zh-CN' as keyof typeof language
     },
     save: {
         global: { cg: Array<string>(), segment: Array<[number, number]>() },
