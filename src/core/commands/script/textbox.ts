@@ -30,7 +30,7 @@ export const text = Dynamic<{ text: string }>(
                 yield* Y<string, Generator<Promise<void>, void, void>>(
                     (rec) =>
                         function* (str): Generator<Promise<void>, void, void> {
-                            yield _wait(timer)(store.config.TextSpeed * 100)
+                            yield _wait(timer)(store.config.textspeed * 100)
                             textView((text) => text + str.charAt(0))
                             if (str.length >= 1) yield* rec(str.slice(1))
                         }

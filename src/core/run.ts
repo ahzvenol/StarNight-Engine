@@ -90,7 +90,7 @@ function runLoop(
             // 像是选项要卡死幕循环的情况,使用不在timer控制范围内的await就可以
             await match(state())
                 .with(GameState.Fast, () => delay(100))
-                .with(GameState.Auto, () => delay(2000 - store.config.AutoReadSpeed() * 2000))
+                .with(GameState.Auto, () => delay(2000 - store.config.autoreadspeed() * 2000))
                 .otherwise(() => Promise.race([onClick(), onAuto(), onFast()]))
             log.info('已受到推动并结束等待')
         }

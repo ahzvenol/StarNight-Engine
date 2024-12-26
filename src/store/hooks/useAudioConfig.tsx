@@ -4,10 +4,10 @@ import { useEventListener } from '@/utils/use/useEventListener'
 import { storePromise } from '../store'
 
 const configVolumeControllerMapPromise = storePromise.then((store) => ({
-    BGM: store.config.BGMVolume,
-    SE: store.config.SEVolume,
-    Clip: store.config.ClipVolume,
-    UISE: store.config.UISEVolume
+    BGM: store.config.bgmvolume,
+    SE: store.config.sevolume,
+    Clip: store.config.clipvolume,
+    UISE: store.config.uisevolume
 }))
 
 export type AudioTracksType = keyof Awaited<typeof configVolumeControllerMapPromise>

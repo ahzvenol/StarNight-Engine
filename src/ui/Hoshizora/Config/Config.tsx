@@ -16,12 +16,12 @@ const Config: Component = () => {
         <div class={clsx('Page', styles.Config_container)}>
             <div class={clsx(styles.Config_cell, styles.Config_cell_left)} style={{ bottom: `${110 + 75 * 5}px` }}>
                 <div class={styles.Config_cell_text}>全屏</div>
-                <BinaryButton signal={config.FullScreen} />
+                <BinaryButton signal={config.fullscreen} />
             </div>
             <Clone count={3}>
                 {(index) => (
                     <Variable
-                        value={config[(['InterruptClip', 'FastForwardUnread', 'StopFastOnSelection'] as const)[index]]}>
+                        value={config[(['interruptclip', 'fastforwardunread', 'stopfastonselection'] as const)[index]]}>
                         {(item) => (
                             <div
                                 class={clsx(styles.Config_cell, styles.Config_cell_left)}
@@ -37,7 +37,7 @@ const Config: Component = () => {
             </Clone>
             <div class={clsx(styles.Config_cell, styles.Config_cell_left)} style={{ bottom: `185px` }}>
                 <div class={styles.Config_cell_text}>窗口透明度</div>
-                <Slider signal={config.TextBoxOpacity} />
+                <Slider signal={config.textboxopacity} />
             </div>
             <Clone count={6}>
                 {(index) => (
@@ -51,12 +51,12 @@ const Config: Component = () => {
                             <Slider
                                 signal={
                                     [
-                                        config.GolbalVolume,
-                                        config.BGMVolume,
-                                        config.SEVolume,
-                                        config.ClipVolume,
-                                        config.TextSpeed,
-                                        config.AutoReadSpeed
+                                        config.golbalvolume,
+                                        config.bgmvolume,
+                                        config.sevolume,
+                                        config.clipvolume,
+                                        config.textspeed,
+                                        config.autoreadspeed
                                     ][index]
                                 }
                             />
