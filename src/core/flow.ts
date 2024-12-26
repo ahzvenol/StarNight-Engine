@@ -11,9 +11,8 @@ import type { FlowStandardResolvedCommand, StandardResolvedCommand } from './typ
 import { isPlainObject, merge, noop, omit } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import { Y } from '@/utils/fp'
-import { log } from '@/utils/Logger'
+import { log } from '@/utils/logger'
 import { PromiseState, PromiseX } from '@/utils/PromiseX'
-import { Command } from './types/Command'
 import { Flow } from './types/Flow'
 import { GameState, RunState } from './types/Game'
 import { splitEffect } from './utils/splitEffect'
@@ -45,7 +44,7 @@ export function Dynamic<T extends CommandArgs>(
 ): StandardCommand<T> {
     return {
         meta: {
-            command: Command.Dynamic
+            flow: Flow.Async
         },
         apply: (context) => (args) => {
             const immediate = new PromiseX<void>((res) => {
@@ -66,7 +65,7 @@ export function NonBlocking<T extends CommandArgs>(
 ): StandardCommand<T> {
     return {
         meta: {
-            command: Command.NonBlocking
+            flow: Flow.Async
         },
         apply: (context) => (args) => normalizeOutput(fn(context)(args))
     }
@@ -75,7 +74,7 @@ export function NonBlocking<T extends CommandArgs>(
 export function Blocking<T extends CommandArgs>(fn: BlockingCommandFunction<T>): StandardCommand<T> {
     return {
         meta: {
-            command: Command.Blocking
+            flow: Flow.Await
         },
         apply: (context) => (args) => normalizeOutput(fn(context)(args))
     }

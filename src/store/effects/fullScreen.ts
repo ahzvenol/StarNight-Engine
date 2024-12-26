@@ -1,5 +1,5 @@
 import { createEffect } from 'solid-js'
-import { log } from '@/utils/Logger'
+import { log } from '@/utils/logger'
 import { storePromise } from '../store'
 
 export const effect = () =>

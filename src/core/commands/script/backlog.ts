@@ -3,9 +3,9 @@ import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
 
 export type BacklogCommandArgs = { text: string; name?: string; file?: string }
 
-export type BacklogRowData = { index: number } & BacklogCommandArgs
+export type BacklogActData = { index: number } & BacklogCommandArgs
 
-export const backlogView = useAutoResetSignal<Array<BacklogRowData>>(() => [], Scope.Game)
+export const backlogView = useAutoResetSignal<Array<BacklogActData>>(() => [], Scope.Game)
 
 export const backlog = NonBlocking<BacklogCommandArgs>(({ index }) => ({ text, name, file }) => {
     backlogView().unshift({ index, text, name, file })

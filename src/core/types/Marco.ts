@@ -1,5 +1,5 @@
 import type { macros } from '../commands/macros'
-import type { CommandArgs, CommandEntity, CommandsKeys } from './Command'
+import type { CommandArgs, CommandEntitys } from './Command'
 
 export type MacroFunction<T extends CommandArgs = CommandArgs> = Function1<T, Array<MacroAble>>
 
@@ -13,17 +13,14 @@ export class Macro<T extends string, R extends CommandArgs = CommandArgs> {
     }
 }
 
-export type MacroAble = MacroEntity<MacrosKeys> | CommandEntity<CommandsKeys>
+export type MacroAble = MacroEntitys | CommandEntitys
 
-export class MacroEntity<T extends MacrosKeys> {
-    private constructor(
-        public readonly sign: T,
-        public readonly args: MacrosArgs<T>
-    ) {}
-    static from<T extends MacrosKeys>(sign: T, args: MacrosArgs<T>): MacroEntity<T> {
-        return new MacroEntity(sign, args)
-    }
+export interface MacroEntity<T extends MacrosKeys> {
+    readonly sign: T
+    readonly args: MacrosArgs<T>
 }
+
+export type MacroEntitys = MacroEntity<MacrosKeys>
 
 export type Macros = (typeof macros)[number]
 

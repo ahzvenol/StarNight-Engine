@@ -1,13 +1,13 @@
-import type { MacroAble, MacroFunction } from '@/core/types/Marco'
+import type { CommandEntitys } from '@/core/types/Command'
+import type { MacroFunction } from '@/core/types/Marco'
 import type { SetImageCommandArgs } from '../script/image'
-import { CommandEntity } from '@/core/types/Command'
 
 export const setImage: MacroFunction<SetImageCommandArgs> = (args) => {
-    const array = Array<MacroAble>()
+    const array = Array<CommandEntitys>()
     args.file = `./static/ImageAsset/${args.file}.png`
     args.ease = 'easeInQuad'
     if (args.name !== 'BG') args.duration = 175
-    array.push(CommandEntity.from('image', args))
-    array.push(CommandEntity.from('unlock', { file: args.file }))
+    array.push({ sign: 'image', args })
+    array.push({ sign: 'unlock', args: { file: args.file } })
     return array
 }

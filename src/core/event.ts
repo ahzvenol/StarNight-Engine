@@ -1,5 +1,5 @@
 import type { GameRuntimeContext } from './types/Game'
-import { log } from '@/utils/Logger'
+import { log } from '@/utils/logger'
 import { EventDispatcher, on } from './utils/EventDispatcher'
 
 export function createButtonEventDispatchers() {

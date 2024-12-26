@@ -1,14 +1,14 @@
-import type { MacroAble, MacroFunction } from '@/core/types/Marco'
-import { CommandEntity } from '@/core/types/Command'
+import type { CommandEntitys } from '@/core/types/Command'
+import type { MacroFunction } from '@/core/types/Marco'
 
 export type SayCommandArgs = { text: string; name?: string; file?: string }
 
 export const say: MacroFunction<SayCommandArgs> = ({ text, name, file }) => {
-    const array = Array<MacroAble>()
-    array.push(CommandEntity.from('text', { text }))
-    array.push(CommandEntity.from('preview', { text }))
-    if (name !== undefined) array.push(CommandEntity.from('name', { name }))
-    if (file !== undefined) array.push(CommandEntity.from('audio', { type: 'Clip', file }))
-    array.push(CommandEntity.from('backlog', { text, name, file }))
+    const array = Array<CommandEntitys>()
+    array.push({ sign: 'text', args: { text } })
+    array.push({ sign: 'preview', args: { text } })
+    if (name !== undefined) array.push({ sign: 'name', args: { name } })
+    if (file !== undefined) array.push({ sign: 'audio', args: { type: 'Clip', file } })
+    array.push({ sign: 'backlog', args: { text, name, file } })
     return array
 }

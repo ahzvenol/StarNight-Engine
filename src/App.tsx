@@ -5,7 +5,7 @@ import '@/store/effects/index'
 import { Context } from './store/context'
 import store from './store/store'
 import UI from './ui/Hoshizora'
-import { log } from './utils/Logger'
+import { log } from './utils/logger'
 
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false

@@ -1,5 +1,5 @@
 import type { Timer } from '@/core/utils/Timer'
-import { TimeoutController } from '@/utils/TimeoutController'
+import { TimeoutController } from '@/core/utils/TimeoutController'
 
 export const _wait = (timer: Timer) => (duration: number) => {
     return new Promise<void>((res) => {

@@ -1,8 +1,8 @@
 import type { Accessor, Component, ParentProps } from 'solid-js'
-import type { Signal } from './Reactive'
+import type { Signal } from '../Reactive'
 import { createEffect, on, runWithOwner } from 'solid-js'
 import { KeepAlive, useKeepAlive } from 'solid-keep-alive'
-import { useSignal } from './Reactive'
+import { useSignal } from '../Reactive'
 import { ReRender } from './ReRender'
 
 const signals = new Map<string, Signal<number>>()

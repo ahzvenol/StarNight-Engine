@@ -3,8 +3,8 @@ import { Either } from './Either'
 import { Option } from './Option'
 
 export abstract class Try<T> {
-    abstract isSuccess(): boolean
-    abstract isFailure(): boolean
+    abstract isSuccess(): this is Success<T>
+    abstract isFailure(): this is Failure<T>
     abstract get(): T
     abstract getOrElse<U>(defaultValue: U): T | U
     abstract orElse<U>(defaultTry: Try<U>): Try<T | U>
@@ -33,15 +33,15 @@ export abstract class Try<T> {
 }
 
 export class Success<T> extends Try<T> {
-    constructor(public readonly value: T) {
+    constructor(private readonly value: T) {
         super()
     }
 
-    isSuccess(): boolean {
+    isSuccess(): this is Success<T> {
         return true
     }
 
-    isFailure(): boolean {
+    isFailure(): this is Failure<T> {
         return false
     }
 
@@ -83,15 +83,15 @@ export class Success<T> extends Try<T> {
 }
 
 export class Failure<T> extends Try<T> {
-    constructor(public readonly error: unknown) {
+    constructor(private readonly error: unknown) {
         super()
     }
 
-    isSuccess(): boolean {
+    isSuccess(): this is Success<T> {
         return false
     }
 
-    isFailure(): boolean {
+    isFailure(): this is Failure<T> {
         return true
     }
 

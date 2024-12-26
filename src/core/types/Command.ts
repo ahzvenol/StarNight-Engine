@@ -1,8 +1,9 @@
 import type { commands } from '../commands'
+import type { Flow } from './Flow'
 import type { GameRuntimeContext } from './Game'
 import type { MetaFunction } from './Meta'
 
-export type CommandArg = string | number | boolean
+export type CommandArg = string | number | boolean | Array<CommandArgs>
 
 export type CommandArgs = Record<string, CommandArg | undefined>
 
@@ -13,12 +14,6 @@ export interface CommandOutput {
 }
 
 export type RuntimeCommandOutput = unknown | CommandOutput
-
-export enum Command {
-    Dynamic,
-    NonBlocking,
-    Blocking
-}
 
 export type SocpedCommandFunction<T extends CommandArgs = CommandArgs> = Function1<
     GameRuntimeContext,
@@ -37,41 +32,36 @@ export type BlockingCommandFunction<T extends CommandArgs = CommandArgs> = Funct
     Function1<T, Promise<RuntimeCommandOutput>>
 >
 
-export interface StandardCommand<T extends CommandArgs = CommandArgs> extends MetaFunction {
-    meta: {
-        command: Command
-    }
-    apply: Function1<GameRuntimeContext, Function1<T, Promise<CommandOutput>>>
-}
+export type CommandFunction<T extends CommandArgs = CommandArgs> =
+    | SocpedCommandFunction<T>
+    | DynamicCommandFunction<T>
+    | NonBlockingCommandFunction<T>
+    | BlockingCommandFunction<T>
 
-export interface DynamicCommand extends MetaFunction {
-    meta: {
-        command: Command.Dynamic
-    }
-}
-export interface NonBlockingCommand extends MetaFunction {
-    meta: {
-        command: Command.NonBlocking
-    }
-}
-export interface BlockingCommand extends MetaFunction {
-    meta: {
-        command: Command.Blocking
-    }
+export type StandardCommandFunction<T extends CommandArgs = CommandArgs> = Function1<
+    GameRuntimeContext,
+    Function1<T, Promise<CommandOutput>>
+>
+
+export interface StandardCommand<T extends CommandArgs = CommandArgs> extends MetaFunction {
+    meta: { flow: Flow }
+    apply: StandardCommandFunction<T>
 }
 
 export type Commands = typeof commands
 
 export type CommandsKeys = keyof Commands
 
+export type CommandLike = {
+    readonly sign: string
+    readonly args: CommandArgs
+}
+
 export type CommandsArgs<T extends CommandsKeys> = Parameters<ReturnType<Commands[T]['apply']>>[0]
 
-export class CommandEntity<T extends CommandsKeys> {
-    private constructor(
-        public readonly sign: T,
-        public readonly args: CommandsArgs<T>
-    ) {}
-    static from<T extends CommandsKeys>(sign: T, args: CommandsArgs<T>): CommandEntity<T> {
-        return new CommandEntity(sign, args)
-    }
+export interface CommandEntity<T extends CommandsKeys> {
+    readonly sign: T
+    readonly args: CommandsArgs<T>
 }
+
+export type CommandEntitys = CommandEntity<CommandsKeys>

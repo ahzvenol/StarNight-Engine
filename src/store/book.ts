@@ -8,6 +8,6 @@ const book = request<Book>('./static/book.json').then((res) => res.data)
 
 const length = () => book.then((res) => res.length)
 
-const row = (index: number) => book.then((res) => cloneDeep(res[index]))
+const act = (index: number) => book.then((res) => cloneDeep(res[index]))
 
-export default { row, length }
+export default { act, length }

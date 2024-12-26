@@ -7,9 +7,9 @@ import { router } from '@/router'
 import { useStore } from '@/store/context'
 import { Clone, Variable } from '@/ui/Elements'
 import { Pages, restartGame } from '@/ui/Pages'
-import { log } from '@/utils/Logger'
+import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
-import { ReRender } from '@/utils/ReRender'
+import { ReRender } from '@/utils/ui/ReRender'
 import styles from './SaveAndLoad.module.scss'
 
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {

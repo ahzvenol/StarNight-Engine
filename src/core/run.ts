@@ -5,7 +5,7 @@ import { delay } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import book from '@/store/book'
 import { Y } from '@/utils/fp'
-import { log } from '@/utils/Logger'
+import { log } from '@/utils/logger'
 import { PromiseX } from '@/utils/PromiseX'
 import { useSignal } from '@/utils/Reactive'
 import {
@@ -18,7 +18,7 @@ import {
     onDestoryed
 } from './event'
 import { fork } from './flow'
-import { row } from './row'
+import { act } from './old act'
 import { GameState } from './types/Game'
 import { Timer } from './utils/Timer'
 
@@ -63,7 +63,7 @@ async function runAct(
     // act start
     ActStartEvent.publish(context)
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-    const commandOutput = await fork(await row(index, context))()
+    const commandOutput = await fork(await act(index, context))()
     // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
     immPromise.reject()
     ActEndEvent.publish(context)

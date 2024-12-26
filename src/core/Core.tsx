@@ -7,9 +7,8 @@ import { createContext, createEffect, on, onCleanup, onMount, useContext } from 
 import { router } from '@/router'
 import { useStore } from '@/store/context'
 import { Pages } from '@/ui/Pages'
-import { log } from '@/utils/Logger'
+import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
-import { runLoop } from './act'
 import {
     ActivatedEvent,
     createButtonEventDispatchers,
@@ -19,7 +18,7 @@ import {
     PostInitEvent,
     PreInitEvent
 } from './event'
-import { row } from './row'
+import { runLoop } from './run'
 import { GameState } from './types/Game'
 import { Timer } from './utils/Timer'
 
@@ -97,7 +96,7 @@ export const Core: Component<ParentProps> = (props) => {
         // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
         let i = 0
         while (i < startAt) {
-            ;(await row(i, { index: i, timer, state: GameState.Init, ...context })).forEach((e) => e.apply())
+            ;(await act(i, { index: i, timer, state: GameState.Init, ...context })).forEach((e) => e.apply())
             // log.info(`正在初始化第${i}幕`)
             i += 1
         }

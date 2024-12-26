@@ -16,18 +16,18 @@ export const Backlog: Component<{ closeBacklog: Function0<void> }> = ({ closeBac
                     container={<div class={styles.Game_Backlog_content} />}
                     content={
                         <For each={backlogView()}>
-                            {(row) => (
+                            {(act) => (
                                 <div class={styles.Game_Backlog_element}>
-                                    <Show when={row.file}>
+                                    <Show when={act.file}>
                                         <div
                                             class={styles.Game_Backlog_element_clip}
                                             onClick={() =>
-                                                useAudioConfig('Clip', new Howl({ src: row.file!, autoplay: true }))
+                                                useAudioConfig('Clip', new Howl({ src: act.file!, autoplay: true }))
                                             }
                                         />
                                     </Show>
-                                    <div class={styles.Game_Backlog_element_name}>{row.name}</div>
-                                    <div class={styles.Game_Backlog_element_text}>{row.text}</div>
+                                    <div class={styles.Game_Backlog_element_name}>{act.name}</div>
+                                    <div class={styles.Game_Backlog_element_text}>{act.text}</div>
                                 </div>
                             )}
                         </For>

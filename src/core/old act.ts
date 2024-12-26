@@ -1,12 +1,10 @@
 import type { CommandsKeys, StandardCommand } from './types/Command'
 import type { GameRuntimeContext } from './types/Game'
-import { groupBy, mapValues, noop, omit } from 'es-toolkit'
+import { groupBy, mapValues, omit } from 'es-toolkit'
 import Mustache from 'mustache'
 import { match, P } from 'ts-pattern'
 import book from '@/store/book'
-import { Either, Left, Right } from '@/utils/fp/Either'
-import { Failure, Success, Try } from '@/utils/fp/Try'
-import { log } from '@/utils/Logger'
+import { log } from '@/utils/logger'
 import { commands } from './commands'
 import { macros } from './commands/macros'
 import { Command, CommandEntity } from './types/Command'
@@ -14,10 +12,8 @@ import { Flow } from './types/Flow'
 
 const KEYWORDS = ['par', 'chain', 'fork', 'if', 'await', 'async'] as const
 
-type E = Either<{ error: string; data: Record<string, unknown> }, CommandEntity<CommandsKeys>>
-
-export const row = async (index: number, context: GameRuntimeContext) => {
-    const row = await book.row(index)
+export const act = async (index: number, context: GameRuntimeContext) => {
+    const act = await book.act(index)
 
     // row.map((line) => {
     //     if (KEYWORDS.includes(line['@'])) {

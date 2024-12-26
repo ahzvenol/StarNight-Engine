@@ -72,7 +72,7 @@ export class Option<A> {
         }
     }
 
-    toList(): Array<A> {
+    toList(): [A] | [] {
         return this.isDefined() ? [this.value!] : []
     }
 
