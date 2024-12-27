@@ -5,16 +5,19 @@ import type { Events, GameContext, Variables } from './types/Game'
 import { useReactive } from 'micro-reactive'
 import { createContext, createEffect, on, onCleanup, onMount, useContext } from 'solid-js'
 import { router } from '@/router'
+import book from '@/store/book'
 import { useStore } from '@/store/context'
-import { Pages } from '@/ui/Pages'
+import { GameInitialContext, Pages } from '@/ui/Pages'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
+import { Fork } from './commands/script/a'
 import {
-    ActivatedEvent,
+    ActivateEvent,
+    CleanupEvent,
     createButtonEventDispatchers,
-    DeactivatedEvent,
-    DestoryedEvent,
-    LeftEvent,
+    DeactivateEvent,
+    LeaveEvent,
+    MountEvent,
     PostInitEvent,
     PreInitEvent
 } from './event'
@@ -31,12 +34,10 @@ export const useEvents = () => useContext(EventsContext)!
 export const useState = () => useContext(StateContext)!
 export const useVariables = () => useContext(VariablesContext)!
 
-export const initData = useSignal({ index: 1 })
-
 export const Core: Component<ParentProps> = (props) => {
-    console.log(initData())
+    const initialData = useContext(GameInitialContext)!
 
-    const startAt = initData().index
+    const startAt = initialData.index
     // startAt = 1
     const store = useStore()
 
@@ -68,36 +69,31 @@ export const Core: Component<ParentProps> = (props) => {
             router.active,
             () => {
                 if (router.active() === Pages.Title) {
-                    log.info('Game:用户回到标题页')
-                    LeftEvent.publish()
+                    LeaveEvent.publish()
                 } else if (router.active() !== Pages.Game) {
-                    log.info('Game:用户离开游戏页面')
-                    DeactivatedEvent.publish()
+                    DeactivateEvent.publish()
                 } else {
-                    log.info('Game:用户回到游戏页面')
-                    ActivatedEvent.publish()
+                    ActivateEvent.publish()
                 }
             },
             { defer: true }
         )
     )
 
-    onCleanup(() => {
-        log.info('Game:组件销毁')
-        DestoryedEvent.publish()
-    })
+    onCleanup(CleanupEvent.publish)
+
+    onMount(MountEvent.publish)
 
     onMount(async () => {
-        log.info('Game:组件挂载')
         const timer = new Timer()
-        timer.toImmediate()
+        timer.immediateExecution()
         PreInitEvent.publish()
         // const context = { timer, state: State.Init }
         // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
         let i = 0
         while (i < startAt) {
-            ;(await act(i, { index: i, timer, state: GameState.Init, ...context })).forEach((e) => e.apply())
-            // log.info(`正在初始化第${i}幕`)
+            await Fork.apply({ index: i, timer, state: GameState.Init, ...context })(await book.act(i))
+            log.info(`正在初始化第${i}幕`)
             i += 1
         }
         // 初始化过程中有一些使用了Promise包装的命令,先让它们执行完毕再进行接下来的步骤

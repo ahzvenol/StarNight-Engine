@@ -9,7 +9,6 @@ import type {
 } from './types/Command'
 import type { FlowStandardResolvedCommand, StandardResolvedCommand } from './types/Flow'
 import { isPlainObject, merge, noop, omit } from 'es-toolkit'
-import { match } from 'ts-pattern'
 import { Y } from '@/utils/fp'
 import { log } from '@/utils/logger'
 import { PromiseState, PromiseX } from '@/utils/PromiseX'
@@ -33,6 +32,12 @@ export function ActScope<T extends CommandArgs>(
     }
 }
 
+export function DynamicForAuto<T extends CommandArgs>(fn: DynamicCommandFunction<T>): DynamicCommandFunction<T> {
+    return (context) => (args) => {
+        return fn(context)(args)
+    }
+}
+
 export function normalizeOutput(output: unknown): Promise<CommandOutput> {
     return Promise.resolve(output)
         .catch((error) => log.error('命令运行出错:', error))
@@ -47,14 +52,14 @@ export function Dynamic<T extends CommandArgs>(
             flow: Flow.Async
         },
         apply: (context) => (args) => {
-            const immediate = new PromiseX<void>((res) => {
+            const fast = new PromiseX<void>((res) => {
                 context.timer.addFinalizeMethod(res)
             })
             const generator = fn(context)(args) || (function* () {})()
-            const output = match(context.state === GameState.Init)
-                .with(true, () => exec(generator))
-                .with(false, () => auto(generator, { immediate, destory: context.destory }))
-                .exhaustive()
+            const output =
+                context.state === GameState.Init
+                    ? runGeneratorSync(generator)
+                    : runGeneratorAsyncWithControl(generator, { fast, cancel: context.cleanup })
             return normalizeOutput(output)
         }
     }
@@ -80,13 +85,13 @@ export function Blocking<T extends CommandArgs>(fn: BlockingCommandFunction<T>):
     }
 }
 
-export async function auto<TRetrun>(
+export async function runGeneratorAsyncWithControl<TRetrun>(
     generator: Generator<Promise<void>, TRetrun, void>,
-    { immediate = new Promise(noop), destory = new Promise(noop) }
+    { fast = new Promise(noop), cancel = new Promise(noop) }
 ): Promise<TRetrun | undefined> {
-    const flag = (await PromiseX.status(destory)) === PromiseState.Pending ? RunState.Normal : RunState.Destroy
+    const flag = (await PromiseX.status(cancel)) === PromiseState.Pending ? RunState.Normal : RunState.Cancel
     return Y<RunState, Promise<TRetrun | undefined>>((rec) => async (flag) => {
-        if (flag === RunState.Destroy) return
+        if (flag === RunState.Cancel) return
         const { value, done } = generator.next()
         if (!done) {
             if (flag === RunState.Fast) return rec(RunState.Fast)
@@ -94,15 +99,15 @@ export async function auto<TRetrun>(
                 return rec(
                     await Promise.race([
                         value.then(() => RunState.Normal),
-                        immediate.then(() => RunState.Fast),
-                        destory.then(() => RunState.Destroy)
+                        fast.then(() => RunState.Fast),
+                        cancel.then(() => RunState.Cancel)
                     ])
                 )
         } else return value
     })(flag)
 }
 
-export function exec<TRetrun>(generator: Generator<Promise<void>, TRetrun, void>): TRetrun {
+export function runGeneratorSync<TRetrun>(generator: Generator<Promise<void>, TRetrun, void>): TRetrun {
     return Y<void, TRetrun>((rec) => () => {
         const { value, done } = generator.next()
         if (!done) return rec()

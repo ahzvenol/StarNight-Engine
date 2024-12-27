@@ -12,7 +12,7 @@ export enum GameState {
 export enum RunState {
     Normal,
     Fast,
-    Destroy
+    Cancel
 }
 
 export type Events = { click: Function0<void>; fast: Function0<void>; auto: Function0<void> }
@@ -36,5 +36,7 @@ export type GameRuntimeContext = {
     timer: Timer
     state: GameState
     index: number
-    destory?: Promise<void>
+    cleanup?: Promise<void>
 } & GameContext
+
+export type InitialGameData = { index: number }
