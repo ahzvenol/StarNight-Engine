@@ -12,17 +12,22 @@ export const preview = NonBlocking<{ text: string }>(
     })
 )
 
+export const showSuffixIconView = useAutoResetSignal(() => false, Scope.Act)
+export const suffixIcon = NonBlocking<{ text: string }>(
+    ActScope(() => () => {
+        showSuffixIconView(true)
+    })
+)
+
+export const readIndicatorView = useAutoResetSignal(() => false, Scope.Act)
+
 export const textView = useAutoResetSignal(() => '', Scope.Act)
-export const fullTextView = useAutoResetSignal(() => '', Scope.Act)
-export const textWasReadView = useAutoResetSignal(() => false, Scope.Act)
 export const text = Dynamic<{ text: string }>(
     ActScope(
         ({ index, timer, store, variables: { global } }) =>
             function* ({ text }) {
-                fullTextView(text)
-
                 if (global.segment().some((i) => inRange(index, i[0], i[1] + 1))) {
-                    textWasReadView(true)
+                    readIndicatorView(true)
                 } else {
                     global.segment(arrayToInterval([...intervalToArray(global.segment()), index]))
                 }
