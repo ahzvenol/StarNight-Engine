@@ -11,6 +11,7 @@ export interface CommandOutput {
     continue?: boolean
     jump?: number
     end?: boolean
+    endAuto?: Promise<void>
 }
 
 export type RuntimeCommandOutput = unknown | CommandOutput

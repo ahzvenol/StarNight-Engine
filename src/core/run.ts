@@ -8,17 +8,16 @@ import { Y } from '@/utils/fp'
 import { log } from '@/utils/logger'
 import { PromiseX } from '@/utils/PromiseX'
 import { useSignal } from '@/utils/Reactive'
+import { Fork } from './commands/script/a'
 import {
     ActEndEvent,
-    ActivatedEvent,
+    ActivateEvent,
     ActSecondClickEvent,
     ActStartEvent,
-    DeactivatedEvent,
+    DeactivateEvent,
     onActEnd,
-    onDestoryed
+    onCleanup
 } from './event'
-import { fork } from './flow'
-import { act } from './old act'
 import { GameState } from './types/Game'
 import { Timer } from './utils/Timer'
 
@@ -28,11 +27,11 @@ ActStartEvent.subscribe((context) => currentIndex(context.index))
 
 // 循环监听Deactivated和Activated事件以暂停/启动timer,直到本幕结束监听取消
 ActStartEvent.subscribe(({ timer }) => {
-    const id1 = DeactivatedEvent.subscribe(timer.pause)
-    const id2 = ActivatedEvent.subscribe(timer.start)
-    Promise.race([onActEnd(), onDestoryed()]).then(() => {
-        DeactivatedEvent.unsubscribe(id1)
-        ActivatedEvent.unsubscribe(id2)
+    const id1 = DeactivateEvent.subscribe(timer.pause)
+    const id2 = ActivateEvent.subscribe(timer.start)
+    Promise.race([onActEnd(), onCleanup()]).then(() => {
+        DeactivateEvent.unsubscribe(id1)
+        ActivateEvent.unsubscribe(id2)
     })
 })
 
@@ -47,14 +46,14 @@ async function runAct(
 ) {
     const timer = new Timer()
     // 如果现在是快进状态,直接把timer设置到立即执行
-    if (state == GameState.Fast) timer.toImmediate()
-    const context: GameRuntimeContext = { timer, state, store, variables, index, destory: onDestoryed() }
+    if (state == GameState.Fast) timer.immediateExecution()
+    const context: GameRuntimeContext = { timer, state, store, variables, index, cleanup: onCleanup() }
     // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕,通过timer立即执行全部效果
     // 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
     const immPromise = new PromiseX()
     immPromise
         .then(() => ActSecondClickEvent.publish(context))
-        .then(timer.toImmediate)
+        .then(timer.immediateExecution)
         // 忽略调用reject导致的报错
         .catch((e) => {
             if (e !== undefined) log.error('Timer.toImmediate出错', e)
@@ -63,7 +62,7 @@ async function runAct(
     // act start
     ActStartEvent.publish(context)
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-    const commandOutput = await fork(await act(index, context))()
+    const commandOutput = await Fork.apply(context)(await book.act(index))
     // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
     immPromise.reject()
     ActEndEvent.publish(context)

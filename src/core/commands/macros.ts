@@ -5,9 +5,8 @@ import { say } from './hoshizora/say'
 import { video } from './hoshizora/video'
 
 export const macros = [
-    Macro.from('say', say),
     Macro.from('image', setImage),
-    Macro.from('say', say),
     Macro.from('audio', audio),
-    Macro.from('video', video)
+    Macro.from('video', video),
+    Macro.from('say', say)
 ] as const

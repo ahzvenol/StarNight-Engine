@@ -1,6 +1,6 @@
 import type { Howl } from 'howler'
 import { createEffect } from 'solid-js'
-import { useEventListener } from '@/utils/use/useEventListener'
+import { useEventListener } from '@/utils/hooks/useEventListener'
 import { storePromise } from '../store'
 
 const configVolumeControllerMapPromise = storePromise.then((store) => ({
