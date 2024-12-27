@@ -7,7 +7,7 @@ import { ReRender } from './ReRender'
 
 const signals = new Map<string, Signal<number>>()
 
-const KeepAliveX: Component<ParentProps<{ id: string; key: Accessor<number> }>> = (props) => {
+const KeepAliveX: Component<ParentProps<{ id: string; key: Accessor<unknown> }>> = (props) => {
     const { removeElement } = useKeepAlive()[1]
     if (!signals.has(props.id)) {
         const refresh = useSignal(1)

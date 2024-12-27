@@ -1,13 +1,14 @@
 import type { Component, ParentProps } from 'solid-js'
-import { createEffect, on } from 'solid-js'
+import { createContext, createEffect, on } from 'solid-js'
 import { initData } from '@/core/Core'
+import { InitialGameData } from '@/core/types/Game'
 import { Route, router } from '@/router'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
 import { KeepAlive } from '@/utils/ui/KeepAlive'
 
-enum Pages {
+export enum Pages {
     'Title' = '',
     'Game' = 'Game',
     'Config' = 'Config',
@@ -16,7 +17,7 @@ enum Pages {
     'Gallery' = 'Gallery'
 }
 
-const Title: Component<ParentProps> = (props) => {
+export const Title: Component<ParentProps> = (props) => {
     const TitleBGM = useAudioConfig(
         'BGM',
         new Howl({
@@ -38,23 +39,24 @@ const Title: Component<ParentProps> = (props) => {
     return <Route path={Pages.Title}>{props.children}</Route>
 }
 
-const key = useSignal(0)
+export const GameInitialContext = createContext<InitialGameData>()
 
-const Game: Component<ParentProps> = (props) => {
+export const defaultInitialGameData: InitialGameData = { index: 1 }
+
+const initialGameData = useSignal<InitialGameData>(defaultInitialGameData, { equals: false })
+
+export const Game: Component<ParentProps> = (props) => {
     return (
         <>
             <Route path={Pages.Game}>
-                <KeepAlive id={Pages.Game} key={key}>
-                    {props.children}
+                <KeepAlive id={Pages.Game} key={initialGameData}>
+                    <GameInitialContext.Provider value={initialGameData()}>
+                        {props.children}
+                    </GameInitialContext.Provider>
                 </KeepAlive>
             </Route>
         </>
     )
 }
 
-export const restartGame = (data = { index: 1 }) => {
-    initData(data)
-    key(Date.now())
-}
-
-export { Game, Pages, Title }
+export const restartGame = (data = initialGameData) => initialGameData(data)
