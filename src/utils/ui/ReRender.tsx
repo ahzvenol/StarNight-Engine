@@ -4,6 +4,6 @@ import { useSignal } from '../Reactive'
 
 export const ReRender: Component<{ key: Accessor<unknown>; children: JSX.Element }> = (props) => {
     const children = useSignal(props.children)
-    createEffect(on(props.key, () => children(props.children), { defer: false }))
+    createEffect(on(props.key, () => children(props.children), { defer: true }))
     return children as unknown as JSX.Element
 }
