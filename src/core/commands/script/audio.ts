@@ -1,5 +1,6 @@
 import type { AudioTracksType } from '@/store/hooks/useAudioConfig'
-import { ActivatedEvent, ActStartEvent, LeftEvent, PostInitEvent, PreInitEvent } from '@/core/event'
+import { isUndefined } from 'es-toolkit'
+import { ActivateEvent, ActStartEvent, CleanupEvent, LeaveEvent, PostInitEvent } from '@/core/event'
 import { Dynamic, NonBlocking } from '@/core/flow'
 import { GameState } from '@/core/types/Game'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
@@ -15,24 +16,24 @@ export type SetAudioCommandArgs = {
 
 const tracks = new Map<string, Howl>()
 
-PreInitEvent.subscribe(() => () => {
-    tracks.forEach((audio) => audio.unload())
-    tracks.clear()
-})
-
 PostInitEvent.subscribe(() => tracks.forEach((audio) => audio.load().play()))
 
 ActStartEvent.subscribe(({ store: { config } }) => {
     if (config.interruptclip) tracks.get('Clip')?.stop()
 })
 
-LeftEvent.subscribe(() => tracks.forEach((audio) => audio.pause()))
-
-ActivatedEvent.subscribe(() =>
+ActivateEvent.subscribe(() =>
     tracks.forEach((audio) => {
         if (!audio.playing()) audio.play()
     })
 )
+
+LeaveEvent.subscribe(() => tracks.forEach((audio) => audio.pause()))
+
+CleanupEvent.subscribe(() => {
+    tracks.forEach((audio) => audio.unload())
+    tracks.clear()
+})
 
 export const setAudio = Dynamic<SetAudioCommandArgs>(
     ({ state }) =>
@@ -72,7 +73,7 @@ export type CloseAudioCommandArgs = { target?: string; duration?: number }
 // 根据名称关闭音轨
 // 如果省略了target,关闭全部轨道
 export const closeAudio = NonBlocking<CloseAudioCommandArgs>(() => ({ target, duration = 0 }) => {
-    const targets = target === undefined ? tracks.keys() : [target]
+    const targets = isUndefined(target) ? tracks.keys() : [target]
     for (const key of targets) {
         const audio = tracks.get(key)
         tracks.delete(key)

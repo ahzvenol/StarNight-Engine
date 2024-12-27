@@ -35,7 +35,7 @@ class TimerX {
         this._isPaused = true
         this.pauseList.forEach((e) => e())
     }
-    public toImmediate = () => {
+    public immediateExecution = () => {
         if (this.isImmediate) return
         this._isImmediate = true
         this.resolveList.forEach((e) => e())

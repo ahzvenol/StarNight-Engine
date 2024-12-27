@@ -1,6 +1,5 @@
 import type { CommandArg } from '@/core/types/Command'
 import { isNotNil, mapValues } from 'es-toolkit'
-import { match } from 'ts-pattern'
 import { PostInitEvent } from '@/core/event'
 import { Dynamic, NonBlocking } from '@/core/flow'
 import { GameState } from '@/core/types/Game'
@@ -39,18 +38,18 @@ export const setImage = Dynamic<SetImageCommandArgs>(
             const { state } = context
             const stage = stageView()
             const array = stage.getElementsByClassName(name)
-            const bitmap = match(state)
-                // @ts-expect-error 类型“ImgHTMLAttributes<HTMLImageElement>”上不存在属性“attr:meta”
-                .with(GameState.Init, () => <img attr:meta={file} />)
-                .otherwise(() => <img src={file} />) as HTMLImageElement
             const oldBitmap = array[0] as HTMLImageElement | null
-            bitmap.className = name
-            bitmap.style.translate =
-                x !== undefined && y !== undefined ? `${x}px ${y}px` : oldBitmap?.style?.translate || ''
-            bitmap.style.zIndex = `${z}`
-            if (w !== undefined) bitmap.style.width = `${w}px`
-            if (h !== undefined) bitmap.style.height = `${h}px`
-            stage.insertBefore(bitmap, stage.firstChild)
+            const newBitmap = (oldBitmap?.cloneNode() || <img class={name} />) as HTMLImageElement
+            const attr = context.state === GameState.Init ? 'meta' : 'src'
+            newBitmap.setAttribute(attr, file)
+            if (x !== undefined && y !== undefined) newBitmap.style.translate = `${x}px ${y}px`
+            // fix:这两个属性会互相覆盖
+            // if (x !== undefined) newBitmap.style.transform = `translateX(${x}px)`
+            // if (y !== undefined) newBitmap.style.transform = `translateY(${y}px)`
+            if (z !== undefined) newBitmap.style.zIndex = `${z}`
+            if (w !== undefined) newBitmap.style.width = `${w}px`
+            if (h !== undefined) newBitmap.style.height = `${h}px`
+            stage.insertBefore(newBitmap, stage.firstChild)
             if (isNotNil(oldBitmap)) {
                 if (state !== GameState.Init) {
                     const sequence = _tween({ target: oldBitmap, ease, duration })({ opacity: 0 })

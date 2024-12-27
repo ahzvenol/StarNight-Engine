@@ -22,17 +22,28 @@ export const onPreInit = on(PreInitEvent)
 export const PostInitEvent = new EventDispatcher<void>()
 export const onPostInit = on(PostInitEvent)
 
-export const LeftEvent = new EventDispatcher<void>()
-export const onLeft = on(LeftEvent)
+//
 
-export const DeactivatedEvent = new EventDispatcher<void>()
-export const onDeactivated = on(DeactivatedEvent)
+export const MountEvent = new EventDispatcher<void>()
+export const onMount = on(MountEvent)
 
-export const ActivatedEvent = new EventDispatcher<void>()
-export const onActivated = on(ActivatedEvent)
+export const LeaveEvent = new EventDispatcher<void>()
+export const onLeave = on(LeaveEvent)
 
-export const DestoryedEvent = new EventDispatcher<void>()
-export const onDestoryed = on(DestoryedEvent)
+export const DeactivateEvent = new EventDispatcher<void>()
+export const onDeactivate = on(DeactivateEvent)
+
+export const ActivateEvent = new EventDispatcher<void>()
+export const onActivate = on(ActivateEvent)
+
+export const CleanupEvent = new EventDispatcher<void>()
+export const onCleanup = on(CleanupEvent)
+
+MountEvent.subscribe(() => log.info('Game:组件挂载'))
+LeaveEvent.subscribe(() => log.info('Game:用户回到标题页'))
+DeactivateEvent.subscribe(() => log.info('Game:用户离开游戏页面'))
+ActivateEvent.subscribe(() => log.info('Game:用户回到游戏页面'))
+CleanupEvent.subscribe(() => log.info('Game:游戏销毁'))
 
 export const ActStartEvent = new EventDispatcher<GameRuntimeContext>()
 export const onActStart = on(ActStartEvent)
