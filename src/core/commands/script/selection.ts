@@ -1,8 +1,8 @@
 import { PreInitEvent } from '@/core/event'
-import { Blocking, NonBlocking } from '@/core/flow'
+import { Blocking, NonBlocking } from '@/core/normalize'
 import { displaySelection } from '@/ui/Hoshizora/Game/Selection'
 import { PromiseX } from '@/utils/PromiseX'
-import { Jump } from './!'
+import { Jump } from './branch'
 
 type Selection = {
     label: string

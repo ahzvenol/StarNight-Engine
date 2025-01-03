@@ -1,7 +1,7 @@
 import type { AudioTracksType } from '@/store/hooks/useAudioConfig'
 import { isUndefined } from 'es-toolkit'
 import { ActivateEvent, ActStartEvent, CleanupEvent, LeaveEvent, PostInitEvent } from '@/core/event'
-import { Dynamic, NonBlocking } from '@/core/flow'
+import { Dynamic, NonBlocking } from '@/core/normalize'
 import { GameState } from '@/core/types/Game'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
 

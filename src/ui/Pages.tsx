@@ -1,7 +1,6 @@
 import type { Component, ParentProps } from 'solid-js'
+import type { InitialGameData } from '@/core/types/Game'
 import { createContext, createEffect, on } from 'solid-js'
-import { initData } from '@/core/Core'
-import { InitialGameData } from '@/core/types/Game'
 import { Route, router } from '@/router'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
 import { log } from '@/utils/logger'
@@ -26,6 +25,7 @@ export const Title: Component<ParentProps> = (props) => {
     )
     createEffect(
         on(router.active, () => {
+            if (import.meta.env.DEV) return
             if (router.active() === Pages.Title) {
                 if (!TitleBGM.playing()) {
                     TitleBGM.play()
@@ -39,11 +39,13 @@ export const Title: Component<ParentProps> = (props) => {
     return <Route path={Pages.Title}>{props.children}</Route>
 }
 
+//
+
 export const GameInitialContext = createContext<InitialGameData>()
+// 使用函数的原因是为了避免修改原始对象,这里具有克隆语义
+export const defaultInitialGameData: Function0<InitialGameData> = () => ({ index: 1 })
 
-export const defaultInitialGameData: InitialGameData = { index: 1 }
-
-const initialGameData = useSignal<InitialGameData>(defaultInitialGameData, { equals: false })
+const initialGameData = useSignal<InitialGameData>(defaultInitialGameData(), { equals: false })
 
 export const Game: Component<ParentProps> = (props) => {
     return (
@@ -59,4 +61,4 @@ export const Game: Component<ParentProps> = (props) => {
     )
 }
 
-export const restartGame = (data = initialGameData) => initialGameData(data)
+export const restartGame = (data = defaultInitialGameData()) => initialGameData(data)

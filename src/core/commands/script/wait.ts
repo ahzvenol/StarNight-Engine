@@ -1,4 +1,4 @@
-import { Dynamic } from '../../flow'
+import { Dynamic } from '../../normalize'
 import { _wait } from './abstract/wait'
 
 export const wait = Dynamic<{ duration: number }>(

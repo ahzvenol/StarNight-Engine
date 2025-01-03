@@ -1,29 +1,25 @@
 import type { Reactive } from 'micro-reactive'
 import type { Accessor, Component, ParentProps } from 'solid-js'
 import type { GlobalSaveData } from '@/store/default'
-import type { Events, GameContext, Variables } from './types/Game'
+import type { Events, Variables } from './types/Game'
+import { once } from 'es-toolkit'
 import { useReactive } from 'micro-reactive'
 import { createContext, createEffect, on, onCleanup, onMount, useContext } from 'solid-js'
 import { router } from '@/router'
-import book from '@/store/book'
 import { useStore } from '@/store/context'
 import { GameInitialContext, Pages } from '@/ui/Pages'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
-import { Fork } from './commands/script/a'
 import {
     ActivateEvent,
     CleanupEvent,
     createButtonEventDispatchers,
     DeactivateEvent,
     LeaveEvent,
-    MountEvent,
-    PostInitEvent,
-    PreInitEvent
+    MountEvent
 } from './event'
 import { runLoop } from './run'
 import { GameState } from './types/Game'
-import { Timer } from './utils/Timer'
 
 // export type GameUIElement = Function0<JSX.Element>
 
@@ -37,11 +33,12 @@ export const useVariables = () => useContext(VariablesContext)!
 export const Core: Component<ParentProps> = (props) => {
     const initialData = useContext(GameInitialContext)!
 
-    const startAt = initialData.index
-    // startAt = 1
-    const store = useStore()
+    const initialIndex = initialData.index
 
-    const index = useSignal(startAt)
+    log.info(`Game组件函数被调用`)
+    log.info(`Game初始数据:`, initialData)
+
+    const store = useStore()
     // tag:可能需要一些更复杂的分支预测机制
     // createEffect(() => preLoad(index() + 5))
     const dispatchs = createButtonEventDispatchers()
@@ -52,7 +49,7 @@ export const Core: Component<ParentProps> = (props) => {
         auto: dispatchs.auto.publish
     }
 
-    const state = useSignal(GameState.Normal)
+    const state = useSignal(GameState.Init)
     dispatchs.auto.subscribe(() => state(state() === GameState.Auto ? GameState.Normal : GameState.Auto))
     dispatchs.fast.subscribe(() => state(state() === GameState.Fast ? GameState.Normal : GameState.Fast))
 
@@ -61,8 +58,6 @@ export const Core: Component<ParentProps> = (props) => {
         // local: slot,
         global: store.save.global as Reactive<GlobalSaveData>
     }
-
-    const context: GameContext = { variables, store: store }
 
     createEffect(
         on(
@@ -84,23 +79,12 @@ export const Core: Component<ParentProps> = (props) => {
 
     onMount(MountEvent.publish)
 
-    onMount(async () => {
-        const timer = new Timer()
-        timer.immediateExecution()
-        PreInitEvent.publish()
-        // const context = { timer, state: State.Init }
-        // book.forEach(e => e.forEach(i => { if (i['@'] === 'sign') sign(i) }))
-        let i = 0
-        while (i < startAt) {
-            await Fork.apply({ index: i, timer, state: GameState.Init, ...context })(await book.act(i))
-            log.info(`正在初始化第${i}幕`)
-            i += 1
-        }
-        // 初始化过程中有一些使用了Promise包装的命令,先让它们执行完毕再进行接下来的步骤
-        setTimeout(PostInitEvent.publish)
-        // 幕循环的第一次运行没有任何条件,所以不需要推动
-        setTimeout(() => runLoop(index, state, store, variables, dispatchs.onClick, dispatchs.onAuto, dispatchs.onFast))
-    })
+    // micro-reactive有Bug,如果遇到奇怪的递归就是它的锅
+    onMount(
+        once(() =>
+            runLoop(initialIndex, state, store, variables, dispatchs.onClick, dispatchs.onAuto, dispatchs.onFast)
+        )
+    )
 
     return (
         <EventsContext.Provider value={events}>

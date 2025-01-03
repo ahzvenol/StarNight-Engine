@@ -2,7 +2,7 @@ import { inRange } from 'es-toolkit'
 import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
 import { Y } from '@/utils/fp'
 import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
-import { ActScope, Dynamic, NonBlocking } from '../../flow'
+import { ActScope, Dynamic, NonBlocking } from '../../normalize'
 import { _wait } from './abstract/wait'
 
 export const textPreview = useAutoResetSignal(() => '', Scope.Act)

@@ -1,6 +1,6 @@
 import type { CommandArg } from '@/core/types/Command'
 import type { Variables } from '@/core/types/Game'
-import { NonBlocking } from '@/core/flow'
+import { NonBlocking } from '@/core/normalize'
 
 export type VariableCommandArgs = { name: string; type: keyof Variables; value: CommandArg }
 

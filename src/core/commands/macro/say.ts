@@ -10,5 +10,6 @@ export const say: MacroFunction<SayCommandArgs> = ({ text, name, file }) => {
     if (name !== undefined) array.push({ sign: 'name', args: { name } })
     if (file !== undefined) array.push({ sign: 'audio', args: { type: 'Clip', file } })
     array.push({ sign: 'backlog', args: { text, name, file } })
+    array.push({ sign: 'fork', args: [{ sign: 'text', args: { text } }] })
     return array
 }

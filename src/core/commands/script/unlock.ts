@@ -1,4 +1,4 @@
-import { NonBlocking } from '@/core/flow'
+import { NonBlocking } from '@/core/normalize'
 
 // 通过更改响应式(或许也可以是非响应式)的变量,在鉴赏页展示对应的cg
 // 如果设置为自动解锁,此命令失效

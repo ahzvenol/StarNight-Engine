@@ -1,7 +1,8 @@
-import { Continue, End, Jump } from './script/!'
 import { closeAudio, setAudio } from './script/audio'
 import { backlog } from './script/backlog'
+import { Continue, End, Jump } from './script/branch'
 import { closeImage, setImage, tweenImage } from './script/image'
+import { Await, Fork } from './script/schedule'
 import { selection, selEnd } from './script/selection'
 import { punch, shake } from './script/shake'
 import { name, preview, text } from './script/textbox'
@@ -14,6 +15,8 @@ export const commands = {
     continue: Continue,
     jump: Jump,
     end: End,
+    fork: Fork,
+    await: Await,
     var: variable,
     image: setImage,
     tween: tweenImage,

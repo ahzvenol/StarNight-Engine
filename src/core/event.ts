@@ -1,5 +1,6 @@
 import type { GameRuntimeContext } from './types/Game'
 import { log } from '@/utils/logger'
+import { GameState } from './types/Game'
 import { EventDispatcher, on } from './utils/EventDispatcher'
 
 export function createButtonEventDispatchers() {
@@ -22,7 +23,8 @@ export const onPreInit = on(PreInitEvent)
 export const PostInitEvent = new EventDispatcher<void>()
 export const onPostInit = on(PostInitEvent)
 
-//
+PreInitEvent.subscribe(() => log.info('Game:初始化开始'))
+PostInitEvent.subscribe(() => log.info('Game:初始化完成'))
 
 export const MountEvent = new EventDispatcher<void>()
 export const onMount = on(MountEvent)
@@ -54,6 +56,10 @@ export const onActEnd = on(ActEndEvent)
 export const ActSecondClickEvent = new EventDispatcher<GameRuntimeContext>()
 export const onActSecondClick = on(ActSecondClickEvent)
 
-ActStartEvent.subscribe((context) => log.info(`开始执行第${context.index}幕...`))
-ActEndEvent.subscribe((context) => log.info(`第${context.index}幕执行结束`))
+ActStartEvent.subscribe((context) =>
+    context.state === GameState.Init
+        ? log.info(`正在初始化第${context.index}幕`)
+        : log.info(`开始执行第${context.index}幕...`)
+)
+ActEndEvent.subscribe((context) => context.state !== GameState.Init && log.info(`第${context.index}幕执行结束`))
 ActSecondClickEvent.subscribe(() => log.info('一幕内第二次点击,立即执行'))

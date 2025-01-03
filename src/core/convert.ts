@@ -1,19 +1,18 @@
-import type { CommandArgs, CommandEntity, CommandLike, CommandsKeys } from './types/Command'
+import type { CommandRow, RuntimeCommandEntitys, RuntimeCommandLike } from './types/Command'
 import { isString, negate, omit } from 'es-toolkit'
 import { Try } from '@/utils/fp/Try'
 import { log } from '@/utils/logger'
 import { commands } from './commands'
 import { macros } from './commands/macros'
 
-export const asCommandLike = (args: CommandArgs): [CommandLike] | [] =>
-    isString(args['@']) ? [{ sign: args['@'], args: omit(args, ['@']) }] : []
+export const asCommandLike = (args: CommandRow): [RuntimeCommandLike] | [] =>
+    isString(args['@']) ? [{ sign: args['@'], args: args['@@'] ? args['@@'] : omit(args, ['@']) }] : []
 
-export const expandMacro = (row: CommandLike): Array<CommandLike> =>
-    macros.reduce<Array<CommandLike>>(
+export const expandMacro = (row: RuntimeCommandLike): Array<RuntimeCommandLike> =>
+    macros.reduce<Array<RuntimeCommandLike>>(
         (acc, macro) =>
             acc.flatMap((row) => {
                 if (row.sign === macro.sign) {
-                    // @ts-expect-error 类型“CommandArgs”的参数不能赋给类型“SetImageCommandArgs & ...
                     const result = Try.apply(() => macro.apply(row.args)).toEither()
                     result.left.foreach((err) => log.error(`macro转换出错:${row.sign}`, row.args, err))
                     return result.getOrElse([])
@@ -23,9 +22,9 @@ export const expandMacro = (row: CommandLike): Array<CommandLike> =>
         [row]
     )
 
-export const isRealCommand = (row: CommandLike): row is CommandEntity<CommandsKeys> => row.sign in commands
+export const isRealCommand = (row: RuntimeCommandLike): row is RuntimeCommandEntitys => row.sign in commands
 
-export const convert = (array: Array<CommandArgs>): Array<CommandEntity<CommandsKeys>> => {
+export const convert = (array: Array<CommandRow>): Array<RuntimeCommandEntitys> => {
     const full = array.flatMap(asCommandLike).flatMap(expandMacro)
     full.filter(negate(isRealCommand)).forEach((row) => log.error(`找不到命令:${row.sign}`, row.args))
     return full.filter(isRealCommand)

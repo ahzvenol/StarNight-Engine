@@ -1,7 +1,7 @@
 import type { CommandArg } from '@/core/types/Command'
 import { isNotNil, mapValues } from 'es-toolkit'
 import { PostInitEvent } from '@/core/event'
-import { Dynamic, NonBlocking } from '@/core/flow'
+import { Dynamic, NonBlocking } from '@/core/normalize'
 import { GameState } from '@/core/types/Game'
 import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
 import { Y } from '@/utils/fp'

@@ -1,4 +1,4 @@
-import { NonBlocking } from '@/core/flow'
+import { NonBlocking } from '@/core/normalize'
 import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
 
 export type BacklogCommandArgs = { text: string; name?: string; file?: string }

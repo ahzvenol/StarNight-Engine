@@ -1,5 +1,5 @@
-import { NonBlocking } from '@/core/flow'
-import { _continue, _end, _jump } from './abstract/flow'
+import { NonBlocking } from '@/core/normalize'
+import { _continue, _end, _jump } from './abstract/branch'
 
 export const Continue = NonBlocking(() => () => _continue())
 
