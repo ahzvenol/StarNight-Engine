@@ -13,7 +13,7 @@ export const preview = NonBlocking<{ text: string }>(
 )
 
 export const showSuffixIconView = useAutoResetSignal(() => false, Scope.Act)
-export const suffixIcon = NonBlocking<{ text: string }>(
+export const icon = NonBlocking<{ text: string }>(
     ActScope(() => () => {
         showSuffixIconView(true)
     })

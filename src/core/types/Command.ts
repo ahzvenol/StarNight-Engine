@@ -6,11 +6,11 @@ import type { NeverFailingPromise, Schedule } from './Schedule'
 // 命令参数可能的类型
 export type CommandArg = string | number | boolean
 
-// 一个独立的命令数据块,@是命令标志位,@@是高阶命令包含的命令集合
-export type CommandRow = Partial<Record<string, CommandArg>> & { '@': string } & { '@@'?: Array<CommandRow> }
+// 命令参数体
+export type CommandArgs = Partial<Record<string, CommandArg>> | Array<CommandRow>
 
-// 去掉了命令标志位后的命令参数体
-export type CommandArgs = Omit<CommandRow, '@'> | Array<CommandRow>
+// 命令数据块
+export type CommandRow = { key: string; args: CommandArgs }
 
 // 会在幕循环中被处理的特殊值
 export interface CommandOutput {
@@ -44,6 +44,12 @@ export type BlockingCommandFunction<T extends CommandArgs> = Function1<
     Function1<T, Promise<RuntimeCommandOutput>>
 >
 
+// 高阶命令最终映射到基本命令,基本命令已进行异常处理,所以高阶命令无需再处理异常
+// 高阶命令只进行多个基本命令之间的调度,基本命令的耗时和阻塞控制由自身的定义决定
+export type HighLevelCommandFunction = StandardCommandFunction<Array<CommandEntitys>>
+
+// 在命令的类型声明中定义的应该是命令需要的参数
+// 因为命令实际可能接收到的参数是any,而参数校验目前未实现
 export type CommandFunction<T extends CommandArgs> =
     | SocpedCommandFunction<T>
     | DynamicCommandFunction<T>
@@ -63,7 +69,7 @@ export interface StandardCommand<T extends CommandArgs> extends MetaFunction {
 }
 
 // 已注册的全部命令
-export type Commands = typeof commands
+export type Commands = ReturnType<typeof commands>
 
 // 已注册的全部命令对应的标志
 export type CommandsKeys = keyof Commands
@@ -72,7 +78,7 @@ export type CommandsKeys = keyof Commands
 
 // 运行时的输入数据,其中命令可能不存在,命令参数可能非法
 export type RuntimeCommandLike = {
-    readonly sign: string
+    readonly key: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     readonly args: any
 }
@@ -82,7 +88,7 @@ export type CommandsArgs<T extends CommandsKeys> = Parameters<ReturnType<Command
 
 // 程序宏使用,产生一个类型安全的命令数据块
 export interface CommandEntity<T extends CommandsKeys> {
-    readonly sign: T
+    readonly key: T
     readonly args: CommandsArgs<T>
 }
 
@@ -91,7 +97,7 @@ export type CommandEntitys = CommandEntity<CommandsKeys>
 
 // 运行时已初步过滤的数据,其中命令一定存在,命令参数可能非法
 export interface RuntimeCommandEntity<T extends CommandsKeys> {
-    readonly sign: T
+    readonly key: T
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     readonly args: any
 }

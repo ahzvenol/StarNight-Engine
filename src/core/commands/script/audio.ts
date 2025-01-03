@@ -64,7 +64,7 @@ export const setAudio = Dynamic<SetAudioCommandArgs>(
             }
             if (duration) newAudio.fade(0, newAudio.volume(), duration)
             // 自动模式需要对audio计时
-            if (type === 'Clip') yield new Promise<void>((res) => newAudio.once('end', () => res()))
+            // if (type === 'Clip') yield new Promise<void>((res) => newAudio.once('end', () => res()))
         }
 )
 
