@@ -6,6 +6,6 @@ export const audio: MacroFunction<SetAudioCommandArgs> = (args) => {
     const array = Array<CommandEntitys>()
     if (args.file !== undefined) args.file = `./static/AudioClip/${args.file}.wav`
     if (args.type === 'BGM') args.loop = true
-    array.push({ sign: 'audio', args })
+    array.push({ key: 'audio', args })
     return array
 }

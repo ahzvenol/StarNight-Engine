@@ -7,7 +7,7 @@ export const setImage: MacroFunction<SetImageCommandArgs> = (args) => {
     args.file = `./static/ImageAsset/${args.file}.png`
     args.ease = 'easeInQuad'
     if (args.name !== 'BG') args.duration = 175
-    array.push({ sign: 'image', args })
-    array.push({ sign: 'unlock', args: { file: args.file } })
+    array.push({ key: 'image', args })
+    array.push({ key: 'unlock', args: { file: args.file } })
     return array
 }

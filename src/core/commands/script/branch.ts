@@ -11,4 +11,4 @@ export const Jump = NonBlocking(
 
 export const End = NonBlocking(() => () => _end())
 
-// const sign = (context) => ({ name }) => jumpMap[name] = index
+// const key = (context) => ({ name }) => jumpMap[name] = index

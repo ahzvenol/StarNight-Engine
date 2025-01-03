@@ -1,13 +1,9 @@
-import type { CommandRow, StandardCommandFunction } from '@/core/types/Command'
+import type { HighLevelCommandFunction } from '@/core/types/Command'
 import type { MetaFunction } from '@/core/types/Meta'
 import { convert } from '@/core/convert'
 import { Schedule } from '@/core/types/Schedule'
 import { commands } from '..'
 import { _fork } from './abstract/schedule'
-
-// 高阶命令不需要处理错误,因为在之前已经处理完毕
-// 高阶命令直接返回Promise,其中不同的命令类型在对应命令内部已经处理
-export type HighLevelCommandFunction = StandardCommandFunction<Array<CommandRow>>
 
 export interface ScheduledHighLevelCommand extends MetaFunction {
     meta: { schedule: Schedule }
@@ -19,7 +15,7 @@ export const Fork: ScheduledHighLevelCommand = {
     apply: (context) => (rows) =>
         _fork(
             convert(rows).map((row) => {
-                const cmd = commands[row.sign]
+                const cmd = commands()[row.key]
                 const schedule = cmd.meta.schedule
                 const apply = () => cmd.apply(context)(row.args)
                 return { meta: { schedule }, apply }
@@ -29,10 +25,10 @@ export const Fork: ScheduledHighLevelCommand = {
 
 export const Await: ScheduledHighLevelCommand = {
     meta: { schedule: Schedule.Await },
-    apply: (context) => (rows) =>
+    apply: (context) => async (rows) =>
         _fork(
             convert(rows).map((row) => {
-                const cmd = commands[row.sign]
+                const cmd = commands()[row.key]
                 const schedule = Schedule.Await
                 const apply = () => cmd.apply(context)(row.args)
                 return { meta: { schedule }, apply }
@@ -48,7 +44,7 @@ export const Await: ScheduledHighLevelCommand = {
 //             if (context.variables) {
 //                 return par(
 //                     convert(array).map((row) => {
-//                         const cmd = commands[row.sign]
+//                         const cmd = commands[row.key]
 //                         const schedule = cmd.meta.schedule
 //                         // @ts-expect-error 不能将类型“CommandArgs”分配给类型“never”。
 //                         const apply = () => cmd.apply(context)(row.args)
