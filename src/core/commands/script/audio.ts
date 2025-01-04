@@ -5,15 +5,6 @@ import { Dynamic, NonBlocking } from '@/core/normalize'
 import { GameState } from '@/core/types/Game'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
 
-// 跨幕环境变量file,需要收集副作用
-export type SetAudioCommandArgs = {
-    type: AudioTracksType
-    file: string
-    loop?: boolean
-    name?: string
-    duration?: number
-}
-
 const tracks = new Map<string, Howl>()
 
 PostInitEvent.subscribe(() => tracks.forEach((audio) => audio.load().play()))
@@ -34,6 +25,15 @@ CleanupEvent.subscribe(() => {
     tracks.forEach((audio) => audio.unload())
     tracks.clear()
 })
+
+// 跨幕环境变量file,需要收集副作用
+export type SetAudioCommandArgs = {
+    type: AudioTracksType
+    file: string
+    loop?: boolean
+    name?: string
+    duration?: number
+}
 
 export const setAudio = Dynamic<SetAudioCommandArgs>(
     ({ state }) =>
