@@ -1,3 +1,4 @@
+import type { CommandEntitys } from '@/core/types/Command'
 import type { MacroFunction } from '@/core/types/Marco'
 
 export type SayCommandArgs = { text: string; name?: string; file?: string }
@@ -5,17 +6,17 @@ export type SayCommandArgs = { text: string; name?: string; file?: string }
 export const say: MacroFunction<SayCommandArgs> = ({ text, name, file }) => {
     return [
         {
-            key: 'await',
+            key: 'fork',
             args: [
                 {
-                    key: 'fork',
+                    key: 'await',
                     args: [
                         { key: 'text', args: { text } },
                         { key: 'preview', args: { text } },
                         name !== undefined ? { key: 'name', args: { name } } : undefined,
                         file !== undefined ? { key: 'audio', args: { type: 'Clip', file } } : undefined,
                         { key: 'backlog', args: { text, name, file } }
-                    ].filter((row) => row !== undefined)
+                    ].filter((row) => row !== undefined) as CommandEntitys[]
                 },
                 {
                     key: 'icon',

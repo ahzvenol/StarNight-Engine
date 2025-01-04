@@ -3,7 +3,7 @@ import type { MetaFunction } from '@/core/types/Meta'
 import { convert } from '@/core/convert'
 import { Schedule } from '@/core/types/Schedule'
 import { commands } from '..'
-import { _fork } from './abstract/schedule'
+import { _chain, _fork, _par } from './abstract/schedule'
 
 export interface ScheduledHighLevelCommand extends MetaFunction {
     meta: { schedule: Schedule }
@@ -23,13 +23,39 @@ export const Fork: ScheduledHighLevelCommand = {
         )()
 }
 
-export const Await: ScheduledHighLevelCommand = {
-    meta: { schedule: Schedule.Await },
-    apply: (context) => async (rows) =>
-        _fork(
+export const Par: ScheduledHighLevelCommand = {
+    meta: { schedule: Schedule.Async },
+    apply: (context) => (rows) =>
+        _par(
+            convert(rows).map((row) => {
+                const cmd = commands()[row.key]
+                const schedule = Schedule.Async
+                const apply = () => cmd.apply(context)(row.args)
+                return { meta: { schedule }, apply }
+            })
+        )()
+}
+
+export const Chain: ScheduledHighLevelCommand = {
+    meta: { schedule: Schedule.Async },
+    apply: (context) => (rows) =>
+        _chain(
             convert(rows).map((row) => {
                 const cmd = commands()[row.key]
                 const schedule = Schedule.Await
+                const apply = () => cmd.apply(context)(row.args)
+                return { meta: { schedule }, apply }
+            })
+        )()
+}
+
+export const Await: ScheduledHighLevelCommand = {
+    meta: { schedule: Schedule.Await },
+    apply: (context) => async (rows) =>
+        _par(
+            convert(rows).map((row) => {
+                const cmd = commands()[row.key]
+                const schedule = Schedule.Async
                 const apply = () => cmd.apply(context)(row.args)
                 return { meta: { schedule }, apply }
             })

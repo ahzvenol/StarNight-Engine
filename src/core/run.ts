@@ -1,5 +1,6 @@
 import type { ReactiveStore, Store } from '@/store/default'
 import type { Signal } from '@/utils/Reactive'
+import type { CommandEntitys } from './types/Command'
 import type { GameRuntimeContext, Variables } from './types/Game'
 import { delay } from 'es-toolkit'
 import { match } from 'ts-pattern'
@@ -65,7 +66,7 @@ async function runAct(
     // act start
     ActStartEvent.publish(context)
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-    const commandOutput = await Fork.apply(context)(await book.act(index))
+    const commandOutput = await Fork.apply(context)((await book.act(index)) as CommandEntitys[])
     // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
     immPromise.reject()
     ActEndEvent.publish(context)

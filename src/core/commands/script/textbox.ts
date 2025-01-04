@@ -13,7 +13,7 @@ export const preview = NonBlocking<{ text: string }>(
 )
 
 export const showSuffixIconView = useAutoResetSignal(() => false, Scope.Act)
-export const icon = NonBlocking<{ text: string }>(
+export const icon = NonBlocking(
     ActScope(() => () => {
         showSuffixIconView(true)
     })

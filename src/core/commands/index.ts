@@ -2,7 +2,7 @@ import { closeAudio, setAudio } from './script/audio'
 import { backlog } from './script/backlog'
 import { Continue, End, Jump } from './script/branch'
 import { closeImage, setImage, tweenImage } from './script/image'
-import { Await, Fork } from './script/schedule'
+import { Await, Chain, Fork, Par } from './script/schedule'
 import { selection, selEnd } from './script/selection'
 import { punch, shake } from './script/shake'
 import { icon, name, preview, text } from './script/textbox'
@@ -20,6 +20,8 @@ export const commands = () =>
         end: End,
         // ----
         fork: Fork,
+        par: Par,
+        chain: Chain,
         await: Await,
         // ----
         var: variable,

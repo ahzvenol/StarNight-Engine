@@ -87,19 +87,15 @@ export type RuntimeCommandLike = {
 export type CommandsArgs<T extends CommandsKeys> = Parameters<ReturnType<Commands[T]['apply']>>[0]
 
 // 程序宏使用,产生一个类型安全的命令数据块
-export interface CommandEntity<T extends CommandsKeys> {
-    readonly key: T
-    readonly args: CommandsArgs<T>
-}
+export type CommandEntity<T extends CommandsKeys> = {
+    [K in CommandsKeys]: { readonly key: K; readonly args: CommandsArgs<K> }
+}[T]
 
 // 所有可能的类型安全的命令数据块
 export type CommandEntitys = CommandEntity<CommandsKeys>
 
 // 运行时已初步过滤的数据,其中命令一定存在,命令参数可能非法
-export interface RuntimeCommandEntity<T extends CommandsKeys> {
-    readonly key: T
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    readonly args: any
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type RuntimeCommandEntity<T extends CommandsKeys> = { readonly key: T; readonly args: any }
 
 export type RuntimeCommandEntitys = RuntimeCommandEntity<CommandsKeys>
