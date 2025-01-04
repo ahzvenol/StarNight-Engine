@@ -1,8 +1,8 @@
 import { Macro } from '../types/Marco'
 import { audio } from './hoshizora/audio'
 import { setImage } from './hoshizora/image'
-import { say } from './hoshizora/say'
 import { video } from './hoshizora/video'
+import { say } from './macro/say'
 
 export const macros = [
     Macro.from('image', setImage),
