@@ -18,6 +18,7 @@
         },
         // "suppressImplicitAnyIndexErrors":true,
         // "resolveJsonModule": true,
+        "noErrorTruncation": true,
         "ignoreDeprecations": "5.0",
         "plugins": [
             {
