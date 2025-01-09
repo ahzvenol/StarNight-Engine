@@ -7,7 +7,7 @@ import { splitEffect } from '@/core/utils/splitEffect'
 // 并行执行接收到全部命令,无论Flow的具体类型
 // 完成时间是传入的命令中所需时间最长的那个
 export const _par: Function1<Array<ScheduledStandardResolvedCommand>, StandardResolvedCommandFunction> =
-    (array) => () => {
+    (array) => async () => {
         const effects = array.map((e) => splitEffect(e.apply))
         for (const effect of effects) {
             effect.execute()

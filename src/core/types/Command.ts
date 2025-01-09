@@ -99,3 +99,9 @@ export type CommandEntitys = CommandEntity<CommandsKeys>
 export type RuntimeCommandEntity<T extends CommandsKeys> = { readonly key: T; readonly args: any }
 
 export type RuntimeCommandEntitys = RuntimeCommandEntity<CommandsKeys>
+
+type IntersectValues<T, U> = {
+    [K in keyof T]: T[K] & U
+}
+
+export type ExtendArgs<T> = Partial<IntersectValues<T, CommandArg>>

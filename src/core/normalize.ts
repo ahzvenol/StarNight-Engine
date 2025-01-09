@@ -10,7 +10,6 @@ import type {
 import { isPlainObject, noop } from 'es-toolkit'
 import { Y } from '@/utils/fp'
 import { log } from '@/utils/logger'
-import { PromiseState, PromiseX } from '@/utils/PromiseX'
 import { GameState, RunState } from './types/Game'
 import { Schedule } from './types/Schedule'
 
@@ -85,7 +84,6 @@ export async function runGeneratorAsyncWithControl<TRetrun>(
     generator: Generator<Promise<void>, TRetrun, void>,
     { fast = new Promise(noop), cancel = new Promise(noop) }
 ): Promise<TRetrun | undefined> {
-    const flag = (await PromiseX.status(cancel)) === PromiseState.Pending ? RunState.Normal : RunState.Cancel
     return Y<RunState, Promise<TRetrun | undefined>>((rec) => async (flag) => {
         if (flag === RunState.Cancel) return
         const { value, done } = generator.next()
@@ -100,7 +98,7 @@ export async function runGeneratorAsyncWithControl<TRetrun>(
                     ])
                 )
         } else return value
-    })(flag)
+    })(RunState.Normal)
 }
 
 export function runGeneratorSync<TRetrun>(generator: Generator<Promise<void>, TRetrun, void>): TRetrun {

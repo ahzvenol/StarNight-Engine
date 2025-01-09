@@ -1,4 +1,4 @@
-import { closeAudio, setAudio } from './script/audio'
+import { closeAudio, fadeAudio, setAudio } from './script/audio'
 import { backlog } from './script/backlog'
 import { Continue, End, Jump } from './script/branch'
 import { closeImage, setImage, tweenImage } from './script/image'
@@ -26,11 +26,12 @@ export const commands = () =>
         // ----
         var: variable,
         // ----
-        image: setImage,
-        tween: tweenImage,
+        setI: setImage,
+        tweenI: tweenImage,
         closeI: closeImage,
         // ----
-        audio: setAudio,
+        setA: setAudio,
+        tweenA: fadeAudio,
         closeA: closeAudio,
         // ----
         sel: selection,

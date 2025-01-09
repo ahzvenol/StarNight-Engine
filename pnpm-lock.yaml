@@ -72,9 +72,6 @@ importers:
       '@types/animejs':
         specifier: ^3.1.12
         version: 3.1.12
-      '@types/howler':
-        specifier: ^2.2.12
-        version: 2.2.12
       '@types/mustache':
         specifier: ^4.2.5
         version: 4.2.5
@@ -869,9 +866,6 @@ packages:
 
   '@types/glob@7.2.0':
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
-
-  '@types/howler@2.2.12':
-    resolution: {integrity: sha512-hy769UICzOSdK0Kn1FBk4gN+lswcj1EKRkmiDtMkUGvFfYJzgaDXmVXkSShS2m89ERAatGIPnTUlp2HhfkVo5g==}
 
   '@types/minimatch@5.1.2':
     resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
@@ -4325,8 +4319,6 @@ snapshots:
     dependencies:
       '@types/minimatch': 5.1.2
       '@types/node': 18.11.9
-
-  '@types/howler@2.2.12': {}
 
   '@types/minimatch@5.1.2': {}
 
