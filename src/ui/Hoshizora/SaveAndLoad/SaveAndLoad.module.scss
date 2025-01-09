@@ -32,21 +32,27 @@
     background-image: url('/static/Texture2D/ShiftArrow.png');
     background-repeat: no-repeat;
     background-position: left;
+}
+
+.Save_Load_top_arrow_left {
+    left: 690px;
+    transform: rotate(180deg);
+
+    &:hover {
+        width: 18 + 32px;
+        filter: drop-shadow(-32px 0 #909090);
+        scale: 1.01;
+    }
+}
+
+.Save_Load_top_arrow_right {
+    right: 90px;
 
     &:hover {
         width: 18 + 32px;
         filter: drop-shadow(32px 0 #909090);
         scale: 1.01;
     }
-}
-
-.Save_Load_top_arrow_left {
-    left: 690px;
-    transform: rotate(180deg);
-}
-
-.Save_Load_top_arrow_right {
-    right: 90px;
 }
 
 .Save_Load_content {

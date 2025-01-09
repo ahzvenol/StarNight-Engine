@@ -5,11 +5,12 @@ import { Show } from 'solid-js'
 import { getSave } from '@/core/save'
 import { router } from '@/router'
 import { useStore } from '@/store/context'
-import { Clone, Variable } from '@/ui/Elements'
+import { Clone, Content, Variable } from '@/ui/Elements'
 import { Pages, restartGame } from '@/ui/Pages'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
 import { ReRender } from '@/utils/ui/ReRender'
+import Scale from './../../Scale'
 import styles from './SaveAndLoad.module.scss'
 
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
@@ -82,10 +83,13 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                                                             <div class={styles.Save_Load_content_text}>Empty</div>
                                                         </>
                                                     }>
-                                                    <div
-                                                        class={styles.Save_Load_content_element_image}
-                                                        style={{ 'background-image': `url(${save().image})` }}
-                                                    />
+                                                    <div class={styles.Save_Load_content_element_image}>
+                                                        <Scale width={1280} height={720} mode="full">
+                                                            <div>
+                                                                <Content innerHTML={save().preview} />
+                                                            </div>
+                                                        </Scale>
+                                                    </div>
                                                     <div class={styles.Save_Load_content_element_date}>
                                                         {dayjs(save().date).format('YYYY/MM/DD HH:mm:ss')}
                                                     </div>

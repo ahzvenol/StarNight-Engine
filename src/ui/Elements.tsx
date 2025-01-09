@@ -1,5 +1,6 @@
 import type { Component, JSX } from 'solid-js'
-import { range } from 'es-toolkit'
+import { isPlainObject, range } from 'es-toolkit'
+import { Howl } from 'howler'
 import { For, splitProps } from 'solid-js'
 import click from '@/assets/mouse_click_1.wav'
 import hover from '@/assets/mouse_hover_1.wav'
@@ -24,7 +25,7 @@ const ClickSE = useAudioConfig('UISE', new Howl({ src: click }))
 const HoverSE = useAudioConfig('UISE', new Howl({ src: hover }))
 
 const Button: Component<
-    Omit<Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onclick'>, 'onmouseenter'> & {
+    Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onclick' | 'onmouseenter'> & {
         onClick?: Function0<void>
         onMouseEnter?: Function0<void>
     }
@@ -46,10 +47,27 @@ const Button: Component<
     )
 }
 
+const Content: Component<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
+    const [local, others] = splitProps(props, ['style'])
+    return (
+        <div
+            style={
+                isPlainObject(local.style)
+                    ? {
+                          ...(local.style as JSX.CSSProperties),
+                          display: 'contents'
+                      }
+                    : local.style + ';display:contents;'
+            }
+            {...others}
+        />
+    )
+}
+
 const Variable = <T,>(props: { value: T; children: (value: T) => JSX.Element }) => props.children(props.value)
 
 const Clone = (props: { count: number; children: (index: number) => JSX.Element }) => (
     <For each={range(0, props.count)}>{(index) => props.children(index)}</For>
 )
 
-export { Button, Clone, Graphic, Variable, column, line }
+export { Button, Content, Clone, Graphic, Variable, column, line }

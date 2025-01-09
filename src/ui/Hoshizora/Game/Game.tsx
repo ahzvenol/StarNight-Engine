@@ -3,6 +3,7 @@ import { throttle } from 'es-toolkit'
 import { Show } from 'solid-js'
 import { clickState, EventState } from '@/core/commands/script/click'
 import { Core, useEvents } from '@/core/Core'
+import { Content } from '@/ui/Elements'
 import { useKeyPress } from '@/utils/hooks/useKeyPress'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
@@ -13,6 +14,8 @@ import { Stage } from './Stage'
 import { TextBox } from './TextBox'
 import { Video } from './Video'
 
+export const currentStage = useSignal<HTMLDivElement | null>(null)
+
 const GameUI: Component = () => {
     log.info('GameUI组件函数被调用')
     const displayBacklog = useSignal(false)
@@ -21,7 +24,7 @@ const GameUI: Component = () => {
     const events = useEvents()
     // 在两个位置管理用户点击:
     // 设置pointer-events以屏蔽整个GameUI的onClick触发
-    // 在触发click之前判断状态适用于函数被其他键盘时间调用的情况
+    // 在触发click之前判断状态适用于函数被其他键盘事件调用的情况
     const enable = () => clickState() === EventState.Enabled
     // 为点击设置0.1秒节流
     const click = throttle(
@@ -36,11 +39,9 @@ const GameUI: Component = () => {
     useKeyPress('Enter', click)
 
     return (
-        <div
-            style={{
-                display: 'contents',
-                'pointer-events': enable() ? 'auto' : 'none'
-            }}
+        <Content
+            ref={(ref) => currentStage(ref)}
+            style={{ 'pointer-events': enable() ? 'auto' : 'none' }}
             onClick={() => (displayBottomBox() ? click() : displayBottomBox(true))}>
             <Stage />
             <Show when={!displayBacklog() && displayBottomBox()}>
@@ -54,7 +55,7 @@ const GameUI: Component = () => {
             </Show>
             <Video />
             <Selection />
-        </div>
+        </Content>
     )
 }
 

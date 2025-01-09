@@ -2,7 +2,7 @@ import type { Component } from 'solid-js'
 import { Show } from 'solid-js'
 import jcyt500W from '@/assets/jcyt500W.ttf'
 import { Route, router } from '../../router'
-import { Graphic } from '../Elements'
+import { Content, Graphic } from '../Elements'
 import { Game, Title } from '../Pages'
 import Back from './Back/Back'
 import Config from './Config/Config'
@@ -22,7 +22,7 @@ const UI: Component = () => (
                 <GameImpl />
             </Game>
             <Route when={(path) => path === 'Config' || path === 'Load' || path === 'Save' || path === 'Gallery'}>
-                <div onContextMenu={router.back} style={{ display: 'contents' }}>
+                <Content onContextMenu={router.back}>
                     <Route path="Config">
                         <Config />
                     </Route>
@@ -36,7 +36,7 @@ const UI: Component = () => (
                         <Gallery />
                     </Route>
                     <Back onClick={router.back} />
-                </div>
+                </Content>
             </Route>
         </Show>
         <style jsx global>

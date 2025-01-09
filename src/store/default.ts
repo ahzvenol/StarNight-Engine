@@ -35,9 +35,8 @@ export default systemDefaultStore
 
 export type IniKV = Record<string, string | number | boolean>
 
-// 用户可能会添加自定义属性,但不在类型上书写它
 export type Store = typeof systemDefaultStore
 export type ReactiveStore = Reactive<Store>
 
 export type GlobalSaveData = Record<string, unknown> & Store['save']['global']
-export type LocalSaveData = Record<string, CommandArg> & { index: number; date: number; preview?: string; text: string }
+export type LocalSaveData = Record<string, CommandArg> & { index: number; date: number; preview: string; text: string }
