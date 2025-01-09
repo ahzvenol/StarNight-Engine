@@ -279,5 +279,6 @@ declare module 'howler' {
 
     const Howler: HowlerGlobal
 
+    // eslint-disable-next-line prettier/prettier
     export { Howler }
 }

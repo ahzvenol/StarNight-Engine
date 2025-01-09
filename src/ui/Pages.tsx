@@ -1,5 +1,6 @@
 import type { Component, ParentProps } from 'solid-js'
 import type { InitialGameData } from '@/core/types/Game'
+import { Howl } from 'howler'
 import { createContext, createEffect, on } from 'solid-js'
 import { Route, router } from '@/router'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
