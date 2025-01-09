@@ -16,7 +16,7 @@ const column = (x: number) => (index: number) => Math.ceil((index + 1) / x)
 const Graphic = (props: { width: number; height: number; mode: 'auto' | 'full'; children: JSX.Element }) => (
     <div style={{ width: '100vw', height: '100vh', 'background-color': '#000' }}>
         <Scale width={props.width} height={props.height} mode={props.mode}>
-            <div>{props.children}</div>
+            {props.children}
         </Scale>
     </div>
 )

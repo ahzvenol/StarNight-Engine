@@ -8,5 +8,5 @@ export const getSave: Function0<LocalSaveData> = () => ({
     index: currentIndex(),
     date: dayjs().valueOf(),
     text: textPreview(),
-    preview: currentStage()!.outerHTML
+    snapshot: currentStage()!.outerHTML
 })

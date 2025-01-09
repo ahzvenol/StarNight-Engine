@@ -85,9 +85,7 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                                                     }>
                                                     <div class={styles.Save_Load_content_element_image}>
                                                         <Scale width={1280} height={720} mode="full">
-                                                            <div>
-                                                                <Content innerHTML={save().preview} />
-                                                            </div>
+                                                            <Content innerHTML={save().snapshot} />
                                                         </Scale>
                                                     </div>
                                                     <div class={styles.Save_Load_content_element_date}>
