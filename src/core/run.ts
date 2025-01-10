@@ -4,10 +4,12 @@ import type { CommandEntitys } from './types/Command'
 import type { GameRuntimeContext, Variables } from './types/Game'
 import { delay } from 'es-toolkit'
 import { match } from 'ts-pattern'
+import { router } from '@/router'
 import book from '@/store/book'
+import { Pages } from '@/ui/Pages'
 import { Y } from '@/utils/fp'
 import { log } from '@/utils/logger'
-import { PromiseX } from '@/utils/PromiseX'
+import { PromiseState, PromiseX } from '@/utils/PromiseX'
 import { useSignal } from '@/utils/Reactive'
 import { Fork } from './commands/script/schedule'
 import {
@@ -15,13 +17,16 @@ import {
     ActivateEvent,
     ActSecondClickEvent,
     ActStartEvent,
+    CleanupEvent,
     DeactivateEvent,
+    LeaveEvent,
     onActEnd,
+    onActivate,
     onCleanup,
     PostInitEvent,
     PreInitEvent
 } from './event'
-import { GameState } from './types/Game'
+import { GameState, UserState } from './types/Game'
 import { Timer } from './utils/Timer'
 
 // 对外暴露目前的index,目前供存档功能使用
@@ -104,10 +109,13 @@ function runLoop(
                 .otherwise(() => Promise.race([onClick(), onAuto(), onFast()]))
             log.info('已受到推动并结束等待')
         }
-        // end命令结束幕循环
-        if (res['end'] === true) return Promise.resolve()
-        // 当行号超出时,自动退出
-        if (index >= (await book.length())) return Promise.resolve()
+        // 如果用户离开游戏界面,等待用户回来
+        if (router.active() !== Pages.Game) await onActivate()
+        // 游戏实例已销毁时退出
+        const isCleanup = (await PromiseX.status(cleanup)) !== PromiseState.Pending
+        // end命令退出幕循环 || 超过最后一幕自动退出
+        const isEnd = res['end'] === true || index >= (await book.length())
+        if (isCleanup || isEnd) return Promise.resolve()
         // jump命令修改接下来一幕的行号
         const jumpArg = res['jump']
         const next = Number.isFinite(jumpArg) ? (jumpArg as number) : index + 1

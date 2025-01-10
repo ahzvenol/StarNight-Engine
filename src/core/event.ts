@@ -11,8 +11,8 @@ export function createButtonEventDispatchers() {
     const onFast = on(fastButtonClickEvent)
     const onAuto = on(autoButtonClickEvent)
     primaryClickEvent.subscribe(() => log.info('触发点击事件'))
-    fastButtonClickEvent.subscribe(() => log.info('触发快进事件'))
-    autoButtonClickEvent.subscribe(() => log.info('触发自动事件'))
+    fastButtonClickEvent.subscribe(() => log.info('点击快进模式按钮'))
+    autoButtonClickEvent.subscribe(() => log.info('点击自动模式按钮'))
 
     return { click: primaryClickEvent, fast: fastButtonClickEvent, auto: autoButtonClickEvent, onClick, onFast, onAuto }
 }
