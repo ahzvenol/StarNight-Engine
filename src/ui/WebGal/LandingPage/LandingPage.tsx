@@ -8,15 +8,20 @@ const enter = useSignal(false)
 export const isEnter = () => enter()
 
 const LandingPage: Component = () => {
-    setTimeout(() => {
-        enter(true)
-    }, 3000)
+    const opacity = useSignal(1)
+
+    const onClick = () => {
+        opacity(0)
+        setTimeout(() => {
+            enter(true)
+        }, 1000)
+    }
 
     return (
-        <div class={clsx('Page', styles.LandingPage_container)} onClick={() => enter(true)}>
+        <div class={clsx('Page', styles.LandingPage_container)} style={{ opacity: opacity() }} onClick={onClick}>
             <link rel="preload" href="/static/Texture2D/title_bg.png" as="image" />
             <link rel="preload" href="/static/AudioClip/bgm01.wav" as="audio" />
-            <img class={styles.LandingPage_logo} src="/static/shiratamaco_logo.png" />
+            <div class={styles.LandingPage_tip}>PRESS THE SCREEN TO START</div>
         </div>
     )
 }

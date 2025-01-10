@@ -19,7 +19,7 @@ import {
     MountEvent
 } from './event'
 import { runLoop } from './run'
-import { GameState, RunState, UserState } from './types/Game'
+import { GameState } from './types/Game'
 
 // export type GameUIElement = Function0<JSX.Element>
 

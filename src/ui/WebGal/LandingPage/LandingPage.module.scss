@@ -1,0 +1,21 @@
+.LandingPage_container {
+    background-color: #fdfbfb;
+    transition: opacity 1s;
+}
+
+.LandingPage_tip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    padding: 2em;
+    font-size: 175%;
+    font-family: '思源宋体', Georgia, serif;
+    letter-spacing: 0.25em;
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+    transition: text-shadow 1s;
+}
+
+.LandingPage_logo {
+    background-image: url('');
+}

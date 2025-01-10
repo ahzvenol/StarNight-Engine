@@ -12,7 +12,7 @@ export const shake = Dynamic<ShakePunchCommandArgs>(
         ({ state }) =>
             function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
                 if (state === GameState.Fast) return
-                const realTarget = stageView()!.getElementsByClassName(target)[0]
+                const realTarget = stageView().querySelector(`[data-name="${target}"]`)
                 const originX = 0
                 const originY = 0
                 const sequence = anime.timeline({
@@ -36,7 +36,7 @@ export const punch = Dynamic<ShakePunchCommandArgs>(
         ({ state }) =>
             function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
                 if (state === GameState.Init || state === GameState.Fast) return
-                const realTarget = stageView()!.getElementsByClassName(target)[0]
+                const realTarget = stageView().querySelector(`[data-name="${target}"]`)
                 const originX = 0
                 const originY = 0
                 const sequence = anime.timeline({

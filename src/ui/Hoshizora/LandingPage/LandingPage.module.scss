@@ -1,21 +1,37 @@
 .LandingPage_container {
-    background-color: #fdfbfb;
-    transition: opacity 1s;
-}
-
-.LandingPage_tip {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    padding: 2em;
-    font-size: 175%;
-    font-family: '思源宋体', Georgia, serif;
-    letter-spacing: 0.25em;
-    white-space: nowrap;
-    transform: translate(-50%, -50%);
-    transition: text-shadow 1s;
+    background-color: rgb(254 254 254);
 }
 
 .LandingPage_logo {
-    background-image: url('');
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation:
+        expand 2.5s linear forwards,
+        fade-out 0.5s linear 2s forwards;
+}
+
+@keyframes expand {
+    0% {
+        // width: 730px;
+        // height: 210px;
+        transform: translate(-50%, -50%) scale(0.3653);
+    }
+
+    100% {
+        // width: 775px;
+        // height: 225px;
+        transform: translate(-50%, -50%) scale(0.3896);
+    }
+}
+
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
 }
