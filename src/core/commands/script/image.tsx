@@ -57,10 +57,11 @@ export type TweenImageCommandArgs = {
 
 export const tweenImage = Dynamic<TweenImageCommandArgs>(
     ({ state }) =>
-        function* ({ target, ease, duration = 0, ...args }) {
+        function* ({ target, ease, duration, ...args }) {
             const tweenTarget = stageView().querySelector(`[data-name="${target}"]`)
             if (isNil(tweenTarget)) return
-            if (state === GameState.Init) {
+            // 持续时间为0的动画不会触发finished事件
+            if (state === GameState.Init || !duration) {
                 anime.set(tweenTarget, args)
             } else {
                 const sequence = _tween({ target: tweenTarget, ease, duration })(args)

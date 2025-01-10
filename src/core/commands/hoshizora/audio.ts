@@ -23,7 +23,7 @@ export const closeAudio: MacroFunction<{ target?: string; duration?: number }> =
     const array = Array<CommandEntitys>()
     if (args.target !== undefined) {
         array.push({
-            key: 'tweenI',
+            key: 'tweenA',
             args: { volume: 0, target: args.target, duration: args.duration }
         })
         array.push({ key: 'closeA', args })
