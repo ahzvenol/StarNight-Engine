@@ -1,4 +1,4 @@
-import type { CommandOutput, RuntimeCommandOutput } from './Command'
+import type { CommandOutput, HighLevelCommandFunction, RuntimeCommandOutput } from './Command'
 import type { MetaFunction } from './Meta'
 
 // 通用类型,表示永远不会失败的Promise
@@ -14,6 +14,11 @@ export type StandardResolvedCommandFunction = Function0<NeverFailingPromise<Comm
 export enum Schedule {
     Await = 'await',
     Async = 'async'
+}
+
+export interface ScheduledHighLevelCommand extends MetaFunction {
+    meta: { schedule: Schedule }
+    apply: HighLevelCommandFunction
 }
 
 export interface ScheduledStandardResolvedCommand extends MetaFunction {

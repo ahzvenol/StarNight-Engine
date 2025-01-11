@@ -20,7 +20,7 @@ export function createButtonEventDispatchers() {
 export const PreInitEvent = new EventDispatcher<void>()
 export const onPreInit = on(PreInitEvent)
 
-export const PostInitEvent = new EventDispatcher<void>()
+export const PostInitEvent = new EventDispatcher<{ index: number }>()
 export const onPostInit = on(PostInitEvent)
 
 PreInitEvent.subscribe(() => log.info('Game:初始化开始'))
@@ -63,3 +63,6 @@ ActStartEvent.subscribe((context) =>
 )
 ActEndEvent.subscribe((context) => context.state !== GameState.Init && log.info(`第${context.index}幕执行结束`))
 ActSecondClickEvent.subscribe(() => log.info('一幕内第二次点击,立即执行'))
+
+export const JumpEvent = new EventDispatcher<{ index: number }>()
+export const onJump = on(JumpEvent)

@@ -9,12 +9,6 @@ export enum GameState {
     Auto
 }
 
-export enum RunState {
-    Normal,
-    Fast,
-    Cancel
-}
-
 export type Events = { click: Function0<void>; fast: Function0<void>; auto: Function0<void> }
 
 export type Variables = {

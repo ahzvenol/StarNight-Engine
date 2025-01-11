@@ -10,7 +10,7 @@ import type {
 import { isPlainObject, noop } from 'es-toolkit'
 import { Y } from '@/utils/fp'
 import { log } from '@/utils/logger'
-import { GameState, RunState } from './types/Game'
+import { GameState } from './types/Game'
 import { Schedule } from './types/Schedule'
 
 export function ActScope<T extends CommandArgs>(
@@ -84,21 +84,21 @@ export async function runGeneratorAsyncWithControl<TRetrun>(
     generator: Generator<Promise<void>, TRetrun, void>,
     { fast = new Promise(noop), cancel = new Promise(noop) }
 ): Promise<TRetrun | undefined> {
-    return Y<RunState, Promise<TRetrun | undefined>>((rec) => async (flag) => {
-        if (flag === RunState.Cancel) return
+    return Y<'Normal' | 'Fast' | 'Cancel', Promise<TRetrun | undefined>>((rec) => async (flag) => {
+        if (flag === 'Cancel') return
         const { value, done } = generator.next()
         if (!done) {
-            if (flag === RunState.Fast) return rec(RunState.Fast)
+            if (flag === 'Fast') return rec('Fast')
             else
                 return rec(
                     await Promise.race([
-                        value.then(() => RunState.Normal),
-                        fast.then(() => RunState.Fast),
-                        cancel.then(() => RunState.Cancel)
+                        value.then(() => 'Normal' as const),
+                        fast.then(() => 'Fast' as const),
+                        cancel.then(() => 'Cancel' as const)
                     ])
                 )
         } else return value
-    })(RunState.Normal)
+    })('Normal')
 }
 
 export function runGeneratorSync<TRetrun>(generator: Generator<Promise<void>, TRetrun, void>): TRetrun {

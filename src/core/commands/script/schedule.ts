@@ -1,14 +1,8 @@
-import type { HighLevelCommandFunction } from '@/core/types/Command'
-import type { MetaFunction } from '@/core/types/Meta'
+import type { ScheduledHighLevelCommand } from '@/core/types/Schedule'
 import { convert } from '@/core/convert'
 import { Schedule } from '@/core/types/Schedule'
 import { commands } from '..'
 import { _chain, _fork, _par } from './abstract/schedule'
-
-export interface ScheduledHighLevelCommand extends MetaFunction {
-    meta: { schedule: Schedule }
-    apply: HighLevelCommandFunction
-}
 
 export const Fork: ScheduledHighLevelCommand = {
     meta: { schedule: Schedule.Async },

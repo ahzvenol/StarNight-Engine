@@ -2,7 +2,7 @@ import type { ReactiveStore, Store } from '@/store/default'
 import type { Signal } from '@/utils/Reactive'
 import type { CommandEntitys } from './types/Command'
 import type { GameRuntimeContext, Variables } from './types/Game'
-import { delay } from 'es-toolkit'
+import { delay, range } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import { router } from '@/router'
 import book from '@/store/book'
@@ -17,16 +17,16 @@ import {
     ActivateEvent,
     ActSecondClickEvent,
     ActStartEvent,
-    CleanupEvent,
     DeactivateEvent,
-    LeaveEvent,
+    JumpEvent,
     onActEnd,
     onActivate,
     onCleanup,
     PostInitEvent,
     PreInitEvent
 } from './event'
-import { GameState, UserState } from './types/Game'
+import { preloadWithIndex } from './preload'
+import { GameState } from './types/Game'
 import { Timer } from './utils/Timer'
 
 // 对外暴露目前的index,目前供存档功能使用
@@ -34,13 +34,28 @@ export const currentIndex = useSignal(0)
 ActStartEvent.subscribe((context) => currentIndex(context.index))
 
 // 循环监听Deactivated和Activated事件以暂停/启动timer,直到本幕结束监听取消
-ActStartEvent.subscribe(({ timer }) => {
+ActStartEvent.subscribe(({ state, timer, cleanup }) => {
+    if (state === GameState.Init) return
     const id1 = DeactivateEvent.subscribe(timer.pause)
     const id2 = ActivateEvent.subscribe(timer.start)
-    Promise.race([onActEnd(), onCleanup()]).then(() => {
+    Promise.race([onActEnd(), cleanup]).then(() => {
         DeactivateEvent.unsubscribe(id1)
         ActivateEvent.unsubscribe(id2)
     })
+})
+
+// 预加载游戏初始坐标后N幕资源
+PostInitEvent.subscribe(async ({ index }) => {
+    range(index, index + 5).forEach(preloadWithIndex)
+})
+// 预加载跳转目标后N幕资源
+JumpEvent.subscribe(async ({ index }) => {
+    range(index, index + 5).forEach(preloadWithIndex)
+})
+// 预加载本幕后第N幕的资源
+ActStartEvent.subscribe(async ({ state, index }) => {
+    if (state === GameState.Init) return
+    preloadWithIndex(index + 5)
 })
 
 // 给予全部命令操作actindex的能力是危险的,有几个特殊的命令会影响主循环,可以单独提出
@@ -59,21 +74,19 @@ async function runAct(
     const context: GameRuntimeContext = { timer, state, store, variables, index, cleanup: onCleanup }
     // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕,通过timer立即执行全部效果
     // 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
-    const immPromise = new PromiseX()
-    immPromise
-        .then(() => ActSecondClickEvent.publish(context))
-        .then(timer.immediateExecution)
-        // 忽略调用reject导致的报错
-        .catch((e) => {
-            if (e !== undefined) log.error('Timer.toImmediate出错', e)
-        })
-    Promise.race([onClick, onFast]).then(immPromise.resolve)
+    const immPromise = new PromiseX<'Fast' | 'Cancel'>()
+    immPromise.then((state) => {
+        if (state === 'Cancel') return
+        ActSecondClickEvent.publish(context)
+        timer.immediateExecution()
+    })
+    Promise.race([onClick, onFast]).then(() => immPromise.resolve('Fast'))
     // act start
     ActStartEvent.publish(context)
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
     const commandOutput = await Fork.apply(context)((await book.act(index)) as CommandEntitys[])
     // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
-    immPromise.reject()
+    immPromise.resolve('Cancel')
     ActEndEvent.publish(context)
     return commandOutput
 }
@@ -92,7 +105,7 @@ function runLoop(
     return Y<number, Promise<void>>((rec) => async (index) => {
         if (index === initialIndex) {
             state(GameState.Normal)
-            PostInitEvent.publish()
+            PostInitEvent.publish({ index })
         }
         // 幕运行过程中不会操作任何状态,但可以操作variables
         const res = await runAct(index, state(), store(), variables, onClick(), onFast(), cleanup)
@@ -118,7 +131,9 @@ function runLoop(
         if (isCleanup || isEnd) return Promise.resolve()
         // jump命令修改接下来一幕的行号
         const jumpArg = res['jump']
-        const next = Number.isFinite(jumpArg) ? (jumpArg as number) : index + 1
+        const isJump = typeof jumpArg === 'number' && isFinite(jumpArg)
+        const next = isJump ? jumpArg : index + 1
+        if (isJump) JumpEvent.publish({ index: jumpArg })
         return rec(next)
     })(0)
 }
