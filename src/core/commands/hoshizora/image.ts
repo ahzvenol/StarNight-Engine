@@ -33,6 +33,7 @@ export const setSprite: MacroFunction<SetImageCommandArgs & SetBGMacroArgs & { z
 export const setBG: MacroFunction<SetImageCommandArgs & SetBGMacroArgs> = (args) => {
     args.name = 'BG'
     args.zIndex = 0
+    const rawFile = args.file
     args.file = `./static/ImageAsset/${args.file}.png`
     const renamedArgs = renameKeys(args, { x: 'translateX', y: 'translateY', z: 'zIndex', w: 'width', h: 'height' })
     const tweenArgs = { target: args.name, ease: 'easeInQuad', duration: args.duration, opacity: 0 }
@@ -40,6 +41,6 @@ export const setBG: MacroFunction<SetImageCommandArgs & SetBGMacroArgs> = (args)
     return [
         { key: 'tweenI', args: tweenArgs },
         { key: 'setI', args: imageArgs as unknown as SetImageCommandArgs },
-        { key: 'unlock', args: { file: args.file } }
+        { key: 'unlock', args: { file: rawFile } }
     ]
 }

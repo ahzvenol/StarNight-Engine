@@ -45,6 +45,6 @@ export default defineConfig(({ command }) => ({
         sourcemap: false
     },
     esbuild: {
-        drop: command === 'build' ? ['console', 'debugger'] : []
+        // drop: command === 'build' ? ['console', 'debugger'] : []
     }
 }))

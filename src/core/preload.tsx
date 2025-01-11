@@ -4,8 +4,8 @@ import book from '@/store/book'
 import { log } from '@/utils/logger'
 
 // 基于命名约定的预加载,搜索所有名称为file的参数
-export function preloadByNamingConvention(array: Array<RuntimeCommandLike>) {
-    array.forEach((row) => {
+export function preloadByNamingConvention(rows: Array<RuntimeCommandLike>) {
+    rows.forEach((row) => {
         if (Array.isArray(row.args)) preloadByNamingConvention(row.args)
         else
             Object.entries(row.args)
@@ -18,10 +18,8 @@ export function preloadByNamingConvention(array: Array<RuntimeCommandLike>) {
 
 export async function preloadWithIndex(index: number) {
     if (index >= (await book.length())) return
-    const data = await book.full(index)
-    console.log(data)
-
-    preloadByNamingConvention(data)
+    const rows = await book.full(index)
+    preloadByNamingConvention(rows)
 }
 
 const loadedResources = new Set<string>()
@@ -50,20 +48,20 @@ function preloadResource(url: string) {
 function preloadImage(url: string) {
     const img = new Image()
     img.src = url
-    img.onload = () => log.info(`图片加载成功: ${url}`)
-    img.onerror = () => log.warn(`图片加载失败: ${url}`)
+    img.onload = () => log.info(`图片加载成功:${url}`)
+    img.onerror = () => log.warn(`图片加载失败:${url}`)
 }
 
 function preloadAudio(url: string) {
     const audio = new Audio()
     audio.src = url
-    audio.onloadeddata = () => log.info(`音频加载成功: ${url}`)
-    audio.onerror = () => log.warn(`音频加载失败: ${url}`)
+    audio.onloadeddata = () => log.info(`音频加载成功:${url}`)
+    audio.onerror = () => log.warn(`音频加载失败:${url}`)
 }
 
 function preloadVideo(url: string) {
     const video = document.createElement('video')
     video.src = url
-    video.onloadeddata = () => log.info(`视频加载成功: ${url}`)
-    video.onerror = () => log.warn(`视频加载失败: ${url}`)
+    video.onloadeddata = () => log.info(`视频加载成功:${url}`)
+    video.onerror = () => log.warn(`视频加载失败:${url}`)
 }
