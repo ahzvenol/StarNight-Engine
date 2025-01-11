@@ -6,7 +6,14 @@ import { Dynamic, NonBlocking } from '@/core/normalize'
 import { GameState } from '@/core/types/Game'
 import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
 import { Y } from '@/utils/fp'
-import { _tween } from './abstract/tween'
+import { _tween } from '../abstract/tween'
+
+// hoshizora特化的image命令
+// 为了实现在角色移动时进行表情变化,需要重新引入容器
+// 角色表情切换以及背景的缓动都是用透明度做的,透明度不能直接应用给容器
+// 但是移动必须直接应用给容器,来实现让几张同角色立绘一起移动
+// 同时层级关系被容器掩盖,z-index必须直接赋值给容器
+// 这些区分带来了一些混乱,但确实增强了功能,暂时不知道是好是坏
 
 export const stageView = useAutoResetSignal<HTMLDivElement>(() => document.createElement('div'), Scope.Game)
 
@@ -37,16 +44,26 @@ ActEndEvent.subscribe(() => {
 export type SetImageCommandArgs = {
     name: string
     file: string
+    zIndex?: string
 } & ExtendArgs<AnimatedPropertys>
 
-export const setImage = NonBlocking<SetImageCommandArgs>((context) => ({ name, file, ...args }) => {
+export const setImage = NonBlocking<SetImageCommandArgs>((context) => ({ name, file, zIndex, ...args }) => {
     const stage = stageView()
-    const oldBitmap = stage.querySelector(`[data-name="${name}"]`)
-    const newBitmap = (oldBitmap?.cloneNode() || <img data-name={name} />) as HTMLImageElement
+    let container = stage.querySelector(`[data-name="${name}"]`) as HTMLDivElement
+    let newBitmap!: HTMLImageElement
+    if (container) {
+        const oldBitmap = container.firstChild!
+        newBitmap = oldBitmap.cloneNode() as HTMLImageElement
+    } else {
+        container = (<div data-name={name} />) as HTMLDivElement
+        newBitmap = document.createElement('img')
+        stage.appendChild(container)
+    }
+    if (!isUndefined(zIndex)) container.style.zIndex = zIndex
     const attr = context.state === GameState.Init ? 'data-src' : 'src'
     newBitmap.setAttribute(attr, file)
     anime.set(newBitmap, args)
-    stage.insertBefore(newBitmap, stage.firstChild)
+    container.insertBefore(newBitmap, container.firstChild)
 })
 
 export type TweenImageCommandArgs = {
@@ -58,7 +75,8 @@ export type TweenImageCommandArgs = {
 export const tweenImage = Dynamic<TweenImageCommandArgs>(
     ({ state }) =>
         function* ({ target, ease, duration, ...args }) {
-            const tweenTarget = stageView().querySelector(`[data-name="${target}"]`)
+            const container = stageView().querySelector(`[data-name="${target}"]`)
+            const tweenTarget = isUndefined(args.opacity) ? container : container?.firstChild
             if (isNil(tweenTarget)) return
             // 持续时间为0的动画不会触发finished事件
             if (state === GameState.Init || !duration) {
