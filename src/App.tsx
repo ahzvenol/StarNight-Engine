@@ -1,14 +1,10 @@
 import '@/store/effects/index'
 import type { Component } from 'solid-js'
-import { range } from 'es-toolkit'
 import { Match, Switch } from 'solid-js'
 import { KeepAliveProvider } from 'solid-keep-alive'
-import { fullExpandMacros } from './core/convert'
-import book from './store/book'
 import { Context } from './store/context'
 import store from './store/store'
 import UI from './ui/Hoshizora'
-import { log } from './utils/logger'
 
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false
@@ -25,11 +21,6 @@ document.oncontextmenu = document.onmousedown = () => false
 //             })
 //     }
 // }
-
-range(0, 10).forEach(async (i) => {
-    console.log(fullExpandMacros(await book.act(i)))
-})
-// console.log(fullExpandMacros(await book.act(3)))
 
 // 整个配置文件在这里分发
 const App: Component = () => (

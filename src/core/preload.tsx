@@ -2,7 +2,6 @@ import type { RuntimeCommandLike } from './types/Command'
 import { isUndefined } from 'es-toolkit'
 import book from '@/store/book'
 import { log } from '@/utils/logger'
-import { fullExpandMacros } from './convert'
 
 // 基于命名约定的预加载,搜索所有名称为file的参数
 export function preloadByNamingConvention(array: Array<RuntimeCommandLike>) {
@@ -19,11 +18,10 @@ export function preloadByNamingConvention(array: Array<RuntimeCommandLike>) {
 
 export async function preloadWithIndex(index: number) {
     if (index >= (await book.length())) return
-    const actData = await book.act(index + 5)
-    const fullActData = fullExpandMacros(actData)
-    console.log(fullActData)
+    const data = await book.full(index)
+    console.log(data)
 
-    preloadByNamingConvention(fullActData)
+    preloadByNamingConvention(data)
 }
 
 const loadedResources = new Set<string>()
