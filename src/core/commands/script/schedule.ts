@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ScheduledHighLevelCommand } from '@/core/types/Schedule'
-import { convert } from '@/core/convert'
 import { Schedule } from '@/core/types/Schedule'
 import { commands } from '..'
 import { _chain, _fork, _par } from './abstract/schedule'
@@ -8,10 +8,10 @@ export const Fork: ScheduledHighLevelCommand = {
     meta: { schedule: Schedule.Async },
     apply: (context) => (rows) =>
         _fork(
-            convert(rows).map((row) => {
+            rows.map((row) => {
                 const cmd = commands()[row.key]
                 const schedule = cmd.meta.schedule
-                const apply = () => cmd.apply(context)(row.args)
+                const apply = () => cmd.apply(context)(row.args as any)
                 return { meta: { schedule }, apply }
             })
         )()
@@ -21,10 +21,10 @@ export const Par: ScheduledHighLevelCommand = {
     meta: { schedule: Schedule.Async },
     apply: (context) => (rows) =>
         _par(
-            convert(rows).map((row) => {
+            rows.map((row) => {
                 const cmd = commands()[row.key]
                 const schedule = Schedule.Async
-                const apply = () => cmd.apply(context)(row.args)
+                const apply = () => cmd.apply(context)(row.args as any)
                 return { meta: { schedule }, apply }
             })
         )()
@@ -34,10 +34,10 @@ export const Chain: ScheduledHighLevelCommand = {
     meta: { schedule: Schedule.Async },
     apply: (context) => (rows) =>
         _chain(
-            convert(rows).map((row) => {
+            rows.map((row) => {
                 const cmd = commands()[row.key]
                 const schedule = Schedule.Await
-                const apply = () => cmd.apply(context)(row.args)
+                const apply = () => cmd.apply(context)(row.args as any)
                 return { meta: { schedule }, apply }
             })
         )()
@@ -47,10 +47,10 @@ export const Await: ScheduledHighLevelCommand = {
     meta: { schedule: Schedule.Await },
     apply: (context) => async (rows) =>
         _par(
-            convert(rows).map((row) => {
+            rows.map((row) => {
                 const cmd = commands()[row.key]
                 const schedule = Schedule.Async
-                const apply = () => cmd.apply(context)(row.args)
+                const apply = () => cmd.apply(context)(row.args as any)
                 return { meta: { schedule }, apply }
             })
         )()

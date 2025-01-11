@@ -84,7 +84,7 @@ async function runAct(
     // act start
     ActStartEvent.publish(context)
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-    const commandOutput = await Fork.apply(context)((await book.act(index)) as CommandEntitys[])
+    const commandOutput = await Fork.apply(context)((await book.full(index)) as CommandEntitys[])
     // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
     immPromise.resolve('Cancel')
     ActEndEvent.publish(context)
