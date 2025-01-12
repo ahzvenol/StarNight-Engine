@@ -6,7 +6,7 @@ import { Route, router } from '@/router'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
-import { KeepAlive } from '@/utils/ui/KeepAlive'
+import { KeepAlive } from '@/utils/solid/KeepAlive'
 
 export enum Pages {
     'Title' = '',
