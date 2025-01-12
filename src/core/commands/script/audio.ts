@@ -1,7 +1,7 @@
 import type { HowlOptions } from 'howler'
 import type { ExtendArgs } from '@/core/types/Command'
 import type { AudioTracksType } from '@/store/hooks/useAudioConfig'
-import { isUndefined } from 'es-toolkit'
+import { delay, isUndefined } from 'es-toolkit'
 import { Howl } from 'howler'
 import { ActivateEvent, ActStartEvent, CleanupEvent, LeaveEvent, PostInitEvent } from '@/core/event'
 import { Dynamic, NonBlocking } from '@/core/normalize'
@@ -53,6 +53,7 @@ export const setAudio = Dynamic<SetAudioCommandArgs>(
             )
             tracks.set(name, newAudio)
             // 如果音频不是循环的,就不希望它播放完毕之后再被其他事件调用play()了
+            // 这里不能直接从map里移除音频,因为map里可能又是其他的音频了
             if (!configs.loop) newAudio.once('end', () => newAudio.unload())
             // tag:自动模式需要对Clip计时,目前先打一个临时的补丁
             if (type === 'Clip' && state === GameState.Auto) {
@@ -66,13 +67,15 @@ export const fadeAudio = Dynamic<{ target: string; volume: number; duration?: nu
         function* ({ target, volume, duration = 0 }) {
             const audio = tracks.get(target)
             // 要设置的音量如果和当前音量相同不会触发fade事件
-            if (!audio || audio.volume() === volume) return
+            // 如果音频没在播放了,那应该是被unload了,unload的音频无法调整音量,也不能触发fade事件
+            if (!audio || !audio.playing() || audio.volume() === volume) return
             if (!duration) {
                 audio.volume(volume)
             } else {
                 audio.fade(audio.volume(), volume, duration)
-                yield new Promise<void>((res) => audio.once('fade', () => res()))
-                audio.once('fade', () => console.log('???'))
+                // 为了避免fade到一半被unload等极端情况导致不触发fade事件,使用race和delay在时间已到时强制释放
+                const fade = new Promise<void>((res) => audio.once('fade', () => res()))
+                yield Promise.race([fade, delay(duration)])
             }
         }
 )

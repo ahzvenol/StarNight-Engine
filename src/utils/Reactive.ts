@@ -6,7 +6,6 @@ import { createEffect, createRoot, createSignal, onCleanup } from 'solid-js'
 // 所以更喜欢使用solidjs原生的signal来存储基本类型的局部变量,并且合并get set方法以获得统一
 // 而对于复杂的数据解构,则使用useReactive享受任意解构带来的好处
 
-// type Primitive = string | number | boolean | symbol | bigint | null | undefined
 // T extends Primitive useSignal(0) 这样会把T约束到0而不是number,不知道如何处理
 
 type Signal<T> = Accessor<T> & Setter<T>

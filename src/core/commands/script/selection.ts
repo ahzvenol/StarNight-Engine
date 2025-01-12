@@ -1,6 +1,6 @@
 import { PreInitEvent } from '@/core/event'
 import { Blocking, NonBlocking } from '@/core/normalize'
-import { displaySelection } from '@/ui/Hoshizora/Game/Selection'
+import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { PromiseX } from '@/utils/PromiseX'
 import { Jump } from './branch'
 
@@ -10,9 +10,11 @@ type Selection = {
     select: () => void
 }
 
-export const selectionView = new Array<Selection>()
+export const selections = new Array<Selection>()
 
-PreInitEvent.subscribe(() => (selectionView.length = 0))
+export const displaySelectionView = useAutoResetSignal(() => false, Scope.Game)
+
+PreInitEvent.subscribe(() => (selections.length = 0))
 
 const promises = new Array<Promise<number>>()
 
@@ -20,7 +22,7 @@ export const selection = NonBlocking<{ name: string; target: number; disable?: b
     () =>
         ({ name, target, disable = false }) => {
             const promise = new PromiseX<number>()
-            selectionView.push({
+            selections.push({
                 label: name,
                 disable: disable,
                 select: () => promise.resolve(target)
@@ -32,10 +34,10 @@ export const selection = NonBlocking<{ name: string; target: number; disable?: b
 export const selEnd = Blocking(
     (context) =>
         async function () {
-            displaySelection(true)
+            displaySelectionView(true)
             const num = await Promise.race(promises)
-            selectionView.length = 0
-            displaySelection(false)
+            selections.length = 0
+            displaySelectionView(false)
             return Jump.apply(context)({ target: num })
         }
 )
