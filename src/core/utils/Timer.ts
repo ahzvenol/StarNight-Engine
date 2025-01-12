@@ -28,6 +28,7 @@ class TimerX {
     }
     public start = () => {
         if (this.isImmediate) return
+        this._isPaused = false
         this.startList.forEach((e) => e())
     }
     public pause = () => {
