@@ -5,6 +5,7 @@ import { For, splitProps } from 'solid-js'
 import click from '@/assets/mouse_click_1.wav'
 import hover from '@/assets/mouse_hover_1.wav'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
+import { stopPropagation } from '@/utils/solid/stopPropagation'
 import Scale from './Scale'
 
 //横行竖列
@@ -33,11 +34,10 @@ const Button: Component<
     const [local, others] = splitProps(props, ['onClick', 'onMouseEnter'])
     return (
         <div
-            onClick={(e) => {
-                e.stopPropagation()
+            onClick={stopPropagation(() => {
                 ClickSE.play()
                 local.onClick?.()
-            }}
+            })}
             onMouseEnter={() => {
                 HoverSE.play()
                 local.onMouseEnter?.()

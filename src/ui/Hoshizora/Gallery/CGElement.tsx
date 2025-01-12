@@ -3,6 +3,7 @@ import type { Component } from 'solid-js'
 import { Show } from 'solid-js'
 import { Portal } from 'solid-js/web'
 import { useSignal } from '@/utils/Reactive'
+import { stopPropagation } from '@/utils/solid/stopPropagation'
 import styles from './Gallery.module.scss'
 
 export const CGElement: Component<{ cg: Getter<Array<string>> }> = ({ cg }) => {
@@ -31,7 +32,7 @@ export const CGElement: Component<{ cg: Getter<Array<string>> }> = ({ cg }) => {
                             // 预加载下一张cg,避免闪烁的情况
                             'background-image': now() + next()
                         }}
-                        onContextMenu={(event) => (event.stopPropagation(), pointer(-1))}
+                        onContextMenu={stopPropagation(() => pointer(-1))}
                         onClick={() => pointer((i) => (isMax() ? -1 : i + 1))}
                     />
                 </Portal>

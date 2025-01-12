@@ -4,17 +4,15 @@ import { Show } from 'solid-js'
 import { clickState, EventState } from '@/core/commands/script/click'
 import { Core, useEvents } from '@/core/Core'
 import { Content } from '@/ui/Elements'
-import { useKeyPress } from '@/utils/hooks/useKeyPress'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
+import { useKeyPress } from '@/utils/solid/useKeyPress'
 import { Backlog } from './Backlog'
 import { ControlPanel } from './ControlPanel'
 import { displaySelection, Selection } from './Selection'
 import { Stage } from './Stage'
 import { TextBox } from './TextBox'
 import { Video } from './Video'
-
-export const currentStage = useSignal<HTMLDivElement | null>(null)
 
 const GameUI: Component = () => {
     log.info('GameUI组件函数被调用')
@@ -40,9 +38,9 @@ const GameUI: Component = () => {
 
     return (
         <Content
-            ref={(ref) => currentStage(ref)}
             style={{ 'pointer-events': enable() ? 'auto' : 'none' }}
-            onClick={() => (displayBottomBox() ? click() : displayBottomBox(true))}>
+            onClick={() => (displayBottomBox() ? click() : displayBottomBox(true))}
+            onContextMenu={() => displayBottomBox((v) => !v)}>
             <Stage />
             <Show when={!displayBacklog() && displayBottomBox()}>
                 <Show when={!displaySelection()}>

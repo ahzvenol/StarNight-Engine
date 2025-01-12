@@ -6,12 +6,13 @@ import { backlogView } from '@/core/commands/script/backlog'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
 import { Content } from '@/ui/Elements'
 import Scrollbar from '@/ui/Scrollbar'
+import { stopPropagation } from '@/utils/solid/stopPropagation'
 import Back from '../Back/Back'
 import styles from './Backlog.module.scss'
 
 export const Backlog: Component<{ closeBacklog: Function0<void> }> = ({ closeBacklog }) => {
     return (
-        <Content onClick={(event) => event.stopPropagation()}>
+        <Content onClick={stopPropagation} onContextMenu={stopPropagation(() => closeBacklog())}>
             <div class={clsx('Page', styles.Game_Backlog_mask)} />
             <div class={clsx('Page', styles.Game_Backlog_container)}>
                 <Scrollbar

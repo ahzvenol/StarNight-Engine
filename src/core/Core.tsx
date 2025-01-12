@@ -7,6 +7,7 @@ import { useReactive } from 'micro-reactive'
 import { createContext, createEffect, on, onCleanup, onMount, useContext } from 'solid-js'
 import { router } from '@/router'
 import { useStore } from '@/store/context'
+import { Content } from '@/ui/Elements'
 import { GameInitialContext, Pages } from '@/ui/Pages'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
@@ -29,6 +30,8 @@ const VariablesContext = createContext<Variables>()
 export const useEvents = () => useContext(EventsContext)!
 export const useState = () => useContext(StateContext)!
 export const useVariables = () => useContext(VariablesContext)!
+
+export const currentStage = useSignal<HTMLDivElement | null>(null)
 
 export const Core: Component<ParentProps> = (props) => {
     const initialData = useContext(GameInitialContext)!
@@ -89,7 +92,9 @@ export const Core: Component<ParentProps> = (props) => {
     return (
         <EventsContext.Provider value={events}>
             <StateContext.Provider value={state}>
-                <VariablesContext.Provider value={variables}>{props.children}</VariablesContext.Provider>
+                <VariablesContext.Provider value={variables}>
+                    <Content ref={(ref) => currentStage(ref)}>{props.children}</Content>
+                </VariablesContext.Provider>
             </StateContext.Provider>
         </EventsContext.Provider>
     )

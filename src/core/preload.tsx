@@ -1,5 +1,5 @@
 import type { RuntimeCommandLike } from './types/Command'
-import { isUndefined } from 'es-toolkit'
+import { isString } from 'es-toolkit'
 import book from '@/store/book'
 import { log } from '@/utils/logger'
 
@@ -10,8 +10,8 @@ export function preloadByNamingConvention(rows: Array<RuntimeCommandLike>) {
         else
             Object.entries(row.args)
                 .filter(([key]) => key === 'file')
-                .map((kv) => kv[1] as string)
-                .filter((value) => !isUndefined(value))
+                .map((kv) => kv[1])
+                .filter((value) => isString(value))
                 .forEach((value) => preloadResource(value))
     })
 }
@@ -22,10 +22,15 @@ export async function preloadWithIndex(index: number) {
     preloadByNamingConvention(rows)
 }
 
+// 以下为核心逻辑无关的预加载实现
+
 const loadedResources = new Set<string>()
 
 function preloadResource(url: string) {
+    // 忽略已经加载过的资源
     if (loadedResources.has(url)) return
+    // 忽略没有扩展名的url
+    if (url.lastIndexOf('.') === -1) return
 
     const extension = url.split('.').pop()!.toLowerCase()
 
@@ -42,6 +47,7 @@ function preloadResource(url: string) {
         log.warn(`未知文件类型:${extension}`)
     }
 
+    // 记录该资源已加载
     loadedResources.add(url)
 }
 

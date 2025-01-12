@@ -6,6 +6,7 @@ import { router } from '@/router'
 import { useStore } from '@/store/context'
 import { Button } from '@/ui/Elements'
 import { Pages, restartGame } from '@/ui/Pages'
+import { stopPropagation } from '@/utils/solid/stopPropagation'
 import styles from './ControlPanel.module.scss'
 
 export const ControlPanel: Component<{ showBacklog: Function0<void>; closeBottomBox: Function0<void> }> = ({
@@ -16,7 +17,7 @@ export const ControlPanel: Component<{ showBacklog: Function0<void>; closeBottom
     const { auto, fast } = useEvents()
     const quickSave = useStore().save.local[0]
     return (
-        <div class={styles.Game_ControlPanel_container} onClick={(event) => event.stopPropagation()}>
+        <div class={styles.Game_ControlPanel_container} onClick={stopPropagation}>
             <div class={styles.Game_ControlPanel_group_1}>
                 <Button class={styles.Game_ControlPanel_save} onClick={() => router.navigate(Pages.Save)} />
                 <Button class={styles.Game_ControlPanel_load} onClick={() => router.navigate(Pages.Load)} />

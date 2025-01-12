@@ -9,7 +9,7 @@ import { Clone, Content, Variable } from '@/ui/Elements'
 import { Pages, restartGame } from '@/ui/Pages'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
-import { ReRender } from '@/utils/ui/ReRender'
+import { ReRender } from '@/utils/solid/ReRender'
 import Scale from './../../Scale'
 import styles from './SaveAndLoad.module.scss'
 

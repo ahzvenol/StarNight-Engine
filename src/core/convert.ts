@@ -50,9 +50,12 @@ export const deepExpandMacro = (rows: Array<RuntimeCommandLike>, macro: Macros):
         } else if (row.key !== macro.key) {
             return [row]
         } else {
-            const result = Try.apply(() => macro.apply(row.args)).toEither()
-            result.left.foreach((err) => log.error(`macro转换出错:${row.key}`, row.args, err))
-            return result.getOrElse([])
+            try {
+                return macro.apply(row.args)
+            } catch (error) {
+                log.error(`macro转换出错:${row.key}`, row.args, error)
+                return []
+            }
         }
     })
 
