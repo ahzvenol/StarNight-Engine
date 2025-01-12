@@ -1,17 +1,14 @@
 import type { Component } from 'solid-js'
 import { For, Show } from 'solid-js'
-import { selectionView } from '@/core/commands/script/selection'
-import { useSignal } from '@/utils/Reactive'
+import { displaySelectionView, selections } from '@/core/commands/script/hoshizora/selection'
 import { stopPropagation } from '@/utils/solid/stopPropagation'
 import styles from './Selection.module.scss'
 
-export const displaySelection = useSignal(false)
-
 export const Selection: Component = () => {
     return (
-        <Show when={displaySelection()}>
+        <Show when={displaySelectionView()}>
             <div class={styles.Game_Selection_container} onClick={stopPropagation}>
-                <For each={selectionView}>
+                <For each={selections}>
                     {(sel) => (
                         <div class={styles.Game_Selection_item} onClick={sel.select}>
                             <div class={styles.Game_Selection_item_background} />

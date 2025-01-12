@@ -2,6 +2,7 @@ import type { Component } from 'solid-js'
 import { throttle } from 'es-toolkit'
 import { Show } from 'solid-js'
 import { clickState, EventState } from '@/core/commands/script/click'
+import { displaySelectionView } from '@/core/commands/script/hoshizora/selection'
 import { Core, useEvents } from '@/core/Core'
 import { Content } from '@/ui/Elements'
 import { log } from '@/utils/logger'
@@ -9,7 +10,7 @@ import { useSignal } from '@/utils/Reactive'
 import { useKeyPress } from '@/utils/solid/useKeyPress'
 import { Backlog } from './Backlog'
 import { ControlPanel } from './ControlPanel'
-import { displaySelection, Selection } from './Selection'
+import { Selection } from './Selection'
 import { Stage } from './Stage'
 import { TextBox } from './TextBox'
 import { Video } from './Video'
@@ -43,7 +44,7 @@ const GameUI: Component = () => {
             onContextMenu={() => displayBottomBox((v) => !v)}>
             <Stage />
             <Show when={!displayBacklog() && displayBottomBox()}>
-                <Show when={!displaySelection()}>
+                <Show when={!displaySelectionView()}>
                     <TextBox />
                 </Show>
                 <ControlPanel showBacklog={() => displayBacklog(true)} closeBottomBox={() => displayBottomBox(false)} />

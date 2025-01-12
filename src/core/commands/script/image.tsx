@@ -4,7 +4,7 @@ import { isNil, isUndefined } from 'es-toolkit'
 import { ActEndEvent, PostInitEvent } from '@/core/event'
 import { Dynamic, NonBlocking } from '@/core/normalize'
 import { GameState } from '@/core/types/Game'
-import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
+import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { Y } from '@/utils/fp'
 import { _tween } from './abstract/tween'
 

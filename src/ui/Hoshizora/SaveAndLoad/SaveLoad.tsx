@@ -13,9 +13,11 @@ import { ReRender } from '@/utils/solid/ReRender'
 import Scale from './../../Scale'
 import styles from './SaveAndLoad.module.scss'
 
+// 退出存档页面再进入不会重置到第一页
+const currentPage = useSignal(0)
+
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
     log.info('SaveLoad组件函数被调用.')
-    const currentPage = useSignal(0)
     const saves = useStore().save.local
     const pageElementCount = 9
 

@@ -1,5 +1,5 @@
 /* eslint-disable solid/components-return-once */
-import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
+import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { PromiseX } from '@/utils/PromiseX'
 import { ActScope, Dynamic } from '../../normalize'
 import { _continue } from './abstract/branch'

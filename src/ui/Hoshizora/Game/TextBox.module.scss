@@ -15,7 +15,7 @@
     left: 260px;
     max-width: 845px;
     font-weight: bold;
-    font-size: 30px;
+    font-size: 28px;
     white-space: pre-wrap;
     word-break: break-all;
     // tag:描边效果有点烂,还是叠字吧
@@ -50,10 +50,14 @@
     opacity: 0.7;
 }
 
+.Game_TextBox_star_container {
+    display: inline-block;
+}
+
 .Game_TextBox_star {
     position: absolute;
     right: -32px;
-    bottom: -12px;
+    bottom: -12 - 30px;
     width: 32px;
     height: 32px;
     background-image: url('/static/Texture2D/window_click.png');

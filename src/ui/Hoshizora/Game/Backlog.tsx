@@ -1,8 +1,9 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
 import { Howl } from 'howler'
-import { For, Show } from 'solid-js'
+import { For, onCleanup, onMount, Show } from 'solid-js'
 import { backlogView } from '@/core/commands/script/backlog'
+import { ActivateEvent, DeactivateEvent } from '@/core/event'
 import { useAudioConfig } from '@/store/hooks/useAudioConfig'
 import { Content } from '@/ui/Elements'
 import Scrollbar from '@/ui/Scrollbar'
@@ -11,6 +12,8 @@ import Back from '../Back/Back'
 import styles from './Backlog.module.scss'
 
 export const Backlog: Component<{ closeBacklog: Function0<void> }> = ({ closeBacklog }) => {
+    onMount(DeactivateEvent.publish)
+    onCleanup(ActivateEvent.publish)
     return (
         <Content onClick={stopPropagation} onContextMenu={stopPropagation(() => closeBacklog())}>
             <div class={clsx('Page', styles.Game_Backlog_mask)} />

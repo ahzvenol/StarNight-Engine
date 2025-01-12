@@ -24,7 +24,9 @@ export const TextBox: Component = () => {
                                 <div>
                                     {line}
                                     <Show when={index() === lines().length - 1 && showSuffixIconView()}>
-                                        <span class={styles.Game_TextBox_star} />
+                                        <span class={styles.Game_TextBox_star_container}>
+                                            <span class={styles.Game_TextBox_star} />
+                                        </span>
                                     </Show>
                                 </div>
                                 <Show when={index() !== lines().length - 1}>

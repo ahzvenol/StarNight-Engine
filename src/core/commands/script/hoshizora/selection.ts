@@ -1,8 +1,11 @@
 import { PreInitEvent } from '@/core/event'
 import { Blocking, NonBlocking } from '@/core/normalize'
+import { GameState } from '@/core/types/Game'
 import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { PromiseX } from '@/utils/PromiseX'
-import { Jump } from './branch'
+import { Jump } from '../branch'
+
+// 对于hoshizora来说,读档不需要知道用户选择了什么选项,从零读过去即可
 
 type Selection = {
     label: string
@@ -19,8 +22,9 @@ PreInitEvent.subscribe(() => (selections.length = 0))
 const promises = new Array<Promise<number>>()
 
 export const selection = NonBlocking<{ name: string; target: number; disable?: boolean }>(
-    () =>
+    (context) =>
         ({ name, target, disable = false }) => {
+            if (context.state === GameState.Init) return
             const promise = new PromiseX<number>()
             selections.push({
                 label: name,
@@ -34,6 +38,7 @@ export const selection = NonBlocking<{ name: string; target: number; disable?: b
 export const selEnd = Blocking(
     (context) =>
         async function () {
+            if (context.state === GameState.Init) return
             displaySelectionView(true)
             const num = await Promise.race(promises)
             selections.length = 0

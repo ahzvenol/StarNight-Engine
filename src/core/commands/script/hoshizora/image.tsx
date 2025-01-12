@@ -4,7 +4,7 @@ import { isNil, isUndefined } from 'es-toolkit'
 import { ActEndEvent, PostInitEvent } from '@/core/event'
 import { Dynamic, NonBlocking } from '@/core/normalize'
 import { GameState } from '@/core/types/Game'
-import { Scope, useAutoResetSignal } from '@/core/utils/useScopeSignal'
+import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { Y } from '@/utils/fp'
 import { _tween } from '../abstract/tween'
 
@@ -27,18 +27,13 @@ PostInitEvent.subscribe(() =>
 )
 
 // 一幕结束之后清理过期的图片元素
-ActEndEvent.subscribe(() => {
-    const children = Array.from(stageView().children)
-    const seenDataAttributes = new Set<string>()
-    for (const child of children) {
-        const dataName = child.getAttribute('data-name')
-        if (seenDataAttributes.has(dataName!)) {
-            child.remove()
-        } else {
-            seenDataAttributes.add(dataName!)
-        }
-    }
-})
+ActEndEvent.subscribe(() =>
+    Array.from(stageView().children).forEach((child) =>
+        Array.from(child.children)
+            .slice(1)
+            .forEach((child) => child.remove())
+    )
+)
 
 // 跨幕环境变量file,需要收集副作用
 export type SetImageCommandArgs = {
