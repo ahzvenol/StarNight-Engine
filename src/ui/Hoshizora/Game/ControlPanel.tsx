@@ -1,5 +1,6 @@
 import type { Component } from 'solid-js'
-import { useEvents, useState } from '@/core/Core'
+import { useState } from '@/core/Core'
+import { AutoButtonClickEvent, FastButtonClickEvent } from '@/core/event'
 import { getSave } from '@/core/save'
 import { GameState } from '@/core/types/Game'
 import { router } from '@/router'
@@ -14,7 +15,6 @@ export const ControlPanel: Component<{ showBacklog: Function0<void>; closeBottom
     closeBottomBox
 }) => {
     const state = useState()
-    const { auto, fast } = useEvents()
     const quickSave = useStore().save.local[0]
     return (
         <div class={styles.Game_ControlPanel_container} onClick={stopPropagation}>
@@ -33,12 +33,12 @@ export const ControlPanel: Component<{ showBacklog: Function0<void>; closeBottom
                 <Button
                     class={styles.Game_ControlPanel_auto}
                     style={{ filter: state() === GameState.Auto ? 'brightness(60%)' : '' }}
-                    onClick={auto}
+                    onClick={() => AutoButtonClickEvent.publish()}
                 />
                 <Button
                     class={styles.Game_ControlPanel_fast}
                     style={{ filter: state() === GameState.Fast ? 'brightness(60%)' : '' }}
-                    onClick={fast}
+                    onClick={() => FastButtonClickEvent.publish()}
                 />
                 <Button class={styles.Game_ControlPanel_hidden} onClick={closeBottomBox} />
             </div>

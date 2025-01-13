@@ -3,7 +3,8 @@ import { throttle } from 'es-toolkit'
 import { Show } from 'solid-js'
 import { clickState, EventState } from '@/core/commands/script/click'
 import { displaySelectionView } from '@/core/commands/script/hoshizora/selection'
-import { Core, useEvents } from '@/core/Core'
+import { Core } from '@/core/Core'
+import { GameClickEvent } from '@/core/event'
 import { Content } from '@/ui/Elements'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
@@ -20,7 +21,6 @@ const GameUI: Component = () => {
     const displayBacklog = useSignal(false)
     const displayBottomBox = useSignal(true)
 
-    const events = useEvents()
     // 在两个位置管理用户点击:
     // 设置pointer-events以屏蔽整个GameUI的onClick触发
     // 在触发click之前判断状态适用于函数被其他键盘事件调用的情况
@@ -28,7 +28,7 @@ const GameUI: Component = () => {
     // 为点击设置0.1秒节流
     const click = throttle(
         () => {
-            if (enable()) events.click()
+            if (enable()) GameClickEvent.publish()
         },
         100,
         { edges: ['leading'] }

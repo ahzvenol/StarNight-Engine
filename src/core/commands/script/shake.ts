@@ -1,6 +1,6 @@
 import anime from 'animejs'
 import { GameState } from '@/core/types/Game'
-import { ActScope, Dynamic } from '../../normalize'
+import { ActScope, Dynamic } from '../../command'
 import { stageView } from './image'
 
 export type ShakePunchCommandArgs = { target: string; x?: number; y?: number; duration: number; iteration?: number }

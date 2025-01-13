@@ -21,7 +21,10 @@ import {
     JumpEvent,
     onActEnd,
     onActivate,
+    onAuto,
     onCleanup,
+    onClick,
+    onFast,
     PostInitEvent,
     PreInitEvent
 } from './event'
@@ -32,17 +35,6 @@ import { Timer } from './utils/Timer'
 // 对外暴露目前的index,目前供存档功能使用
 export const currentIndex = useSignal(0)
 ActStartEvent.subscribe((context) => currentIndex(context.index))
-
-// 循环监听Deactivated和Activated事件以暂停/启动timer,直到本幕结束监听取消
-ActStartEvent.subscribe(({ state, timer, cleanup }) => {
-    if (state === GameState.Init) return
-    const id1 = DeactivateEvent.subscribe(timer.pause)
-    const id2 = ActivateEvent.subscribe(timer.start)
-    Promise.race([onActEnd(), cleanup]).then(() => {
-        DeactivateEvent.unsubscribe(id1)
-        ActivateEvent.unsubscribe(id2)
-    })
-})
 
 // 预加载游戏初始坐标后N幕资源
 PostInitEvent.subscribe(async ({ index }) => {
@@ -58,57 +50,55 @@ ActStartEvent.subscribe(async ({ state, index }) => {
     preloadWithIndex(index + 5)
 })
 
+// 循环监听Deactivated和Activated事件以暂停/启动timer,直到本幕结束监听取消
+ActStartEvent.subscribe(async ({ state, timer, cleanup }) => {
+    if (state === GameState.Init || state === GameState.Fast) return
+    const id1 = DeactivateEvent.subscribe(timer.pause)
+    const id2 = ActivateEvent.subscribe(timer.start)
+    await Promise.race([onActEnd(), cleanup])
+    DeactivateEvent.unsubscribe(id1)
+    ActivateEvent.unsubscribe(id2)
+})
+
+// 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕,通过timer立即执行全部效果
+// 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
+// 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
+ActStartEvent.subscribe(async (context) => {
+    const { timer, state, cleanup } = context
+    if (state === GameState.Init || state === GameState.Fast) return
+    const immPromise = new PromiseX<'Fast' | 'Cancel'>()
+    Promise.race([onClick(), onFast()]).then(() => immPromise.resolve('Fast'))
+    Promise.race([onActEnd(), cleanup]).then(() => immPromise.resolve('Cancel'))
+    const flag = await immPromise
+    if (flag === 'Cancel') return
+    ActSecondClickEvent.publish(context)
+    timer.immediateExecution()
+})
+
 // 给予全部命令操作actindex的能力是危险的,有几个特殊的命令会影响主循环,可以单独提出
-async function runAct(
-    index: number,
-    state: GameState,
-    store: Store,
-    variables: Variables,
-    onClick: Promise<void>,
-    onFast: Promise<void>,
-    onCleanup: Promise<void>
-) {
+async function runAct(index: number, state: GameState, store: Store, variables: Variables, onCleanup: Promise<void>) {
     const timer = new Timer()
     // 如果现在是快进状态,直接把timer设置到立即执行
     if (state === GameState.Init || state === GameState.Fast) timer.immediateExecution()
     const context: GameRuntimeContext = { timer, state, store, variables, index, cleanup: onCleanup }
-    // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕,通过timer立即执行全部效果
-    // 如果没有特殊阻塞,调用timer.toImmediate后会将promise链推进至actEnd
-    const immPromise = new PromiseX<'Fast' | 'Cancel'>()
-    immPromise.then((state) => {
-        if (state === 'Cancel') return
-        ActSecondClickEvent.publish(context)
-        timer.immediateExecution()
-    })
-    Promise.race([onClick, onFast]).then(() => immPromise.resolve('Fast'))
     // act start
     ActStartEvent.publish(context)
     // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
     const commandOutput = await Fork.apply(context)((await book.full(index)) as CommandEntitys[])
-    // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
-    immPromise.resolve('Cancel')
     ActEndEvent.publish(context)
     return commandOutput
 }
 
-function runLoop(
-    initialIndex: number,
-    state: Signal<GameState>,
-    store: ReactiveStore,
-    variables: Variables,
-    onClick: Function0<Promise<void>>,
-    onAuto: Function0<Promise<void>>,
-    onFast: Function0<Promise<void>>
-) {
-    const cleanup = onCleanup()
+function runLoop(initialIndex: number, state: Signal<GameState>, store: ReactiveStore, variables: Variables) {
     PreInitEvent.publish()
+    const cleanup = onCleanup()
     return Y<number, Promise<void>>((rec) => async (index) => {
         if (index === initialIndex) {
             state(GameState.Normal)
             PostInitEvent.publish({ index })
         }
         // 幕运行过程中不会操作任何状态,但可以操作variables
-        const res = await runAct(index, state(), store(), variables, onClick(), onFast(), cleanup)
+        const res = await runAct(index, state(), store(), variables, cleanup)
         // const res = {}
         // 等待过程受continue命令影响
         if (state() !== GameState.Init && res['continue'] !== true) {
@@ -126,10 +116,10 @@ function runLoop(
         if (router.active() !== Pages.Game) await onActivate()
         // 游戏实例已销毁时退出
         const isCleanup = (await PromiseX.status(cleanup)) !== PromiseState.Pending
-        // end命令退出幕循环 || 超过最后一幕自动退出
+        // 通过end命令退出 || 超过最后一幕自动退出
         const isEnd = res['end'] === true || index >= (await book.length())
         if (isCleanup || isEnd) return Promise.resolve()
-        // jump命令修改接下来一幕的行号
+        // jump命令修改接下来一幕的index
         const jumpArg = res['jump']
         const isJump = typeof jumpArg === 'number' && isFinite(jumpArg)
         const next = isJump ? jumpArg : index + 1

@@ -1,8 +1,10 @@
 import { inRange } from 'es-toolkit'
+import { createEffect } from 'solid-js'
+import { ActStartEvent } from '@/core/event'
 import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { Y } from '@/utils/fp'
 import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
-import { ActScope, Dynamic, NonBlocking } from '../../normalize'
+import { ActScope, Dynamic, NonBlocking } from '../../command'
 import { _wait } from './abstract/wait'
 
 export const textPreview = useAutoResetSignal(() => '', Scope.Act)
@@ -13,8 +15,10 @@ export const preview = NonBlocking<{ text: string }>(
 )
 
 export const showSuffixIconView = useAutoResetSignal(() => false, Scope.Act)
+
 export const icon = NonBlocking(
     ActScope(() => () => {
+        debugger
         showSuffixIconView(true)
     })
 )

@@ -1,7 +1,7 @@
 /* eslint-disable solid/components-return-once */
 import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { PromiseX } from '@/utils/PromiseX'
-import { ActScope, Dynamic } from '../../normalize'
+import { ActScope, Dynamic } from '../../command'
 import { _continue } from './abstract/branch'
 
 export const videoView = useAutoResetSignal<HTMLVideoElement | null>(() => null, Scope.Game)

@@ -1,6 +1,6 @@
 import anime from 'animejs'
 import { GameState } from '@/core/types/Game'
-import { ActScope, Dynamic } from '../../../normalize'
+import { ActScope, Dynamic } from '../../../command'
 import { stageView } from './image'
 
 // 这里没有任何改动,但是受到stageView的限制,不得不复制一份

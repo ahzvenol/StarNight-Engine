@@ -3,20 +3,6 @@ import { log } from '@/utils/logger'
 import { GameState } from './types/Game'
 import { EventDispatcher, on } from './utils/EventDispatcher'
 
-export function createButtonEventDispatchers() {
-    const GameClickEvent = new EventDispatcher<void>()
-    const FastButtonClickEvent = new EventDispatcher<void>()
-    const AutoButtonClickEvent = new EventDispatcher<void>()
-    const onClick = on(GameClickEvent)
-    const onFast = on(FastButtonClickEvent)
-    const onAuto = on(AutoButtonClickEvent)
-    GameClickEvent.subscribe(() => log.info('触发点击事件'))
-    FastButtonClickEvent.subscribe(() => log.info('点击快进模式按钮'))
-    AutoButtonClickEvent.subscribe(() => log.info('点击自动模式按钮'))
-
-    return { click: GameClickEvent, fast: FastButtonClickEvent, auto: AutoButtonClickEvent, onClick, onFast, onAuto }
-}
-
 export const PreInitEvent = new EventDispatcher<void>()
 export const onPreInit = on(PreInitEvent)
 
@@ -28,7 +14,6 @@ PostInitEvent.subscribe(() => log.info('Game:初始化完成'))
 
 export const MountEvent = new EventDispatcher<void>()
 export const onMount = on(MountEvent)
-
 // 用户回到主页的事件,此时内容由起始页接管
 export const LeaveEvent = new EventDispatcher<void>()
 export const onLeave = on(LeaveEvent)
@@ -67,3 +52,19 @@ ActSecondClickEvent.subscribe(() => log.info('一幕内第二次点击,立即执
 
 export const JumpEvent = new EventDispatcher<{ index: number }>()
 export const onJump = on(JumpEvent)
+
+// 这些事件只在幕循环中使用,由GameUI触发,其他位置的代码不应依赖它们
+// 所有游戏实例都依赖于同一组点击事件,通过在新实例挂载时清理订阅来避免影响旧实例
+export const GameClickEvent = new EventDispatcher<void>()
+export const onClick = on(GameClickEvent)
+export const FastButtonClickEvent = new EventDispatcher<void>()
+export const onFast = on(FastButtonClickEvent)
+export const AutoButtonClickEvent = new EventDispatcher<void>()
+export const onAuto = on(AutoButtonClickEvent)
+
+CleanupEvent.subscribe(GameClickEvent.unsubscribeAll)
+CleanupEvent.subscribe(FastButtonClickEvent.unsubscribeAll)
+CleanupEvent.subscribe(AutoButtonClickEvent.unsubscribeAll)
+MountEvent.subscribe(() => GameClickEvent.subscribe(() => log.info('触发点击事件')))
+MountEvent.subscribe(() => FastButtonClickEvent.subscribe(() => log.info('点击快进模式按钮')))
+MountEvent.subscribe(() => AutoButtonClickEvent.subscribe(() => log.info('点击自动模式按钮')))
