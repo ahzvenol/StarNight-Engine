@@ -4,9 +4,7 @@ import type { CommandEntitys } from './types/Command'
 import type { GameRuntimeContext, Variables } from './types/Game'
 import { delay, range } from 'es-toolkit'
 import { match } from 'ts-pattern'
-import { router } from '@/router'
 import book from '@/store/book'
-import { Pages } from '@/ui/Pages'
 import { Y } from '@/utils/fp'
 import { log } from '@/utils/logger'
 import { PromiseState, PromiseX } from '@/utils/PromiseX'
@@ -92,6 +90,13 @@ async function runAct(index: number, state: GameState, store: Store, variables: 
 function runLoop(initialIndex: number, state: Signal<GameState>, store: ReactiveStore, variables: Variables) {
     PreInitEvent.publish()
     const cleanup = onCleanup()
+    const isDeactivate = useSignal(false)
+    const id1 = ActivateEvent.subscribe(() => isDeactivate(false))
+    const id2 = DeactivateEvent.subscribe(() => isDeactivate(true))
+    cleanup.then(() => {
+        ActivateEvent.unsubscribe(id1)
+        DeactivateEvent.unsubscribe(id2)
+    })
     return Y<number, Promise<void>>((rec) => async (index) => {
         if (index === initialIndex) {
             state(GameState.Normal)
@@ -113,7 +118,7 @@ function runLoop(initialIndex: number, state: Signal<GameState>, store: Reactive
             log.info('已受到推动并结束等待')
         }
         // 如果用户离开游戏界面,等待用户回来
-        if (router.active() !== Pages.Game) await onActivate()
+        if (isDeactivate()) await onActivate()
         // 游戏实例已销毁时退出
         const isCleanup = (await PromiseX.status(cleanup)) !== PromiseState.Pending
         // 通过end命令退出 || 超过最后一幕自动退出

@@ -30,7 +30,7 @@ export type GameRuntimeContext = {
     timer: Timer
     state: GameState
     index: number
-    cleanup?: Promise<void>
+    cleanup: Promise<void>
 } & GameContext
 
 export type InitialGameData = { index: number }
