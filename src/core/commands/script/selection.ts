@@ -1,5 +1,5 @@
+import { Blocking, NonBlocking } from '@/core/command'
 import { PreInitEvent } from '@/core/event'
-import { Blocking, NonBlocking } from '@/core/normalize'
 import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { PromiseX } from '@/utils/PromiseX'
 import { Jump } from './branch'

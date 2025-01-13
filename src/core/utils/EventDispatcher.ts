@@ -17,6 +17,10 @@ class EventDispatcher<T> {
         this.callbacks.delete(id)
     }
 
+    public unsubscribeAll = () => {
+        this.callbacks.clear()
+    }
+
     public once = (callback: EventHandler<T>) => {
         const uuid = Symbol()
         this.callbacks.set(uuid, (e) => {
