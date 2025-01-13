@@ -1,6 +1,4 @@
 import { inRange } from 'es-toolkit'
-import { createEffect } from 'solid-js'
-import { ActStartEvent } from '@/core/event'
 import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { Y } from '@/utils/fp'
 import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
@@ -18,7 +16,6 @@ export const showSuffixIconView = useAutoResetSignal(() => false, Scope.Act)
 
 export const icon = NonBlocking(
     ActScope(() => () => {
-        debugger
         showSuffixIconView(true)
     })
 )

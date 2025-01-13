@@ -27,13 +27,7 @@ export function ActScope<T extends CommandArgs>(
     }
 }
 
-export function DynamicForAuto<T extends CommandArgs>(fn: DynamicCommandFunction<T>): DynamicCommandFunction<T> {
-    return (context) => (args) => {
-        return fn(context)(args)
-    }
-}
-
-export function normalizeOutput(output: unknown): Promise<CommandOutput> {
+function normalizeOutput(output: unknown): Promise<CommandOutput> {
     return Promise.resolve(output)
         .catch((error) => log.error('命令运行出错:', error))
         .then((result) => (isPlainObject(result) ? result : {}))
@@ -82,10 +76,11 @@ export function Blocking<T extends CommandArgs>(fn: BlockingCommandFunction<T>):
 
 export async function runGeneratorAsyncWithControl<TRetrun>(
     generator: Generator<Promise<void>, TRetrun, void>,
-    { fast = new Promise(noop), cancel = new Promise(noop) }
+    { fast, cancel }: { fast: Promise<void>; cancel: Promise<void> }
 ): Promise<TRetrun | undefined> {
     return Y<'Normal' | 'Fast' | 'Cancel', Promise<TRetrun | undefined>>((rec) => async (flag) => {
-        if (flag === 'Cancel') return
+        // 游戏销毁与新游戏实例创建几乎同时发生,阻塞状态的生成器直接返回可能导致后面的命令泄漏到新实例,实际我们希望它继续阻塞
+        if (flag === 'Cancel') return new Promise(noop)
         const { value, done } = generator.next()
         if (!done) {
             if (flag === 'Fast') return rec('Fast')

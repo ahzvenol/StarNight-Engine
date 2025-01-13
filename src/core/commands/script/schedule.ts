@@ -4,6 +4,8 @@ import { Schedule } from '@/core/types/Schedule'
 import { commands } from '..'
 import { _chain, _fork, _par } from './abstract/schedule'
 
+// meta.key只用于调试
+
 export const Fork: ScheduledHighLevelCommand = {
     meta: { schedule: Schedule.Async },
     apply: (context) => (rows) =>
@@ -12,7 +14,7 @@ export const Fork: ScheduledHighLevelCommand = {
                 const cmd = commands()[row.key]
                 const schedule = cmd.meta.schedule
                 const apply = () => cmd.apply(context)(row.args as any)
-                return { meta: { schedule }, apply }
+                return { meta: { key: row.key, schedule }, apply }
             })
         )()
 }
@@ -25,7 +27,7 @@ export const Par: ScheduledHighLevelCommand = {
                 const cmd = commands()[row.key]
                 const schedule = Schedule.Async
                 const apply = () => cmd.apply(context)(row.args as any)
-                return { meta: { schedule }, apply }
+                return { meta: { key: row.key, schedule }, apply }
             })
         )()
 }
@@ -38,7 +40,7 @@ export const Chain: ScheduledHighLevelCommand = {
                 const cmd = commands()[row.key]
                 const schedule = Schedule.Await
                 const apply = () => cmd.apply(context)(row.args as any)
-                return { meta: { schedule }, apply }
+                return { meta: { key: row.key, schedule }, apply }
             })
         )()
 }
@@ -51,7 +53,7 @@ export const Await: ScheduledHighLevelCommand = {
                 const cmd = commands()[row.key]
                 const schedule = Schedule.Async
                 const apply = () => cmd.apply(context)(row.args as any)
-                return { meta: { schedule }, apply }
+                return { meta: { key: row.key, schedule }, apply }
             })
         )()
 }
