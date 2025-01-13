@@ -22,7 +22,7 @@ const Title: Component = () => {
                                         height: `26px`,
                                         right: `570px`,
                                         bottom: `${55 + 41 * (4 - line(4)(index))}px`,
-                                        'background-image': `url('./static/Texture2D/title_${imageId}.png')`
+                                        'background-image': `url('./static/Texture2D/title_${imageId}.webp')`
                                     }}
                                     onClick={() => {
                                         if (index === 0) restartGame()
@@ -32,7 +32,7 @@ const Title: Component = () => {
                                 <style jsx>
                                     {`
                                         .Title_button_${index}:hover {
-                                            background-image: url('./static/Texture2D/title_${imageId}_on.png') !important;
+                                            background-image: url('./static/Texture2D/title_${imageId}_on.webp') !important;
                                         }
                                     `}
                                 </style>

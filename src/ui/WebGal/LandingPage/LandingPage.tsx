@@ -19,8 +19,8 @@ const LandingPage: Component = () => {
 
     return (
         <div class={clsx('Page', styles.LandingPage_container)} style={{ opacity: opacity() }} onClick={onClick}>
-            <link rel="preload" href="/static/Texture2D/title_bg.png" as="image" />
-            <link rel="preload" href="/static/AudioClip/bgm01.wav" as="audio" />
+            <link rel="preload" href="/static/Texture2D/title_bg.webp" as="image" />
+            <link rel="preload" href="/static/AudioClip/bgm01.flac" as="audio" />
             <div class={styles.LandingPage_tip}>PRESS THE SCREEN TO START</div>
         </div>
     )

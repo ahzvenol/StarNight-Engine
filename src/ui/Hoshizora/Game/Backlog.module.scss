@@ -1,6 +1,6 @@
 .Game_Backlog_container {
     z-index: 9;
-    background-image: url('/static/Texture2D/backlog.png');
+    background-image: url('/static/Texture2D/backlog.webp');
 }
 
 .Game_Backlog_mask {
@@ -39,7 +39,7 @@
     left: 0;
     width: 30px;
     height: 30px;
-    background-image: url('/static/Texture2D/backlog_backvoice.png');
+    background-image: url('/static/Texture2D/backlog_backvoice.webp');
 }
 
 .Game_Backlog_element_name {
@@ -53,7 +53,7 @@
     padding-left: 30px;
     font-weight: 300;
     font-size: 27px;
-    background-image: url('/static/Texture2D/backlog_name.png');
+    background-image: url('/static/Texture2D/backlog_name.webp');
 }
 
 .Game_Backlog_element_text {
@@ -65,7 +65,7 @@
     padding-top: 50px;
     padding-left: 100px;
     font-size: 20px;
-    background-image: url('/static/Texture2D/backlog_window.png');
+    background-image: url('/static/Texture2D/backlog_window.webp');
 }
 
 .Game_Backlog_Scrollbar_track {

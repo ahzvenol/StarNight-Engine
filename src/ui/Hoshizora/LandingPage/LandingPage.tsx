@@ -14,9 +14,9 @@ const LandingPage: Component = () => {
 
     return (
         <div class={clsx('Page', styles.LandingPage_container)} onClick={() => enter(true)}>
-            <link rel="preload" href="./static/Texture2D/title_bg.png" as="image" />
-            <link rel="preload" href="./static/AudioClip/bgm01.wav" as="audio" />
-            <img class={styles.LandingPage_logo} src="./static/shiratamaco_logo.png" />
+            <link rel="preload" href="./static/Texture2D/title_bg.webp" as="image" />
+            <link rel="preload" href="./static/AudioClip/bgm01.flac" as="audio" />
+            <img class={styles.LandingPage_logo} src="./static/shiratamaco_logo.webp" />
         </div>
     )
 }

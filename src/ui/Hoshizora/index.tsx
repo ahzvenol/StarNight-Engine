@@ -1,6 +1,5 @@
 import type { Component } from 'solid-js'
 import { Show } from 'solid-js'
-import jcyt500W from '@/assets/jcyt500W.ttf'
 import { Route, router } from '../../router'
 import { Content, Graphic } from '../Elements'
 import { Game, Title } from '../Pages'
@@ -43,7 +42,7 @@ const UI: Component = () => (
             {`
                 @font-face {
                     font-family: 'jcyt';
-                    src: url(${jcyt500W});
+                    src: url('./static/jcyt500W.ttf');
                     font-weight: normal;
                 }
                 * {

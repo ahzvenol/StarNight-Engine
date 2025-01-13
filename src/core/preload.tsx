@@ -34,13 +34,13 @@ function preloadResource(url: string) {
 
     const extension = url.split('.').pop()!.toLowerCase()
 
-    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'tiff', 'ico'].includes(extension)) {
         // 图片
         preloadImage(url)
-    } else if (['mp3', 'wav', 'ogg', 'aac'].includes(extension)) {
+    } else if (['mp3', 'wav', 'flac', 'ogg', 'aac', 'm4a', 'opus'].includes(extension)) {
         // 音频
         preloadAudio(url)
-    } else if (['mp4', 'webm'].includes(extension)) {
+    } else if (['mp4', 'webm', 'ogg', 'avi', 'mov', 'mkv'].includes(extension)) {
         // 视频
         preloadVideo(url)
     } else {

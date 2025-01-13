@@ -28,8 +28,8 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                 style={{
                     'background-image':
                         mode === 'Save'
-                            ? 'url(./static/Texture2D/SaveButton.png)'
-                            : 'url(./static/Texture2D/LoadButton.png)'
+                            ? 'url(./static/Texture2D/SaveButton.webp)'
+                            : 'url(./static/Texture2D/LoadButton.webp)'
                 }}
             />
             {/* tag:魔法方案的闪烁问题非常严重并且影响操作,暂时放弃对transition: 0.15s的支持 */}

@@ -67,8 +67,8 @@ export const fadeAudio = Dynamic<{ target: string; volume: number; duration?: nu
         function* ({ target, volume, duration = 0 }) {
             const audio = tracks.get(target)
             // 要设置的音量如果和当前音量相同不会触发fade事件
-            // 如果音频没在播放了,那应该是被unload了,unload的音频无法调整音量,也不能触发fade事件
-            if (!audio || !audio.playing() || audio.volume() === volume) return
+            // 非loaded状态的音频无法调整音量,也不能触发fade事件
+            if (!audio || audio.state() !== 'loaded' || audio.volume() === volume) return
             if (!duration) {
                 audio.volume(volume)
             } else {

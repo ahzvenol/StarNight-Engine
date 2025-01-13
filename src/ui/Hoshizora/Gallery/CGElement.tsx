@@ -9,16 +9,16 @@ import styles from './Gallery.module.scss'
 export const CGElement: Component<{ cg: Getter<Array<string>> }> = ({ cg }) => {
     const pointer = useSignal(-1)
     const canShow = () => cg().length > 0
-    const cover = () => `url(./static/ImageAsset/${cg()[0]}.png)`
+    const cover = () => `url(./static/ImageAsset/${cg()[0]}.webp)`
     const isMax = () => pointer() >= cg().length - 1
-    const now = () => `url(./static/ImageAsset/${cg()[pointer()]}.png)`
-    const next = () => (isMax() ? '' : `,url(./static/ImageAsset/${cg()[pointer() + 1]}.png)`)
+    const now = () => `url(./static/ImageAsset/${cg()[pointer()]}.webp)`
+    const next = () => (isMax() ? '' : `,url(./static/ImageAsset/${cg()[pointer() + 1]}.webp)`)
     return (
         <>
             <div
                 class={styles.Gallery_content_element}
                 style={{
-                    'background-image': canShow() ? cover() : `url(./static/Texture2D/gallery_thumb.png)`
+                    'background-image': canShow() ? cover() : `url(./static/Texture2D/gallery_thumb.webp)`
                 }}
                 onClick={() => {
                     if (canShow()) pointer(0)

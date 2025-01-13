@@ -1,5 +1,5 @@
 .Config_container {
-    background-image: url('/static/Texture2D/config_BG.png');
+    background-image: url('/static/Texture2D/config_BG.webp');
 }
 
 .Config_cell {
@@ -27,11 +27,11 @@
 }
 
 .Config_button_full_screen_off {
-    background-image: url('/static/Texture2D/config_window.png');
+    background-image: url('/static/Texture2D/config_window.webp');
 }
 
 .Config_button_full_screen_on {
-    background-image: url('/static/Texture2D/config_full.png');
+    background-image: url('/static/Texture2D/config_full.webp');
 }
 
 .Config_button {
@@ -50,19 +50,19 @@
 }
 
 .Config_button_off_off {
-    background-image: url('/static/Texture2D/config_button_off.png');
+    background-image: url('/static/Texture2D/config_button_off.webp');
 }
 
 .Config_button_off_on {
-    background-image: url('/static/Texture2D/config_button_off_ov.png');
+    background-image: url('/static/Texture2D/config_button_off_ov.webp');
 }
 
 .Config_button_on_off {
-    background-image: url('/static/Texture2D/config_button_on.png');
+    background-image: url('/static/Texture2D/config_button_on.webp');
 }
 
 .Config_button_on_on {
-    background-image: url('/static/Texture2D/config_button_on_ov.png');
+    background-image: url('/static/Texture2D/config_button_on_ov.webp');
 }
 
 .Config_bottom_back_title,
@@ -74,18 +74,18 @@
 
 .Config_bottom_back_title {
     right: 148px;
-    background-image: url('/static/Texture2D/config_backtitle.png');
+    background-image: url('/static/Texture2D/config_backtitle.webp');
 
     &:hover {
-        background-image: url('/static/Texture2D/config_backtitle_ov.png');
+        background-image: url('/static/Texture2D/config_backtitle_ov.webp');
     }
 }
 
 .Config_bottom_reset {
     right: 248px;
-    background-image: url('/static/Texture2D/config_reset.png');
+    background-image: url('/static/Texture2D/config_reset.webp');
 
     &:hover {
-        background-image: url('/static/Texture2D/config_reset_ov.png');
+        background-image: url('/static/Texture2D/config_reset_ov.webp');
     }
 }

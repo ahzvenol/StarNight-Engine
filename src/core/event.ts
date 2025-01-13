@@ -4,17 +4,17 @@ import { GameState } from './types/Game'
 import { EventDispatcher, on } from './utils/EventDispatcher'
 
 export function createButtonEventDispatchers() {
-    const primaryClickEvent = new EventDispatcher<void>()
-    const fastButtonClickEvent = new EventDispatcher<void>()
-    const autoButtonClickEvent = new EventDispatcher<void>()
-    const onClick = on(primaryClickEvent)
-    const onFast = on(fastButtonClickEvent)
-    const onAuto = on(autoButtonClickEvent)
-    primaryClickEvent.subscribe(() => log.info('触发点击事件'))
-    fastButtonClickEvent.subscribe(() => log.info('点击快进模式按钮'))
-    autoButtonClickEvent.subscribe(() => log.info('点击自动模式按钮'))
+    const GameClickEvent = new EventDispatcher<void>()
+    const FastButtonClickEvent = new EventDispatcher<void>()
+    const AutoButtonClickEvent = new EventDispatcher<void>()
+    const onClick = on(GameClickEvent)
+    const onFast = on(FastButtonClickEvent)
+    const onAuto = on(AutoButtonClickEvent)
+    GameClickEvent.subscribe(() => log.info('触发点击事件'))
+    FastButtonClickEvent.subscribe(() => log.info('点击快进模式按钮'))
+    AutoButtonClickEvent.subscribe(() => log.info('点击自动模式按钮'))
 
-    return { click: primaryClickEvent, fast: fastButtonClickEvent, auto: autoButtonClickEvent, onClick, onFast, onAuto }
+    return { click: GameClickEvent, fast: FastButtonClickEvent, auto: AutoButtonClickEvent, onClick, onFast, onAuto }
 }
 
 export const PreInitEvent = new EventDispatcher<void>()

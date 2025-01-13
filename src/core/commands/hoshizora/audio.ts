@@ -4,7 +4,7 @@ import type { SetAudioCommandArgs } from '../script/audio'
 
 export const setAudio: MacroFunction<SetAudioCommandArgs & { duration?: number }> = (args) => {
     const array = Array<CommandEntitys>()
-    if (args.file !== undefined) args.file = `./static/AudioClip/${args.file}.wav`
+    if (args.file !== undefined) args.file = `./static/AudioClip/${args.file}.flac`
     if (args.type === 'BGM') args.loop = true
     if (args.name === undefined) args.name = args.type
     if (args.duration) {

@@ -1,5 +1,5 @@
 .Gallery_container {
-    background-image: url('/static/Texture2D/gallery_BG.png');
+    background-image: url('/static/Texture2D/gallery_BG.webp');
 }
 
 .Gallery_switch {
@@ -12,7 +12,7 @@
     color: #344460;
     font-weight: bold;
     font-family: initial;
-    background-image: url('/static/Texture2D/gallery_category.png');
+    background-image: url('/static/Texture2D/gallery_category.webp');
     transition: 0.2s;
 }
 
@@ -42,7 +42,7 @@
     position: initial;
     width: 192px;
     height: 108px;
-    background-image: url('/static/Texture2D/gallery_thumb.png');
+    background-image: url('/static/Texture2D/gallery_thumb.webp');
     background-size: contain;
 }
 
