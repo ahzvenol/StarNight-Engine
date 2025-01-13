@@ -21,7 +21,7 @@ export const Title: Component<ParentProps> = (props) => {
     const TitleBGM = useAudioConfig(
         'BGM',
         new Howl({
-            src: './static/AudioClip/bgm01.wav'
+            src: './static/AudioClip/bgm01.flac'
         })
     )
     createEffect(

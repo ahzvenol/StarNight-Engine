@@ -18,6 +18,8 @@ PreInitEvent.subscribe(() => (selections.length = 0))
 
 const promises = new Array<Promise<number>>()
 
+PreInitEvent.subscribe(() => (selections.length = 0))
+
 export const selection = NonBlocking<{ name: string; target: number; disable?: boolean }>(
     () =>
         ({ name, target, disable = false }) => {
@@ -37,6 +39,7 @@ export const selEnd = Blocking(
             displaySelectionView(true)
             const num = await Promise.race(promises)
             selections.length = 0
+            promises.length = 0
             displaySelectionView(false)
             return Jump.apply(context)({ target: num })
         }
