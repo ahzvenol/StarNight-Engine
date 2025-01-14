@@ -4,7 +4,7 @@ import type { AudioTracksType } from '@/store/hooks/useAudio'
 import { delay, isUndefined } from 'es-toolkit'
 import { Howl } from 'howler'
 import { Dynamic, NonBlocking } from '@/core/command'
-import { ActStartEvent, CleanupEvent, ContinueGameEvent, PostInitEvent, ReturnToTitleEvent } from '@/core/event'
+import { ActStartEvent, ContinueGameEvent, GameCleanupEvent, PostInitEvent, ReturnToTitleEvent } from '@/core/event'
 import { GameState } from '@/core/types/Game'
 import { useAudio } from '@/store/hooks/useAudio'
 
@@ -20,7 +20,7 @@ ContinueGameEvent.subscribe(() => tracks.forEach((audio) => audio.play()))
 
 ReturnToTitleEvent.subscribe(() => tracks.forEach((audio) => audio.pause()))
 
-CleanupEvent.subscribe(() => {
+GameCleanupEvent.subscribe(() => {
     tracks.forEach((audio) => audio.unload())
     tracks.clear()
 })

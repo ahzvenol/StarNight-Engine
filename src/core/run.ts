@@ -18,9 +18,9 @@ import {
     JumpEvent,
     onActEnd,
     onAuto,
-    onCleanup,
     onClick,
     onFast,
+    onGameCleanup,
     onGameVisibilityChange,
     PostInitEvent,
     PreInitEvent
@@ -62,7 +62,7 @@ ActStartEvent.subscribe(async (context) => {
 
 export function run(initialIndex: number, state: Signal<GameState>, store: ReactiveStore, variables: Variables) {
     PreInitEvent.publish()
-    const cleanup = onCleanup()
+    const cleanup = onGameCleanup()
     return Y<number, Promise<void>>((rec) => async (index) => {
         if (index === initialIndex) {
             state(GameState.Normal)

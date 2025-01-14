@@ -17,7 +17,8 @@ export const video = Dynamic<VideoCommandArgs>(
             function* ({ file }) {
                 const promise = new PromiseX<void>()
                 const videoElement = (
-                    <video src={file} autoplay onEnded={() => promise.resolve()} />
+                    // @ts-expect-error 类型“VideoHTMLAttributes<HTMLVideoElement>”上不存在属性“disablePictureInPicture”。
+                    <video src={file} autoplay onEnded={() => promise.resolve()} disablePictureInPicture />
                 ) as HTMLVideoElement
                 videoElement.volume = config.golbalvolume
                 videoView(videoElement)

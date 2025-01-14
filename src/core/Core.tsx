@@ -10,7 +10,13 @@ import { Content } from '@/ui/Elements'
 import { GameInitialContext } from '@/ui/Pages'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
-import { AutoButtonClickEvent, CleanupEvent, FastButtonClickEvent, GameVisibilityEvent, MountEvent } from './event'
+import {
+    AutoButtonClickEvent,
+    FastButtonClickEvent,
+    GameCleanupEvent,
+    GameMountEvent,
+    GameVisibilityEvent
+} from './event'
 import { run } from './run'
 import { GameState } from './types/Game'
 import { Scope, useAutoResetSignal } from './utils/useAutoResetSignal'
@@ -45,9 +51,9 @@ export const Core: Component<ParentProps> = (props) => {
         global: store.save.global as Reactive<GlobalSaveData>
     }
 
-    onCleanup(CleanupEvent.publish)
+    onCleanup(GameCleanupEvent.publish)
 
-    onMount(MountEvent.publish)
+    onMount(GameMountEvent.publish)
 
     // micro-reactive有Bug,如果遇到奇怪的递归就是它的锅
     onMount(once(() => run(initialIndex, state, store, variables)))

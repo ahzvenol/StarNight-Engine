@@ -54,14 +54,14 @@ GameVisibilityEvent.subscribe((visible) => log.info(`Game:游戏可见性变动:
 // 先触发CleanupEvent,接着触发MountEvent
 // 如果不存在旧的游戏实例,CleanupEvent不会触发
 // 新游戏实例挂载的事件
-export const MountEvent = new EventDispatcher<void>()
-export const onMount = on(MountEvent)
+export const GameMountEvent = new EventDispatcher<void>()
+export const onGameMount = on(GameMountEvent)
 // 旧游戏实例销毁的事件
-export const CleanupEvent = new EventDispatcher<void>()
-export const onCleanup = on(CleanupEvent)
+export const GameCleanupEvent = new EventDispatcher<void>()
+export const onGameCleanup = on(GameCleanupEvent)
 
-MountEvent.subscribe(() => log.info('Game:组件挂载'))
-CleanupEvent.subscribe(() => log.info('Game:游戏销毁'))
+GameMountEvent.subscribe(() => log.info('Game:组件挂载'))
+GameCleanupEvent.subscribe(() => log.info('Game:游戏销毁'))
 
 export const ActStartEvent = new EventDispatcher<GameRuntimeContext>()
 export const onActStart = on(ActStartEvent)
@@ -92,9 +92,9 @@ export const onFast = on(FastButtonClickEvent)
 export const AutoButtonClickEvent = new EventDispatcher<void>()
 export const onAuto = on(AutoButtonClickEvent)
 
-CleanupEvent.subscribe(GameClickEvent.unsubscribeAll)
-CleanupEvent.subscribe(FastButtonClickEvent.unsubscribeAll)
-CleanupEvent.subscribe(AutoButtonClickEvent.unsubscribeAll)
-MountEvent.subscribe(() => GameClickEvent.subscribe(() => log.info('触发点击事件')))
-MountEvent.subscribe(() => FastButtonClickEvent.subscribe(() => log.info('点击快进模式按钮')))
-MountEvent.subscribe(() => AutoButtonClickEvent.subscribe(() => log.info('点击自动模式按钮')))
+GameCleanupEvent.subscribe(GameClickEvent.unsubscribeAll)
+GameCleanupEvent.subscribe(FastButtonClickEvent.unsubscribeAll)
+GameCleanupEvent.subscribe(AutoButtonClickEvent.unsubscribeAll)
+GameMountEvent.subscribe(() => GameClickEvent.subscribe(() => log.info('触发点击事件')))
+GameMountEvent.subscribe(() => FastButtonClickEvent.subscribe(() => log.info('点击快进模式按钮')))
+GameMountEvent.subscribe(() => AutoButtonClickEvent.subscribe(() => log.info('点击自动模式按钮')))
