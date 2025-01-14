@@ -41,6 +41,7 @@ export const selEnd = Blocking(
     (context) =>
         async function () {
             if (context.state === GameState.Init) return
+            if (context.state === GameState.Fast && context.store.config.stopfastonselection === false) return
             displaySelectionView(true)
             const num = await Promise.race(promises)
             selections.length = 0
