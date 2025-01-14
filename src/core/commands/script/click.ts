@@ -1,14 +1,10 @@
 import { NonBlocking } from '@/core/command'
+import { SwitchState } from '@/core/types/Meta'
 import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 
-export enum EventState {
-    Enabled,
-    Disabled
-}
+export const clickState = useAutoResetSignal<SwitchState>(() => SwitchState.Enabled, Scope.Game)
 
-export const clickState = useAutoResetSignal<EventState>(() => EventState.Enabled, Scope.Game)
-
-export const click = NonBlocking<{ value: boolean }>(() => ({ value = true }) => {
-    if (value) clickState(EventState.Enabled)
-    else clickState(EventState.Disabled)
+export const click = NonBlocking<{ enable: boolean }>(() => ({ enable }) => {
+    if (enable) clickState(SwitchState.Enabled)
+    else clickState(SwitchState.Disabled)
 })

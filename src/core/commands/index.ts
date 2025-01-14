@@ -1,13 +1,14 @@
 import { closeAudio, fadeAudio, setAudio } from './script/audio'
 import { backlog } from './script/backlog'
 import { Continue, End, Jump } from './script/branch'
+import { click } from './script/click'
 // import { closeImage, setImage, tweenImage } from './script/image'
 import { closeImage, setImage, tweenImage } from './script/hoshizora/image'
 import { selection, selEnd } from './script/hoshizora/selection'
 // import { punch, shake } from './script/shake'
 import { punch, shake } from './script/hoshizora/shake'
 import { Await, Chain, Fork, Par } from './script/schedule'
-import { icon, name, preview, text } from './script/textbox'
+import { icon, name, preview, text, textbox } from './script/textbox'
 import { unlock } from './script/unlock'
 import { variable } from './script/variable'
 import { video } from './script/video'
@@ -49,7 +50,9 @@ export const commands = () =>
         video,
         unlock,
         shake,
-        punch
+        punch,
+        click,
+        textbox
     }) as const
 
 // 文本:text

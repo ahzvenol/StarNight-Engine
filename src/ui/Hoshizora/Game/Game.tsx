@@ -1,10 +1,12 @@
 import type { Component } from 'solid-js'
 import { throttle } from 'es-toolkit'
 import { Show } from 'solid-js'
-import { clickState, EventState } from '@/core/commands/script/click'
+import { clickState } from '@/core/commands/script/click'
 import { displaySelectionView } from '@/core/commands/script/hoshizora/selection'
+import { textboxState } from '@/core/commands/script/textbox'
 import { Core } from '@/core/Core'
 import { GameClickEvent } from '@/core/event'
+import { SwitchState } from '@/core/types/Meta'
 import { Content } from '@/ui/Elements'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
@@ -24,7 +26,7 @@ const GameUI: Component = () => {
     // 在两个位置管理用户点击:
     // 设置pointer-events以屏蔽整个GameUI的onClick触发
     // 在触发click之前判断状态适用于函数被其他键盘事件调用的情况
-    const enable = () => clickState() === EventState.Enabled
+    const enable = () => clickState() === SwitchState.Enabled
     // 为点击设置0.1秒节流
     const click = throttle(
         () => {
@@ -41,9 +43,9 @@ const GameUI: Component = () => {
         <Content
             style={{ 'pointer-events': enable() ? 'auto' : 'none' }}
             onClick={() => (displayBottomBox() ? click() : displayBottomBox(true))}
-            onContextMenu={() => displayBottomBox((v) => !v)}>
+            onContextMenu={() => displayBottomBox((b) => !b)}>
             <Stage />
-            <Show when={!displayBacklog() && displayBottomBox()}>
+            <Show when={!displayBacklog() && displayBottomBox() && textboxState() === SwitchState.Enabled}>
                 <Show when={!displaySelectionView()}>
                     <TextBox />
                 </Show>
