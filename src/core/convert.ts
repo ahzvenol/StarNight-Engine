@@ -66,7 +66,7 @@ export const deepExpandMacros = (row: RuntimeCommandLike): Array<RuntimeCommandL
 // 对每个命令节点应用转换
 export const fullExpandMacros = (rows: Array<RuntimeCommandLike>): Array<RuntimeCommandLike> =>
     rows.flatMap((row) => {
-        if (Array.isArray(row.args)) return fullExpandMacros(row.args)
+        if (Array.isArray(row.args)) return [{ key: row.key, args: fullExpandMacros(row.args) }]
         else return deepExpandMacros(row)
     })
 
