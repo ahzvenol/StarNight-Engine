@@ -2,8 +2,9 @@ import type { Component, ParentProps } from 'solid-js'
 import type { InitialGameData } from '@/core/types/Game'
 import { Howl } from 'howler'
 import { createContext, createEffect, on } from 'solid-js'
+import { GameActivateEvent, GameDeactivateEvent, ReturnToTitleEvent } from '@/core/event'
 import { Route, router } from '@/router'
-import { useAudioConfig } from '@/store/hooks/useAudioConfig'
+import { useAudio } from '@/store/hooks/useAudio'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
 import { KeepAlive } from '@/utils/solid/KeepAlive'
@@ -17,8 +18,33 @@ export enum Pages {
     'Gallery' = 'Gallery'
 }
 
+let isInGame = false
+
+createEffect(
+    on(
+        router.active,
+        (now, prev) => {
+            if (isInGame) {
+                if (now === Pages.Title) {
+                    ReturnToTitleEvent.publish()
+                } else if (now === Pages.Game) {
+                    GameActivateEvent.publish()
+                } else if (prev === Pages.Game) {
+                    GameDeactivateEvent.publish()
+                }
+            }
+            if (now === Pages.Game) {
+                isInGame = true
+            } else if (now === Pages.Title) {
+                isInGame = false
+            }
+        },
+        { defer: true }
+    )
+)
+
 export const Title: Component<ParentProps> = (props) => {
-    const TitleBGM = useAudioConfig(
+    const TitleBGM = useAudio(
         'BGM',
         new Howl({
             src: './static/AudioClip/bgm01.flac'

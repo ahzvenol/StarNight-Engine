@@ -2,8 +2,8 @@ import { Dynamic } from '../../command'
 import { _wait } from './abstract/wait'
 
 export const wait = Dynamic<{ duration: number }>(
-    ({ timer }) =>
+    (context) =>
         function* ({ duration }) {
-            yield _wait(timer)(duration)
+            yield* _wait(context)(duration)
         }
 )

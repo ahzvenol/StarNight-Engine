@@ -25,8 +25,10 @@ export const readIndicatorView = useAutoResetSignal(() => false, Scope.Act)
 export const textView = useAutoResetSignal(() => '', Scope.Act)
 export const text = Dynamic<{ text: string }>(
     ActScope(
-        ({ index, timer, store, variables: { global } }) =>
+        (context) =>
             function* ({ text }) {
+                const { index, store } = context
+                const global = context.variables.global
                 if (global.segment().some((i) => inRange(index, i[0], i[1] + 1))) {
                     readIndicatorView(true)
                 } else {
@@ -36,7 +38,7 @@ export const text = Dynamic<{ text: string }>(
                 yield* Y<string, Generator<Promise<void>, void, void>>(
                     (rec) =>
                         function* (str): Generator<Promise<void>, void, void> {
-                            yield _wait(timer)(store.config.textspeed * 100)
+                            yield* _wait(context)(store.config.textspeed * 100)
                             textView((text) => text + str.charAt(0))
                             if (str.length >= 1) yield* rec(str.slice(1))
                         }

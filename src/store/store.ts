@@ -8,8 +8,8 @@ import { log } from '@/utils/logger'
 import systemDefaultStore from './default'
 import { getUserConfig } from './user'
 
-const createStore = async () => {
-    const userConfig = (await getUserConfig().catch((e) => log.warn('没有获取到用户配置', e))) || {}
+async function createStore() {
+    const userConfig = await getUserConfig()
 
     const userDefaultStore = toMerged(systemDefaultStore, userConfig)
 
@@ -42,7 +42,7 @@ const createStore = async () => {
     // tag:直接访问根对象,如store(),会导致store数据改变时,组件被重复调用
     // 我也不知道怎么回事,总之套一层数组来解构一下它就好了
     // micro-reactive的更新版本没有这个问题,但是
-    // 新版本也取消了子变量修改时对父变量的Effect传递,所以,不能更新
+    // 新版本也取消了子对象修改时对父对象的Effect传递,所以,不能更新
 
     Object.keys(store()).forEach((key) => {
         createEffect(
@@ -64,7 +64,7 @@ const createStore = async () => {
 
 const storePackage = createStore()
 
-// 各模块对store数据的依赖关系通过使用storePromise定义在各自模块中
+// 各模块对store数据的依赖关系通过使用storePromise定义在effects中
 const storePromise = storePackage.then(({ store }) => store)
 
 // 重置三件套

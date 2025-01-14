@@ -77,11 +77,8 @@ export type CommandsKeys = keyof Commands
 // ----
 
 // 运行时的输入数据,其中命令可能不存在,命令参数可能非法
-export type RuntimeCommandLike = {
-    readonly key: string
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    readonly args: any
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type RuntimeCommandLike = { readonly key: string; readonly args: any }
 
 // 已注册的全部命令的参数定义,使用标志取出
 export type CommandsArgs<T extends CommandsKeys> = Parameters<ReturnType<Commands[T]['apply']>>[0]

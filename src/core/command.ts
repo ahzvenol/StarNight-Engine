@@ -41,14 +41,11 @@ export function Dynamic<T extends CommandArgs>(
             schedule: Schedule.Async
         },
         apply: (context) => (args) => {
-            const fast = new Promise<void>((res) => {
-                context.timer.addFinalizeMethod(res)
-            })
             const generator = fn(context)(args) || (function* () {})()
             const output =
                 context.state === GameState.Init
                     ? runGeneratorSync(generator)
-                    : runGeneratorAsyncWithControl(generator, { fast, cancel: context.cleanup })
+                    : runGeneratorAsyncWithControl(generator, { immediate: context.immediate, cancel: context.cleanup })
             return normalizeOutput(output)
         }
     }
@@ -74,9 +71,9 @@ export function Blocking<T extends CommandArgs>(fn: BlockingCommandFunction<T>):
     }
 }
 
-export async function runGeneratorAsyncWithControl<TRetrun>(
+async function runGeneratorAsyncWithControl<TRetrun>(
     generator: Generator<Promise<void>, TRetrun, void>,
-    { fast, cancel }: { fast: Promise<void>; cancel: Promise<void> }
+    { immediate, cancel }: { immediate: Promise<void>; cancel: Promise<void> }
 ): Promise<TRetrun | undefined> {
     return Y<'Normal' | 'Fast' | 'Cancel', Promise<TRetrun | undefined>>((rec) => async (flag) => {
         // 游戏销毁与新游戏实例创建几乎同时发生,阻塞状态的生成器直接返回可能导致后面的命令泄漏到新实例,实际我们希望它继续阻塞
@@ -88,7 +85,7 @@ export async function runGeneratorAsyncWithControl<TRetrun>(
                 return rec(
                     await Promise.race([
                         value.then(() => 'Normal' as const),
-                        fast.then(() => 'Fast' as const),
+                        immediate.then(() => 'Fast' as const),
                         cancel.then(() => 'Cancel' as const)
                     ])
                 )
@@ -96,7 +93,7 @@ export async function runGeneratorAsyncWithControl<TRetrun>(
     })('Normal')
 }
 
-export function runGeneratorSync<TRetrun>(generator: Generator<Promise<void>, TRetrun, void>): TRetrun {
+function runGeneratorSync<TRetrun>(generator: Generator<Promise<void>, TRetrun, void>): TRetrun {
     return Y<void, TRetrun>((rec) => () => {
         const { value, done } = generator.next()
         if (!done) return rec()
