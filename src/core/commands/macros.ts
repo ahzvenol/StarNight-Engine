@@ -4,10 +4,12 @@ import { setBG, setSprite } from './hoshizora/image'
 import { say } from './hoshizora/say'
 import { tweenImage } from './hoshizora/tween'
 import { video } from './hoshizora/video'
+import { wait } from './hoshizora/wait'
 
-// 宏存在顺序依赖,目前只有say需要在audio上面
+// 宏存在顺序依赖
 // 逐个应用宏,单个宏被应用过后就不会再次应用
 export const macros = [
+    Macro.from('wait', wait),
     Macro.from('setBG', setBG),
     Macro.from('setS', setSprite),
     Macro.from('tween', tweenImage),

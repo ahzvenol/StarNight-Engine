@@ -1,4 +1,5 @@
 import { inRange } from 'es-toolkit'
+import { SwitchState } from '@/core/types/Meta'
 import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { Y } from '@/utils/fp'
 import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
@@ -51,4 +52,11 @@ export const nameView = useAutoResetSignal(() => '', Scope.Act)
 
 export const name = NonBlocking<{ name: string }>(() => ({ name }) => {
     nameView(name)
+})
+
+export const textboxState = useAutoResetSignal<SwitchState>(() => SwitchState.Enabled, Scope.Game)
+
+export const textbox = NonBlocking<{ enable: boolean }>(() => ({ enable }) => {
+    if (enable) textboxState(SwitchState.Enabled)
+    else textboxState(SwitchState.Disabled)
 })
