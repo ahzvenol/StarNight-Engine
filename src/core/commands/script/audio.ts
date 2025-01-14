@@ -1,12 +1,12 @@
 import type { HowlOptions } from 'howler'
 import type { ExtendArgs } from '@/core/types/Command'
-import type { AudioTracksType } from '@/store/hooks/useAudioConfig'
+import type { AudioTracksType } from '@/store/hooks/useAudio'
 import { delay, isUndefined } from 'es-toolkit'
 import { Howl } from 'howler'
 import { Dynamic, NonBlocking } from '@/core/command'
-import { ActivateEvent, ActStartEvent, CleanupEvent, LeaveEvent, PostInitEvent } from '@/core/event'
+import { ActStartEvent, CleanupEvent, ContinueGameEvent, PostInitEvent, ReturnToTitleEvent } from '@/core/event'
 import { GameState } from '@/core/types/Game'
-import { useAudioConfig } from '@/store/hooks/useAudioConfig'
+import { useAudio } from '@/store/hooks/useAudio'
 
 const tracks = new Map<string, Howl>()
 
@@ -16,13 +16,9 @@ ActStartEvent.subscribe(({ store: { config } }) => {
     if (config.interruptclip) tracks.get('Clip')?.stop()
 })
 
-ActivateEvent.subscribe(() =>
-    tracks.forEach((audio) => {
-        if (!audio.playing()) audio.play()
-    })
-)
+ContinueGameEvent.subscribe(() => tracks.forEach((audio) => audio.play()))
 
-LeaveEvent.subscribe(() => tracks.forEach((audio) => audio.pause()))
+ReturnToTitleEvent.subscribe(() => tracks.forEach((audio) => audio.pause()))
 
 CleanupEvent.subscribe(() => {
     tracks.forEach((audio) => audio.unload())
@@ -42,7 +38,7 @@ export const setAudio = Dynamic<SetAudioCommandArgs>(
             // Clip的生命周期是幕,所以不用初始化
             if ((state === GameState.Init || state === GameState.Fast) && type === 'Clip') return
             // 挂载新音频
-            const newAudio = useAudioConfig(
+            const newAudio = useAudio(
                 type as AudioTracksType,
                 new Howl({
                     ...configs,

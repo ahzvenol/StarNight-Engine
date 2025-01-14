@@ -2,7 +2,7 @@ import type { Component, JSX } from 'solid-js'
 import { isPlainObject, range } from 'es-toolkit'
 import { Howl } from 'howler'
 import { For, splitProps } from 'solid-js'
-import { useAudioConfig } from '@/store/hooks/useAudioConfig'
+import { useAudio } from '@/store/hooks/useAudio'
 import { stopPropagation } from '@/utils/solid/stopPropagation'
 import Scale from './Scale'
 
@@ -20,8 +20,8 @@ const Graphic = (props: { width: number; height: number; mode: 'auto' | 'full'; 
     </div>
 )
 
-const ClickSE = useAudioConfig('UISE', new Howl({ src: './static/mouse_click_1.wav' }))
-const HoverSE = useAudioConfig('UISE', new Howl({ src: './static/mouse_hover_1.wav' }))
+const ClickSE = useAudio('UISE', new Howl({ src: './static/mouse_click_1.wav' }))
+const HoverSE = useAudio('UISE', new Howl({ src: './static/mouse_hover_1.wav' }))
 
 const Button: Component<
     Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onclick' | 'onmouseenter'> & {

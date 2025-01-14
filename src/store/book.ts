@@ -3,7 +3,6 @@ import { cloneDeep } from 'es-toolkit'
 import { fullConvert } from '@/core/convert'
 import request from '@/utils/request'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Book = Array<Array<RuntimeCommandLike>>
 
 const book = request<Book>('./static/book.json').then((res) => res.data)

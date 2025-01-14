@@ -1,6 +1,5 @@
 import type { Reactive, ReactiveType } from 'micro-reactive'
 import type { GlobalSaveData, ReactiveStore } from '@/store/default'
-import type { Timer } from '../utils/Timer'
 
 export enum GameState {
     Init,
@@ -27,9 +26,9 @@ export type GameContext = {
 }
 
 export type GameRuntimeContext = {
-    timer: Timer
     state: GameState
     index: number
+    immediate: Promise<void>
     cleanup: Promise<void>
 } & GameContext
 

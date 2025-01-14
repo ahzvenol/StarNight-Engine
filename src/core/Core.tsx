@@ -4,24 +4,19 @@ import type { GlobalSaveData } from '@/store/default'
 import type { Variables } from './types/Game'
 import { once } from 'es-toolkit'
 import { useReactive } from 'micro-reactive'
-import { createContext, createEffect, on, onCleanup, onMount, useContext } from 'solid-js'
-import { router } from '@/router'
+import { createContext, onCleanup, onMount, useContext } from 'solid-js'
 import { useStore } from '@/store/context'
 import { Content } from '@/ui/Elements'
-import { GameInitialContext, Pages } from '@/ui/Pages'
+import { GameInitialContext } from '@/ui/Pages'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
-import {
-    ActivateEvent,
-    AutoButtonClickEvent,
-    CleanupEvent,
-    DeactivateEvent,
-    FastButtonClickEvent,
-    LeaveEvent,
-    MountEvent
-} from './event'
-import { runLoop } from './run'
+import { AutoButtonClickEvent, CleanupEvent, FastButtonClickEvent, GameVisibilityEvent, MountEvent } from './event'
+import { run } from './run'
 import { GameState } from './types/Game'
+import { Scope, useAutoResetSignal } from './utils/useAutoResetSignal'
+
+export const isGameVisible = useAutoResetSignal(() => true, Scope.Game)
+GameVisibilityEvent.subscribe((visible) => isGameVisible(visible))
 
 const StateContext = createContext<Accessor<GameState>>()
 const VariablesContext = createContext<Variables>()
@@ -55,23 +50,7 @@ export const Core: Component<ParentProps> = (props) => {
     onMount(MountEvent.publish)
 
     // micro-reactive有Bug,如果遇到奇怪的递归就是它的锅
-    onMount(once(() => runLoop(initialIndex, state, store, variables)))
-
-    createEffect(
-        on(
-            router.active,
-            () => {
-                if (router.active() === Pages.Title) {
-                    LeaveEvent.publish()
-                } else if (router.active() !== Pages.Game) {
-                    DeactivateEvent.publish()
-                } else {
-                    ActivateEvent.publish()
-                }
-            },
-            { defer: true }
-        )
-    )
+    onMount(once(() => run(initialIndex, state, store, variables)))
 
     return (
         <StateContext.Provider value={state}>

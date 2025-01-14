@@ -2,6 +2,7 @@ import '@/store/effects/index'
 import type { Component } from 'solid-js'
 import { Match, Switch } from 'solid-js'
 import { KeepAliveProvider } from 'solid-keep-alive'
+import { AppEnterEvent, AppLeaveEvent } from './core/event'
 import { Context } from './store/context'
 import store from './store/store'
 import UI from './ui/Hoshizora'
@@ -21,6 +22,13 @@ document.oncontextmenu = document.onmousedown = () => false
 //             })
 //     }
 // }
+addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') {
+        AppLeaveEvent.publish()
+    } else if (document.visibilityState === 'visible') {
+        AppEnterEvent.publish()
+    }
+})
 
 // 整个配置文件在这里分发
 const App: Component = () => (

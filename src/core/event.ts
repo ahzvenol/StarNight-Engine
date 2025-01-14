@@ -1,4 +1,6 @@
 import type { GameRuntimeContext } from './types/Game'
+import { router } from '@/router'
+import { Pages } from '@/ui/Pages'
 import { log } from '@/utils/logger'
 import { GameState } from './types/Game'
 import { EventDispatcher, on } from './utils/EventDispatcher'
@@ -12,25 +14,53 @@ export const onPostInit = on(PostInitEvent)
 PreInitEvent.subscribe(() => log.info('Game:初始化开始'))
 PostInitEvent.subscribe(() => log.info('Game:初始化完成'))
 
+// 用户完全离开应用（切换到其他应用、关闭浏览器、最小化等）
+export const AppLeaveEvent = new EventDispatcher<void>()
+export const onAppLeave = on(AppLeaveEvent)
+// 用户回到应用（从后台切回、重新打开窗口）
+export const AppEnterEvent = new EventDispatcher<void>()
+export const onAppEnter = on(AppEnterEvent)
+// 用户离开游戏页面（但仍在游戏内，如进入设置、存档页、Backlog）
+export const GameDeactivateEvent = new EventDispatcher<void>()
+export const onGameDeactivate = on(GameDeactivateEvent)
+// 用户回到游戏页面（如从设置、存档页、Backlog中返回）
+export const GameActivateEvent = new EventDispatcher<void>()
+export const onGameActivate = on(GameActivateEvent)
+// 用户返回标题页
+export const ReturnToTitleEvent = new EventDispatcher<void>()
+export const onReturnToTitle = on(ReturnToTitleEvent)
+// 用户从标题页点击继续游戏
+export const ContinueGameEvent = new EventDispatcher<void>()
+export const onContinueGame = on(ContinueGameEvent)
+// 游戏可见性改变的事件
+export const GameVisibilityEvent = new EventDispatcher<boolean>()
+export const onGameVisibilityChange = on(GameVisibilityEvent)
+
+AppLeaveEvent.subscribe(() => log.info('App:用户离开应用'))
+AppEnterEvent.subscribe(() => log.info('App:用户回到应用'))
+GameDeactivateEvent.subscribe(() => log.info('Game:用户离开游戏页面'))
+GameActivateEvent.subscribe(() => log.info('Game:用户回到游戏页面'))
+ReturnToTitleEvent.subscribe(() => log.info('Game:用户返回标题页'))
+ContinueGameEvent.subscribe(() => log.info('Game: 用户从标题页继续游戏'))
+AppLeaveEvent.subscribe(() => router.active() === Pages.Game && GameVisibilityEvent.publish(false))
+AppEnterEvent.subscribe(() => router.active() === Pages.Game && GameVisibilityEvent.publish(true))
+GameDeactivateEvent.subscribe(() => GameVisibilityEvent.publish(false))
+GameActivateEvent.subscribe(() => GameVisibilityEvent.publish(true))
+ReturnToTitleEvent.subscribe(() => GameVisibilityEvent.publish(false))
+ContinueGameEvent.subscribe(() => GameVisibilityEvent.publish(true))
+GameVisibilityEvent.subscribe((visible) => log.info(`Game:游戏可见性变动:${visible}`))
+
+// 同时只会存在一个游戏实例,用户开始新游戏时:
+// 先触发CleanupEvent,接着触发MountEvent
+// 如果不存在旧的游戏实例,CleanupEvent不会触发
+// 新游戏实例挂载的事件
 export const MountEvent = new EventDispatcher<void>()
 export const onMount = on(MountEvent)
-// 用户回到主页的事件,此时内容由起始页接管
-export const LeaveEvent = new EventDispatcher<void>()
-export const onLeave = on(LeaveEvent)
-// 用户离开游戏页面的事件,可能是前往设置页,存档页等页面,通过点击返回还会回到游戏中
-export const DeactivateEvent = new EventDispatcher<void>()
-export const onDeactivate = on(DeactivateEvent)
-// 用户回到游戏页面的事件
-export const ActivateEvent = new EventDispatcher<void>()
-export const onActivate = on(ActivateEvent)
-// 用户开始新游戏的事件,旧游戏实例的一切效果应销毁
+// 旧游戏实例销毁的事件
 export const CleanupEvent = new EventDispatcher<void>()
 export const onCleanup = on(CleanupEvent)
 
 MountEvent.subscribe(() => log.info('Game:组件挂载'))
-LeaveEvent.subscribe(() => log.info('Game:用户回到标题页'))
-DeactivateEvent.subscribe(() => log.info('Game:用户离开游戏页面'))
-ActivateEvent.subscribe(() => log.info('Game:用户回到游戏页面'))
 CleanupEvent.subscribe(() => log.info('Game:游戏销毁'))
 
 export const ActStartEvent = new EventDispatcher<GameRuntimeContext>()

@@ -1,4 +1,4 @@
-/* eslint-disable solid/components-return-once */
+import { AppEnterEvent, AppLeaveEvent } from '@/core/event'
 import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { PromiseX } from '@/utils/PromiseX'
 import { ActScope, Dynamic } from '../../command'
@@ -8,19 +8,19 @@ export const videoView = useAutoResetSignal<HTMLVideoElement | null>(() => null,
 
 export type VideoCommandArgs = { file: string }
 
+AppEnterEvent.subscribe(() => videoView()?.play())
+AppLeaveEvent.subscribe(() => videoView()?.pause())
+
 export const video = Dynamic<VideoCommandArgs>(
     ActScope(
-        (context) =>
+        ({ store: { config } }) =>
             function* ({ file }) {
-                const { timer, store } = context
                 const promise = new PromiseX<void>()
                 const videoElement = (
                     <video src={file} autoplay onEnded={() => promise.resolve()} />
                 ) as HTMLVideoElement
-                videoElement.volume = store.config.golbalvolume
+                videoElement.volume = config.golbalvolume
                 videoView(videoElement)
-                timer.addPauseMethod(videoElement.pause)
-                timer.addResumeMethod(videoElement.play)
                 yield promise
                 videoElement.pause()
                 videoView(null)
