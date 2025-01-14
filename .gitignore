@@ -4,6 +4,8 @@
 
 node_modules/
 
+android/
+
 dist/
 
 target/
@@ -16,3 +18,5 @@ target/
 public/static/
 
 stats.html
+
+capacitor.config.ts
