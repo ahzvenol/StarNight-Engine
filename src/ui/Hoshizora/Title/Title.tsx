@@ -31,8 +31,10 @@ const Title: Component = () => {
                                 />
                                 <style jsx>
                                     {`
-                                        .Title_button_${index}:hover {
-                                            background-image: url('./static/Texture2D/title_${imageId}_on.webp') !important;
+                                        @media (hover: hover) {
+                                            .Title_button_${index}:hover {
+                                                background-image: url('./static/Texture2D/title_${imageId}_on.webp') !important;
+                                            }
                                         }
                                     `}
                                 </style>

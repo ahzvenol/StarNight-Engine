@@ -16,8 +16,12 @@
     transition: 0.2s;
 }
 
-.Gallery_switch_hover:hover {
-    opacity: 0.5;
+.Gallery_switch_hover {
+    @media (hover: hover) {
+        &:hover {
+            opacity: 0.5;
+        }
+    }
 }
 
 .Gallery_switch_1 {

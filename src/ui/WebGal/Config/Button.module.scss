@@ -9,10 +9,12 @@
     cursor: pointer;
 }
 
-.NormalButton:hover {
-    color: rgb(81 110 65 / 90%);
-    font-weight: bold;
-    border-bottom: 2px solid rgb(81 110 65 / 90%);
+@media (hover: hover) {
+    .NormalButton:hover {
+        color: rgb(81 110 65 / 90%);
+        font-weight: bold;
+        border-bottom: 2px solid rgb(81 110 65 / 90%);
+    }
 }
 
 .NormalButtonChecked {

@@ -23,9 +23,11 @@
     cursor: pointer;
 }
 
-.extra_top_icon:hover {
-    background: rgb(255 255 255 / 25%);
-    animation: extra_icon_softin 0.25s ease-out forwards;
+@media (hover: hover) {
+    .extra_top_icon:hover {
+        background: rgb(255 255 255 / 25%);
+        animation: extra_icon_softin 0.25s ease-out forwards;
+    }
 }
 
 @keyframes extra_icon_softin {
@@ -109,8 +111,10 @@
         color 0.33s;
 }
 
-.bgmControlButton:hover {
-    box-shadow: 0 0 10px 5px rgb(255 255 255 / 35%);
+@media (hover: hover) {
+    .bgmControlButton:hover {
+        box-shadow: 0 0 10px 5px rgb(255 255 255 / 35%);
+    }
 }
 
 .bgmName {
@@ -151,12 +155,14 @@
     }
 }
 
-.bgmElement:hover {
-    color: #666666;
-    background-color: rgb(255 255 255 / 65%);
-    transition:
-        background-color 0.5s,
-        color 0.5s;
+@media (hover: hover) {
+    .bgmElement:hover {
+        color: #666666;
+        background-color: rgb(255 255 255 / 65%);
+        transition:
+            background-color 0.5s,
+            color 0.5s;
+    }
 }
 
 .bgmElement_active {
@@ -244,8 +250,10 @@
     background-color: rgb(0 92 175 / 10%) !important;
 }
 
-.cgNav:hover {
-    background-color: rgb(0 92 175 / 5%);
+@media (hover: hover) {
+    .cgNav:hover {
+        background-color: rgb(0 92 175 / 5%);
+    }
 }
 
 .showFullContainer {

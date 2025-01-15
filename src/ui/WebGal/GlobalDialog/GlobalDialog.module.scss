@@ -7,7 +7,7 @@
     width: 100%;
     height: 100%;
     color: white;
-    //font-family: "WebgalUI", -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    // font-family: "WebgalUI", -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     font-family: '思源宋体', serif;
     background: rgb(15 37 64 / 39%);
     opacity: 0.5;
@@ -71,15 +71,17 @@
         color 0.33s,
         font-weight 0.33s,
         transform 0.33s;
-    //background: rgba(0, 0, 0, 0.05);
+    // background: rgba(0, 0, 0, 0.05);
 }
 
-.button:hover {
-    color: #005caf;
-    font-weight: bold;
-    text-shadow: 0 0 15px rgb(0 0 0 / 0%);
-    background: rgb(255 255 255 / 85%);
-    transform: scale(1.1, 1.1);
+@media (hover: hover) {
+    .button:hover {
+        color: #005caf;
+        font-weight: bold;
+        text-shadow: 0 0 15px rgb(0 0 0 / 0%);
+        background: rgb(255 255 255 / 85%);
+        transform: scale(1.1, 1.1);
+    }
 }
 
 @keyframes showGlobalDialog {

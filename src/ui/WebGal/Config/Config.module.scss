@@ -134,6 +134,8 @@
     opacity: 1;
 }
 
-.Options_page_button:hover {
-    opacity: 1;
+@media (hover: hover) {
+    .Options_page_button:hover {
+        opacity: 1;
+    }
 }

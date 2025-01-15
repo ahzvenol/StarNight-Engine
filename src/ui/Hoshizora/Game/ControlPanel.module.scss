@@ -30,16 +30,18 @@
     width: 26px;
     background-image: url('/static/Texture2D/window_close.webp');
 
-    &:hover {
-        background-image: url('/static/Texture2D/window_close_ov.webp');
+    @media (hover: hover) {
+        &:hover {
+            background-image: url('/static/Texture2D/window_close_ov.webp');
+        }
     }
 }
-/* fast没有hover,_ov是点击才会变 */
+
 .Game_ControlPanel_fast {
     width: 28px;
     background-image: url('/static/Texture2D/window_skip.webp');
 }
-/* auto没有hover,甚至没有_ov,点击效果好像是变暗? */
+
 .Game_ControlPanel_auto {
     width: 24px;
     background-image: url('/static/Texture2D/window_auto.webp');
@@ -49,8 +51,10 @@
     width: 26px;
     background-image: url('/static/Texture2D/window_backlog.webp');
 
-    &:hover {
-        background-image: url('/static/Texture2D/window_backlog_ov.webp');
+    @media (hover: hover) {
+        &:hover {
+            background-image: url('/static/Texture2D/window_backlog_ov.webp');
+        }
     }
 }
 
@@ -58,8 +62,10 @@
     width: 26px;
     background-image: url('/static/Texture2D/window_config.webp');
 
-    &:hover {
-        background-image: url('/static/Texture2D/window_config_ov.webp');
+    @media (hover: hover) {
+        &:hover {
+            background-image: url('/static/Texture2D/window_config_ov.webp');
+        }
     }
 }
 
@@ -71,16 +77,20 @@
 .Game_ControlPanel_quickload {
     background-image: url('/static/Texture2D/window_qload.webp');
 
-    &:hover {
-        background-image: url('/static/Texture2D/window_qload_ov.webp');
+    @media (hover: hover) {
+        &:hover {
+            background-image: url('/static/Texture2D/window_qload_ov.webp');
+        }
     }
 }
 
 .Game_ControlPanel_quicksave {
     background-image: url('/static/Texture2D/window_qsave.webp');
 
-    &:hover {
-        background-image: url('/static/Texture2D/window_qsave_ov.webp');
+    @media (hover: hover) {
+        &:hover {
+            background-image: url('/static/Texture2D/window_qsave_ov.webp');
+        }
     }
 }
 
@@ -92,15 +102,19 @@
 .Game_ControlPanel_load {
     background-image: url('/static/Texture2D/window_load.webp');
 
-    &:hover {
-        background-image: url('/static/Texture2D/window_load_ov.webp');
+    @media (hover: hover) {
+        &:hover {
+            background-image: url('/static/Texture2D/window_load_ov.webp');
+        }
     }
 }
 
 .Game_ControlPanel_save {
     background-image: url('/static/Texture2D/window_save.webp');
 
-    &:hover {
-        background-image: url('/static/Texture2D/window_save_ov.webp');
+    @media (hover: hover) {
+        &:hover {
+            background-image: url('/static/Texture2D/window_save_ov.webp');
+        }
     }
 }

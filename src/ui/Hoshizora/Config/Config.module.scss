@@ -76,8 +76,10 @@
     right: 148px;
     background-image: url('/static/Texture2D/config_backtitle.webp');
 
-    &:hover {
-        background-image: url('/static/Texture2D/config_backtitle_ov.webp');
+    @media (hover: hover) {
+        &:hover {
+            background-image: url('/static/Texture2D/config_backtitle_ov.webp');
+        }
     }
 }
 
@@ -85,7 +87,9 @@
     right: 248px;
     background-image: url('/static/Texture2D/config_reset.webp');
 
-    &:hover {
-        background-image: url('/static/Texture2D/config_reset_ov.webp');
+    @media (hover: hover) {
+        &:hover {
+            background-image: url('/static/Texture2D/config_reset_ov.webp');
+        }
     }
 }

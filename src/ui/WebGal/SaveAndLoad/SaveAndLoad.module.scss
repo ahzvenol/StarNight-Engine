@@ -7,12 +7,12 @@
 
 .Save_Load_top {
     display: flex;
-    //border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    // border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     justify-content: center;
     width: 100%;
     height: 10%;
-    //background-color: rgba(255, 255, 255, 1);
-    //box-shadow: 0 0 1.5em 0.1em rgba(0, 0, 0, 0.05);
+    // background-color: rgba(255, 255, 255, 1);
+    // box-shadow: 0 0 1.5em 0.1em rgba(0, 0, 0, 0.05);
     animation: Elements_in ease-out 1s forwards;
 }
 
@@ -21,12 +21,12 @@
     top: 0;
     left: 20px;
     z-index: -1;
-    //border-bottom: 4px solid #77428D;
+    // border-bottom: 4px solid #77428D;
     display: flex;
     align-items: center;
     justify-content: center;
-    //margin: 0 0 0 0.8em;
-    //padding: 0 0.8em 0 0.8em;
+    // margin: 0 0 0 0.8em;
+    // padding: 0 0.8em 0 0.8em;
     box-sizing: border-box;
     width: auto;
     min-width: 350px;
@@ -56,7 +56,7 @@
 .Save_Load_top_buttonList {
     display: flex;
     height: 100%;
-    //padding: 0 0 0 2em;
+    // padding: 0 0 0 2em;
 }
 
 .Save_Load_top_button {
@@ -121,11 +121,11 @@
 }
 
 .Save_Load_content_element {
-    //border: 1px solid rgba(255, 255, 255, 1);
+    // border: 1px solid rgba(255, 255, 255, 1);
     width: 17.5%;
     height: 45%;
     overflow: hidden;
-    //background: linear-gradient(-45deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%);
+    // background: linear-gradient(-45deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%);
     background: linear-gradient(-45deg, rgb(0 0 0 / 5%), rgb(0 0 0 / 7.5%));
     border-radius: 4px;
     cursor: pointer;
@@ -133,14 +133,14 @@
     transition:
         transform 0.25s,
         box-shadow 0.25s;
-    //box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    // box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     animation:
         Elements_in 1s ease-out forwards,
         Elements_in_transform 1s ease-out;
 }
 
 .Save_Load_content_element:hover {
-    //box-shadow: 0 0 25px 8px rgba(0, 0, 0, 0.1);
+    // box-shadow: 0 0 25px 8px rgba(0, 0, 0, 0.1);
     transform: scale(1.05, 1.05) translate(-0.2em, -0.2em);
 }
 
@@ -180,7 +180,7 @@
 }
 
 .Save_Load_content_text {
-    //box-sizing: border-box;
+    // box-sizing: border-box;
     display: flex;
     flex-flow: column;
     align-items: flex-start;
@@ -188,7 +188,7 @@
     width: 100%;
     height: 40%;
     color: #373c38;
-    //background: rgba(255,255,255,1);
+    // background: rgba(255,255,255,1);
     font-size: 120%;
     font-family: WebgalUI, sans-serif;
     letter-spacing: 0.05em;
@@ -204,10 +204,10 @@
     width: 100%;
     padding: 0.35em 0.8em 0.25em;
     color: #77428d;
-    //margin: 0.35em 0 0 0;
-    //background: rgba(0, 0, 0, 0.04);
+    // margin: 0.35em 0 0 0;
+    // background: rgba(0, 0, 0, 0.04);
     font-weight: bold;
-    //border-radius: 4px;
+    // border-radius: 4px;
     border-bottom: 1px solid rgb(0 0 0 / 10%);
 }
 

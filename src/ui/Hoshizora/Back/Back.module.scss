@@ -5,7 +5,9 @@
     height: 23px;
     background-image: url('/static/Texture2D/backlog_back.webp');
 
-    &:hover {
-        background-image: url('/static/Texture2D/backlog_back_ov.webp');
+    @media (hover: hover) {
+        &:hover {
+            background-image: url('/static/Texture2D/backlog_back_ov.webp');
+        }
     }
 }

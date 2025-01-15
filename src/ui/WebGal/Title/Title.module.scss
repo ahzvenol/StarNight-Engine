@@ -33,9 +33,11 @@
     backdrop-filter: blur(5px);
     transition: all 0.33s;
 
-    &:hover {
-        padding: 1em 6em 1em 3em;
-        text-shadow: 0 0 10px rgb(255 255 255 / 100%);
+    @media (hover: hover) {
+        &:hover {
+            padding: 1em 6em 1em 3em;
+            text-shadow: 0 0 10px rgb(255 255 255 / 100%);
+        }
     }
 }
 

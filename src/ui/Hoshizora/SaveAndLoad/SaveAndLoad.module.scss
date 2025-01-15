@@ -38,20 +38,24 @@
     left: 690px;
     transform: rotate(180deg);
 
-    &:hover {
-        width: 18 + 32px;
-        filter: drop-shadow(-32px 0 #909090);
-        scale: 1.01;
+    @media (hover: hover) {
+        &:hover {
+            width: 18 + 32px;
+            filter: drop-shadow(-32px 0 #909090);
+            scale: 1.01;
+        }
     }
 }
 
 .Save_Load_top_arrow_right {
     right: 90px;
 
-    &:hover {
-        width: 18 + 32px;
-        filter: drop-shadow(32px 0 #909090);
-        scale: 1.01;
+    @media (hover: hover) {
+        &:hover {
+            width: 18 + 32px;
+            filter: drop-shadow(32px 0 #909090);
+            scale: 1.01;
+        }
     }
 }
 
@@ -79,9 +83,13 @@
         background-image: url('/static/Texture2D/saveload_frame.webp');
         content: '';
     }
+}
 
-    &.Save_Load_content_element_hover:hover::before {
-        opacity: 0.412;
+.Save_Load_content_element_hover {
+    @media (hover: hover) {
+        &:hover::before {
+            opacity: 0.412;
+        }
     }
 }
 
