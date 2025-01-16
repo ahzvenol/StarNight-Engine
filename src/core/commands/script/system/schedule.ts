@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ScheduledHighLevelCommand } from '@/core/types/Schedule'
 import { Schedule } from '@/core/types/Schedule'
-import { commands } from '..'
-import { _chain, _fork, _par } from './abstract/schedule'
+import { commands } from '../../'
+import { _chain, _fork, _par } from '../abstract/schedule'
 
 // meta.key只用于调试
 
