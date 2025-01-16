@@ -1,8 +1,9 @@
-import { Blocking, NonBlocking } from '@/core/command'
+import { ActScope, Blocking, NonBlocking } from '@/core/command'
 import { PreInitEvent } from '@/core/event'
+import { GameState } from '@/core/types/Game'
 import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { PromiseX } from '@/utils/PromiseX'
-import { Jump } from './branch'
+import { Jump } from './system/branch'
 
 type Selection = {
     label: string
@@ -10,37 +11,42 @@ type Selection = {
     select: () => void
 }
 
+export const selectRecord = Array<number | string>()
+
+PreInitEvent.subscribe(() => (selectRecord.length = 0))
+
 export const selections = new Array<Selection>()
 
 export const displaySelectionView = useAutoResetSignal(() => false, Scope.Game)
 
 PreInitEvent.subscribe(() => (selections.length = 0))
 
-const promises = new Array<Promise<number>>()
+const promises = new Array<Promise<number | string>>()
 
-PreInitEvent.subscribe(() => (selections.length = 0))
+PreInitEvent.subscribe(() => (promises.length = 0))
 
-export const selection = NonBlocking<{ name: string; target: number; disable?: boolean }>(
-    () =>
-        ({ name, target, disable = false }) => {
-            const promise = new PromiseX<number>()
-            selections.push({
-                label: name,
-                disable: disable,
-                select: () => promise.resolve(target)
-            })
-            promises.push(promise)
-        }
+export const selection = NonBlocking<{ name: string; target: number | string; disable?: boolean }>(
+    ActScope(() => ({ name, target, disable = false }) => {
+        const promise = new PromiseX<number | string>()
+        selections.push({
+            label: name,
+            disable: disable,
+            select: () => promise.resolve(target)
+        })
+        promises.push(promise)
+    })
 )
 
 export const selEnd = Blocking(
     (context) =>
         async function () {
             displaySelectionView(true)
-            const num = await Promise.race(promises)
+            const target =
+                context.state === GameState.Init ? context.initial.select.shift()! : await Promise.race(promises)
             selections.length = 0
             promises.length = 0
             displaySelectionView(false)
-            return Jump.apply(context)({ target: num })
+            selectRecord.push(target)
+            return Jump.apply(context)({ target })
         }
 )

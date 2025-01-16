@@ -1,8 +1,8 @@
 import { AppEnterEvent, AppLeaveEvent } from '@/core/event'
 import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { PromiseX } from '@/utils/PromiseX'
-import { ActScope, Dynamic } from '../../command'
-import { _continue } from './abstract/branch'
+import { ActScope, Blocking } from '../../command'
+import { Continue } from './system/branch'
 
 export const videoView = useAutoResetSignal<HTMLVideoElement | null>(() => null, Scope.Game)
 
@@ -11,21 +11,27 @@ export type VideoCommandArgs = { file: string }
 AppEnterEvent.subscribe(() => videoView()?.play())
 AppLeaveEvent.subscribe(() => videoView()?.pause())
 
-export const video = Dynamic<VideoCommandArgs>(
-    ActScope(
-        ({ store: { config } }) =>
-            function* ({ file }) {
-                const promise = new PromiseX<void>()
-                const videoElement = (
-                    // @ts-expect-error 类型“VideoHTMLAttributes<HTMLVideoElement>”上不存在属性“disablePictureInPicture”。
-                    <video src={file} autoplay onEnded={() => promise.resolve()} disablePictureInPicture />
-                ) as HTMLVideoElement
-                videoElement.volume = config.golbalvolume
-                videoView(videoElement)
-                yield promise
-                videoElement.pause()
-                videoView(null)
-                return _continue()
-            }
-    )
+export const video = Blocking<VideoCommandArgs>(
+    ActScope((context) => async ({ file }) => {
+        const {
+            store: { config }
+        } = context
+        const promise = new PromiseX<void>()
+        const videoElement = (
+            <video
+                src={file}
+                autoplay
+                onClick={() => promise.resolve()}
+                onEnded={() => promise.resolve()}
+                // @ts-expect-error 类型上不存在属性
+                disablePictureInPicture
+            />
+        ) as HTMLVideoElement
+        videoElement.volume = config.golbalvolume
+        videoView(videoElement)
+        await promise
+        videoElement.pause()
+        videoView(null)
+        return Continue.apply(context)({})
+    })
 )

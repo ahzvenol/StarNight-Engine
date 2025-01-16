@@ -1,5 +1,5 @@
 import type { Reactive, ReactiveType } from 'micro-reactive'
-import type { GlobalSaveData, ReactiveStore } from '@/store/default'
+import type { GlobalSaveData, LocalSaveData, ReactiveStore } from '@/store/default'
 
 export enum GameState {
     Init,
@@ -21,15 +21,17 @@ export type Variables = {
 }
 
 export type GameContext = {
-    store: ReactiveType<ReactiveStore>
     variables: Variables
+    readonly store: ReactiveType<ReactiveStore>
 }
 
 export type GameRuntimeContext = {
-    state: GameState
-    index: number
-    immediate: Promise<void>
-    cleanup: Promise<void>
+    initial: InitialGameData
+    readonly state: GameState
+    readonly index: number
+    readonly immediate: Promise<void>
+    readonly cleanup: Promise<void>
 } & GameContext
 
-export type InitialGameData = { index: number }
+// 存档中对初始化有效的参数目前只有index和select,其中index由初始化消耗,select由sel命令消耗
+export type InitialGameData = Pick<LocalSaveData, 'index' | 'select'>

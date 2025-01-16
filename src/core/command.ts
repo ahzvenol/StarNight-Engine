@@ -14,14 +14,17 @@ import { GameState } from './types/Game'
 import { Schedule } from './types/Schedule'
 
 export function ActScope<T extends CommandArgs>(
+    fn: BlockingCommandFunction<T>
+): BlockingCommandFunction<T> | SocpedCommandFunction<T>
+export function ActScope<T extends CommandArgs>(
     fn: DynamicCommandFunction<T>
 ): DynamicCommandFunction<T> | SocpedCommandFunction<T>
 export function ActScope<T extends CommandArgs>(
     fn: NonBlockingCommandFunction<T>
 ): NonBlockingCommandFunction<T> | SocpedCommandFunction<T>
 export function ActScope<T extends CommandArgs>(
-    fn: DynamicCommandFunction<T> | NonBlockingCommandFunction<T>
-): DynamicCommandFunction<T> | NonBlockingCommandFunction<T> | SocpedCommandFunction<T> {
+    fn: BlockingCommandFunction<T> | DynamicCommandFunction<T> | NonBlockingCommandFunction<T>
+): BlockingCommandFunction<T> | DynamicCommandFunction<T> | NonBlockingCommandFunction<T> | SocpedCommandFunction<T> {
     return (context) => (args) => {
         if (context.state !== GameState.Init) return fn(context)(args)
     }
@@ -62,7 +65,9 @@ export function NonBlocking<T extends CommandArgs>(
     }
 }
 
-export function Blocking<T extends CommandArgs>(fn: BlockingCommandFunction<T>): StandardCommand<T> {
+export function Blocking<T extends CommandArgs>(
+    fn: BlockingCommandFunction<T> | SocpedCommandFunction<T>
+): StandardCommand<T> {
     return {
         meta: {
             schedule: Schedule.Await

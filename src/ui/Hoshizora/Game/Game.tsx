@@ -2,9 +2,8 @@ import type { Component } from 'solid-js'
 import { throttle } from 'es-toolkit'
 import { Show } from 'solid-js'
 import { clickState } from '@/core/commands/script/click'
-import { displaySelectionView } from '@/core/commands/script/hoshizora/selection'
+import { displaySelectionView } from '@/core/commands/script/selection'
 import { textboxState } from '@/core/commands/script/textbox'
-import { Core } from '@/core/Core'
 import { GameClickEvent } from '@/core/event'
 import { SwitchState } from '@/core/types/Meta'
 import { Content } from '@/ui/Elements'
@@ -60,10 +59,4 @@ const GameUI: Component = () => {
     )
 }
 
-const Game: Component = () => (
-    <Core>
-        <GameUI />
-    </Core>
-)
-
-export default Game
+export default GameUI

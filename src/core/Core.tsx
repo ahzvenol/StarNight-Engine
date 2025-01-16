@@ -34,10 +34,9 @@ export const currentStage = useSignal<HTMLDivElement | null>(null)
 export const Core: Component<ParentProps> = (props) => {
     log.info(`Game组件函数被调用`)
 
-    const initialData = useContext(GameInitialContext)!
-    const initialIndex = initialData.index
+    const initial = useContext(GameInitialContext)!
 
-    log.info(`Game初始数据:`, initialData)
+    log.info(`Game初始数据:`, initial)
 
     const store = useStore()
 
@@ -56,7 +55,7 @@ export const Core: Component<ParentProps> = (props) => {
     onMount(GameMountEvent.publish)
 
     // micro-reactive有Bug,如果遇到奇怪的递归就是它的锅
-    onMount(once(() => run(initialIndex, state, store, variables)))
+    onMount(once(() => run(initial, state, store, variables)))
 
     return (
         <StateContext.Provider value={state}>

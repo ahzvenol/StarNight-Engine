@@ -1,5 +1,4 @@
 import type { Reactive } from 'micro-reactive'
-import type { CommandArg } from '@/core/types/Command'
 import type { language } from '@/store/effects/translations'
 
 // 确保程序运行所需的键值,如新增依赖变量,需要在这里添加默认值
@@ -38,5 +37,11 @@ export type IniKV = Record<string, string | number | boolean>
 export type Store = typeof systemDefaultStore
 export type ReactiveStore = Reactive<Store>
 
-export type GlobalSaveData = Record<string, unknown> & Store['save']['global']
-export type LocalSaveData = Record<string, CommandArg> & { index: number; date: number; snapshot: string; text: string }
+export type GlobalSaveData = Store['save']['global']
+export type LocalSaveData = {
+    index: number
+    date: number
+    text: string
+    snapshot: string
+    select: Array<number | string>
+}

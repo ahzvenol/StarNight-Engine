@@ -1,6 +1,6 @@
 import type { GameRuntimeContext } from './types/Game'
 import { router } from '@/router'
-import { Pages } from '@/ui/Pages'
+import { Pages } from '@/ui/Type'
 import { log } from '@/utils/logger'
 import { GameState } from './types/Game'
 import { EventDispatcher, on } from './utils/EventDispatcher'

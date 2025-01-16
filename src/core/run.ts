@@ -1,7 +1,7 @@
 import type { ReactiveStore } from '@/store/default'
 import type { Signal } from '@/utils/Reactive'
 import type { CommandEntitys } from './types/Command'
-import type { Variables } from './types/Game'
+import type { InitialGameData, Variables } from './types/Game'
 import { delay, range } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import book from '@/store/book'
@@ -9,7 +9,7 @@ import { Y } from '@/utils/fp'
 import { log } from '@/utils/logger'
 import { PromiseState, PromiseX } from '@/utils/PromiseX'
 import { useSignal } from '@/utils/Reactive'
-import { Fork } from './commands/script/schedule'
+import { Fork } from './commands/script/system/schedule'
 import { isGameVisible } from './Core'
 import {
     ActEndEvent,
@@ -33,15 +33,15 @@ export const currentIndex = useSignal(0)
 ActStartEvent.subscribe((context) => currentIndex(context.index))
 
 // 预加载游戏初始坐标后N幕资源
-PostInitEvent.subscribe(async ({ index }) => {
+PostInitEvent.subscribe(({ index }) => {
     range(index, index + 5).forEach(preloadWithIndex)
 })
 // 预加载跳转目标后N幕资源
-JumpEvent.subscribe(async ({ index }) => {
+JumpEvent.subscribe(({ index }) => {
     range(index, index + 5).forEach(preloadWithIndex)
 })
 // 预加载本幕后第N幕的资源
-ActStartEvent.subscribe(async ({ state, index }) => {
+ActStartEvent.subscribe(({ state, index }) => {
     if (state === GameState.Init) return
     preloadWithIndex(index + 5)
 })
@@ -60,18 +60,15 @@ ActStartEvent.subscribe(async (context) => {
     ;(immediate as PromiseX<void>).resolve()
 })
 
-export function run(initialIndex: number, state: Signal<GameState>, store: ReactiveStore, variables: Variables) {
+export function run(initial: InitialGameData, state: Signal<GameState>, store: ReactiveStore, variables: Variables) {
     PreInitEvent.publish()
     const cleanup = onGameCleanup()
+    PostInitEvent.once(() => state(GameState.Normal))
     return Y<number, Promise<void>>((rec) => async (index) => {
-        if (index === initialIndex) {
-            state(GameState.Normal)
-            PostInitEvent.publish({ index })
-        }
+        if (index === initial.index) PostInitEvent.publish({ index })
         const immediate = new PromiseX<void>()
         if (state() === GameState.Init || state() === GameState.Fast) immediate.resolve()
-        // 幕运行过程中不会操作任何状态,但可以操作variables
-        const context = { state: state(), store: store(), variables, index, immediate, cleanup }
+        const context = { initial, state: state(), store: store(), variables, index, immediate, cleanup }
         // ActStart
         ActStartEvent.publish(context)
         // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
@@ -80,8 +77,8 @@ export function run(initialIndex: number, state: Signal<GameState>, store: React
         ActEndEvent.publish(context)
         // 等待过程受continue命令影响
         if (state() !== GameState.Init && output['continue'] !== true) {
-            // 有两种情况导致阻塞:幕中的阻塞命令,等待点击事件
-            // 点击自动按钮的情况下,不需要去加速正在运行的幕,但是需要去推动已经停止的循环
+            // 有两种情况导致阻塞: 幕中的阻塞命令,等待点击事件
+            // 点击自动按钮,不需要去加速正在运行的幕,但是需要去推动已经停止的循环
             await match(state())
                 .with(GameState.Fast, () => delay(100))
                 .with(GameState.Auto, () => delay(2000 - store.config.autoreadspeed() * 2000))

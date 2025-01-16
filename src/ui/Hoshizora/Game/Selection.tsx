@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js'
 import { For, Show } from 'solid-js'
-import { displaySelectionView, selections } from '@/core/commands/script/hoshizora/selection'
+import { displaySelectionView, selections } from '@/core/commands/script/selection'
 import { stopPropagation } from '@/utils/solid/stopPropagation'
 import styles from './Selection.module.scss'
 
