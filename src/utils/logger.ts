@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { cloneDeep } from 'es-toolkit'
 
 type Level = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR'
 type InfoTypes = string | number | boolean | bigint | null | undefined
@@ -23,7 +24,7 @@ class Logger {
             ''
         )
 
-        extra.forEach((item) => console.log(item))
+        extra.forEach((item) => console.log(cloneDeep(item)))
     }
 
     debug(info: InfoTypes, ...extra: Array<ExtraTypes>) {

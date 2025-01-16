@@ -4,7 +4,7 @@ import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
 import { Y } from '@/utils/fp'
 import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
 import { ActScope, Dynamic, NonBlocking } from '../../command'
-import { _wait } from './abstract/wait'
+import { wait } from './wait'
 
 export const textPreview = useAutoResetSignal(() => '', Scope.Act)
 export const preview = NonBlocking<{ text: string }>(
@@ -39,7 +39,9 @@ export const text = Dynamic<{ text: string }>(
                 yield* Y<string, Generator<Promise<void>, void, void>>(
                     (rec) =>
                         function* (str): Generator<Promise<void>, void, void> {
-                            yield* _wait(context)(store.config.textspeed * 100)
+                            yield wait.apply(context)({
+                                duration: store.config.textspeed * 100
+                            }) as unknown as Promise<void>
                             textView((text) => text + str.charAt(0))
                             if (str.length >= 1) yield* rec(str.slice(1))
                         }

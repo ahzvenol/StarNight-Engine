@@ -1,22 +1,16 @@
 import type { Component, ParentProps } from 'solid-js'
 import type { InitialGameData } from '@/core/types/Game'
+import { cloneDeep } from 'es-toolkit'
 import { Howl } from 'howler'
 import { createContext, createEffect, on } from 'solid-js'
+import { Core } from '@/core/Core'
 import { GameActivateEvent, GameDeactivateEvent, ReturnToTitleEvent } from '@/core/event'
 import { Route, router } from '@/router'
 import { useAudio } from '@/store/hooks/useAudio'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
 import { KeepAlive } from '@/utils/solid/KeepAlive'
-
-export enum Pages {
-    'Title' = '',
-    'Game' = 'Game',
-    'Config' = 'Config',
-    'Load' = 'Load',
-    'Save' = 'Save',
-    'Gallery' = 'Gallery'
-}
+import { Pages } from './Type'
 
 let isInGame = false
 
@@ -70,10 +64,10 @@ export const Title: Component<ParentProps> = (props) => {
 //
 
 export const GameInitialContext = createContext<InitialGameData>()
-// 使用函数的原因是为了避免修改原始对象,这里具有克隆语义
-export const defaultInitialGameData: Function0<InitialGameData> = () => ({ index: 1 })
 
-const initialGameData = useSignal<InitialGameData>(defaultInitialGameData(), { equals: false })
+export const defaultInitialGameData = { index: 1 } as InitialGameData
+
+const initialGameData = useSignal<InitialGameData>(cloneDeep(defaultInitialGameData), { equals: false })
 
 export const Game: Component<ParentProps> = (props) => {
     return (
@@ -81,7 +75,7 @@ export const Game: Component<ParentProps> = (props) => {
             <Route path={Pages.Game}>
                 <KeepAlive id={Pages.Game} key={initialGameData}>
                     <GameInitialContext.Provider value={initialGameData()}>
-                        {props.children}
+                        <Core>{props.children}</Core>
                     </GameInitialContext.Provider>
                 </KeepAlive>
             </Route>
@@ -89,4 +83,4 @@ export const Game: Component<ParentProps> = (props) => {
     )
 }
 
-export const restartGame = (data = defaultInitialGameData()) => initialGameData(data)
+export const restartGame = (data = defaultInitialGameData) => initialGameData(cloneDeep(data))
