@@ -1,22 +1,19 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
-import dayjs from 'dayjs'
-import { Show } from 'solid-js'
-import { getSave } from '@/core/save'
-import { router } from '@/router'
 import { useStore } from '@/store/context'
-import { Clone, Content, Variable } from '@/ui/Elements'
-import { Pages, restartGame } from '@/ui/Pages'
+import { Clone, Variable } from '@/ui/Elements'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
 import { ReRender } from '@/utils/solid/ReRender'
-import Scale from './../../Scale'
 import styles from './SaveAndLoad.module.scss'
+import { SaveLoadElement } from './SaveLoadElement'
+
+export type SaveLoadMode = 'Save' | 'Load'
 
 // 退出存档页面再进入不会重置到第一页
 const currentPage = useSignal(0)
 
-const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
+const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
     log.info('SaveLoad组件函数被调用.')
     const saves = useStore().save.local
     const pageElementCount = 9
@@ -58,46 +55,7 @@ const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {
                         <Variable value={() => i + 1 + currentPage() * pageElementCount}>
                             {(index) => (
                                 <ReRender key={index}>
-                                    <Variable value={saves[index()]}>
-                                        {(save) => (
-                                            <div
-                                                class={clsx(styles.Save_Load_content_element, {
-                                                    [styles.Save_Load_content_element_hover]:
-                                                        mode === 'Save' || save() !== undefined
-                                                })}
-                                                onClick={() => {
-                                                    if (mode === 'Save') {
-                                                        save(getSave())
-                                                    } else if (save() !== undefined) {
-                                                        restartGame(save()!)
-                                                        router.navigate(Pages.Game)
-                                                    }
-                                                }}>
-                                                <div class={styles.Save_Load_content_element_index}>
-                                                    {/* 原作从0开始 */}
-                                                    No.&nbsp;&nbsp;&nbsp;{index()}
-                                                </div>
-                                                <Show
-                                                    when={save() !== undefined}
-                                                    fallback={
-                                                        <>
-                                                            <div class={styles.Save_Load_content_element_empty_image} />
-                                                            <div class={styles.Save_Load_content_text}>Empty</div>
-                                                        </>
-                                                    }>
-                                                    <div class={styles.Save_Load_content_element_image}>
-                                                        <Scale width={1280} height={720} mode="full">
-                                                            <Content innerHTML={save().snapshot} />
-                                                        </Scale>
-                                                    </div>
-                                                    <div class={styles.Save_Load_content_element_date}>
-                                                        {dayjs(save().date).format('YYYY/MM/DD HH:mm:ss')}
-                                                    </div>
-                                                    <div class={styles.Save_Load_content_text}>{save().text}</div>
-                                                </Show>
-                                            </div>
-                                        )}
-                                    </Variable>
+                                    <SaveLoadElement save={saves[index()]} mode={mode} index={index()} />
                                 </ReRender>
                             )}
                         </Variable>
