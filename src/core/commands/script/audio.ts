@@ -1,12 +1,12 @@
-import type { HowlOptions } from 'howler'
 import type { ExtendArgs } from '@/core/types/Command'
-import type { AudioTracksType } from '@/store/hooks/useAudio'
+import type { Howl, HowlOptions } from '@/lib/howler'
 import { delay, isUndefined } from 'es-toolkit'
-import { Howl } from 'howler'
 import { Dynamic, NonBlocking } from '@/core/command'
 import { ActStartEvent, ContinueGameEvent, GameCleanupEvent, PostInitEvent, ReturnToTitleEvent } from '@/core/event'
 import { GameState } from '@/core/types/Game'
-import { useAudio } from '@/store/hooks/useAudio'
+import { BGM, Clip, SE, UISE } from '@/store/audio'
+
+const AUDIO = { BGM, SE, Clip, UISE } as const
 
 const tracks = new Map<string, Howl>()
 
@@ -27,7 +27,7 @@ GameCleanupEvent.subscribe(() => {
 
 // 跨幕环境变量file,需要收集副作用
 export type SetAudioCommandArgs = {
-    type: AudioTracksType
+    type: keyof typeof AUDIO
     file: string
     name?: string
 } & ExtendArgs<HowlOptions>
@@ -38,15 +38,12 @@ export const setAudio = Dynamic<SetAudioCommandArgs>(
             // Clip的生命周期是幕,所以不用初始化
             if ((state === GameState.Init || state === GameState.Fast) && type === 'Clip') return
             // 挂载新音频
-            const newAudio = useAudio(
-                type as AudioTracksType,
-                new Howl({
-                    ...configs,
-                    src: file,
-                    autoplay: true,
-                    preload: state !== GameState.Init
-                })
-            )
+            const newAudio = AUDIO[type]({
+                ...configs,
+                src: file,
+                autoplay: true,
+                preload: state !== GameState.Init
+            })
             tracks.set(name, newAudio)
             // 如果音频不是循环的,就不希望它播放完毕之后再被其他事件调用play()了
             // 这里不能直接从map里移除音频,因为map里可能又是其他的音频了
