@@ -1,10 +1,9 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
-import { Howl } from 'howler'
 import { For, onCleanup, onMount, Show } from 'solid-js'
 import { backlogView } from '@/core/commands/script/backlog'
 import { GameActivateEvent, GameDeactivateEvent } from '@/core/event'
-import { useAudio } from '@/store/hooks/useAudio'
+import { Clip } from '@/store/audio'
 import { Content } from '@/ui/Elements'
 import Scrollbar from '@/ui/Scrollbar'
 import { stopPropagation } from '@/utils/solid/stopPropagation'
@@ -27,9 +26,7 @@ export const Backlog: Component<{ closeBacklog: Function0<void> }> = ({ closeBac
                                     <Show when={act.file}>
                                         <div
                                             class={styles.Game_Backlog_element_clip}
-                                            onClick={() =>
-                                                useAudio('Clip', new Howl({ src: act.file!, autoplay: true }))
-                                            }
+                                            onClick={() => Clip({ src: act.file!, autoplay: true })}
                                         />
                                     </Show>
                                     <div class={styles.Game_Backlog_element_name}>{act.name}</div>

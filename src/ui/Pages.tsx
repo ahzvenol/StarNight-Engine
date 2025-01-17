@@ -1,12 +1,11 @@
 import type { Component, ParentProps } from 'solid-js'
 import type { InitialGameData } from '@/core/types/Game'
 import { cloneDeep } from 'es-toolkit'
-import { Howl } from 'howler'
 import { createContext, createEffect, on } from 'solid-js'
 import { Core } from '@/core/Core'
 import { GameActivateEvent, GameDeactivateEvent, ReturnToTitleEvent } from '@/core/event'
 import { Route, router } from '@/router'
-import { useAudio } from '@/store/hooks/useAudio'
+import { BGM } from '@/store/audio'
 import { log } from '@/utils/logger'
 import { useSignal } from '@/utils/Reactive'
 import { KeepAlive } from '@/utils/solid/KeepAlive'
@@ -38,12 +37,9 @@ createEffect(
 )
 
 export const Title: Component<ParentProps> = (props) => {
-    const TitleBGM = useAudio(
-        'BGM',
-        new Howl({
-            src: './static/AudioClip/bgm01.flac'
-        })
-    )
+    const TitleBGM = BGM({
+        src: './static/AudioClip/bgm01.flac'
+    })
     createEffect(
         on(router.active, () => {
             if (router.active() === Pages.Title) {
