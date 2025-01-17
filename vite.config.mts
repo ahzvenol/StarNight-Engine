@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 import type { PluginOption } from 'vite'
 import scalaJSPlugin from '@scala-js/vite-plugin-scalajs'
+import legacy from '@vitejs/plugin-legacy'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
 import importToCDN from 'vite-plugin-cdn-import'
@@ -24,6 +25,10 @@ export default defineConfig(({ command }) => ({
                     path: 'https://cdn.bootcdn.net/ajax/libs/localforage/1.10.0/localforage.min.js'
                 }
             ]
+        }),
+        legacy({
+            modernPolyfills: true,
+            renderLegacyChunks: false
         }),
         // scalaJSPlugin() as PluginOption,
         visualizer({
