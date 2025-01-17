@@ -20,4 +20,5 @@ const LandingPage: Component = () => {
         </div>
     )
 }
+
 export default LandingPage

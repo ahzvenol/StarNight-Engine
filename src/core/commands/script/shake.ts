@@ -35,7 +35,7 @@ export const punch = Dynamic<ShakePunchCommandArgs>(
     ActScope(
         ({ state }) =>
             function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
-                if (state === GameState.Init || state === GameState.Fast) return
+                if (state === GameState.Fast) return
                 const realTarget = stageView().querySelector(`[data-name="${target}"]`)
                 const originX = 0
                 const originY = 0

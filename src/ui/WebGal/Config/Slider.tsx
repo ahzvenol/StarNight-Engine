@@ -14,7 +14,7 @@ const Slider: Component<{ signal: Reactive<number> }> = ({ signal }) => (
                     'box-shadow': '1px 1px 7px rgba(0, 0, 0, 0.3)',
                     background: 'rgba(81, 110, 65, 0.9)',
                     'border-radius': '2em',
-                    translate: '0 -50%'
+                    transform: 'translate(0 -50%)'
                 }}
             />
         }
@@ -27,7 +27,7 @@ const Slider: Component<{ signal: Reactive<number> }> = ({ signal }) => (
                     background: '#ffffff',
                     cursor: 'pointer',
                     'box-shadow': '0 0 5px rgba(0, 0, 0, 0.5)',
-                    translate: '-50% -50%'
+                    transform: 'translate(-50% -50%)'
                 }}
             />
         }

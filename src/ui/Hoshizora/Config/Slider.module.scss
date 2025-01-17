@@ -18,11 +18,11 @@
     background-color: #344460;
     border: 3.5px solid white;
     border-radius: 50%;
-    translate: -50% 7px;
+    transform: translate(-50%, 7px);
 }
 
 .Config_Slider_fill {
     height: 4px;
     background-color: white;
-    translate: 0 12.5px;
+    transform: translate(0, 12.5px);
 }

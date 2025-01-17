@@ -41,8 +41,8 @@
     @media (hover: hover) {
         &:hover {
             width: 18 + 32px;
+            transform: rotate(180deg) scale(1.01);
             filter: drop-shadow(-32px 0 #909090);
-            scale: 1.01;
         }
     }
 }
@@ -53,8 +53,8 @@
     @media (hover: hover) {
         &:hover {
             width: 18 + 32px;
+            transform: scale(1.01);
             filter: drop-shadow(32px 0 #909090);
-            scale: 1.01;
         }
     }
 }
