@@ -1,10 +1,10 @@
 import { AppEnterEvent, AppLeaveEvent } from '@/core/event'
-import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
+import { useGameScopeSignal } from '@/core/utils/useScopeSignal'
 import { PromiseX } from '@/utils/PromiseX'
 import { ActScope, Blocking } from '../../command'
 import { Continue } from './system/branch'
 
-export const videoView = useAutoResetSignal<HTMLVideoElement | null>(() => null, Scope.Game)
+export const videoView = useGameScopeSignal<HTMLVideoElement | null>(null)
 
 export type VideoCommandArgs = { file: string }
 

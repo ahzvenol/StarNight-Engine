@@ -1,7 +1,7 @@
 import { ActScope, Blocking, NonBlocking } from '@/core/command'
 import { PreInitEvent } from '@/core/event'
 import { GameState } from '@/core/types/Game'
-import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
+import { useGameScopeSignal } from '@/core/utils/useScopeSignal'
 import { PromiseX } from '@/utils/PromiseX'
 import { Jump } from './system/branch'
 
@@ -17,7 +17,7 @@ PreInitEvent.subscribe(() => (selectRecord.length = 0))
 
 export const selections = new Array<Selection>()
 
-export const displaySelectionView = useAutoResetSignal(() => false, Scope.Game)
+export const displaySelectionView = useGameScopeSignal(false)
 
 PreInitEvent.subscribe(() => (selections.length = 0))
 

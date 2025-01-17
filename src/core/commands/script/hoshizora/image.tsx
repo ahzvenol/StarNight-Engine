@@ -4,7 +4,7 @@ import { isNil, isUndefined } from 'es-toolkit'
 import { Dynamic, NonBlocking } from '@/core/command'
 import { ActEndEvent, PostInitEvent } from '@/core/event'
 import { GameState } from '@/core/types/Game'
-import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
+import { useGameScopeSignal } from '@/core/utils/useScopeSignal'
 import { Y } from '@/utils/fp'
 import { _tween } from '../abstract/tween'
 
@@ -15,7 +15,7 @@ import { _tween } from '../abstract/tween'
 // 同时层级关系被容器掩盖,z-index必须直接赋值给容器
 // 这些区分带来了一些混乱,但确实增强了功能,暂时不知道是好是坏
 
-export const stageView = useAutoResetSignal<HTMLDivElement>(() => document.createElement('div'), Scope.Game)
+export const stageView = useGameScopeSignal<HTMLDivElement>(() => document.createElement('div'))
 
 PostInitEvent.subscribe(() =>
     Y<Element, void>((rec) => (displayObject) => {
@@ -69,14 +69,14 @@ export type TweenImageCommandArgs = {
 
 export const tweenImage = Dynamic<TweenImageCommandArgs>(
     ({ state }) =>
-        function* ({ target, ease, duration, ...args }) {
+        function* ({ target, ease, duration = 0, ...args }) {
             const container = stageView().querySelector(`[data-name="${target}"]`)
             const tweenTarget = isUndefined(args.opacity) ? container : container?.firstChild
             if (isNil(tweenTarget)) return
-            // 持续时间为0的动画不会触发finished事件
-            if (state === GameState.Init || !duration) {
+            if (state === GameState.Init) {
                 anime.set(tweenTarget, args)
             } else {
+                // animejs似乎可以正确处理duration=0的情况
                 const sequence = _tween({ target: tweenTarget, ease, duration })(args)
                 yield sequence.finished
                 sequence.seek(sequence.duration)

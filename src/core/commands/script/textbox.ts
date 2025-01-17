@@ -1,19 +1,19 @@
 import { inRange } from 'es-toolkit'
 import { SwitchState } from '@/core/types/Meta'
-import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
+import { useActScopeSignal } from '@/core/utils/useScopeSignal'
 import { Y } from '@/utils/fp'
 import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
 import { ActScope, Dynamic, NonBlocking } from '../../command'
 import { wait } from './wait'
 
-export const textPreview = useAutoResetSignal(() => '', Scope.Act)
+export const textPreview = useActScopeSignal('')
 export const preview = NonBlocking<{ text: string }>(
     ActScope(() => ({ text }) => {
         textPreview(text)
     })
 )
 
-export const showSuffixIconView = useAutoResetSignal(() => false, Scope.Act)
+export const showSuffixIconView = useActScopeSignal(false)
 
 export const icon = NonBlocking(
     ActScope(() => () => {
@@ -21,9 +21,9 @@ export const icon = NonBlocking(
     })
 )
 
-export const readIndicatorView = useAutoResetSignal(() => false, Scope.Act)
+export const readIndicatorView = useActScopeSignal(false)
 
-export const textView = useAutoResetSignal(() => '', Scope.Act)
+export const textView = useActScopeSignal('')
 export const text = Dynamic<{ text: string }>(
     ActScope(
         (context) =>
@@ -50,13 +50,13 @@ export const text = Dynamic<{ text: string }>(
     )
 )
 
-export const nameView = useAutoResetSignal(() => '', Scope.Act)
+export const nameView = useActScopeSignal('')
 
 export const name = NonBlocking<{ name: string }>(() => ({ name }) => {
     nameView(name)
 })
 
-export const textboxState = useAutoResetSignal<SwitchState>(() => SwitchState.Enabled, Scope.Game)
+export const textboxState = useActScopeSignal<SwitchState>(SwitchState.Enabled)
 
 export const textbox = NonBlocking<{ enable: boolean }>(() => ({ enable }) => {
     if (enable) textboxState(SwitchState.Enabled)

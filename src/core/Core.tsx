@@ -19,9 +19,9 @@ import {
 } from './event'
 import { run } from './run'
 import { GameState } from './types/Game'
-import { Scope, useAutoResetSignal } from './utils/useAutoResetSignal'
+import { useGameScopeSignal } from './utils/useScopeSignal'
 
-export const isGameVisible = useAutoResetSignal(() => true, Scope.Game)
+export const isGameVisible = useGameScopeSignal(true)
 GameVisibilityEvent.subscribe((visible) => isGameVisible(visible))
 
 const StateContext = createContext<Accessor<GameState>>()

@@ -4,11 +4,11 @@ import { isNil, isUndefined } from 'es-toolkit'
 import { Dynamic, NonBlocking } from '@/core/command'
 import { ActEndEvent, PostInitEvent } from '@/core/event'
 import { GameState } from '@/core/types/Game'
-import { Scope, useAutoResetSignal } from '@/core/utils/useAutoResetSignal'
+import { useGameScopeSignal } from '@/core/utils/useScopeSignal'
 import { Y } from '@/utils/fp'
 import { _tween } from './abstract/tween'
 
-export const stageView = useAutoResetSignal<HTMLDivElement>(() => document.createElement('div'), Scope.Game)
+export const stageView = useGameScopeSignal<HTMLDivElement>(() => document.createElement('div'))
 
 PostInitEvent.subscribe(() =>
     Y<Element, void>((rec) => (displayObject) => {
