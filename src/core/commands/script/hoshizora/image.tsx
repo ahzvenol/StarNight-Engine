@@ -78,7 +78,6 @@ export const tweenImage = Dynamic<TweenImageCommandArgs>(
             } else {
                 const sequence = _tween({ target: tweenTarget, ease, duration })(args)
                 yield sequence.finished
-                console.log(sequence)
                 sequence.seek(sequence.duration)
             }
         }
