@@ -11,7 +11,7 @@ const activeTimelines = new Map<object, anime.AnimeTimelineInstance>()
 
 ActStartEvent.subscribe(() => activeTimelines.clear())
 
-// 不同命令对于Fast模式的行为不同,这里只保证同一个物体的缓动被顺序应用
+// 这里只保证同一个物体的缓动被顺序应用
 export const _tween: Function1<
     TweenCommandArgs,
     Function1<Record<string, CommandArg | undefined>, anime.AnimeTimelineInstance>
@@ -28,9 +28,12 @@ export const _tween: Function1<
             )
         }
         const sequence = activeTimelines.get(target)!
+        // animejs可以正确处理duration=0的情况
+        // 但是必须在timeline结束之前订阅finished才有效
+        const finished = sequence.finished
         const currentTime = sequence.currentTime
         sequence.add({ ...args, duration })
         // 因为调用add后默认重新从头开始
         sequence.seek(currentTime)
-        return sequence
+        return { ...sequence, finished }
     }

@@ -1786,7 +1786,7 @@ export function HowlerInstance() {
 
       // Delete this sound from the cache (if no other Howl is using it).
       let remCache = true;
-      for (i=0; i<Howler._howls.length; i++) {
+      for (let i=0; i<Howler._howls.length; i++) {
         if (Howler._howls[i]._src === self._src || self._src.indexOf(Howler._howls[i]._src) >= 0) {
           remCache = false;
           break;
@@ -1847,7 +1847,7 @@ export function HowlerInstance() {
 
       if (fn || id) {
         // Loop through event store and remove the passed function.
-        for (i=0; i<events.length; i++) {
+        for (let i=0; i<events.length; i++) {
           let isId = (id === events[i].id);
           if (fn === events[i].fn && isId || !fn && isId) {
             events.splice(i, 1);
@@ -1860,7 +1860,7 @@ export function HowlerInstance() {
       } else {
         // Clear out all events of every type.
         let keys = Object.keys(self);
-        for (i=0; i<keys.length; i++) {
+        for (let i=0; i<keys.length; i++) {
           if ((keys[i].indexOf('_on') === 0) && Array.isArray(self[keys[i]])) {
             self[keys[i]] = [];
           }
@@ -2085,7 +2085,7 @@ export function HowlerInstance() {
       }
 
       // Count the number of inactive sounds.
-      for (i=0; i<self._sounds.length; i++) {
+      for (let i=0; i<self._sounds.length; i++) {
         if (self._sounds[i]._ended) {
           cnt++;
         }
