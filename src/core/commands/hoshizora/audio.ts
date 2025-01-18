@@ -12,10 +12,14 @@ export const setAudio: MacroFunction<SetAudioCommandArgs & { duration?: number }
             key: 'await',
             args: [{ key: 'tweenA', args: { target: args.name, volume: 0, duration: args.duration } }]
         })
+        array.push({ key: 'closeA', args: { target: args.name } })
+        array.push({ key: 'setA', args: Object.assign({ volume: 0 }, args) })
+        array.push({ key: 'tweenA', args: { target: args.name, volume: args.volume || 1, duration: args.duration } })
+    } else {
+        array.push({ key: 'closeA', args: { target: args.name } })
+        array.push({ key: 'setA', args: Object.assign({ volume: args.volume || 1 }, args) })
     }
-    array.push({ key: 'closeA', args: { target: args.name } })
-    array.push({ key: 'setA', args: Object.assign({ volume: 0 }, args) })
-    array.push({ key: 'tweenA', args: { target: args.name, volume: args.volume || 1, duration: args.duration } })
+
     return [{ key: 'fork', args: array }]
 }
 

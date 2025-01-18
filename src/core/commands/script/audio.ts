@@ -38,19 +38,26 @@ export const setAudio = Dynamic<SetAudioCommandArgs>(
             // Clip的生命周期是幕,所以不用初始化
             if ((state === GameState.Init || state === GameState.Fast) && type === 'Clip') return
             // 挂载新音频
-            const newAudio = AUDIO[type]({
+            const audio = AUDIO[type]({
                 ...configs,
+                pool: 1,
                 src: file,
                 autoplay: true,
                 preload: state !== GameState.Init
             })
-            tracks.set(name, newAudio)
+            tracks.set(name, audio)
             // 如果音频不是循环的,就不希望它播放完毕之后再被其他事件调用play()了
-            // 这里不能直接从map里移除音频,因为map里可能又是其他的音频了
-            if (!configs.loop) newAudio.once('end', () => newAudio.unload())
+            if (!configs.loop) {
+                audio.once('end', () => {
+                    audio.unload()
+                    if (tracks.get(name) === audio) {
+                        tracks.delete(name)
+                    }
+                })
+            }
             // tag:自动模式需要对Clip计时,目前先打一个临时的补丁
             if (type === 'Clip' && state === GameState.Auto) {
-                yield new Promise<void>((res) => newAudio.once('end', () => res()))
+                yield new Promise<void>((res) => audio.once('end', () => res()))
             }
         }
 )
@@ -60,8 +67,9 @@ export const fadeAudio = Dynamic<{ target: string; volume: number; duration?: nu
         function* ({ target, volume, duration = 0 }) {
             const audio = tracks.get(target)
             // 要设置的音量如果和当前音量相同不会触发fade事件
+            if (!audio || audio.volume() === volume) return
             // 非loaded状态的音频无法调整音量,也不能触发fade事件
-            if (!audio || audio.state() !== 'loaded' || audio.volume() === volume) return
+            if (audio.state() !== 'loaded') yield new Promise<void>((res) => audio.once('load', res))
             if (!duration) {
                 audio.volume(volume)
             } else {

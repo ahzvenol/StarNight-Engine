@@ -39,6 +39,7 @@ async function createStore() {
             user: userDefaultStore.user
         }
     ])[0]
+
     // tag:直接访问根对象,如store(),会导致store数据改变时,组件被重复调用
     // 我也不知道怎么回事,总之套一层数组来解构一下它就好了
     // micro-reactive的更新版本没有这个问题,但是

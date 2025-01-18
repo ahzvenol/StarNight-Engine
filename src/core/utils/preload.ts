@@ -20,7 +20,7 @@ const AUDIO_EXTENSIONS = [
     'flac'
 ]
 
-const VIDEO_EXTENSIONS = ['apng', 'avif', 'gif', 'jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp', 'png', 'svg', 'webp']
+const VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg', 'avi', 'mov', 'mkv']
 
 const loadedResources = new Set<string>()
 

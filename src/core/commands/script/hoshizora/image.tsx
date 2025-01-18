@@ -76,9 +76,9 @@ export const tweenImage = Dynamic<TweenImageCommandArgs>(
             if (state === GameState.Init) {
                 anime.set(tweenTarget, args)
             } else {
-                // animejs似乎可以正确处理duration=0的情况
                 const sequence = _tween({ target: tweenTarget, ease, duration })(args)
                 yield sequence.finished
+                console.log(sequence)
                 sequence.seek(sequence.duration)
             }
         }
