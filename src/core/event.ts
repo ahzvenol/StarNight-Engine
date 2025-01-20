@@ -83,8 +83,9 @@ ActSecondClickEvent.subscribe(() => log.info('一幕内第二次点击,立即执
 export const JumpEvent = new EventDispatcher<{ index: number }>()
 export const onJump = on(JumpEvent)
 
-// 这些事件只在幕循环中使用,由GameUI触发,其他位置的代码不应依赖它们
-// 所有游戏实例都依赖于同一组点击事件,通过在新实例挂载时清理订阅来避免影响旧实例
+// 所有游戏实例都依赖于同一组点击事件
+// 在新实例挂载时会清理订阅,以此避免影响旧实例
+// 需要注意这个情况,小心使用这些事件
 export const GameClickEvent = new EventDispatcher<void>()
 export const onClick = on(GameClickEvent)
 export const FastButtonClickEvent = new EventDispatcher<void>()

@@ -23,7 +23,6 @@ export const setSprite: MacroFunction<SetImageCommandArgs & SetBGMacroArgs & { z
             key: 'fork',
             args: [
                 { key: 'tweenI', args: tweenArgs },
-                // { key: 'await', args: [{ key: 'wait', args: { duration: 0 } }] },
                 { key: 'setI', args: imageArgs as unknown as SetImageCommandArgs }
             ]
         }
