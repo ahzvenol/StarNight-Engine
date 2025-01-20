@@ -41,7 +41,9 @@ const GameUI: Component = () => {
     return (
         <Content
             style={{ 'pointer-events': enable() ? 'auto' : 'none' }}
-            onClick={() => (displayBottomBox() ? click() : displayBottomBox(true))}
+            onClick={() =>
+                displayBottomBox() || textboxState() === SwitchState.Disabled ? click() : displayBottomBox(true)
+            }
             onContextMenu={() => displayBottomBox((b) => !b)}>
             <Stage />
             <Show when={!displayBacklog() && displayBottomBox() && textboxState() === SwitchState.Enabled}>
