@@ -48,7 +48,6 @@
     "dependencies": {
         "@capacitor/android": "^6.2.0",
         "@capacitor/core": "^6.2.0",
-        "@solidjs/router": "^0.8.3",
         "animejs": "^3.2.2",
         "axios": "^1.2.2",
         "clsx": "^2.1.1",

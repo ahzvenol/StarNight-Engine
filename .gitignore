@@ -19,6 +19,8 @@ target/
 
 public/static/
 
+book.json
+
 stats.html
 
 capacitor.config.ts
