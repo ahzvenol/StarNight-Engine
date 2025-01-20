@@ -29,7 +29,7 @@ export const text = Dynamic<{ text: string }>(
     ActScope(
         (context) =>
             function* ({ text }) {
-                const { index, store } = context
+                const { index, state, store } = context
                 const global = context.variables.global
                 if (global.segment().some((i) => inRange(index, i[0], i[1] + 1))) {
                     readIndicatorView(true)
@@ -47,7 +47,9 @@ export const text = Dynamic<{ text: string }>(
                             if (str.length >= 1) yield* rec(str.slice(1))
                         }
                 )(text)
-                if (!readIndicatorView() && !context.store.config.fastforwardunread) return { state: GameState.Normal }
+                if (state === GameState.Fast && !store.config.fastforwardunread && !readIndicatorView()) {
+                    return { state: GameState.Normal }
+                }
             }
     )
 )
