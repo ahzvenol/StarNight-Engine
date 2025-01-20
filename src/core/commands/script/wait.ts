@@ -5,6 +5,7 @@ import { PromiseX } from '@/utils/PromiseX'
 import { Dynamic } from '../../command'
 
 export const wait = Dynamic<{ duration: number }>(
+    'Normal.Await',
     ({ immediate }) =>
         function* ({ duration }) {
             const promise = new PromiseX<void>()
