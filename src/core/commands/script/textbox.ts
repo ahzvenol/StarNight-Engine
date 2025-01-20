@@ -1,4 +1,5 @@
 import { inRange } from 'es-toolkit'
+import { GameState } from '@/core/types/Game'
 import { SwitchState } from '@/core/types/Meta'
 import { useActScopeSignal } from '@/core/utils/useScopeSignal'
 import { Y } from '@/utils/fp'
@@ -46,6 +47,7 @@ export const text = Dynamic<{ text: string }>(
                             if (str.length >= 1) yield* rec(str.slice(1))
                         }
                 )(text)
+                if (!readIndicatorView() && !context.store.config.fastforwardunread) return { state: GameState.Normal }
             }
     )
 )

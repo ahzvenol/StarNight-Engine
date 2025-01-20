@@ -8,6 +8,7 @@ import { Jump } from './system/branch'
 type Selection = {
     label: string
     disable: boolean
+    target: number | string
     select: () => void
 }
 
@@ -31,6 +32,7 @@ export const selection = NonBlocking<{ name: string; target: number | string; di
         selections.push({
             label: name,
             disable: disable,
+            target: target,
             select: () => promise.resolve(target)
         })
         promises.push(promise)
@@ -42,7 +44,11 @@ export const selEnd = Blocking(
         async function () {
             displaySelectionView(true)
             const target =
-                context.state === GameState.Init ? context.initial.select.shift()! : await Promise.race(promises)
+                context.state === GameState.Init
+                    ? context.initial.select.shift()!
+                    : context.store.config.stopfastonselection
+                      ? await Promise.race(promises)
+                      : selections[0].target
             selections.length = 0
             promises.length = 0
             displaySelectionView(false)

@@ -75,6 +75,7 @@ export function run(initial: InitialGameData, state: Signal<GameState>, store: R
         const output = await Fork.apply(context)((await book.full(index)) as CommandEntitys[])
         // ActEnd
         ActEndEvent.publish(context)
+        if (output['state']) state(output['state'])
         // 等待过程受continue命令影响
         if (state() !== GameState.Init && output['continue'] !== true) {
             // 有两种情况导致阻塞: 幕中的阻塞命令,等待点击事件

@@ -1,5 +1,5 @@
 import type { commands } from '../commands'
-import type { GameRuntimeContext } from './Game'
+import type { GameRuntimeContext, GameState } from './Game'
 import type { MetaFunction } from './Meta'
 import type { NeverFailingPromise, Schedule } from './Schedule'
 
@@ -17,6 +17,7 @@ export interface CommandOutput {
     continue?: boolean
     jump?: number
     end?: boolean
+    state?: GameState
     endAuto?: Promise<void>
 }
 
