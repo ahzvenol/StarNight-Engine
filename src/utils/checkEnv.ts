@@ -12,12 +12,16 @@ export function isWeb(): boolean {
     return Capacitor.getPlatform() === 'web'
 }
 
+export function isNative(): boolean {
+    return Capacitor.isNativePlatform()
+}
+
 export function isProduction(): boolean {
-    return import.meta.env.MODE === 'production'
+    return import.meta.env.DEV !== true
 }
 
 export function isDevelopment(): boolean {
-    return import.meta.env.MODE === 'development'
+    return import.meta.env.DEV === true
 }
 
 export function isMobile(): boolean {

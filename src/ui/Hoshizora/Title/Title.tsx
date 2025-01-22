@@ -1,16 +1,25 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
 import { router } from '@/router'
+import { useStore } from '@/store/context'
 import { Button, Clone, Variable } from '@/ui/Elements'
 import { restartGame } from '@/ui/Pages'
 import { Pages } from '@/ui/Type'
+import { isMobile } from '@/utils/checkEnv'
 import { log } from '@/utils/logger'
 import styles from './Title.module.scss'
 
 const Title: Component = () => {
     log.info('Title组件函数被调用')
+    const system = useStore().system
     return (
         <div class={clsx('Page', styles.Title_container)}>
+            <div style={{ 'font-size': isMobile() ? '30px' : '20px' }} class={styles.Title_info_container}>
+                <div>
+                    版本:{system.versioncode()}&nbsp;&nbsp;{system.versionname()}
+                </div>
+                <div>白羽夜星制作组</div>
+            </div>
             <div class={styles.Title_button_container}>
                 <Clone count={4}>
                     {(index) => (
