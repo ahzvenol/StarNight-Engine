@@ -6,10 +6,9 @@ import { useReactive } from 'micro-reactive'
 import { createEffect, createResource, on } from 'solid-js'
 import { log } from '@/utils/logger'
 import systemDefaultStore from './default'
-import { getUserConfig } from './user'
 
 async function createStore() {
-    const userConfig = await getUserConfig()
+    const userConfig = {}
 
     const userDefaultStore = toMerged(systemDefaultStore, userConfig)
 
@@ -20,7 +19,6 @@ async function createStore() {
     // 暂时不知道存起来有什么用,或许对比版本号更新一些东西的时候有用
     // 这部分不能和config放在一起,因为config的特点是用户配置覆盖默认配置
     // 应该不会有需求动态更改画布大小的吧
-    const system = (await localforage.getItem<Store['system']>('system')) || {}
 
     // localforage.getItem可能返回null,Object.assign遇到一个null不会有问题,parseIni遇到问题会抛异常
     // 合并配置文件和数据库内的配置，数据库中的配置会覆盖掉配置文件的默认配置
@@ -30,13 +28,15 @@ async function createStore() {
     // 多层空调用报错会导致程序崩溃,foo.bar.baz is not a function
     const save = await localforage.getItem<Store['save']>('save')
 
+    const user = (await localforage.getItem<Store['user']>('user')) || {}
+
     // 这里是默认配置与storage配置之间的关系逻辑
     const store = useReactive([
         {
-            system: toMerged(system, userDefaultStore.system),
+            system: userDefaultStore.system,
             config: toMerged(userDefaultStore.config, config),
             save: save || userDefaultStore.save,
-            user: userDefaultStore.user
+            user: toMerged(userDefaultStore.user, user)
         }
     ])[0]
 
