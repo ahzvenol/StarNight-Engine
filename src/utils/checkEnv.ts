@@ -1,23 +1,25 @@
 import { Capacitor } from '@capacitor/core'
 
+export const platform = Capacitor.getPlatform()
+
 export function isAndroid(): boolean {
-    return Capacitor.getPlatform() === 'android'
+    return platform === 'android'
 }
 
 export function isIOS(): boolean {
-    return Capacitor.getPlatform() === 'ios'
+    return platform === 'ios'
 }
 
 export function isWeb(): boolean {
-    return Capacitor.getPlatform() === 'web'
+    return platform === 'web'
 }
 
 export function isNative(): boolean {
-    return Capacitor.isNativePlatform()
+    return isAndroid() || isIOS()
 }
 
 export function isProduction(): boolean {
-    return import.meta.env.DEV !== true
+    return !isDevelopment()
 }
 
 export function isDevelopment(): boolean {
