@@ -14,7 +14,7 @@
     },
     "devDependencies": {
         "@capacitor/assets": "^3.0.5",
-        "@capacitor/cli": "^6.2.0",
+        "@capacitor/cli": "^7.0.0",
         "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
         "@scala-js/vite-plugin-scalajs": "^1.0.0",
         "@types/animejs": "^3.1.12",
@@ -47,8 +47,8 @@
         "vite-plugin-solid": "^2.11.0"
     },
     "dependencies": {
-        "@capacitor/android": "^6.2.0",
-        "@capacitor/core": "^6.2.0",
+        "@capacitor/android": "^7.0.0",
+        "@capacitor/core": "^7.0.0",
         "@capacitor/device": "^7.0.0",
         "@msgpack/msgpack": "3.0.0-beta2",
         "animejs": "^3.2.2",
