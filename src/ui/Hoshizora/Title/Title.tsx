@@ -1,12 +1,12 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
-import { Match, Switch } from 'solid-js'
+import { Match, Show, Switch } from 'solid-js'
 import { router } from '@/router'
 import { useStore } from '@/store/context'
 import { Button, Clone, Variable } from '@/ui/Elements'
 import { restartGame } from '@/ui/Pages'
 import { Pages } from '@/ui/Type'
-import { isMobile } from '@/utils/checkEnv'
+import { isDevelopment, isMobile, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/logger'
 import styles from './Title.module.scss'
 
@@ -14,19 +14,19 @@ const Title: Component = () => {
     log.info('Title组件函数被调用')
     const store = useStore()
     const system = store.system
-    const user = store.user
+    const local = store.local
     return (
         <div class={clsx('Page', styles.Title_container)}>
-            <div style={{ 'font-size': isMobile() ? '30px' : '20px' }} class={styles.Title_update_status}>
-                <Switch>
-                    <Match when={user.latestversion() > system.versioncode()}>发现新版本！</Match>
-                    <Match when={user.latestversion() === -1}>检测更新失败！</Match>
-                    <Match when={user.latestversion() === system.versioncode()}>当前已是最新版</Match>
-                </Switch>
-            </div>
             <div style={{ 'font-size': isMobile() ? '30px' : '20px' }} class={styles.Title_info_container}>
+                <Show when={isNative() || isDevelopment()}>
+                    <Switch>
+                        <Match when={local.latestversion() > system.versioncode()}>发现新版本！</Match>
+                        <Match when={local.latestversion() === -1}>检测更新失败！</Match>
+                        <Match when={local.latestversion() === system.versioncode()}>当前已是最新版</Match>
+                    </Switch>
+                </Show>
                 <div>
-                    版本:{system.versioncode()}&nbsp;&nbsp;{system.versionname()}
+                    版本:{system.versionname()}&nbsp;&nbsp;{system.releasedate()}
                 </div>
                 <div>白羽夜星制作组</div>
             </div>

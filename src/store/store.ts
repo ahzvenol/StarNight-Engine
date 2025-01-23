@@ -28,7 +28,7 @@ async function createStore() {
     // 多层空调用报错会导致程序崩溃,foo.bar.baz is not a function
     const save = await localforage.getItem<Store['save']>('save')
 
-    const user = (await localforage.getItem<Store['user']>('user')) || {}
+    const local = (await localforage.getItem<Store['local']>('local')) || {}
 
     // 这里是默认配置与storage配置之间的关系逻辑
     const store = useReactive([
@@ -36,7 +36,7 @@ async function createStore() {
             system: userDefaultStore.system,
             config: toMerged(userDefaultStore.config, config),
             save: save || userDefaultStore.save,
-            user: toMerged(userDefaultStore.user, user)
+            local: toMerged(userDefaultStore.local, local)
         }
     ])[0]
 
