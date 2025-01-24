@@ -51,7 +51,7 @@ const Config: Component = () => {
                             <Slider
                                 signal={
                                     [
-                                        config.golbalvolume,
+                                        config.globalvolume,
                                         config.bgmvolume,
                                         config.sevolume,
                                         config.clipvolume,
