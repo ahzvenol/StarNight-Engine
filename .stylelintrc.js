@@ -13,6 +13,7 @@ module.exports = {
     ],
     plugins: ['stylelint-scss', 'stylelint-order', 'stylelint-config-rational-order/plugin'],
     rules: {
+        // 'color-function-notation': 'legacy', // 使用传统rbga函数
         // indentation: 4, // 用来定义缩进的单位
         // 'function-url-quotes': 'always', // URL 的引号 "always(必须加上引号)"|"never(没有引号)"
         // 'string-quotes': 'single', // 指定字符串使用单引号或双引号 "single(单引号)"|"double(双引号)"

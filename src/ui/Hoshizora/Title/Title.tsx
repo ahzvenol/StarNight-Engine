@@ -18,6 +18,9 @@ const Title: Component = () => {
     return (
         <div class={clsx('Page', styles.Title_container)}>
             <div style={{ 'font-size': isMobile() ? '30px' : '20px' }} class={styles.Title_info_container}>
+                <div>
+                    版本:{system.versionname()}&nbsp;&nbsp;{system.releasedate()}
+                </div>
                 <Show when={isNative() || isDevelopment()}>
                     <Switch>
                         <Match when={local.latestversion() > system.versioncode()}>发现新版本！</Match>
@@ -25,9 +28,6 @@ const Title: Component = () => {
                         <Match when={local.latestversion() === system.versioncode()}>当前已是最新版</Match>
                     </Switch>
                 </Show>
-                <div>
-                    版本:{system.versionname()}&nbsp;&nbsp;{system.releasedate()}
-                </div>
                 <div>白羽夜星制作组</div>
             </div>
             <div class={styles.Title_button_container}>
