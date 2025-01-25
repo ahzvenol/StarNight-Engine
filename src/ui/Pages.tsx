@@ -7,8 +7,8 @@ import { GameActivateEvent, GameDeactivateEvent, ReturnToTitleEvent } from '@/co
 import { Route, router } from '@/router'
 import { BGM } from '@/store/audio'
 import { log } from '@/utils/logger'
-import { useSignal } from '@/utils/Reactive'
 import { KeepAlive } from '@/utils/solid/KeepAlive'
+import { useSignal } from '@/utils/solid/useSignal'
 import { Pages } from './Type'
 
 let isInGame = false

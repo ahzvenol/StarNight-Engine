@@ -21,7 +21,7 @@ const Title: Component = () => {
                 <div>
                     版本:{system.versionname()}&nbsp;&nbsp;{system.releasedate()}
                 </div>
-                <Show when={isNative() || isDevelopment()}>
+                <Show when={isNative() || isDevelopment() || true}>
                     <Switch>
                         <Match when={local.latestversion() > system.versioncode()}>发现新版本！</Match>
                         <Match when={local.latestversion() === -1}>检测更新失败！</Match>
