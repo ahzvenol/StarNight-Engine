@@ -16,7 +16,6 @@ export default defineConfig(({ command }) => ({
             modernPolyfills: true,
             renderLegacyChunks: false
         }),
-        // scalaJSPlugin() as PluginOption,
         visualizer({
             filename: 'stats.html' // 默认在项目根目录下生成stats.html文件，可自定义
             // open: true //生成后自动打开浏览器查看

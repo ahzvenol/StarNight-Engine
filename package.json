@@ -16,7 +16,6 @@
         "@capacitor/assets": "^3.0.5",
         "@capacitor/cli": "^7.0.0",
         "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
-        "@scala-js/vite-plugin-scalajs": "^1.0.0",
         "@types/animejs": "^3.1.12",
         "@types/mustache": "^4.2.5",
         "@typescript-eslint/eslint-plugin": "^8.6.0",
