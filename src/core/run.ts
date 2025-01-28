@@ -5,6 +5,7 @@ import type { InitialGameData, Variables } from './types/Game'
 import { delay, range } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import book from '@/store/book'
+import { isNative } from '@/utils/checkEnv'
 import { Y } from '@/utils/fp'
 import { log } from '@/utils/logger'
 import { PromiseState, PromiseX } from '@/utils/PromiseX'
@@ -75,13 +76,13 @@ export function run(initial: InitialGameData, state: Signal<GameState>, store: R
         const output = await Fork.apply(context)((await book.full(index)) as CommandEntitys[])
         // ActEnd
         ActEndEvent.publish(context)
-        if (output['state']) state(output['state'])
+        if (output['state'] && state() !== GameState.Init) state(output['state'])
         // 等待过程受continue命令影响
         if (state() !== GameState.Init && output['continue'] !== true) {
             // 有两种情况导致阻塞: 幕中的阻塞命令,等待点击事件
             // 点击自动按钮,不需要去加速正在运行的幕,但是需要去推动已经停止的循环
             await match(state())
-                .with(GameState.Fast, () => delay(100))
+                .with(GameState.Fast, () => delay(isNative() ? 10 : 100))
                 .with(GameState.Auto, () => delay(2000 - store.config.autoreadspeed() * 2000))
                 .otherwise(() => Promise.race([onClick(), onAuto(), onFast()]))
             log.info('已受到推动并结束等待')
