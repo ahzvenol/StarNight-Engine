@@ -63,6 +63,7 @@ ActStartEvent.subscribe(async (context) => {
     ;(immediate as PromiseX<void>).resolve()
 })
 
+// 在循环开始前预取book.fulls会使快速读档变得很慢,由此换取10%的加载速度提升是不值得的
 export async function run(
     initial: InitialGameData,
     state: Signal<GameState>,
@@ -72,7 +73,6 @@ export async function run(
     PreInitEvent.publish()
     const cleanup = onGameCleanup()
     const bookLength = await book.length()
-    const bookFull = await book.full()
     let index = 0
     PostInitEvent.once(() => state(GameState.Normal))
     // eslint-disable-next-line no-constant-condition
@@ -84,7 +84,7 @@ export async function run(
         // ActStart
         ActStartEvent.publish(context)
         // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-        const output = await Fork.apply(context)(bookFull[index] as CommandEntitys[])
+        const output = await Fork.apply(context)((await book.full(index)) as CommandEntitys[])
         // ActEnd
         ActEndEvent.publish(context)
         if (output['state'] && state() !== GameState.Init) state(output['state'])
@@ -94,7 +94,7 @@ export async function run(
             // 有两种情况导致阻塞: 幕中的阻塞命令,等待点击事件
             // 点击自动按钮,不需要去加速正在运行的幕,但是需要去推动已经停止的循环
             await match(state())
-                .with(GameState.Fast, () => delay(isNative() ? 10 : 10))
+                .with(GameState.Fast, () => delay(isNative() ? 10 : 100))
                 .with(GameState.Auto, () => delay(2000 - store.config.autoreadspeed() * 2000))
                 .otherwise(() => Promise.race([onClick(), onAuto(), onFast()]))
             log.info('已受到推动并结束等待')
