@@ -61,6 +61,10 @@ const Title: Component = () => {
                                                     transform-origin: top;
                                                 }
                                             }
+                                            .mobile .Title_button_${index} {
+                                                transform: scale(1.35) translate(0, ${index * 5}px);
+                                                transform-origin: top;
+                                            }
                                         `}
                                     </style>
                                 </>
