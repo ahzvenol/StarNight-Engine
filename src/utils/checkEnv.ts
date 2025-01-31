@@ -15,6 +15,10 @@ export function isWeb(): boolean {
 }
 
 export function isNative(): boolean {
+    return Capacitor.isNativePlatform()
+}
+
+export function isMobile(): boolean {
     return isAndroid() || isIOS()
 }
 
@@ -24,8 +28,4 @@ export function isProduction(): boolean {
 
 export function isDevelopment(): boolean {
     return import.meta.env.DEV === true
-}
-
-export function isMobile(): boolean {
-    return window.matchMedia('(hover: none)').matches
 }
