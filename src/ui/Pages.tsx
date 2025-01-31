@@ -36,12 +36,10 @@ createEffect(
     )
 )
 
-// 作为micro-reactive触发两次渲染的修复,这个变量不应被包含进组件
-// 另一个角度来讲,这个组件本来也只预期执行一次,这两种方式其实也是等价的
-const TitleBGM = BGM({
-    src: './static/AudioClip/bgm01.flac'
-})
 export const Title: Component<ParentProps> = (props) => {
+    const TitleBGM = BGM({
+        src: './static/AudioClip/bgm01.flac'
+    })
     createEffect(
         on(router.active, () => {
             if (router.active() === Pages.Title) {

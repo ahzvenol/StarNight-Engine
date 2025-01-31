@@ -2,9 +2,10 @@ import type { Resource } from 'solid-js'
 import type { ReactiveStore, Store } from './default'
 import { cloneDeep, debounce, toMerged } from 'es-toolkit'
 import localforage from 'localforage'
-import { useReactive } from 'micro-reactive'
 import { createEffect, createResource, on } from 'solid-js'
+import { unwrap } from 'solid-js/store'
 import { log } from '@/utils/logger'
+import { useReactive } from '@/utils/solid/useReactive'
 import systemDefaultStore from './default'
 
 async function createStore() {
@@ -31,26 +32,19 @@ async function createStore() {
     const local = (await localforage.getItem<Store['local']>('local')) || {}
 
     // 这里是默认配置与storage配置之间的关系逻辑
-    const store = useReactive([
-        {
-            system: userDefaultStore.system,
-            config: toMerged(userDefaultStore.config, config),
-            save: save || userDefaultStore.save,
-            local: toMerged(userDefaultStore.local, local)
-        }
-    ])[0]
-
-    // tag:直接访问根对象,如store(),会导致store数据改变时,组件被重复调用
-    // 我也不知道怎么回事,总之套一层数组来解构一下它就好了
-    // micro-reactive的更新版本没有这个问题,但是
-    // 新版本也取消了子对象修改时对父对象的Effect传递,所以,不能更新
+    const store = useReactive({
+        system: userDefaultStore.system,
+        config: toMerged(userDefaultStore.config, config),
+        save: save || userDefaultStore.save,
+        local: toMerged(userDefaultStore.local, local)
+    })
 
     Object.keys(store()).forEach((key) => {
         createEffect(
             on(
-                store[key as keyof ReactiveStore],
+                () => JSON.stringify(store[key as keyof ReactiveStore]()),
                 debounce(() => {
-                    localforage.setItem(key, store[key as keyof ReactiveStore]())
+                    localforage.setItem(key, unwrap(store[key as keyof ReactiveStore]()))
                     log.info(`写入本地存储:${key}`)
                 }, 100)
             )

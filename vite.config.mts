@@ -5,12 +5,10 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
 import obfuscator from 'vite-plugin-javascript-obfuscator'
 import solidPlugin from 'vite-plugin-solid'
-import TrackEffect from './plugins/vite-plugin-track-effect'
 
 export default defineConfig(({ command }) => ({
     plugins: [
         solidPlugin(),
-        TrackEffect(),
         obfuscator({ apply: 'build' }),
         legacy({
             modernPolyfills: true,
