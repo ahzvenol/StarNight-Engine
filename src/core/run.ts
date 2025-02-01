@@ -88,7 +88,7 @@ export async function run(
         // ActEnd
         ActEndEvent.publish(context)
         if (output['state'] && state() !== GameState.Init) state(output['state'])
-        if (state() !== GameState.Init && state() !== GameState.Fast) store.save.local[0](getSave())
+        if (state() !== GameState.Init && state() !== GameState.Fast) store.save.local[0](getSave('full'))
         // 等待过程受continue命令影响
         if (state() !== GameState.Init && output['continue'] !== true) {
             // 有两种情况导致阻塞: 幕中的阻塞命令,等待点击事件
