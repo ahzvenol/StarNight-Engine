@@ -44,26 +44,19 @@ export const selEnd = Blocking<{ index: number }>(
     (context) =>
         async function ({ index }) {
             displaySelectionView(true)
-            const stop = context.store.config.stopfastonselection
             const target =
-                context.state === GameState.Init
-                    ? context.initial.select.shift()!
-                    : context.state === GameState.Fast && !stop
-                      ? selections[0].target
-                      : await Promise.race(promises)
-
+                context.state === GameState.Init ? context.initial.select.shift()! : await Promise.race(promises)
+            const stopfastonselection = context.store.config.stopfastonselection && context.state === GameState.Fast
             Try.apply(() => {
                 const achievement = context.variables.global.achievement
                 const i = selections.map((e) => e.target).findIndex((e) => e === target)
                 const last = achievement[1 << index]
                 if ((last() & (1 << 2)) === 0) {
-                    if (!stop) {
+                    if (context.state === GameState.Fast) {
                         last(Number((BigInt(last()) & ~0b11n) | BigInt(1 << 2)) + 3)
                     } else {
                         last(Number((BigInt(last()) & ~0b11n) | BigInt(1 << 2)) + i)
                     }
-                    console.log(last())
-                    console.log(context.variables.global.achievement())
                 }
             })
             displaySelectionView(false)
@@ -71,7 +64,7 @@ export const selEnd = Blocking<{ index: number }>(
             promises.length = 0
             selectRecord.push(target)
             return Jump.apply(context)({ target }).then((jump) =>
-                stop && context.state === GameState.Fast ? Object.assign(jump, { state: GameState.Normal }) : jump
+                stopfastonselection ? Object.assign(jump, { state: GameState.Normal }) : jump
             )
         }
 )
