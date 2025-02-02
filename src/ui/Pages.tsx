@@ -36,24 +36,22 @@ createEffect(
     )
 )
 
+export const TitleBGM = BGM({
+    src: './static/AudioClip/bgm01.flac'
+})
 export const Title: Component<ParentProps> = (props) => {
-    const TitleBGM = BGM({
-        src: './static/AudioClip/bgm01.flac'
-    })
-    createEffect(
-        on(router.active, () => {
-            if (router.active() === Pages.Title) {
-                if (!TitleBGM.playing()) {
-                    log.info('播放主背景音乐(开发环境下不播放)')
-                    if (!import.meta.env.DEV) {
-                        TitleBGM.play()
-                    }
-                }
-            } else if (router.active() === Pages.Game) {
-                TitleBGM.stop()
+    createEffect(() => {
+        if (router.active() === Pages.Title) {
+            if (!TitleBGM.playing()) {
+                log.info('播放主背景音乐(开发环境下不播放)')
+                // if (!import.meta.env.DEV) {
+                    TitleBGM.play()
+                // }
             }
-        })
-    )
+        } else if (router.active() === Pages.Game) {
+            TitleBGM.stop()
+        }
+    })
     return <Route path={Pages.Title}>{props.children}</Route>
 }
 
