@@ -46,6 +46,8 @@
         "vite-plugin-solid": "^2.11.0"
     },
     "dependencies": {
+        "@better-scroll/core": "^2.5.1",
+        "@better-scroll/mouse-wheel": "^2.5.1",
         "@capacitor/android": "^7.0.0",
         "@capacitor/core": "^7.0.0",
         "@capacitor/device": "^7.0.0",
