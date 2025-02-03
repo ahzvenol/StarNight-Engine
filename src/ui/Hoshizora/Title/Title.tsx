@@ -55,12 +55,6 @@ const Title: Component = () => {
                                                     background-image: url('./static/Texture2D/title_${imageId}_on.webp') !important;
                                                 }
                                             }
-                                            @media (hover: none) {
-                                                .Title_button_${index} {
-                                                    transform: scale(1.35) translate(0, ${index * 5}px);
-                                                    transform-origin: top;
-                                                }
-                                            }
                                             .mobile .Title_button_${index} {
                                                 transform: scale(1.35) translate(0, ${index * 5}px);
                                                 transform-origin: top;
