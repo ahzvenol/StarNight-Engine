@@ -8,6 +8,7 @@ export const wait = Dynamic<{ duration: number }>(
     'Normal.Await',
     ({ immediate }) =>
         function* ({ duration }) {
+            if (duration === 0) return
             const promise = new PromiseX<void>()
             const controller = new TimeoutController(promise.resolve, duration)
             immediate.then(() => controller.immediateExecution())

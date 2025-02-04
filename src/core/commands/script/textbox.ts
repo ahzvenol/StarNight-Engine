@@ -31,17 +31,17 @@ export const text = Dynamic<{ text: string }>(
             function* ({ text }) {
                 const { index, state, store } = context
                 const global = context.variables.global
-                if (global.segment().some((i) => inRange(index, i[0], i[1] + 1))) {
+                if (global.readsegment().some((i) => inRange(index, i[0], i[1] + 1))) {
                     readIndicatorView(true)
                 } else {
-                    global.segment(arrayToInterval([...intervalToArray(global.segment()), index]))
+                    global.readsegment(arrayToInterval([...intervalToArray(global.readsegment()), index]))
                 }
 
                 yield* Y<string, Generator<Promise<void>, void, void>>(
                     (rec) =>
                         function* (str): Generator<Promise<void>, void, void> {
                             yield wait.apply(context)({
-                                duration: store.config.textspeed * 100
+                                duration: 100 - store.config.textspeed * 100
                             }) as unknown as Promise<void>
                             textView((text) => text + str.charAt(0))
                             if (str.length >= 1) yield* rec(str.slice(1))
