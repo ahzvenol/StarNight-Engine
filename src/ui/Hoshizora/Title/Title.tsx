@@ -6,7 +6,7 @@ import { useStore } from '@/store/context'
 import { Button, Clone, Variable } from '@/ui/Elements'
 import { restartGame } from '@/ui/Pages'
 import { Pages } from '@/ui/Type'
-import { isDevelopment, isMobile, isNative } from '@/utils/checkEnv'
+import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/logger'
 import styles from './Title.module.scss'
 
@@ -17,14 +17,14 @@ const Title: Component = () => {
     const local = store.local
     return (
         <div class={clsx('Page', styles.Title_container)}>
-            <div style={{ 'font-size': isMobile() ? '30px' : '20px' }} class={styles.Title_info_container}>
+            <div class={styles.Title_info_container}>
                 <div>
                     版本:{system.versionname()}&nbsp;&nbsp;{system.releasedate()}
                 </div>
                 <Show when={isNative() || isDevelopment()}>
                     <Switch>
-                        <Match when={local.latestversion() > system.versioncode()}>发现新版本！</Match>
                         <Match when={local.latestversion() === -1}>检测更新失败！</Match>
+                        <Match when={local.latestversion() > system.versioncode()}>发现新版本！</Match>
                         <Match when={local.latestversion() === system.versioncode()}>当前已是最新版</Match>
                     </Switch>
                 </Show>
