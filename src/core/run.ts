@@ -7,10 +7,11 @@ import { match } from 'ts-pattern'
 import { router } from '@/router'
 import book from '@/store/book'
 import { Pages } from '@/ui/Type'
-import { isNative } from '@/utils/checkEnv'
+import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/logger'
 import { PromiseState, PromiseX } from '@/utils/PromiseX'
 import { useSignal } from '@/utils/solid/useSignal'
+import { RangeSet } from '@/utils/zipNumArray'
 import { Fork } from './commands/script/system/schedule'
 import { isGameVisible } from './Core'
 import {
@@ -24,8 +25,7 @@ import {
     onFast,
     onGameCleanup,
     onGameVisibilityChange,
-    PostInitEvent,
-    PreInitEvent
+    PostInitEvent
 } from './event'
 import { preloadWithIndex } from './preload'
 import { getSave } from './save'
@@ -63,6 +63,9 @@ ActStartEvent.subscribe(async (context) => {
     ;(immediate as PromiseX<void>).resolve()
 })
 
+// 由幕循环维护已读幕
+export const isRead = useSignal(false)
+
 // 在循环开始前预取book.fulls会使快速读档变得很慢,由此换取10%的加载速度提升是不值得的
 export async function run(
     initial: InitialGameData,
@@ -70,14 +73,18 @@ export async function run(
     store: ReactiveStore,
     variables: Variables
 ) {
-    PreInitEvent.publish()
+    let index = 0
     const cleanup = onGameCleanup()
     const bookLength = await book.length()
-    let index = 0
+    const readsegment = variables.global.readsegment
     PostInitEvent.once(() => state(GameState.Normal))
     // eslint-disable-next-line no-constant-condition
     while (true) {
         if (index === initial.index) PostInitEvent.publish({ index })
+        const range = RangeSet.fromRanges(readsegment())
+        isRead(range.includes(index))
+        if (!isRead()) readsegment(range.push(index).getRanges())
+        if (state() === GameState.Fast && !store.config.fastforwardunread() && !isRead()) state(GameState.Normal)
         const immediate = new PromiseX<void>()
         if (state() === GameState.Init || state() === GameState.Fast) immediate.resolve()
         const context = { initial, state: state(), store: store(), variables, index, immediate, cleanup }
@@ -94,7 +101,7 @@ export async function run(
             // 有两种情况导致阻塞: 幕中的阻塞命令,等待点击事件
             // 点击自动按钮,不需要去加速正在运行的幕,但是需要去推动已经停止的循环
             await match(state())
-                .with(GameState.Fast, () => delay(isNative() ? 10 : 100))
+                .with(GameState.Fast, () => delay(isNative() || isDevelopment() ? 10 : 100))
                 .with(GameState.Auto, () => delay(2000 - store.config.autoreadspeed() * 2000))
                 .otherwise(() => Promise.race([onClick(), onAuto(), onFast()]))
             log.info('已受到推动并结束等待')

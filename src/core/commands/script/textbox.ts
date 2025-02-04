@@ -1,9 +1,6 @@
-import { inRange } from 'es-toolkit'
-import { GameState } from '@/core/types/Game'
 import { SwitchState } from '@/core/types/Meta'
 import { useActScopeSignal } from '@/core/utils/useScopeSignal'
 import { Y } from '@/utils/fp'
-import { arrayToInterval, intervalToArray } from '@/utils/zipNumArray'
 import { ActScope, Dynamic, NonBlocking } from '../../command'
 import { wait } from './wait'
 
@@ -22,34 +19,21 @@ export const icon = NonBlocking(
     })
 )
 
-export const readIndicatorView = useActScopeSignal(false)
-
 export const textView = useActScopeSignal('')
 export const text = Dynamic<{ text: string }>(
     ActScope(
         (context) =>
             function* ({ text }) {
-                const { index, state, store } = context
-                const global = context.variables.global
-                if (global.readsegment().some((i) => inRange(index, i[0], i[1] + 1))) {
-                    readIndicatorView(true)
-                } else {
-                    global.readsegment(arrayToInterval([...intervalToArray(global.readsegment()), index]))
-                }
-
                 yield* Y<string, Generator<Promise<void>, void, void>>(
                     (rec) =>
                         function* (str): Generator<Promise<void>, void, void> {
                             yield wait.apply(context)({
-                                duration: 100 - store.config.textspeed * 100
+                                duration: 100 - context.store.config.textspeed * 100
                             }) as unknown as Promise<void>
                             textView((text) => text + str.charAt(0))
                             if (str.length >= 1) yield* rec(str.slice(1))
                         }
                 )(text)
-                if (state === GameState.Fast && !store.config.fastforwardunread && !readIndicatorView()) {
-                    return { state: GameState.Normal }
-                }
             }
     )
 )
