@@ -13,19 +13,19 @@ type Selection = {
     select: () => void
 }
 
-export const selectRecord = Array<number | string>()
+export let selectRecord = Array<number | string>()
 
-PreInitEvent.subscribe(() => (selectRecord.length = 0))
+PreInitEvent.subscribe(() => (selectRecord = []))
 
-export const selections = new Array<Selection>()
+export let selections = new Array<Selection>()
 
 export const displaySelectionView = useGameScopeSignal(false)
 
-PreInitEvent.subscribe(() => (selections.length = 0))
+PreInitEvent.subscribe(() => (selections = []))
 
-const promises = new Array<Promise<number | string>>()
+let promises = new Array<Promise<number | string>>()
 
-PreInitEvent.subscribe(() => (promises.length = 0))
+PreInitEvent.subscribe(() => (promises = []))
 
 export const selection = NonBlocking<{ name: string; target: number | string; disable?: boolean }>(
     ActScope(() => ({ name, target, disable = false }) => {
@@ -52,7 +52,7 @@ export const selEnd = Blocking<{ index: number }>(
                 const i = selections.map((e) => e.target).findIndex((e) => e === target)
                 const last = achievement[1 << index]
                 if ((last() & (1 << 2)) === 0) {
-                    if (context.state === GameState.Fast) {
+                    if (context.state === GameState.Fast || context.state === GameState.Init) {
                         last(Number((BigInt(last()) & ~0b11n) | BigInt(1 << 2)) + 3)
                     } else {
                         last(Number((BigInt(last()) & ~0b11n) | BigInt(1 << 2)) + i)

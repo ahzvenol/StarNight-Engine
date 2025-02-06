@@ -25,7 +25,8 @@ import {
     onFast,
     onGameCleanup,
     onGameVisibilityChange,
-    PostInitEvent
+    PostInitEvent,
+    PreInitEvent
 } from './event'
 import { preloadWithIndex } from './preload'
 import { getSave } from './save'
@@ -73,6 +74,7 @@ export async function run(
     store: ReactiveStore,
     variables: Variables
 ) {
+    PreInitEvent.publish()
     let index = 0
     const cleanup = onGameCleanup()
     const bookLength = await book.length()
