@@ -27,7 +27,7 @@ async function createStore() {
 
     // 响应式绑定不能超过一级,所以数据结构仍然需要预先初始化
     // 多层空调用报错会导致程序崩溃,foo.bar.baz is not a function
-    const save = await localforage.getItem<Store['save']>('save')
+    const save = (await localforage.getItem<Store['save']>('save')) || {}
 
     const local = (await localforage.getItem<Store['local']>('local')) || {}
 
@@ -35,7 +35,7 @@ async function createStore() {
     const store = useReactive({
         system: userDefaultStore.system,
         config: toMerged(userDefaultStore.config, config),
-        save: save || userDefaultStore.save,
+        save: toMerged(userDefaultStore.save, save),
         local: toMerged(userDefaultStore.local, local)
     })
 
