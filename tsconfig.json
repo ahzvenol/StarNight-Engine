@@ -1,5 +1,5 @@
 {
-    "include": ["**/*.ts", "**/*.tsx", "**/*.mts", "src/utils/randomUUID.ts"],
+    "include": ["**/*.ts", "**/*.tsx", "**/*.mts"],
     "compilerOptions": {
         "strict": true,
         "target": "ESNext",
