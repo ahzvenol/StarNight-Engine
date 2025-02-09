@@ -1,6 +1,6 @@
 import { Capacitor } from '@capacitor/core'
 
-export const platform = Capacitor.getPlatform()
+export const platform: string = Capacitor.getPlatform()
 
 export function isAndroid(): boolean {
     return platform === 'android'
@@ -15,7 +15,7 @@ export function isWeb(): boolean {
 }
 
 export function isNative(): boolean {
-    return Capacitor.isNativePlatform()
+    return !isWeb()
 }
 
 export function isMobile(): boolean {

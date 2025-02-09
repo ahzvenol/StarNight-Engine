@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Try } from './Try'
 import { Option } from './Option'
@@ -26,11 +27,11 @@ export abstract class Either<A, B> {
         return new RightProjection(this)
     }
 
-    static left<A, B>(value: A): Either<A, B> {
+    static left<A, B = any>(value: A): Either<A, B> {
         return new Left<A, B>(value)
     }
 
-    static right<A, B>(value: B): Either<A, B> {
+    static right<B, A = any>(value: B): Either<A, B> {
         return new Right<A, B>(value)
     }
 }

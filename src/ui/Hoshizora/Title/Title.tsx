@@ -17,7 +17,7 @@ const Title: Component = () => {
     const local = store.local
     return (
         <div class={clsx('Page', styles.Title_container)}>
-            <div class={styles.Title_info_container}>
+            <div class={styles.Title_info_container} onClick={() => router.navigate('Hakuuyosei')}>
                 <div>
                     版本:{system.versionname()}&nbsp;&nbsp;{system.releasedate()}
                 </div>

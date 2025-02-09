@@ -2,13 +2,10 @@
     "name": "-",
     "version": "0.0.0",
     "description": "",
-    "main": "dist-electron/main.js",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
         "serve": "vite preview",
-        "electron:start": "chcp 65001 && vite",
-        "electron:build": "chcp 65001 && vite build && electron-builder",
         "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
         "lint:prettier": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\"",
         "lint:style": "stylelint src\"/**/*.+(css|scss|less|stylus|sass|postcss)\" --fix",

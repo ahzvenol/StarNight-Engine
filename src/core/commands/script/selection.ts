@@ -1,4 +1,4 @@
-import { ActScope, Blocking, NonBlocking } from '@/core/command'
+import { Blocking, NonBlocking } from '@/core/command'
 import { PreInitEvent } from '@/core/event'
 import { GameState } from '@/core/types/Game'
 import { useGameScopeSignal } from '@/core/utils/useScopeSignal'
@@ -28,16 +28,17 @@ let promises = new Array<Promise<number | string>>()
 PreInitEvent.subscribe(() => (promises = []))
 
 export const selection = NonBlocking<{ name: string; target: number | string; disable?: boolean }>(
-    ActScope(() => ({ name, target, disable = false }) => {
-        const promise = new PromiseX<number | string>()
-        selections.push({
-            label: name,
-            disable: disable,
-            target: target,
-            select: () => promise.resolve(target)
-        })
-        promises.push(promise)
-    })
+    () =>
+        ({ name, target, disable = false }) => {
+            const promise = new PromiseX<number | string>()
+            selections.push({
+                label: name,
+                disable: disable,
+                target: target,
+                select: () => promise.resolve(target)
+            })
+            promises.push(promise)
+        }
 )
 
 export const selEnd = Blocking<{ index: number }>(
@@ -45,7 +46,9 @@ export const selEnd = Blocking<{ index: number }>(
         async function ({ index }) {
             displaySelectionView(true)
             const target =
-                context.state === GameState.Init ? context.initial.select.shift()! : await Promise.race(promises)
+                context.state === GameState.Init
+                    ? context.initial?.select?.shift?.() || (await Promise.race(promises))
+                    : await Promise.race(promises)
             const stopfastonselection = context.store.config.stopfastonselection && context.state === GameState.Fast
             Try.apply(() => {
                 const achievement = context.variables.global.achievement
