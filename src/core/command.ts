@@ -50,8 +50,8 @@ export function SkipFast<T extends CommandArgs>(
     }
 }
 
-function normalizeOutput(output: unknown): Promise<CommandOutput> {
-    return Promise.resolve(output)
+function normalizeOutput(output: Function0<unknown>): Promise<CommandOutput> {
+    return new Promise((res) => res(output()))
         .catch((error) => log.error('命令运行出错:', error))
         .then((result) => (isPlainObject(result) ? result : {}))
 }
@@ -79,7 +79,7 @@ export function Dynamic<T extends CommandArgs>(
         apply: (context) => (args) => {
             const generator = fn(context)(args) || (function* () {})()
             const output = run(generator, { immediate: context.immediate, cancel: context.cleanup })
-            return normalizeOutput(output)
+            return normalizeOutput(() => output)
         }
     }
 }
@@ -91,7 +91,7 @@ export function NonBlocking<T extends CommandArgs>(
         meta: {
             schedule: Schedule.Async
         },
-        apply: (context) => (args) => normalizeOutput(fn(context)(args))
+        apply: (context) => (args) => normalizeOutput(() => fn(context)(args))
     }
 }
 
@@ -102,6 +102,6 @@ export function Blocking<T extends CommandArgs>(
         meta: {
             schedule: Schedule.Await
         },
-        apply: (context) => (args) => normalizeOutput(fn(context)(args))
+        apply: (context) => (args) => normalizeOutput(() => fn(context)(args))
     }
 }
