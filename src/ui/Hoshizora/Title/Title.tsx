@@ -21,13 +21,14 @@ const Title: Component = () => {
                 <div>
                     版本:{system.versionname()}&nbsp;&nbsp;{system.releasedate()}
                 </div>
-                <Show when={isNative() || isDevelopment()}>
+                <Show when={isNative()}>
                     <Switch>
                         <Match when={local.latestversion() === -1}>检测更新失败！</Match>
                         <Match when={local.latestversion() > system.versioncode()}>发现新版本！</Match>
                         <Match when={local.latestversion() === system.versioncode()}>当前已是最新版</Match>
                     </Switch>
                 </Show>
+                <Show when={isDevelopment()}>当前已是最新版</Show>
                 <div>白羽夜星制作组</div>
             </div>
             <div class={styles.Title_button_container}>
