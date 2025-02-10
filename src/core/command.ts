@@ -11,7 +11,7 @@ import { isPlainObject } from 'es-toolkit'
 import { log } from '@/utils/logger'
 import { GameState } from './types/Game'
 import { Schedule } from './types/Schedule'
-import { runGeneratorAsyncWithControl, runGeneratorSync } from './utils/runGenerator'
+import { run } from './utils/generator'
 
 // 只在本幕内产生效果的命令,由此不需要初始化
 export function ActScope<T extends CommandArgs>(
@@ -78,10 +78,7 @@ export function Dynamic<T extends CommandArgs>(
         },
         apply: (context) => (args) => {
             const generator = fn(context)(args) || (function* () {})()
-            const output =
-                context.state === GameState.Init
-                    ? runGeneratorSync(generator)
-                    : runGeneratorAsyncWithControl(generator, { immediate: context.immediate, cancel: context.cleanup })
+            const output = run(generator, { immediate: context.immediate, cancel: context.cleanup })
             return normalizeOutput(output)
         }
     }

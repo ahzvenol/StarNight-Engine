@@ -1,6 +1,5 @@
 import { SwitchState } from '@/core/types/Meta'
 import { useActScopeSignal } from '@/core/utils/useScopeSignal'
-import { Y } from '@/utils/fp'
 import { ActScope, Dynamic, NonBlocking } from '../../command'
 import { wait } from './wait'
 
@@ -24,16 +23,13 @@ export const text = Dynamic<{ text: string }>(
     ActScope(
         (context) =>
             function* ({ text }) {
-                yield* Y<string, Generator<Promise<void>, void, void>>(
-                    (rec) =>
-                        function* (str): Generator<Promise<void>, void, void> {
-                            yield wait.apply(context)({
-                                duration: 100 - context.store.config.textspeed * 100
-                            }) as unknown as Promise<void>
-                            textView((text) => text + str.charAt(0))
-                            if (str.length >= 1) yield* rec(str.slice(1))
-                        }
-                )(text)
+                while (text.length >= 1) {
+                    yield wait.apply(context)({
+                        duration: 100 - context.store.config.textspeed * 100
+                    }) as unknown as Promise<void>
+                    textView((i) => i + text.charAt(0))
+                    text = text.slice(1)
+                }
             }
     )
 )

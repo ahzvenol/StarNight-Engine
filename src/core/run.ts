@@ -74,11 +74,12 @@ export async function run(
     store: ReactiveStore,
     variables: Variables
 ) {
-    PreInitEvent.publish()
     let index = 0
+    PreInitEvent.publish()
     const cleanup = onGameCleanup()
-    const bookLength = await book.length()
     const readsegment = variables.global.readsegment
+    console.time()
+    PostInitEvent.once(() => console.timeEnd())
     PostInitEvent.once(() => state(GameState.Normal))
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -117,7 +118,7 @@ export async function run(
         // 游戏实例已销毁时退出
         const isCleanup = state() !== GameState.Init && (await PromiseX.status(cleanup)) !== PromiseState.Pending
         // 通过end命令退出 || 超过最后一幕自动退出
-        const isEnd = output['end'] === true || index >= bookLength
+        const isEnd = output['end'] === true || index >= (await book.length())
         if (isCleanup || isEnd) break
         if (isJump) JumpEvent.publish({ index: jumpArg })
     }
