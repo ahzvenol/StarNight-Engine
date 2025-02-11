@@ -36,9 +36,11 @@ export const text = Dynamic<{ text: string }>(
 
 export const nameView = useActScopeSignal('')
 
-export const name = NonBlocking<{ name: string }>(() => ({ name }) => {
-    nameView(name)
-})
+export const name = NonBlocking<{ name: string }>(
+    ActScope(() => ({ name }) => {
+        nameView(name)
+    })
+)
 
 export const textboxState = useActScopeSignal<SwitchState>(SwitchState.Enabled)
 

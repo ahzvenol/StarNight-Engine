@@ -77,9 +77,9 @@ export function Dynamic<T extends CommandArgs>(
             schedule
         },
         apply: (context) => (args) => {
-            const generator = fn(context)(args) || (function* () {})()
-            const output = run(generator, { immediate: context.immediate, cancel: context.cleanup })
-            return normalizeOutput(() => output)
+            const { immediate, cleanup: cancel } = context
+            const generator = fn(context)(args)
+            return generator ? normalizeOutput(() => run(generator, { immediate, cancel })) : Promise.resolve({})
         }
     }
 }

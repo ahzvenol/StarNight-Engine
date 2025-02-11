@@ -12,7 +12,7 @@ import { log } from '@/utils/logger'
 import { PromiseState, PromiseX } from '@/utils/PromiseX'
 import { useSignal } from '@/utils/solid/useSignal'
 import { RangeSet } from '@/utils/zipNumArray'
-import { Fork } from './commands/script/system/schedule'
+import { Chain, Fork } from './commands/script/system/schedule'
 import { isGameVisible } from './Core'
 import {
     ActEndEvent,
@@ -75,10 +75,10 @@ export async function run(
     variables: Variables
 ) {
     let index = 0
+    console.time()
     PreInitEvent.publish()
     const cleanup = onGameCleanup()
     const readsegment = variables.global.readsegment
-    console.time()
     PostInitEvent.once(() => console.timeEnd())
     PostInitEvent.once(() => state(GameState.Normal))
     // eslint-disable-next-line no-constant-condition
@@ -94,7 +94,10 @@ export async function run(
         // ActStart
         ActStartEvent.publish(context)
         // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-        const output = await Fork.apply(context)((await book.full(index)) as CommandEntitys[])
+        const output =
+            state() === GameState.Init
+                ? await Chain.apply(context)((await book.flat(index)) as CommandEntitys[])
+                : await Fork.apply(context)((await book.full(index)) as CommandEntitys[])
         // ActEnd
         ActEndEvent.publish(context)
         if (output['state'] && state() !== GameState.Init) state(output['state'])
