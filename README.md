@@ -2,7 +2,7 @@
 **为了更强的表达能力,更快的开发速度,更好的使用体验,更少的技术债务**
 ## 在线体验
 以本引擎为基础的完整作品：
-1. [星空列车与白的旅行](https://xcoc.tk/webgal/hoshizora/)
+1. [星空列车与白的旅行](https://cusky.tk/webgal/hoshizora/)
 ## 使用本引擎制作游戏
 [参考文档](https://ahzvenol.github.io/StarNight-Engine-Doc/)  
 ## 引擎特点
