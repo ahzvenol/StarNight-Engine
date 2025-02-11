@@ -13,6 +13,7 @@ module.exports = {
     ],
     plugins: ['stylelint-scss', 'stylelint-order', 'stylelint-config-rational-order/plugin'],
     rules: {
+        // 'color-function-notation': 'legacy', // 使用传统rbga函数
         // indentation: 4, // 用来定义缩进的单位
         // 'function-url-quotes': 'always', // URL 的引号 "always(必须加上引号)"|"never(没有引号)"
         // 'string-quotes': 'single', // 指定字符串使用单引号或双引号 "single(单引号)"|"double(双引号)"
@@ -31,7 +32,8 @@ module.exports = {
         'selector-id-pattern': null, // 强制选择器类名的格式
         'selector-class-pattern': null, // 强制选择器类名的格式
         'value-no-vendor-prefix': null, // 关闭 vendor-prefix (为了解决多行省略 -webkit-box)
-        'no-descending-specificity': null // 不允许较低特异性的选择器出现在覆盖较高特异性的选择器
+        'no-descending-specificity': null, // 不允许较低特异性的选择器出现在覆盖较高特异性的选择器
+        'selector-pseudo-class-no-unknown': null, // stylelint无法正确识别:global()选择器
     },
     ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts']
 }

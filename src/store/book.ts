@@ -1,25 +1,43 @@
 import type { RuntimeCommandLike } from '@/core/types/Command'
 import { cloneDeep, merge } from 'es-toolkit'
-import { fullConvert } from '@/core/convert'
-import request from '@/utils/request'
+import { convertCommands, flattenCommands } from '@/core/convert'
+import { resource } from '@/utils/request'
 
 type Book = Array<Array<RuntimeCommandLike>>
 
-const book = request<Book>('./static/book.json').then((res) => res.data)
+const book = resource<Book>('./static/book.json').then((res) => res.data)
 
-const signs = book.then((res) =>
+const _length = book.then((res) => res.length)
+
+const _sign = book.then((res) =>
     res
         .map((act) => act.filter((item) => item.key === 'sign'))
         .flatMap((act, index) => (act.length === 0 ? [] : [{ [act[0]['args']['name']]: index }]))
         .reduce<Record<string, number>>(merge, {})
 )
 
-const length = () => book.then((res) => res.length)
+const _full = book.then((res) => res.map(convertCommands))
 
-const act = (index: number) => book.then((res) => cloneDeep(res[index]))
+const _flat = _full.then((res) => res.map(flattenCommands))
 
-const full = (index: number) => act(index).then(fullConvert)
+async function length() {
+    return _length
+}
 
-const sign = (sign: string) => signs.then((map) => map[sign])
+async function act(index: number) {
+    return book.then((res) => cloneDeep(res[index]))
+}
 
-export default { act, full, sign, length }
+async function full(index: number) {
+    return _full.then((res) => cloneDeep(res[index]))
+}
+
+async function flat(index: number) {
+    return _flat.then((res) => cloneDeep(res[index]))
+}
+
+async function sign(sign: string) {
+    return _sign.then((map) => map[sign])
+}
+
+export default { act, full, flat, sign, length }

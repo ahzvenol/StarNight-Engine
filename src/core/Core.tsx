@@ -2,14 +2,13 @@ import type { Reactive } from 'micro-reactive'
 import type { Accessor, Component, ParentProps } from 'solid-js'
 import type { GlobalSaveData } from '@/store/default'
 import type { Variables } from './types/Game'
-import { once } from 'es-toolkit'
 import { useReactive } from 'micro-reactive'
 import { createContext, onCleanup, onMount, useContext } from 'solid-js'
 import { useStore } from '@/store/context'
 import { Content } from '@/ui/Elements'
 import { GameInitialContext } from '@/ui/Pages'
 import { log } from '@/utils/logger'
-import { useSignal } from '@/utils/Reactive'
+import { useSignal } from '@/utils/solid/useSignal'
 import {
     AutoButtonClickEvent,
     FastButtonClickEvent,
@@ -54,8 +53,7 @@ export const Core: Component<ParentProps> = (props) => {
 
     onMount(GameMountEvent.publish)
 
-    // micro-reactive有Bug,如果遇到奇怪的递归就是它的锅
-    onMount(once(() => run(initial, state, store, variables)))
+    onMount(() => run(initial, state, store, variables))
 
     return (
         <StateContext.Provider value={state}>

@@ -35,5 +35,8 @@ export const _tween: Function1<
         sequence.add({ ...args, duration })
         // 因为调用add后默认重新从头开始
         sequence.seek(currentTime)
+        // 神秘代码,防止一个已经结束的sequence在seek后仍然从头开始
+        sequence.pause()
+        sequence.play()
         return { ...sequence, finished }
     }

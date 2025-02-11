@@ -1,0 +1,14 @@
+{
+  "name": "StarNight Engine",
+  "short_name": "StarNight Engine",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "./icon.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    }
+  ]
+}

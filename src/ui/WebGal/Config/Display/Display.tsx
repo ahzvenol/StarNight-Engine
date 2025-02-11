@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { translation } from '@/store/effects/translations'
 import { Clone, Variable } from '@/ui/Elements'
-import { useSignal } from '@/utils/Reactive'
+import { useSignal } from '@/utils/solid/useSignal'
 import Button from '../Button'
 import Cell from '../Cell'
 import styles from '../Config.module.scss'

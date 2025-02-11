@@ -1,8 +1,121 @@
+import type { Reactive } from 'micro-reactive'
 import type { Component, JSX } from 'solid-js'
-import { children, createEffect, onMount } from 'solid-js'
-import { Portal } from 'solid-js/web'
-import { useSignal } from '@/utils/Reactive'
-import Slider from './Slider'
+import BScroll from '@better-scroll/core'
+import MouseWheel from '@better-scroll/mouse-wheel'
+import { children, createEffect, getOwner, on, onCleanup, onMount, runWithOwner } from 'solid-js'
+import { useEventListener } from '@/utils/solid/useEventListener'
+import { useSignal } from '@/utils/solid/useSignal'
+
+BScroll.use(MouseWheel)
+
+const Slider: Component<{
+    fill?: JSX.Element
+    thumb: JSX.Element
+    track1: JSX.Element
+    track2: JSX.Element
+    signal: Reactive<number>
+    vertical?: boolean
+}> = (props) => {
+    const resolvedFill = children(() => props.fill ?? <div />).toArray()
+    const resolvedThumb = children(() => props.thumb).toArray()
+    const resolvedTrack1 = children(() => props.track1).toArray()
+    const resolvedTrack2 = children(() => props.track2).toArray()
+    if (
+        (resolvedFill.length !== 1 || typeof resolvedFill[0] !== 'object') &&
+        (resolvedThumb.length !== 1 || typeof resolvedThumb[0] !== 'object') &&
+        (resolvedTrack1.length !== 1 || typeof resolvedTrack1[0] !== 'object') &&
+        (resolvedTrack2.length !== 1 || typeof resolvedTrack2[0] !== 'object')
+    ) {
+        console.error('每个参数需要且仅需要一个HTMLElement')
+        return <></>
+    }
+
+    const fill = resolvedFill[0]! as HTMLElement
+    const thumb = resolvedThumb[0]! as HTMLElement
+    const track1 = resolvedTrack1[0]! as HTMLElement
+    const track2 = resolvedTrack2[0]! as HTMLElement
+
+    const owner = getOwner()
+
+    const vertical = props.vertical === undefined ? false : true
+
+    track1.style.position = 'relative'
+    track1.appendChild(fill)
+    track1.appendChild(thumb)
+    fill.style.position = 'absolute'
+    thumb.style.position = 'absolute'
+
+    createEffect(() => {
+        fill.style[vertical ? 'height' : 'width'] = `${props.signal() * 100}%`
+        thumb.style[vertical ? 'top' : 'left'] = `${props.signal() * 100}%`
+    })
+
+    const thumbHandler = (event: MouseEvent | TouchEvent) => {
+        const max = track1.getBoundingClientRect()[vertical ? 'height' : 'width']
+
+        const fillLength = fill.getBoundingClientRect()[vertical ? 'height' : 'width']
+
+        const start =
+            event instanceof MouseEvent
+                ? event[vertical ? 'clientY' : 'clientX']
+                : event.changedTouches[0][vertical ? 'clientY' : 'clientX']
+
+        const handler = (event: MouseEvent | TouchEvent) => {
+            const current =
+                event instanceof MouseEvent
+                    ? event[vertical ? 'clientY' : 'clientX']
+                    : event.changedTouches[0][vertical ? 'clientY' : 'clientX']
+
+            const moveLength = current - start
+
+            const percent = Math.min(Math.max((fillLength + moveLength) / max, 0), 1)
+
+            fill.style[vertical ? 'height' : 'width'] = `${percent * 100}%`
+            thumb.style[vertical ? 'top' : 'left'] = `${percent * 100}%`
+
+            props.signal(percent)
+        }
+        runWithOwner(owner, () => {
+            const removeMouseMoveListener = useEventListener('mousemove', handler)
+            const removeMouseUpListener = useEventListener('mouseup', clean)
+            const removeTouchMoveListener = useEventListener('touchmove', handler, { target: thumb })
+            const removeTouchEndListener = useEventListener('touchend', clean, { target: thumb })
+            const removeTouchCancelListener = useEventListener('touchcancel', clean, { target: thumb })
+            function clean() {
+                removeMouseMoveListener()
+                removeTouchMoveListener()
+                removeMouseUpListener()
+                removeTouchEndListener()
+                removeTouchCancelListener()
+            }
+        })
+    }
+    const trackHandler = (event: MouseEvent) => {
+        const max = track1.getBoundingClientRect()[vertical ? 'height' : 'width']
+
+        const fillLength = fill.getBoundingClientRect()[vertical ? 'height' : 'width']
+
+        const start =
+            thumb.getBoundingClientRect()[vertical ? 'top' : 'left'] +
+            thumb.getBoundingClientRect()[vertical ? 'height' : 'width'] / 2
+
+        const current = event[vertical ? 'clientY' : 'clientX']
+
+        const moveLength = current - start
+
+        const percent = Math.min(Math.max((fillLength + moveLength) / max, 0), 1)
+
+        fill.style[vertical ? 'height' : 'width'] = `${percent * 100}%`
+        thumb.style[vertical ? 'top' : 'left'] = `${percent * 100}%`
+
+        props.signal(percent)
+    }
+    useEventListener('click', trackHandler, { target: track2 })
+    useEventListener('mousedown', thumbHandler, { target: thumb })
+    useEventListener('touchstart', thumbHandler, { target: thumb })
+
+    return <>{track2}</>
+}
 
 const Scrollbar: Component<{
     container: JSX.Element
@@ -40,7 +153,14 @@ const Scrollbar: Component<{
     track.appendChild(el)
 
     onMount(() => {
-        const containerDimension = parseInt(getComputedStyle(container).getPropertyValue('height'))
+        const bs = new BScroll(container, {
+            scrollY: true,
+            click: true,
+            mouseWheel: true,
+            bounce: false,
+            probeType: 3
+        })
+
         // scrollHeight自己还会变,预先保存下来
         const contentDimension = container.scrollHeight
         // 轨道的定义长度
@@ -55,23 +175,42 @@ const Scrollbar: Component<{
         el.style.height = `${trackDimension - thumbDimension}px`
         // 滑动滑块时,修改盒子定位,移动距离是:
         // 不可见的长度和总长度的比 * 内容长度和容器长度的比 * 滑动条得到的百分比 * 100
-        createEffect(() => {
-            box.style.top =
-                '-' +
-                percent() *
-                    ((contentDimension - container.clientHeight) / contentDimension) *
-                    (contentDimension / containerDimension) *
-                    100 +
-                '%'
-        })
+
+        let isScroll = false
+        bs.scrollTo(0, percent() * bs.maxScrollY)
+        createEffect(
+            on(
+                percent,
+                () => {
+                    if (!isScroll) {
+                        bs.scrollTo(0, percent() * bs.maxScrollY)
+                    }
+                    // 为了使滑块不超出轨道,对滑块应用一个变换
+                    // thumb.style.transform = `translateY(${-percent() * 100}%)`
+                },
+                { defer: true }
+            )
+        )
+
+        const update = (position: { x: number; y: number }) => percent(position.y / bs.maxScrollY)
+
+        bs.on('scroll', update)
+        bs.on('mousewheelMove', update)
+        bs.on('mousewheelStart', () => (isScroll = true))
+        bs.on('scrollStart', () => (isScroll = true))
+        bs.on('scrollEnd', () => (isScroll = false))
+        bs.on('scrollCancel', () => (isScroll = false))
+        bs.on('mousewheelEnd', () => (isScroll = false))
+        bs.on('scrollEnd', () => console.log(isScroll))
+        bs.on('scrollCancel', () => console.log(isScroll))
+        bs.on('mousewheelEnd', () => console.log(isScroll))
+        onCleanup(() => bs.destroy())
     })
+
     return (
         <>
             {container}
-            {track}
-            <Portal mount={track}>
-                <Slider vertical track={el} thumb={thumb} signal={percent} />
-            </Portal>
+            <Slider vertical track1={el} track2={track} thumb={thumb} signal={percent} />
         </>
     )
 }

@@ -2,7 +2,7 @@ import type { Component, JSX } from 'solid-js'
 import { isPlainObject, range } from 'es-toolkit'
 import { For, splitProps } from 'solid-js'
 import { UISE } from '@/store/audio'
-import { stopPropagation } from '@/utils/solid/stopPropagation'
+import { useEventListener } from '@/utils/solid/useEventListener'
 import Scale from './Scale'
 
 //横行竖列
@@ -22,24 +22,14 @@ const Graphic = (props: { width: number; height: number; mode: 'auto' | 'full'; 
 const ClickSE = UISE({ src: './static/mouse_click_1.wav' })
 const HoverSE = UISE({ src: './static/mouse_hover_1.wav' })
 
-const Button: Component<
-    Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onclick' | 'onmouseenter'> & {
-        onClick?: Function0<void>
-        onMouseEnter?: Function0<void>
-    }
-> = (props) => {
-    const [local, others] = splitProps(props, ['onClick', 'onMouseEnter'])
+const Button: Component<Omit<JSX.HTMLAttributes<HTMLDivElement>, 'ref'>> = (props) => {
     return (
         <div
-            onClick={stopPropagation(() => {
-                ClickSE.play()
-                local.onClick?.()
-            })}
-            onMouseEnter={() => {
-                HoverSE.play()
-                local.onMouseEnter?.()
+            ref={(ref) => {
+                useEventListener('click', () => ClickSE.play(), { target: ref })
+                useEventListener('mouseenter', () => HoverSE.play(), { target: ref })
             }}
-            {...others}
+            {...props}
         />
     )
 }
@@ -50,10 +40,7 @@ const Content: Component<JSX.HTMLAttributes<HTMLDivElement>> = (props) => {
         <div
             style={
                 isPlainObject(local.style)
-                    ? {
-                          ...(local.style as JSX.CSSProperties),
-                          display: 'contents'
-                      }
+                    ? { ...local.style, display: 'contents' }
                     : local.style + ';display:contents;'
             }
             {...others}

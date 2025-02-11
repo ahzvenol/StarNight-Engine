@@ -1,4 +1,6 @@
-function arrayToInterval(list: Array<number>): Array<[number, number]> {
+import { range } from 'es-toolkit'
+
+function arrayToRanges(list: Array<number>): Array<[number, number]> {
     if (list == undefined || list.length === 0) {
         return []
     } else if (list.length === 1) {
@@ -20,20 +22,19 @@ function arrayToInterval(list: Array<number>): Array<[number, number]> {
     return collection
 }
 
-// 转换数学区间到数组
-function intervalToArray(arr: Array<[number, number]>): Array<number> {
-    return arr.flatMap((e) => to(e[0], e[1]))
-}
-
-const to = (start: number, end: number): Array<number> => {
-    const i: Array<number> = []
-    const go = (start: number, end: number) => {
-        i.push(start)
-        if (start === end) return i
-        else go(start + 1, end)
+class RangeSet {
+    private constructor(private ranges: Array<[number, number]> = []) {}
+    static fromRanges = (arr: Array<[number, number]>) => new RangeSet(arr)
+    static fromArray = (arr: Array<number>) => new RangeSet(arrayToRanges(arr))
+    push = (num: number) => {
+        if (!this.includes(num)) {
+            this.ranges = arrayToRanges([...this.getArray(), num])
+        }
+        return this
     }
-    go(start, end)
-    return i
+    includes = (num: number): boolean => this.ranges.some((e) => e[0] <= num && num <= e[1])
+    getRanges = (): Array<[number, number]> => this.ranges
+    getArray = (): Array<number> => this.ranges.flatMap((e) => range(e[0], e[1] + 1))
 }
 
-export { arrayToInterval, intervalToArray }
+export { RangeSet }

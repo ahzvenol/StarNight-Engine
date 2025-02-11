@@ -11,7 +11,7 @@ import { isPlainObject } from 'es-toolkit'
 import { log } from '@/utils/logger'
 import { GameState } from './types/Game'
 import { Schedule } from './types/Schedule'
-import { runGeneratorAsyncWithControl, runGeneratorSync } from './utils/runGenerator'
+import { run } from './utils/generator'
 
 // 只在本幕内产生效果的命令,由此不需要初始化
 export function ActScope<T extends CommandArgs>(
@@ -50,8 +50,8 @@ export function SkipFast<T extends CommandArgs>(
     }
 }
 
-function normalizeOutput(output: unknown): Promise<CommandOutput> {
-    return Promise.resolve(output)
+function normalizeOutput(output: Function0<unknown>): Promise<CommandOutput> {
+    return new Promise((res) => res(output()))
         .catch((error) => log.error('命令运行出错:', error))
         .then((result) => (isPlainObject(result) ? result : {}))
 }
@@ -77,12 +77,9 @@ export function Dynamic<T extends CommandArgs>(
             schedule
         },
         apply: (context) => (args) => {
-            const generator = fn(context)(args) || (function* () {})()
-            const output =
-                context.state === GameState.Init
-                    ? runGeneratorSync(generator)
-                    : runGeneratorAsyncWithControl(generator, { immediate: context.immediate, cancel: context.cleanup })
-            return normalizeOutput(output)
+            const { immediate, cleanup: cancel } = context
+            const generator = fn(context)(args)
+            return generator ? normalizeOutput(() => run(generator, { immediate, cancel })) : Promise.resolve({})
         }
     }
 }
@@ -94,7 +91,7 @@ export function NonBlocking<T extends CommandArgs>(
         meta: {
             schedule: Schedule.Async
         },
-        apply: (context) => (args) => normalizeOutput(fn(context)(args))
+        apply: (context) => (args) => normalizeOutput(() => fn(context)(args))
     }
 }
 
@@ -105,6 +102,6 @@ export function Blocking<T extends CommandArgs>(
         meta: {
             schedule: Schedule.Await
         },
-        apply: (context) => (args) => normalizeOutput(fn(context)(args))
+        apply: (context) => (args) => normalizeOutput(() => fn(context)(args))
     }
 }

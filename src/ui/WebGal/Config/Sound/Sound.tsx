@@ -2,7 +2,7 @@ import type { Component } from 'solid-js'
 import { useStore } from '@/store/context'
 import { translation } from '@/store/effects/translations'
 import { Clone, Variable } from '@/ui/Elements'
-import { useSignal } from '@/utils/Reactive'
+import { useSignal } from '@/utils/solid/useSignal'
 import Button from '../Button'
 import Cell from '../Cell'
 import styles from '../Config.module.scss'
@@ -15,7 +15,7 @@ const Sound: Component = () => {
     return (
         <div class={styles.Options_main_content_half}>
             <Cell title={t.volumeMain.title}>
-                <Slider signal={config.golbalvolume} />
+                <Slider signal={config.globalvolume} />
             </Cell>
             <Cell title={t.vocalVolume.title}>
                 <Slider signal={config.clipvolume} />

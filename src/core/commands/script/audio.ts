@@ -36,7 +36,12 @@ export const setAudio = Dynamic<SetAudioCommandArgs>(
     ({ state }) =>
         function* ({ type, name = type, file, ...configs }) {
             // Clip的生命周期是幕,所以不用初始化
-            if ((state === GameState.Init || state === GameState.Fast) && type === 'Clip') return
+            if (
+                (state === GameState.Init || state === GameState.Fast) &&
+                (type === 'Clip' || (type === 'SE' && configs.loop !== true))
+            ) {
+                return
+            }
             // 挂载新音频
             const audio = AUDIO[type]({
                 ...configs,

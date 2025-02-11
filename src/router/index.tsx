@@ -2,7 +2,7 @@ import type { JSX, ParentProps } from 'solid-js'
 import { isFunction, isString } from 'es-toolkit'
 import { createEffect, Show } from 'solid-js'
 import { log } from '@/utils/logger'
-import { useSignal } from '@/utils/Reactive'
+import { useSignal } from '@/utils/solid/useSignal'
 
 const active = useSignal('')
 

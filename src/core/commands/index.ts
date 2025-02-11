@@ -1,6 +1,8 @@
+import { achievement } from './script/achievement'
 import { closeAudio, fadeAudio, setAudio } from './script/audio'
 import { backlog } from './script/backlog'
 import { check, click } from './script/click'
+import { blind } from './script/hoshizora/blind'
 // import { closeImage, setImage, tweenImage } from './script/image'
 import { closeImage, setImage, tweenImage } from './script/hoshizora/image'
 import { selection, selEnd } from './script/selection'
@@ -10,7 +12,6 @@ import { Continue, End, Jump, sign } from './script/system/branch'
 import { Await, Chain, Fork, Par } from './script/system/schedule'
 import { icon, name, preview, text, textbox } from './script/textbox'
 import { unlock } from './script/unlock'
-import { variable } from './script/variable'
 import { video } from './script/video'
 import { wait } from './script/wait'
 
@@ -27,7 +28,7 @@ export const commands = () =>
         chain: Chain,
         await: Await,
         // ----
-        var: variable,
+        ach: achievement,
         // ----
         setI: setImage,
         tweenI: tweenImage,
@@ -54,7 +55,8 @@ export const commands = () =>
         punch,
         click,
         check,
-        textbox
+        textbox,
+        blind
     }) as const
 
 // 文本:text

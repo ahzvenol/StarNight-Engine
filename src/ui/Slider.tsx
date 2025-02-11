@@ -1,6 +1,7 @@
 import type { Reactive } from 'micro-reactive'
 import type { Component, JSX } from 'solid-js'
-import { children } from 'solid-js'
+import { children, createEffect, getOwner, runWithOwner } from 'solid-js'
+import { useEventListener } from '@/utils/solid/useEventListener'
 
 // 滑块组件,提供最大限度的自由配置,根据此组件父元素的width作为滑块长度
 // 为了实现功能,此组件会修改以下属性,其余属性自由配置
@@ -33,6 +34,8 @@ const Slider: Component<{
     const thumb = resolvedThumb[0]! as HTMLElement
     const track = resolvedTrack[0]! as HTMLElement
 
+    const owner = getOwner()
+
     const vertical = props.vertical === undefined ? false : true
 
     track.style.position = 'relative'
@@ -40,12 +43,13 @@ const Slider: Component<{
     track.appendChild(thumb)
     fill.style.position = 'absolute'
     thumb.style.position = 'absolute'
-    fill.style[vertical ? 'height' : 'width'] = `${props.signal() * 100}%`
-    thumb.style[vertical ? 'top' : 'left'] = `${props.signal() * 100}%`
 
-    thumb.onmousedown = thumb.ontouchstart = (event: MouseEvent | TouchEvent) => {
-        event.stopPropagation()
+    createEffect(() => {
+        fill.style[vertical ? 'height' : 'width'] = `${props.signal() * 100}%`
+        thumb.style[vertical ? 'top' : 'left'] = `${props.signal() * 100}%`
+    })
 
+    const thumbHandler = (event: MouseEvent | TouchEvent) => {
         const max = track.getBoundingClientRect()[vertical ? 'height' : 'width']
 
         const fillLength = fill.getBoundingClientRect()[vertical ? 'height' : 'width']
@@ -63,28 +67,51 @@ const Slider: Component<{
 
             const moveLength = current - start
 
-            let percent = (fillLength + moveLength) / max
-            if (percent <= 0) percent = 0
-            else if (percent >= 1) percent = 1
+            const percent = Math.min(Math.max((fillLength + moveLength) / max, 0), 1)
 
             fill.style[vertical ? 'height' : 'width'] = `${percent * 100}%`
             thumb.style[vertical ? 'top' : 'left'] = `${percent * 100}%`
 
             props.signal(percent)
         }
-
-        document.addEventListener('mousemove', handler as EventListener)
-        document.addEventListener('touchmove', handler as EventListener)
-
-        const clean = () => {
-            document.removeEventListener('mousemove', handler as EventListener)
-            document.removeEventListener('touchmove', handler as EventListener)
-            document.removeEventListener('mouseup', clean)
-            document.removeEventListener('touchend', clean)
-        }
-        document.addEventListener('mouseup', clean)
-        document.addEventListener('touchend', clean)
+        runWithOwner(owner, () => {
+            const removeMouseMoveListener = useEventListener('mousemove', handler)
+            const removeMouseUpListener = useEventListener('mouseup', clean)
+            const removeTouchMoveListener = useEventListener('touchmove', handler, { target: thumb })
+            const removeTouchEndListener = useEventListener('touchend', clean, { target: thumb })
+            const removeTouchCancelListener = useEventListener('touchcancel', clean, { target: thumb })
+            function clean() {
+                removeMouseMoveListener()
+                removeTouchMoveListener()
+                removeMouseUpListener()
+                removeTouchEndListener()
+                removeTouchCancelListener()
+            }
+        })
     }
+    const trackHandler = (event: MouseEvent) => {
+        const max = track.getBoundingClientRect()[vertical ? 'height' : 'width']
+
+        const fillLength = fill.getBoundingClientRect()[vertical ? 'height' : 'width']
+
+        const start =
+            thumb.getBoundingClientRect()[vertical ? 'top' : 'left'] +
+            thumb.getBoundingClientRect()[vertical ? 'height' : 'width'] / 2
+
+        const current = event[vertical ? 'clientY' : 'clientX']
+
+        const moveLength = current - start
+
+        const percent = Math.min(Math.max((fillLength + moveLength) / max, 0), 1)
+
+        fill.style[vertical ? 'height' : 'width'] = `${percent * 100}%`
+        thumb.style[vertical ? 'top' : 'left'] = `${percent * 100}%`
+
+        props.signal(percent)
+    }
+    useEventListener('click', trackHandler, { target: track })
+    useEventListener('mousedown', thumbHandler, { target: thumb })
+    useEventListener('touchstart', thumbHandler, { target: thumb })
 
     return <>{track}</>
 }

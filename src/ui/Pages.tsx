@@ -7,8 +7,8 @@ import { GameActivateEvent, GameDeactivateEvent, ReturnToTitleEvent } from '@/co
 import { Route, router } from '@/router'
 import { BGM } from '@/store/audio'
 import { log } from '@/utils/logger'
-import { useSignal } from '@/utils/Reactive'
 import { KeepAlive } from '@/utils/solid/KeepAlive'
+import { useSignal } from '@/utils/solid/useSignal'
 import { Pages } from './Type'
 
 let isInGame = false
@@ -36,24 +36,22 @@ createEffect(
     )
 )
 
+export const TitleBGM = BGM({
+    src: './static/AudioClip/bgm01.flac'
+})
 export const Title: Component<ParentProps> = (props) => {
-    const TitleBGM = BGM({
-        src: './static/AudioClip/bgm01.flac'
-    })
-    createEffect(
-        on(router.active, () => {
-            if (router.active() === Pages.Title) {
-                if (!TitleBGM.playing()) {
-                    log.info('播放主背景音乐(开发环境下不播放)')
-                    if (!import.meta.env.DEV) {
-                        TitleBGM.play()
-                    }
+    createEffect(() => {
+        if (router.active() === Pages.Title) {
+            if (!TitleBGM.playing()) {
+                log.info('播放主背景音乐(开发环境下不播放)')
+                if (!import.meta.env.DEV) {
+                    TitleBGM.play()
                 }
-            } else if (router.active() === Pages.Game) {
-                TitleBGM.stop()
             }
-        })
-    )
+        } else if (router.active() === Pages.Game) {
+            TitleBGM.stop()
+        }
+    })
     return <Route path={Pages.Title}>{props.children}</Route>
 }
 

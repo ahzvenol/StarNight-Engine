@@ -5,8 +5,8 @@ import { Show } from 'solid-js'
 import { useStore } from '@/store/context'
 import { translation } from '@/store/effects/translations'
 import { Button, Clone, Variable } from '@/ui/Elements'
-import { useSignal } from '@/utils/Reactive'
 import { ReRender } from '@/utils/ReRender'
+import { useSignal } from '@/utils/solid/useSignal'
 import styles from './SaveAndLoad.module.scss'
 
 const SaveLoad: Component<{ mode: 'Save' | 'Load' }> = ({ mode }) => {

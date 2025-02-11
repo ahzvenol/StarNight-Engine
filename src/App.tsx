@@ -5,23 +5,14 @@ import { KeepAliveProvider } from 'solid-keep-alive'
 import { AppEnterEvent, AppLeaveEvent } from './core/event'
 import { Context } from './store/context'
 import store from './store/store'
-import UI from './ui/Hoshizora'
+import UI from './ui/WebGal'
+import { isMobile, likeMobile } from './utils/checkEnv'
 
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false
 
-// if (import.meta.env.DEV !== true) {
-//     if ('serviceWorker' in navigator) {
-//         navigator.serviceWorker
-//             .register('/service-worker.js')
-//             .then((registration) => {
-//                 log.info('ServiceWorker registration successful with scope: ' + registration.scope)
-//             })
-//             .catch((error) => {
-//                 log.error('ServiceWorker registration failed: ' + error)
-//             })
-//     }
-// }
+if (isMobile() || likeMobile()) document.documentElement.classList.add('mobile')
+
 addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'hidden') {
         AppLeaveEvent.publish()

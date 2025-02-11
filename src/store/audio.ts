@@ -22,14 +22,16 @@ function wrapHowlWithSuspend(HowlClass: Howlonstructor) {
     }
 }
 
+const { Howler: HowlerGlobal, Howl: HowlerConstructor } = HowlerInstance()
 const { Howler: BGMGlobal, Howl: BGMConstructor } = HowlerInstance()
 const { Howler: SEGlobal, Howl: SEConstructor } = HowlerInstance()
 const { Howler: ClipGlobal, Howl: ClipConstructor } = HowlerInstance()
 const { Howler: UISEGlobal, Howl: UISEConstructor } = HowlerInstance()
 
+export const Howler = wrapHowlWithSuspend(HowlerConstructor)
 export const BGM = wrapHowlWithSuspend(BGMConstructor)
 export const SE = wrapHowlWithSuspend(SEConstructor)
 export const Clip = wrapHowlWithSuspend(ClipConstructor)
 export const UISE = wrapHowlWithSuspend(UISEConstructor)
 
-export { BGMGlobal, SEGlobal, ClipGlobal, UISEGlobal }
+export { HowlerGlobal, BGMGlobal, SEGlobal, ClipGlobal, UISEGlobal }

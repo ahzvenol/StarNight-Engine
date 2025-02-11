@@ -27,7 +27,7 @@ export const video = Blocking<VideoCommandArgs>(
                 disablePictureInPicture
             />
         ) as HTMLVideoElement
-        videoElement.volume = config.golbalvolume
+        videoElement.volume = config.globalvolume
         videoView(videoElement)
         await promise
         videoElement.pause()

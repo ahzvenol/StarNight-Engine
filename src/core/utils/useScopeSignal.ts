@@ -1,5 +1,5 @@
-import type { Signal } from '@/utils/Reactive'
-import { useSignal } from '@/utils/Reactive'
+import type { Signal } from '@/utils/solid/useSignal'
+import { useSignal } from '@/utils/solid/useSignal'
 import { ActStartEvent, GameMountEvent } from '../event'
 
 type Primitive = string | number | boolean | symbol | bigint | null | undefined

@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
-import { useSignal } from '@/utils/Reactive'
+import { useSignal } from '@/utils/solid/useSignal'
 import styles from './LandingPage.module.scss'
 
 const enter = useSignal(false)
