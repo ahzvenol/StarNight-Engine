@@ -9,9 +9,7 @@ import { useReactive } from '@/utils/solid/useReactive'
 import systemDefaultStore from './default'
 
 async function createStore() {
-    const userConfig = {}
-
-    const userDefaultStore = toMerged(systemDefaultStore, userConfig)
+    const userDefaultStore = systemDefaultStore
 
     localforage.config({ name: userDefaultStore.system.key })
 
