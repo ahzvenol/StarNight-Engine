@@ -1,4 +1,4 @@
-import { Blocking, NonBlocking } from '@/core/command'
+import { Blocking, NonBlocking } from '@/core/decorator'
 import { PreInitEvent } from '@/core/event'
 import { GameState } from '@/core/types/Game'
 import { useGameScopeSignal } from '@/core/utils/useScopeSignal'
@@ -45,13 +45,11 @@ export const selEnd = Blocking<{ index: number }>(
     (context) =>
         async function ({ index }) {
             displaySelectionView(true)
-            const target =
-                context.state === GameState.Init
-                    ? context.initial?.select?.shift?.() || (await Promise.race(promises))
-                    : await Promise.race(promises)
+            const savedSelect = context.initial?.select?.shift?.()
+            const target = context.state === GameState.Init && savedSelect ? savedSelect : await Promise.race(promises)
             const stopfastonselection = context.store.config.stopfastonselection && context.state === GameState.Fast
             Try.apply(() => {
-                const achievement = context.variables.global.achievement
+                const achievement = context.global.achievement
                 const i = selections.map((e) => e.target).findIndex((e) => e === target)
                 const last = achievement[1 << index]
                 if ((last() & (1 << 2)) === 0) {

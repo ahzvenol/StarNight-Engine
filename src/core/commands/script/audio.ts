@@ -1,7 +1,7 @@
 import type { ExtendArgs } from '@/core/types/Command'
 import type { Howl, HowlOptions } from '@/lib/howler'
 import { delay, isUndefined } from 'es-toolkit'
-import { Dynamic, NonBlocking } from '@/core/command'
+import { Dynamic, NonBlocking } from '@/core/decorator'
 import { ActStartEvent, ContinueGameEvent, GameCleanupEvent, PostInitEvent, ReturnToTitleEvent } from '@/core/event'
 import { GameState } from '@/core/types/Game'
 import { BGM, Clip, SE, UISE } from '@/store/audio'

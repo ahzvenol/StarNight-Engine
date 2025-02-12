@@ -1,6 +1,6 @@
 import { SwitchState } from '@/core/types/Meta'
 import { useActScopeSignal } from '@/core/utils/useScopeSignal'
-import { ActScope, Dynamic, NonBlocking } from '../../command'
+import { ActScope, Dynamic, NonBlocking } from '../../decorator'
 import { wait } from './wait'
 
 export const textPreview = useActScopeSignal('')

@@ -1,7 +1,7 @@
 import type { ReactiveStore } from '@/store/default'
 import type { Signal } from '@/utils/solid/useSignal'
 import type { CommandEntitys } from './types/Command'
-import type { InitialGameData, Variables } from './types/Game'
+import type { InitialGameData } from './types/Game'
 import { delay, range } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import { router } from '@/router'
@@ -64,33 +64,32 @@ ActStartEvent.subscribe(async (context) => {
     ;(immediate as PromiseX<void>).resolve()
 })
 
-// 由幕循环维护已读幕
+// 已读/未读标记
 export const isRead = useSignal(false)
 
 // 在循环开始前预取book.fulls会使快速读档变得很慢,由此换取10%的加载速度提升是不值得的
-export async function run(
-    initial: InitialGameData,
-    state: Signal<GameState>,
-    store: ReactiveStore,
-    variables: Variables
-) {
+export async function start(initial: InitialGameData, state: Signal<GameState>, store: ReactiveStore) {
     let index = 0
     console.time()
     PreInitEvent.publish()
     const cleanup = onGameCleanup()
-    const readsegment = variables.global.readsegment
+    const global = store.save.global
+    const readsegment = global.readsegment
     PostInitEvent.once(() => console.timeEnd())
     PostInitEvent.once(() => state(GameState.Normal))
     // eslint-disable-next-line no-constant-condition
     while (true) {
         if (index === initial.index) PostInitEvent.publish({ index })
+        // 由幕循环维护已读幕,这一操作需要在ActStart之前完成,所以不能借助事件
         const range = RangeSet.fromRanges(readsegment())
         isRead(range.includes(index))
         if (!isRead()) readsegment(range.push(index).getRanges())
+        // 处理在未读文本处解除快进的设置项
         if (state() === GameState.Fast && !store.config.fastforwardunread() && !isRead()) state(GameState.Normal)
+        // ActStart前的初始化工作
         const immediate = new PromiseX<void>()
         if (state() === GameState.Init || state() === GameState.Fast) immediate.resolve()
-        const context = { initial, state: state(), store: store(), variables, index, immediate, cleanup }
+        const context = { initial, state: state(), store: store(), global, index, immediate, cleanup }
         // ActStart
         ActStartEvent.publish(context)
         // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue

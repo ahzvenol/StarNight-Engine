@@ -2,7 +2,7 @@ import { isGameVisible } from '@/core/Core'
 import { GameVisibilityEvent } from '@/core/event'
 import { TimeoutController } from '@/core/utils/TimeoutController'
 import { PromiseX } from '@/utils/PromiseX'
-import { ActScope, Dynamic } from '../../command'
+import { ActScope, Dynamic } from '../../decorator'
 
 export const wait = Dynamic<{ duration: number }>(
     'Normal.Await',
