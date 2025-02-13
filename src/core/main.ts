@@ -6,7 +6,6 @@ import { delay, range } from 'es-toolkit'
 import { match } from 'ts-pattern'
 import { router } from '@/router'
 import book from '@/store/book'
-import { Pages } from '@/ui/Type'
 import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/logger'
 import { PromiseState, PromiseX } from '@/utils/PromiseX'
@@ -31,6 +30,7 @@ import {
 import { preloadWithIndex } from './preload'
 import { getSave } from './save'
 import { GameState } from './types/Game'
+import { Pages } from './types/Pages'
 
 // 对外暴露目前的index,目前供存档功能使用
 export const currentIndex = useSignal(0)
