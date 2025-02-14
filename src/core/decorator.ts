@@ -17,10 +17,9 @@ export function ActScope<T extends CommandArgs>(cmd: StandardCommand<T>): Standa
     delete cmd.meta.scope[GameState.Init]
     return cmd
 }
-// 某些命令并不是只在本幕内产生效果,但是仍然需要跳过初始化
-export { ActScope as SkipInit }
-// 某些命令不需要在快进时产生效果,这样的命令应当也是ActScope的
-export function SkipFast<T extends CommandArgs>(cmd: StandardCommand<T>): StandardCommand<T> {
+// 只在执行过程中产生效果的命令,这样的命令应当也是ActScope的
+export function EffectScope<T extends CommandArgs>(cmd: StandardCommand<T>): StandardCommand<T> {
+    delete cmd.meta.scope[GameState.Init]
     delete cmd.meta.scope[GameState.Fast]
     return cmd
 }
@@ -47,8 +46,7 @@ export function Dynamic<T extends CommandArgs>(
         apply: (context) => (args) => {
             const { immediate, cleanup: cancel } = context
             const generator = fn(context)(args)
-            const output = normalizeOutput(() => run(generator, { immediate, cancel }))
-            return output
+            return normalizeOutput(() => run(generator, { immediate, cancel }))
         }
     }
 }
