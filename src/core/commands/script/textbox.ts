@@ -4,23 +4,23 @@ import { ActScope, Dynamic, NonBlocking } from '../../decorator'
 import { wait } from './wait'
 
 export const textPreview = useActScopeSignal('')
-export const preview = NonBlocking<{ text: string }>(
-    ActScope(() => ({ text }) => {
+export const preview = ActScope(
+    NonBlocking<{ text: string }>(() => ({ text }) => {
         textPreview(text)
     })
 )
 
 export const showSuffixIconView = useActScopeSignal(false)
 
-export const icon = NonBlocking(
-    ActScope(() => () => {
+export const icon = ActScope(
+    NonBlocking(() => () => {
         showSuffixIconView(true)
     })
 )
 
 export const textView = useActScopeSignal('')
-export const text = Dynamic<{ text: string }>(
-    ActScope(
+export const text = ActScope(
+    Dynamic<{ text: string }>(
         (context) =>
             function* ({ text }) {
                 while (text.length >= 1) {
@@ -36,8 +36,8 @@ export const text = Dynamic<{ text: string }>(
 
 export const nameView = useActScopeSignal('')
 
-export const name = NonBlocking<{ name: string }>(
-    ActScope(() => ({ name }) => {
+export const name = ActScope(
+    NonBlocking<{ name: string }>(() => ({ name }) => {
         nameView(name)
     })
 )

@@ -4,9 +4,9 @@ import { TimeoutController } from '@/core/utils/TimeoutController'
 import { PromiseX } from '@/utils/PromiseX'
 import { ActScope, Dynamic } from '../../decorator'
 
-export const wait = Dynamic<{ duration: number }>(
-    'Normal.Await',
-    ActScope(
+export const wait = ActScope(
+    Dynamic<{ duration: number }>(
+        'Normal.Await',
         ({ immediate }) =>
             function* ({ duration }) {
                 if (duration === 0) return
