@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { ScheduledHighLevelCommand } from '@/core/types/Schedule'
-import { Schedule, Scope } from '@/core/types/Schedule'
+import type { ScheduledHighLevelCommand } from '@/core/types/Command'
+import { Schedule, Scope } from '@/core/types/Command'
 import { commands } from '../../'
 import { _chain, _fork, _par } from '../abstract/schedule'
 
@@ -12,9 +12,10 @@ export const Fork: ScheduledHighLevelCommand = {
         _fork(
             rows.flatMap((row) => {
                 const cmd = commands()[row.key]
+                if (!(context.state in cmd.meta.scope)) return []
                 const schedule = cmd.meta.schedule
                 const apply = () => cmd.apply(context)(row.args as any)
-                return context.state in cmd.meta.scope ? [{ meta: { key: row.key, schedule }, apply }] : []
+                return [{ meta: { key: row.key, schedule }, apply }]
             })
         )()
 }
@@ -25,9 +26,10 @@ export const Par: ScheduledHighLevelCommand = {
         _par(
             rows.flatMap((row) => {
                 const cmd = commands()[row.key]
+                if (!(context.state in cmd.meta.scope)) return []
                 const schedule = Schedule.Async
                 const apply = () => cmd.apply(context)(row.args as any)
-                return context.state in cmd.meta.scope ? [{ meta: { key: row.key, schedule }, apply }] : []
+                return [{ meta: { key: row.key, schedule }, apply }]
             })
         )()
 }
@@ -38,9 +40,10 @@ export const Chain: ScheduledHighLevelCommand = {
         _chain(
             rows.flatMap((row) => {
                 const cmd = commands()[row.key]
+                if (!(context.state in cmd.meta.scope)) return []
                 const schedule = Schedule.Await
                 const apply = () => cmd.apply(context)(row.args as any)
-                return context.state in cmd.meta.scope ? [{ meta: { key: row.key, schedule }, apply }] : []
+                return [{ meta: { key: row.key, schedule }, apply }]
             })
         )()
 }

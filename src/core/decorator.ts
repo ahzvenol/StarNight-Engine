@@ -8,8 +8,8 @@ import type {
 } from './types/Command'
 import { isPlainObject } from 'es-toolkit'
 import { log } from '@/utils/logger'
+import { Schedule, Scope } from './types/Command'
 import { GameState } from './types/Game'
-import { Schedule, Scope } from './types/Schedule'
 import { run } from './utils/generator'
 
 // 只在本幕内产生效果的命令,由此不需要初始化

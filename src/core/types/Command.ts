@@ -1,7 +1,7 @@
 import type { commands } from '../commands'
-import type { GameRuntimeContext, GameState } from './Game'
+import type { GameRuntimeContext } from './Game'
 import type { MetaFunction, NeverFailingPromise } from './Meta'
-import type { Schedule, Scope } from './Schedule'
+import { GameState } from './Game'
 
 // 命令参数可能的类型
 export type CommandArg = string | number | boolean
@@ -42,10 +42,6 @@ export type BlockingCommandFunction<T extends CommandArgs> = Function1<
     Function1<T, Promise<RuntimeCommandOutput>>
 >
 
-// 高阶命令最终映射到基本命令,基本命令已进行异常处理,所以高阶命令无需再处理异常
-// 高阶命令只进行多个基本命令之间的调度,基本命令的耗时和阻塞控制由自身的定义决定
-export type HighLevelCommandFunction = StandardCommandFunction<Array<CommandEntitys>>
-
 // 在命令的类型声明中定义的应该是命令需要的参数
 // 因为命令实际可能接收到的参数是any,而参数校验目前未实现
 export type CommandFunction<T extends CommandArgs> =
@@ -53,16 +49,46 @@ export type CommandFunction<T extends CommandArgs> =
     | NonBlockingCommandFunction<T>
     | BlockingCommandFunction<T>
 
-// Standard命令返回一个永不失败的Promise
+// 高阶命令最终映射到基本命令,基本命令已进行异常处理,所以高阶命令无需再处理异常
+// 高阶命令只进行多个基本命令之间的调度,基本命令的耗时和阻塞控制由自身的定义决定
+export type HighLevelCommandFunction = StandardCommandFunction<Array<CommandEntitys>>
+
+// Resolved命令已经传入全部参数
+export type ResolvedCommandFunction = Function0<RuntimeCommandOutput>
+
+// 具有Resolved和Standard性质的命令
+export type StandardResolvedCommandFunction = Function0<NeverFailingPromise<CommandOutput>>
+
+// 使用这两个标记的目的是使用外部数据对象控制程序的阻塞/并行调度
+export enum Schedule {
+    Await = 'await',
+    Async = 'async'
+}
+
+// 命令作用域用于优化运行效率
+export const Scope = () => ({ ...GameState })
+
+// 标准命令返回一个永不失败的Promise
 export type StandardCommandFunction<T extends CommandArgs> = Function1<
     GameRuntimeContext,
     Function1<T, NeverFailingPromise<CommandOutput>>
 >
 
-// 附加了阻塞/并行调度标志的标准命令
+// 附加了作用域标志的标准命令
 export interface StandardCommand<T extends CommandArgs> extends MetaFunction {
     meta: { schedule: Schedule; scope: Partial<ReturnType<typeof Scope>> }
     apply: StandardCommandFunction<T>
+}
+
+// 附加了作用域标志的高阶命令
+export interface ScheduledHighLevelCommand extends MetaFunction {
+    meta: { schedule: Schedule; scope: Partial<ReturnType<typeof Scope>> }
+    apply: HighLevelCommandFunction
+}
+
+export interface ScheduledStandardResolvedCommand extends MetaFunction {
+    meta: { schedule: Schedule }
+    apply: StandardResolvedCommandFunction
 }
 
 // 已注册的全部命令
