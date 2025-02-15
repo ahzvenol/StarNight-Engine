@@ -1,3 +1,4 @@
+import type { Scope } from '@/core/types/Command'
 import type { commands } from '../commands'
 import type { GameRuntimeContext } from './Game'
 import type { MetaFunction, NeverFailingPromise } from './Meta'
@@ -18,7 +19,6 @@ export interface CommandOutput {
     jump?: number
     end?: boolean
     state?: GameState
-    endAuto?: Promise<void>
 }
 
 // 实际上命令可以返回任何值,但是只有CommandOutput有意义
@@ -66,7 +66,7 @@ export enum Schedule {
 }
 
 // 命令作用域用于优化运行效率
-export const Scope = () => ({ ...GameState })
+export { GameState as Scope }
 
 // 标准命令返回一个永不失败的Promise
 export type StandardCommandFunction<T extends CommandArgs> = Function1<
@@ -76,13 +76,13 @@ export type StandardCommandFunction<T extends CommandArgs> = Function1<
 
 // 附加了作用域标志的标准命令
 export interface StandardCommand<T extends CommandArgs> extends MetaFunction {
-    meta: { schedule: Schedule; scope: Partial<ReturnType<typeof Scope>> }
+    meta: { schedule?: Schedule; exclude?: Partial<Record<Scope, undefined>> }
     apply: StandardCommandFunction<T>
 }
 
 // 附加了作用域标志的高阶命令
 export interface ScheduledHighLevelCommand extends MetaFunction {
-    meta: { schedule: Schedule; scope: Partial<ReturnType<typeof Scope>> }
+    meta: { schedule?: Schedule; exclude?: Partial<Record<Scope, undefined>> }
     apply: HighLevelCommandFunction
 }
 

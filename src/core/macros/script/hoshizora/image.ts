@@ -19,13 +19,8 @@ export const setSprite: MacroFunction<SetImageCommandArgs & SetBGMacroArgs & { z
     const imageArgs = Object.assign({ opacity: 1 }, omit(renamedArgs, ['duration']), { zIndex: 1 })
     const tweenArgs = { target: args.name, ease: 'easeInQuad', duration: 175, opacity: 0 }
     return [
-        {
-            key: 'fork',
-            args: [
-                { key: 'tweenI', args: tweenArgs },
-                { key: 'setI', args: imageArgs as unknown as SetImageCommandArgs }
-            ]
-        }
+        { key: 'tweenI', args: tweenArgs },
+        { key: 'setI', args: imageArgs as unknown as SetImageCommandArgs }
     ]
 }
 

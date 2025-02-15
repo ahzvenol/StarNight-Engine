@@ -2,11 +2,10 @@ import { isGameVisible } from '@/core/Core'
 import { GameVisibilityEvent } from '@/core/event'
 import { TimeoutController } from '@/core/utils/TimeoutController'
 import { PromiseX } from '@/utils/PromiseX'
-import { ActScope, Dynamic } from '../../decorator'
+import { ActScope, DynamicBlocking } from '../../decorator'
 
 export const wait = ActScope(
-    Dynamic<{ duration: number }>(
-        'Normal.Await',
+    DynamicBlocking<{ duration: number }>(
         ({ immediate }) =>
             function* ({ duration }) {
                 if (duration === 0) return
