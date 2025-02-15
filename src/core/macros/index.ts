@@ -1,10 +1,10 @@
 import { Macro } from '../types/Marco'
-import { closeAudio, setAudio } from './hoshizora/audio'
-import { setBG, setSprite } from './hoshizora/image'
-import { say } from './hoshizora/say'
-import { tweenImage } from './hoshizora/tween'
-import { video } from './hoshizora/video'
-import { wait } from './hoshizora/wait'
+import { closeAudio, setAudio } from './script/hoshizora/audio'
+import { setBG, setSprite } from './script/hoshizora/image'
+import { say } from './script/hoshizora/say'
+import { tweenImage } from './script/hoshizora/tween'
+import { video } from './script/hoshizora/video'
+import { wait } from './script/hoshizora/wait'
 
 // 宏存在顺序依赖
 // 逐个应用宏,单个宏被应用过后就不会再次应用
