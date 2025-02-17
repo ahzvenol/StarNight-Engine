@@ -5,9 +5,10 @@ import { restartGame } from '@/core/Pages'
 import { Pages } from '@/core/types/Pages'
 import { router } from '@/router'
 import { useStore } from '@/store/context'
-import { Button, Clone, Variable } from '@/ui/Elements'
+import { Clone, Variable } from '@/ui/Elements'
 import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/logger'
+import { Button } from '../Button'
 import styles from './Title.module.scss'
 
 const Title: Component = () => {
