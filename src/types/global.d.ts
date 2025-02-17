@@ -12,3 +12,5 @@ type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never }
 
 // 定义互斥类型，T或U只有一个能出现（互相剔除时，被剔除方必须存在）
 type XOR<T, U> = (Without<T, U> & U) | (Without<U, T> & T)
+
+type Primitive = string | number | boolean | symbol | bigint | null | undefined

@@ -2,8 +2,6 @@ import type { Signal } from '@/utils/solid/useSignal'
 import { useSignal } from '@/utils/solid/useSignal'
 import { ActStartEvent, GameMountEvent } from '../event'
 
-type Primitive = string | number | boolean | symbol | bigint | null | undefined
-
 export function useGameScopeSignal(initialValue: string): Signal<string>
 export function useGameScopeSignal(initialValue: number): Signal<number>
 export function useGameScopeSignal(initialValue: boolean): Signal<boolean>
