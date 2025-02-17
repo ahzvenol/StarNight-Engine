@@ -1,10 +1,9 @@
 import type { Reactive, ReactiveType } from 'micro-reactive'
 import type { Accessor } from 'solid-js'
 import { toMerged } from 'es-toolkit'
-import { useReactive } from 'micro-reactive'
 import { createEffect, on } from 'solid-js'
 import { log } from '@/utils/logger'
-import { useSignal } from '@/utils/solid/useSignal'
+import { useReactive } from '@/utils/solid/useReactive'
 import { ChineseSimplified } from './ChineseSimplified'
 import { English } from './English'
 import { Japanese } from './Japanese'
@@ -26,7 +25,7 @@ export const description = {
 // 目前采用的策略是以默认语言为最大集合,合并选择的语言和默认语言的翻译,通过默认语言补全翻译缺失的值
 export const translation = useReactive({}) as Reactive<(typeof language)['zh-CN']>
 
-const lang = useSignal<keyof typeof language>('zh-CN')
+export const lang = useReactive<keyof typeof language>('zh-CN')
 // 通过在修改lang前判断lang是否真正修改减少视图渲染,同时需要贯彻"只在使用响应式变量的地方调用它"的原则
 // 否则,无论是计算属性,还是间接赋值,每次修改lang都会使整个子组件树更新
 
