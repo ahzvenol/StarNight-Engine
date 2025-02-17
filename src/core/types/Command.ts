@@ -110,8 +110,8 @@ export type CommandsArgs<T extends CommandsKeys> = Parameters<ReturnType<Command
 export type CommandEntity<T extends CommandsKeys> = {
     [K in CommandsKeys]: {
         readonly key: K
-        readonly block?: true
-        readonly when?: Function1<GameRuntimeContext, boolean>
+        readonly await?: true
+        readonly if?: Function1<GameRuntimeContext, boolean>
         readonly args: CommandsArgs<K>
     }
 }[T]

@@ -14,7 +14,7 @@ export const say: MacroFunction<SayCommandArgs> = ({ text, name, file }) => {
                 file !== undefined
                     ? { key: 'backlog', args: { text, name, file: `./static/AudioClip/${file}.flac` } }
                     : { key: 'backlog', args: { text, name } },
-                { key: 'text', block: true, args: { text } },
+                { key: 'text', await: true, args: { text } },
                 { key: 'icon', args: {} }
             ].filter((row) => row !== undefined) as CommandEntitys[]
         }
