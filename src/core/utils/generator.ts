@@ -1,7 +1,7 @@
 import { noop } from 'es-toolkit'
 
 export async function run<TRetrun>(
-    generator: Generator<Promise<void>, TRetrun, void>,
+    generator: Generator<Promise<unknown>, TRetrun, void>,
     { immediate, cancel }: { immediate: Promise<void>; cancel: Promise<void> }
 ): Promise<TRetrun | undefined> {
     let flag: 'Normal' | 'Fast' | 'Cancel' = 'Normal'

@@ -26,7 +26,7 @@ export const text = ActScope(
                 while (text.length >= 1) {
                     yield wait.apply(context)({
                         duration: 100 - context.store.config.textspeed * 100
-                    }) as unknown as Promise<void>
+                    })
                     textView((i) => i + text.charAt(0))
                     text = text.slice(1)
                 }

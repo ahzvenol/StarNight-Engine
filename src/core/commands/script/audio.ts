@@ -62,7 +62,7 @@ export const setAudio = Dynamic<SetAudioCommandArgs>(
             }
             // tag:自动模式需要对Clip计时,目前先打一个临时的补丁
             if (type === 'Clip' && state === GameState.Auto) {
-                yield new Promise<void>((res) => audio.once('end', () => res()))
+                yield new Promise((res) => audio.once('end', res))
             }
         }
 )

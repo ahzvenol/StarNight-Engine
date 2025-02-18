@@ -42,18 +42,18 @@ export const selection = NonBlocking<{ name: string; target: number | string; di
 )
 
 export const selEnd = Blocking<{ index: number }>(
-    (context) =>
+    ({ initial, state, store, global }) =>
         async function ({ index }) {
             displaySelectionView(true)
-            const savedSelect = context.initial?.select?.shift?.()
-            const target = context.state === GameState.Init && savedSelect ? savedSelect : await Promise.race(promises)
-            const stopfastonselection = context.store.config.stopfastonselection && context.state === GameState.Fast
+            const savedSelect = initial?.select?.shift?.()
+            const target = state === GameState.Init && savedSelect ? savedSelect : await Promise.race(promises)
+            const stopfastonselection = store.config.stopfastonselection && state === GameState.Fast
             Try.apply(() => {
-                const achievement = context.global.achievement
+                const achievement = global.achievement
                 const i = selections.map((e) => e.target).findIndex((e) => e === target)
                 const last = achievement[1 << index]
                 if ((last() & (1 << 2)) === 0) {
-                    if (context.state === GameState.Fast || context.state === GameState.Init) {
+                    if (state === GameState.Fast || state === GameState.Init) {
                         last(Number((BigInt(last()) & ~0b11n) | BigInt(1 << 2)) + 3)
                     } else {
                         last(Number((BigInt(last()) & ~0b11n) | BigInt(1 << 2)) + i)
@@ -64,7 +64,7 @@ export const selEnd = Blocking<{ index: number }>(
             selections.length = 0
             promises.length = 0
             selectRecord.push(target)
-            return Jump.apply(context)({ target }).then((jump) =>
+            return Jump.apply()({ target }).then((jump) =>
                 stopfastonselection ? Object.assign(jump, { state: GameState.Normal }) : jump
             )
         }

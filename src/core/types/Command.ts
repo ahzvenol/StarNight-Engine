@@ -27,7 +27,7 @@ export type RuntimeCommandOutput = unknown | CommandOutput
 // 使用生成器函数定义一个耗时无阻塞命令
 export type DynamicCommandFunction<T extends CommandArgs> = Function1<
     GameRuntimeContext,
-    Function1<T, Generator<Promise<void>, RuntimeCommandOutput, void>>
+    Function1<T, Generator<Promise<unknown>, RuntimeCommandOutput, void>>
 >
 
 // 使用普通函数定义一个不耗时无阻塞命令
@@ -48,10 +48,6 @@ export type CommandFunction<T extends CommandArgs> =
     | DynamicCommandFunction<T>
     | NonBlockingCommandFunction<T>
     | BlockingCommandFunction<T>
-
-// 高阶命令最终映射到基本命令,基本命令已进行异常处理,所以高阶命令无需再处理异常
-// 高阶命令只进行多个基本命令之间的调度,基本命令的耗时和阻塞控制由自身的定义决定
-export type HighLevelCommandFunction = StandardCommandFunction<Array<CommandEntitys>>
 
 // Resolved命令已经传入全部参数
 export type ResolvedCommandFunction = Function0<RuntimeCommandOutput>
@@ -74,15 +70,29 @@ export type StandardCommandFunction<T extends CommandArgs> = Function1<
     Function1<T, NeverFailingPromise<CommandOutput>>
 >
 
+export type StandardCommandFunction0<T extends CommandArgs> = Function0<
+    Function1<T, NeverFailingPromise<CommandOutput>>
+>
+
+// 高阶命令最终映射到基本命令,基本命令已进行异常处理,所以高阶命令无需再处理异常
+// 高阶命令只进行多个基本命令之间的调度,基本命令的耗时和阻塞控制由自身的定义决定
+export type HighLevelCommandFunction = StandardCommandFunction<Array<CommandEntitys>>
+
 // 附加了作用域标志的标准命令
 export interface StandardCommand<T extends CommandArgs> extends MetaFunction {
-    meta: { schedule?: Schedule; exclude?: Partial<Record<Scope, undefined>> }
+    meta?: { schedule?: Schedule; exclude?: Partial<Record<Scope, undefined>> }
     apply: StandardCommandFunction<T>
+}
+
+// 显式不需要Context的命令,临时解决方案,方便命令间互相调用
+export interface StandardCommand0<T extends CommandArgs> extends MetaFunction {
+    meta?: { schedule?: Schedule; exclude?: Partial<Record<Scope, undefined>> }
+    apply: StandardCommandFunction0<T>
 }
 
 // 附加了作用域标志的高阶命令
 export interface ScheduledHighLevelCommand extends MetaFunction {
-    meta: { schedule?: Schedule; exclude?: Partial<Record<Scope, undefined>> }
+    meta?: { schedule?: Schedule; exclude?: Partial<Record<Scope, undefined>> }
     apply: HighLevelCommandFunction
 }
 

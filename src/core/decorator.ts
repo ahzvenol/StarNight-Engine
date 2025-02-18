@@ -20,6 +20,19 @@ export function ActScope<T extends CommandArgs>(cmd: StandardCommand<T>): Standa
 export function EffectScope<T extends CommandArgs>(cmd: StandardCommand<T>): StandardCommand<T> {
     return merge(cmd, { meta: { exclude: { [GameState.Init]: undefined, [GameState.Fast]: undefined } } })
 }
+// 不产生任何效果的虚拟命令
+export function VirtualScope<T extends CommandArgs>(cmd: StandardCommand<T>): StandardCommand<T> {
+    return merge(cmd, {
+        meta: {
+            exclude: {
+                [GameState.Init]: undefined,
+                [GameState.Fast]: undefined,
+                [GameState.Normal]: undefined,
+                [GameState.Auto]: undefined
+            }
+        }
+    })
+}
 
 // 辅助函数,标准化命令输出以方便下一环节处理
 function normalizeOutput(output: Function0<unknown>): Promise<CommandOutput> {
@@ -31,7 +44,6 @@ function normalizeOutput(output: Function0<unknown>): Promise<CommandOutput> {
 // 具有一定的执行时间,但也可以立即完成命令行为,由引擎调度是否阻塞的动态命令
 export function Dynamic<T extends CommandArgs>(fn: DynamicCommandFunction<T>): StandardCommand<T> {
     return {
-        meta: {},
         apply: (context) => (args) => {
             const { immediate, cleanup: cancel } = context
             const generator = fn(context)(args)

@@ -9,9 +9,7 @@ export const blind = ActScope(
         (context) =>
             function* () {
                 displayBlindView(true)
-                yield wait.apply(context)({
-                    duration: 300
-                }) as unknown as Promise<void>
+                yield wait.apply(context)({ duration: 300 })
                 displayBlindView(false)
             }
     )
