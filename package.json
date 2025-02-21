@@ -60,7 +60,6 @@
         "js-ini": "^1.6.0",
         "localforage": "^1.10.0",
         "lz-string": "^1.5.0",
-        "micro-reactive": "2.6.4",
         "mustache": "^4.2.0",
         "solid-js": "^1.9.4",
         "solid-keep-alive": "^0.2.3",

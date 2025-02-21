@@ -1,6 +1,6 @@
-import type { Reactive } from 'micro-reactive'
-import { useReactive as useMicroReactive } from 'micro-reactive'
+import type { Reactive } from '@/lib/micro-reactive'
 import { createMutable } from 'solid-js/store'
+import { useReactive as useMicroReactive } from '@/lib/micro-reactive'
 
 // 通过solid的store对象实现响应式,通过micro-reactive实现任意解构和函数风格
 export function useReactive<T>(value: T): Reactive<T> {
