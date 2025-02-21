@@ -1,5 +1,5 @@
-import type { Reactive, ReactiveType } from 'micro-reactive'
 import type { Accessor } from 'solid-js'
+import type { Reactive, ReactiveType } from '@/lib/micro-reactive'
 import { toMerged } from 'es-toolkit'
 import { createEffect, on } from 'solid-js'
 import { log } from '@/utils/logger'
