@@ -2,6 +2,7 @@ import type { Accessor } from 'solid-js'
 import type { Reactive, ReactiveType } from '@/lib/micro-reactive'
 import { toMerged } from 'es-toolkit'
 import { createEffect, on } from 'solid-js'
+import { storePromise } from '@/store/store'
 import { log } from '@/utils/logger'
 import { useReactive } from '@/utils/solid/useReactive'
 import { ChineseSimplified } from './ChineseSimplified'
@@ -28,14 +29,16 @@ export const translation = useReactive({}) as Reactive<(typeof language)['zh-CN'
 export const lang = useReactive<keyof typeof language>('zh-CN')
 // 通过在修改lang前判断lang是否真正修改减少视图渲染,同时需要贯彻"只在使用响应式变量的地方调用它"的原则
 // 否则,无论是计算属性,还是间接赋值,每次修改lang都会使整个子组件树更新
-
-const defaultLang = lang() as 'zh-CN'
-// tag:最新版本好像这里判不判断都没啥动静了,都不会重复渲染
-createEffect(
-    on(lang as Accessor<ReactiveType<typeof lang>>, (now, prev) => {
-        if (now !== prev) {
-            translation(toMerged(language[defaultLang], language[lang()]))
-            log.info('当前语言:' + description[lang()])
-        }
-    })
-)
+storePromise.then((store) => {
+    const lang = store.config.language as Reactive<keyof typeof language>
+    const defaultLang = lang() as 'zh-CN'
+    // tag:最新版本好像这里判不判断都没啥动静了,都不会重复渲染
+    createEffect(
+        on(lang as Accessor<ReactiveType<typeof lang>>, (now, prev) => {
+            if (now !== prev) {
+                translation(toMerged(language[defaultLang], language[lang()]))
+                log.info('当前语言:' + description[lang()])
+            }
+        })
+    )
+})
