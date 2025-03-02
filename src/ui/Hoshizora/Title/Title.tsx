@@ -15,7 +15,7 @@ const Title: Component = () => {
     log.info('Title组件函数被调用')
     const store = useStore()
     const system = store.system
-    const local = store.local
+    const local = store.extra
     return (
         <div class={clsx('Page', styles.Title_container)}>
             <div class={styles.Title_info_container} onClick={() => router.navigate('Hakuuyosei')}>

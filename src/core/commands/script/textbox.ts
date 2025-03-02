@@ -5,13 +5,13 @@ import { wait } from './wait'
 
 declare module '@/core/types/Game' {
     interface GameLocalData {
-        textpreview: string
+        textpreview?: string
     }
 }
 
 export const textpreview = ActScope(
     NonBlocking<{ text: string }>(({ current }) => ({ text }) => {
-        current.textpreview(text)
+        current.textpreview!(text)
     })
 )
 
@@ -22,6 +22,12 @@ export const icon = ActScope(
         UIIconState(SwitchState.Enabled)
     })
 )
+
+declare module '@/core/types/Game' {
+    interface GameConfig {
+        textspeed: number
+    }
+}
 
 export const UIText = useActScopeSignal('')
 export const text = ActScope(

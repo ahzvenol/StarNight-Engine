@@ -6,14 +6,25 @@ import { ActStartEvent, GameDestroyEvent, GameSleepEvent, GameWakeEvent, InitCom
 import { GameState } from '@/core/types/Game'
 import { BGM, Clip, SE, UISE } from '@/store/audio'
 
+declare module '@/core/types/Game' {
+    interface GameConfig {
+        interruptclip: boolean
+        globalvolume: number
+        bgmvolume: number
+        sevolume: number
+        clipvolume: number
+        uisevolume: number
+    }
+}
+
 const AUDIO = { BGM, SE, Clip, UISE } as const
 
 const tracks = new Map<string, Howl>()
 
 InitCompleteEvent.subscribe(() => tracks.forEach((audio) => audio.load().play()))
 
-ActStartEvent.subscribe(({ store: { config } }) => {
-    if (config.interruptclip) tracks.get('Clip')?.stop()
+ActStartEvent.subscribe(({ config }) => {
+    if (config.interruptclip()) tracks.get('Clip')?.stop()
 })
 
 GameWakeEvent.subscribe(() => tracks.forEach((audio) => audio.play()))

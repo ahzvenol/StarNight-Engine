@@ -10,7 +10,7 @@ import { isPlainObject, merge } from 'es-toolkit'
 import { log } from '@/utils/logger'
 import { Schedule } from './types/Command'
 import { GameState } from './types/Game'
-import { run } from './utils/generator'
+import { run } from './utils/runGenerator'
 
 // 只在本幕内产生效果的命令,由此不需要初始化
 export function ActScope<T extends CommandArgs>(cmd: StandardCommand<T>): StandardCommand<T> {
