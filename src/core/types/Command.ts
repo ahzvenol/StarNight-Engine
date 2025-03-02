@@ -16,7 +16,7 @@ export type CommandRow = { key: string; args: CommandArgs }
 // 会在幕循环中被处理的特殊值
 export interface CommandOutput {
     continue?: boolean
-    jump?: number
+    jump?: number | string
     end?: boolean
     state?: GameState
 }

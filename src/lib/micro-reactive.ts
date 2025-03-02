@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { property } from 'es-toolkit/compat'
 
 /**
  * 读取值的函数
@@ -19,7 +20,6 @@ export type Setter<T> = (value: T) => void
 export interface Signal<T> {
     (): T
     (value: T): void
-    (value: Partial<T>, patch: boolean): void
 }
 
 /**
@@ -27,22 +27,16 @@ export interface Signal<T> {
  * @public
  */
 export type Reactive<T> = Signal<T> &
-    (T extends object
-        ? {
-              readonly [key in keyof T]: Reactive<T[key]>
-          } & Readonly<T>
-        : {})
+  (T extends object
+    ? { readonly [key in keyof T]: Reactive<T[key]> } & (T extends Array<any> ? Array<unknown> : {})
+    : {});
 
 /**
  * 只读响应式对象
  * @public
  */
 export type ReadonlyReactive<T> = Getter<T> &
-    (T extends object
-        ? {
-              readonly [key in keyof T]: ReadonlyReactive<T[key]>
-          } & Readonly<T>
-        : {})
+  (T extends object ? { readonly [key in keyof T]: ReadonlyReactive<T[key]> } : {});
 
 /**
  * 响应式对象的内部值
@@ -61,9 +55,9 @@ export type ReactiveMap<T> = Map<keyof T, Reactive<T[keyof T]>>
 export type Option<T> = {
     reactiveMap: ReactiveMap<T>
     parent: Option<T> | null
-    path: string
+    path: PropertyKey[]
     get: Getter<T>
-    set: Setter<T> | ((value: Partial<T>, patch: boolean) => void)
+    set: Setter<T>
 }
 
 export const state: any = {}
@@ -83,49 +77,17 @@ export const getId = (
  * @param path - 路径
  * @returns 访问器对象
  */
-export function createAccessor(path: string) {
-    const segments = path.split('.')
+export function createAccessor(path: PropertyKey[]) {
     return {
         get() {
-            return path ? segments.reduce((obj, k) => obj[k], state) : state
+            return property(path)(state)
         },
-        set<T>(value: T, patch = false) {
-            let i = 0,
-                obj = state
-            for (i = 0; i < segments.length - 1; i++) {
-                obj = obj[segments[i]]
-            }
-            patch && typeof value === 'object' && value !== null
-                ? Object.assign(obj[segments[i]], value)
-                : (obj[segments[i]] = value)
+        set<T>(value: T) {
+            const i = path.at(-1)!
+            const obj = property(path.slice(0, -1))(state)
+            obj[i] = value
         }
     }
-}
-
-/**
- * symbol类型的空值，用于区分读取和写入操作
- */
-const NULL = Symbol('NULL') as any
-
-/**
- * 读取值
- * @param option - 信号函数的选项
- * @returns 读取的值
- */
-export function read<T>(option: Option<T>): T {
-    const { get } = option
-    return get()
-}
-
-/**
- * 写入值
- * @param option - 信号函数的选项
- * @param value - 写入的值
- * @param patch - 是否为局部更新
- */
-export function write<T>(option: Option<T>, value: T, patch: boolean): void {
-    const { set } = option
-    set(value, patch)
 }
 
 /**
@@ -138,9 +100,8 @@ export function write<T>(option: Option<T>, value: T, patch: boolean): void {
 export function createSignal<T>(option: Option<T>): Signal<T> {
     function signal<T>(): T
     function signal<T>(value: T): void
-    function signal<T>(value: Partial<T>, patch: boolean): void
-    function signal(value = NULL, patch = false) {
-        return NULL === value ? read(option) : write(option, value, patch)
+    function signal(value?: T) {
+        return value === undefined ? option.get() : option.set(value)
     }
     return signal
 }
@@ -151,13 +112,8 @@ export function createSignal<T>(option: Option<T>): Signal<T> {
  * @param parent - 响应式对象的父级option
  * @returns 响应式对象
  */
-export function createReactive<T>(path: string, parent: Option<any> | null): Reactive<T> {
-    const opt: Option<T> = {
-        reactiveMap: new Map(),
-        parent,
-        path,
-        ...createAccessor(path)
-    }
+export function createReactive<T>(path: PropertyKey[], parent: Option<any> | null): Reactive<T> {
+    const opt: Option<T> = { reactiveMap: new Map(), parent, path, ...createAccessor(path) }
     const signal = createSignal(opt)
     return new Proxy(signal, {
         get(target, key) {
@@ -189,7 +145,7 @@ export function createReactive<T>(path: string, parent: Option<any> | null): Rea
             if (key === 'then') return void 0
 
             // 生成属性的响应式对象，缓存并返回
-            const react = createReactive(`${path}.${String(key)}`, opt)
+            const react = createReactive([...path, key], opt)
             opt.reactiveMap.set(key as keyof T, react as any)
             return react
         }
@@ -205,5 +161,5 @@ export function createReactive<T>(path: string, parent: Option<any> | null): Rea
 export function useReactive<T>(value: T): Reactive<T> {
     const key = getId()
     state[key] = value
-    return createReactive(key, null)
+    return createReactive([key], null)
 }

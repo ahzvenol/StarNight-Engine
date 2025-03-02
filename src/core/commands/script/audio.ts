@@ -2,7 +2,7 @@ import type { ExtendArgs } from '@/core/types/Command'
 import type { Howl, HowlOptions } from '@/lib/howler'
 import { delay, isUndefined } from 'es-toolkit'
 import { Dynamic, NonBlocking } from '@/core/decorator'
-import { ActStartEvent, ContinueGameEvent, GameCleanupEvent, PostInitEvent, ReturnToTitleEvent } from '@/core/event'
+import { ActStartEvent, GameDestroyEvent, GameSleepEvent, GameWakeEvent, InitCompleteEvent } from '@/core/event'
 import { GameState } from '@/core/types/Game'
 import { BGM, Clip, SE, UISE } from '@/store/audio'
 
@@ -10,17 +10,17 @@ const AUDIO = { BGM, SE, Clip, UISE } as const
 
 const tracks = new Map<string, Howl>()
 
-PostInitEvent.subscribe(() => tracks.forEach((audio) => audio.load().play()))
+InitCompleteEvent.subscribe(() => tracks.forEach((audio) => audio.load().play()))
 
 ActStartEvent.subscribe(({ store: { config } }) => {
     if (config.interruptclip) tracks.get('Clip')?.stop()
 })
 
-ContinueGameEvent.subscribe(() => tracks.forEach((audio) => audio.play()))
+GameWakeEvent.subscribe(() => tracks.forEach((audio) => audio.play()))
 
-ReturnToTitleEvent.subscribe(() => tracks.forEach((audio) => audio.pause()))
+GameSleepEvent.subscribe(() => tracks.forEach((audio) => audio.pause()))
 
-GameCleanupEvent.subscribe(() => {
+GameDestroyEvent.subscribe(() => {
     tracks.forEach((audio) => audio.unload())
     tracks.clear()
 })
@@ -32,7 +32,7 @@ export type SetAudioCommandArgs = {
     name?: string
 } & ExtendArgs<HowlOptions>
 
-export const setAudio = Dynamic<SetAudioCommandArgs>(
+export const setaudio = Dynamic<SetAudioCommandArgs>(
     ({ state }) =>
         function* ({ type, name = type, file, ...configs }) {
             // Clip的生命周期是幕,所以不用初始化
@@ -67,7 +67,7 @@ export const setAudio = Dynamic<SetAudioCommandArgs>(
         }
 )
 
-export const fadeAudio = Dynamic<{ target: string; volume: number; duration?: number }>(
+export const fadeaudio = Dynamic<{ target: string; volume: number; duration?: number }>(
     () =>
         function* ({ target, volume, duration = 0 }) {
             const audio = tracks.get(target)
@@ -90,7 +90,7 @@ export type CloseAudioCommandArgs = { target?: string }
 
 // 根据名称关闭音轨
 // 如果省略了target,关闭全部轨道
-export const closeAudio = NonBlocking<CloseAudioCommandArgs>(() => ({ target }) => {
+export const closeaudio = NonBlocking<CloseAudioCommandArgs>(() => ({ target }) => {
     const targets = isUndefined(target) ? tracks.keys() : [target]
     for (const key of targets) {
         const audio = tracks.get(key)

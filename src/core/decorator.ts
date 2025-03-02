@@ -45,9 +45,9 @@ function normalizeOutput(output: Function0<unknown>): Promise<CommandOutput> {
 export function Dynamic<T extends CommandArgs>(fn: DynamicCommandFunction<T>): StandardCommand<T> {
     return {
         apply: (context) => (args) => {
-            const { immediate, cleanup: cancel } = context
+            const { immediate, destroy } = context
             const generator = fn(context)(args)
-            return normalizeOutput(() => run(generator, { immediate, cancel }))
+            return normalizeOutput(() => run(generator, { immediate, destroy }))
         }
     }
 }
@@ -57,9 +57,9 @@ export function DynamicBlocking<T extends CommandArgs>(fn: DynamicCommandFunctio
     return {
         meta: { schedule: Schedule.Await },
         apply: (context) => (args) => {
-            const { immediate, cleanup: cancel } = context
+            const { immediate, destroy } = context
             const generator = fn(context)(args)
-            return normalizeOutput(() => run(generator, { immediate, cancel }))
+            return normalizeOutput(() => run(generator, { immediate, destroy }))
         }
     }
 }

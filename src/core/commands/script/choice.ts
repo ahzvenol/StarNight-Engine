@@ -1,56 +1,47 @@
 import { Blocking, NonBlocking } from '@/core/decorator'
-import { PreInitEvent } from '@/core/event'
+import { GameStartEvent } from '@/core/event'
 import { GameState } from '@/core/types/Game'
 import { useGameScopeSignal } from '@/core/utils/useScopeSignal'
 import { Try } from '@/utils/fp/Try'
 import { PromiseX } from '@/utils/PromiseX'
 import { Jump } from './system/branch'
 
-type Selection = {
-    label: string
+type ChoiceItem = {
+    text: string
     disable: boolean
     target: number | string
-    select: () => void
+    choose: () => void
 }
 
-export let selectRecord = Array<number | string>()
-
-PreInitEvent.subscribe(() => (selectRecord = []))
-
-export let selections = new Array<Selection>()
+export let choices = new Array<ChoiceItem>()
 
 export const displaySelectionView = useGameScopeSignal(false)
 
-PreInitEvent.subscribe(() => (selections = []))
+GameStartEvent.subscribe(() => (choices = []))
 
 let promises = new Array<Promise<number | string>>()
 
-PreInitEvent.subscribe(() => (promises = []))
+GameStartEvent.subscribe(() => (promises = []))
 
-export const selection = NonBlocking<{ name: string; target: number | string; disable?: boolean }>(
+export const addchoice = NonBlocking<{ text: string; target: number | string; disable?: boolean }>(
     () =>
-        ({ name, target, disable = false }) => {
+        ({ text, target, disable = false }) => {
             const promise = new PromiseX<number | string>()
-            selections.push({
-                label: name,
-                disable: disable,
-                target: target,
-                select: () => promise.resolve(target)
-            })
+            choices.push({ text, disable, target, choose: () => promise.resolve(target) })
             promises.push(promise)
         }
 )
 
-export const selEnd = Blocking<{ index: number }>(
-    ({ initial, state, store, global }) =>
+export const showchoices = Blocking<{ index: number }>(
+    ({ local, state, store, global }) =>
         async function ({ index }) {
             displaySelectionView(true)
-            const savedSelect = initial?.select?.shift?.()
+            const savedSelect = local?.select?.shift?.()
             const target = state === GameState.Init && savedSelect ? savedSelect : await Promise.race(promises)
             const stopfastonselection = store.config.stopfastonselection && state === GameState.Fast
             Try.apply(() => {
                 const achievement = global.achievement
-                const i = selections.map((e) => e.target).findIndex((e) => e === target)
+                const i = choices.map((e) => e.target).findIndex((e) => e === target)
                 const last = achievement[1 << index]
                 if ((last() & (1 << 2)) === 0) {
                     if (state === GameState.Fast || state === GameState.Init) {
@@ -61,7 +52,7 @@ export const selEnd = Blocking<{ index: number }>(
                 }
             })
             displaySelectionView(false)
-            selections.length = 0
+            choices.length = 0
             promises.length = 0
             selectRecord.push(target)
             return Jump.apply()({ target }).then((jump) =>
