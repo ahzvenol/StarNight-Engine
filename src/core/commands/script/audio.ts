@@ -1,10 +1,18 @@
 import type { ExtendArgs } from '@/core/types/Command'
-import type { Howl, HowlOptions } from '@/lib/howler'
+import type { Howl, HowlConstructor, HowlOptions } from '@/lib/howler'
 import { delay, isUndefined } from 'es-toolkit'
+import { createEffect } from 'solid-js'
 import { Dynamic, NonBlocking } from '@/core/decorator'
-import { ActStartEvent, GameDestroyEvent, GameSleepEvent, GameWakeEvent, InitCompleteEvent } from '@/core/event'
+import {
+    ActStartEvent,
+    GameDestroyEvent,
+    GameSleepEvent,
+    GameWakeEvent,
+    InitCompleteEvent,
+    SetupConfigEvent
+} from '@/core/event'
 import { GameState } from '@/core/types/Game'
-import { BGM, Clip, SE, UISE } from '@/store/audio'
+import { HowlerInstance } from '@/lib/howler'
 
 declare module '@/core/types/Game' {
     interface GameConfig {
@@ -17,18 +25,36 @@ declare module '@/core/types/Game' {
     }
 }
 
-const AUDIO = { BGM, SE, Clip, UISE } as const
+const types: Record<string, HowlConstructor> = {}
+
+SetupConfigEvent.once(({ globalvolume, bgmvolume, sevolume, clipvolume, uisevolume }) => {
+    const { Howler: BGMGlobal, Howl: BGMConstructor } = HowlerInstance()
+    const { Howler: SEGlobal, Howl: SEConstructor } = HowlerInstance()
+    const { Howler: ClipGlobal, Howl: ClipConstructor } = HowlerInstance()
+    const { Howler: UISEGlobal, Howl: UISEConstructor } = HowlerInstance()
+    createEffect(() => BGMGlobal.volume(globalvolume() * bgmvolume()))
+    createEffect(() => SEGlobal.volume(globalvolume() * sevolume()))
+    createEffect(() => ClipGlobal.volume(globalvolume() * clipvolume()))
+    createEffect(() => UISEGlobal.volume(globalvolume() * uisevolume()))
+    types['BGM'] = BGMConstructor
+    types['SE'] = SEConstructor
+    types['Clip'] = ClipConstructor
+    types['UISE'] = UISEConstructor
+})
 
 const tracks = new Map<string, Howl>()
 
 InitCompleteEvent.subscribe(() => tracks.forEach((audio) => audio.load().play()))
 
 ActStartEvent.subscribe(({ config }) => {
-    if (config.interruptclip()) tracks.get('Clip')?.stop()
+    if (config.interruptclip()) tracks.get('Clip')?.unload()
 })
 
-GameWakeEvent.subscribe(() => tracks.forEach((audio) => audio.play()))
-
+GameWakeEvent.subscribe(() =>
+    tracks.forEach((audio) => {
+        if (!audio.playing()) audio.play()
+    })
+)
 GameSleepEvent.subscribe(() => tracks.forEach((audio) => audio.pause()))
 
 GameDestroyEvent.subscribe(() => {
@@ -38,7 +64,7 @@ GameDestroyEvent.subscribe(() => {
 
 // 跨幕环境变量file,需要收集副作用
 export type SetAudioCommandArgs = {
-    type: keyof typeof AUDIO
+    type: keyof typeof types
     file: string
     name?: string
 } & ExtendArgs<HowlOptions>
@@ -54,13 +80,14 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
                 return
             }
             // 挂载新音频
-            const audio = AUDIO[type]({
+            const audio = new types[type]({
                 ...configs,
                 pool: 1,
                 src: file,
                 autoplay: true,
                 preload: state !== GameState.Init
             })
+
             tracks.set(name, audio)
             // 如果音频不是循环的,就不希望它播放完毕之后再被其他事件调用play()了
             if (!configs.loop) {

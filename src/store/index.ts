@@ -6,11 +6,11 @@ import { createEffect, on } from 'solid-js'
 import { unwrap } from 'solid-js/store'
 import { log } from '@/utils/logger'
 import { useReactive } from '@/utils/solid/useReactive'
-import { customDefaultStore } from './custom'
-import { systemDefaultStore } from './default'
+import { CustomDefaultStore } from './custom'
+import { SystemDefaultStore } from './default'
 
-async function createStore() {
-    localforage.config({ name: (await customDefaultStore).system.key })
+async function initializeStore() {
+    localforage.config({ name: (await CustomDefaultStore()).system.key })
 
     const config = (await localforage.getItem<Store['config'] | null>('config')) || {}
     const global = (await localforage.getItem<Store['global'] | null>('global')) || {}
@@ -18,13 +18,13 @@ async function createStore() {
     const extra = (await localforage.getItem<Store['extra'] | null>('extra')) || {}
 
     // 这里是默认配置与storage配置之间的关系逻辑
-    const store = useReactive(toMerged(systemDefaultStore, { config, global, local, extra }))
+    const store = useReactive(toMerged(SystemDefaultStore(), { config, global, local, extra }))
 
     return store
 }
 
 // 各模块对store数据的依赖关系通过使用onStoreReady定义在effects中
-export const onStoreReady = createStore()
+export const onStoreReady = initializeStore()
 
 onStoreReady.then((store) =>
     Object.keys(store()).forEach((key) => {
@@ -40,6 +40,4 @@ onStoreReady.then((store) =>
     })
 )
 
-onStoreReady.then((store) => {
-    log.info('Store初始化完毕:', store())
-})
+onStoreReady.then((store) => log.info('Store初始化完毕:', store()))

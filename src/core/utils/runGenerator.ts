@@ -7,7 +7,7 @@ export async function run<TRetrun>(
     let flag: 'Normal' | 'Fast' | 'Destroy' = 'Normal'
     // eslint-disable-next-line no-constant-condition
     while (true) {
-        // 游戏销毁与新游戏实例创建几乎同时发生,阻塞状态的生成器直接返回可能导致后面的命令泄漏到新实例,实际我们希望它继续阻塞
+        // 释放阻塞可能导致接下来的命令泄漏到新游戏实例
         if (flag === 'Destroy') return new Promise(noop)
         const { value, done } = generator.next()
         if (!done) {

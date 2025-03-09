@@ -1,24 +1,42 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
-import { Match, Show, Switch } from 'solid-js'
-import { restartGame } from '@/core/Pages'
-import { Pages } from '@/core/types/Pages'
+import { createEffect, Match, on, onMount, Show, Switch } from 'solid-js'
 import { router } from '@/router'
+import { onStoreReady } from '@/store'
 import { useStore } from '@/store/context'
 import { Clone, Variable } from '@/ui/Elements'
 import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/logger'
+import { AudioMutex, Howler } from '../BGM'
 import { Button } from '../Button'
+import { Pages } from '../Pages'
 import styles from './Title.module.scss'
+
+const ID = 'Title'
+const audio = Howler({ loop: true, src: './static/AudioClip/bgm01.flac' })
+createEffect(
+    on(
+        AudioMutex,
+        () => {
+            if (AudioMutex() !== ID) audio.pause()
+        },
+        { defer: false }
+    )
+)
+
+onStoreReady.then(({ config: { bgmvolume } }) => createEffect(() => audio.volume(bgmvolume())))
 
 const Title: Component = () => {
     log.info('Title组件函数被调用')
     const store = useStore()
     const system = store.system
     const local = store.extra
+    onMount(() => {
+        if (!audio.playing()) audio.play()
+    })
     return (
         <div class={clsx('Page', styles.Title_container)}>
-            <div class={styles.Title_info_container} onClick={() => router.navigate('Hakuuyosei')}>
+            <div class={styles.Title_info_container} onClick={() => router.navigate(Pages.Hakuuyosei)}>
                 <div>
                     版本:{system.versionname()}&nbsp;&nbsp;{system.releasedate()}
                 </div>
@@ -44,7 +62,6 @@ const Title: Component = () => {
                                             'background-image': `url('./static/Texture2D/title_${imageId}.webp')`
                                         }}
                                         onClick={() => {
-                                            if (index === 0) restartGame()
                                             router.navigate(
                                                 [Pages.Game, Pages.Load, Pages.Config, Pages.Gallery][index]
                                             )

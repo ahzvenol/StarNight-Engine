@@ -1,16 +1,20 @@
 import { Try } from '@/utils/fp/Try'
 
-type EventHandler<T> = Function1<T, void>
-class EventDispatcher<T> {
-    private callbacks: Map<symbol, EventHandler<T>> = new Map()
+type EventListener<T> = Function1<T, void>
+
+export type Publisher<T> = { publish: (e: T) => void }
+
+export class EventDispatcher<T> {
+    private callbacks: Map<symbol, EventListener<T>> = new Map()
 
     public publish = (e: T) => {
         this.callbacks.forEach((fn) => Try.apply(() => fn(e)))
     }
-    public subscribe = (callback: EventHandler<T>) => {
-        const uuid = Symbol()
-        this.callbacks.set(uuid, callback)
-        return uuid
+
+    public subscribe = (listener: EventListener<T>) => {
+        const symbol = Symbol()
+        this.callbacks.set(symbol, listener)
+        return symbol
     }
 
     public unsubscribe = (id: symbol) => {
@@ -21,17 +25,16 @@ class EventDispatcher<T> {
         this.callbacks.clear()
     }
 
-    public once = (callback: EventHandler<T>) => {
-        const uuid = Symbol()
-        this.callbacks.set(uuid, (e) => {
-            this.callbacks.delete(uuid)
-            callback(e)
+    public once = (listener: EventListener<T>) => {
+        const symbol = Symbol()
+        this.callbacks.set(symbol, (e) => {
+            this.callbacks.delete(symbol)
+            listener(e)
         })
     }
 }
-const on =
+
+export const on =
     <T>(event: EventDispatcher<T>) =>
     () =>
         new Promise<T>(event.once)
-
-export { EventDispatcher, on }

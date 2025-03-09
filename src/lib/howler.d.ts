@@ -160,7 +160,7 @@ export interface HowlOptions extends HowlListeners {
         | undefined
 }
 
-export interface Howlonstructor {
+export interface HowlConstructor {
     new (options: HowlOptions): Howl
 }
 
@@ -277,6 +277,6 @@ export interface HowlerGlobal {
     orientation(x: number, y?: number, z?: number, xUp?: number, yUp?: number, zUp?: number): this
 }
 
-declare function HowlerInstance(): { Howler: HowlerGlobal; Howl: Howlonstructor }
+declare function HowlerInstance(): { Howler: HowlerGlobal; Howl: HowlConstructor }
 
 export { HowlerInstance }

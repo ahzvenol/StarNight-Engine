@@ -4,5 +4,6 @@ export enum Pages {
     'Config' = 'Config',
     'Load' = 'Load',
     'Save' = 'Save',
-    'Gallery' = 'Gallery'
+    'Gallery' = 'Gallery',
+    'Hakuuyosei' = 'Hakuuyosei'
 }

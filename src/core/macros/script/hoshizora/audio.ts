@@ -2,7 +2,7 @@ import type { SetAudioCommandArgs } from '@/core/commands/script/audio'
 import type { CommandEntitys } from '@/core/types/Command'
 import type { MacroFunction } from '@/core/types/Marco'
 
-export const setAudio: MacroFunction<SetAudioCommandArgs & { duration?: number }> = (args) => {
+export const audio: MacroFunction<SetAudioCommandArgs & { duration?: number }> = (args) => {
     const array = Array<CommandEntitys>()
     if (args.type === 'BGM') {
         args.loop = true
@@ -23,7 +23,7 @@ export const setAudio: MacroFunction<SetAudioCommandArgs & { duration?: number }
     return [{ key: 'fork', args: array }]
 }
 
-export const closeAudio: MacroFunction<{ target?: string; duration?: number }> = (args) => {
+export const closeaudio: MacroFunction<{ target?: string; duration?: number }> = (args) => {
     const array = Array<CommandEntitys>()
     if (args.target !== undefined) {
         array.push({

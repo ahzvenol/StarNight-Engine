@@ -4,7 +4,7 @@ import { SwitchState } from '@/core/types/Meta'
 import { useActScopeSignal, useGameScopeSignal } from '@/core/utils/useScopeSignal'
 import { Try } from '@/utils/fp/Try'
 import { PromiseX } from '@/utils/PromiseX'
-import { Jump } from './system/branch'
+import { Jump } from '../system/branch'
 
 type ChoiceItem = {
     text: string

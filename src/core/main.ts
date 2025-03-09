@@ -6,17 +6,14 @@ import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { Option } from '@/utils/fp/Option'
 import { log } from '@/utils/logger'
 import { PromiseState, PromiseX } from '@/utils/PromiseX'
-import { useSignal } from '@/utils/solid/useSignal'
 import { RangeSet } from '@/utils/zipNumArray'
-import { Fork } from './commands/script/system/schedule'
+import { Fork } from './commands/system/schedule'
 import {
     ActEndEvent,
     ActSecondClickEvent,
     ActStartEvent,
     AutoButtonClickEvent,
     FastButtonClickEvent,
-    GameDestroyEvent,
-    GameStartEvent,
     GameVisibilityEvent,
     InitCompleteEvent,
     JumpEvent,
@@ -25,7 +22,8 @@ import {
     onClick,
     onFast,
     onGameDestroy,
-    onGameVisibilityChange
+    onGameVisibilityChange,
+    onSetupConfig
 } from './event'
 import { preloadWithIndex } from './preload'
 import { GameState } from './types/Game'
@@ -69,11 +67,11 @@ export const state = useGameScopeSignal(GameState.Init)
 export const current = useGameScopeReactive<GameLocalData>(() => ({ index: 1 }))
 
 // 在循环开始前预取book.fulls会使快速读档变得很慢,由此换取10%的加载速度提升是不值得的
-export async function start({ local, global, config, book }: GameStartOptions) {
+export async function run({ book, local, global }: GameStartOptions) {
     console.time()
-    GameStartEvent.publish()
     const index = current.index
     const destroy = onGameDestroy()
+    const config = await onSetupConfig
     const readsegment = global.readsegment
     InitCompleteEvent.once(() => console.timeEnd())
     InitCompleteEvent.once(() => state(GameState.Normal))
@@ -81,7 +79,7 @@ export async function start({ local, global, config, book }: GameStartOptions) {
     FastButtonClickEvent.subscribe(() => state(state() === GameState.Fast ? GameState.Normal : GameState.Fast))
     // eslint-disable-next-line no-constant-condition
     while (true) {
-        if (index() === local.index()) InitCompleteEvent.publish({ index: index() })
+        if (index() === local.index) InitCompleteEvent.publish({ index: index() })
         // 由幕循环维护已读幕,这一操作需要在ActStart之前完成,所以不能借助事件
         const range = RangeSet.fromRanges(readsegment())
         isRead(range.includes(index()))
@@ -126,8 +124,4 @@ export async function start({ local, global, config, book }: GameStartOptions) {
         if (isCleanup) return new Promise(noop)
         if (jump.isDefined()) JumpEvent.publish({ index: jump.get() })
     }
-}
-
-export function destroy() {
-    GameDestroyEvent.publish()
 }

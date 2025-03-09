@@ -2,7 +2,7 @@ import type { Component } from 'solid-js'
 import clsx from 'clsx'
 import { router } from '@/router'
 import { useStore } from '@/store/context'
-import { resetConfig } from '@/store/store'
+import { CustomDefaultStore } from '@/store/custom'
 import { Clone, Variable } from '@/ui/Elements'
 import { log } from '@/utils/logger'
 import { Button } from '../Button'
@@ -12,7 +12,8 @@ import Slider from './Slider'
 
 const Config: Component = () => {
     log.info('Config组件函数被调用')
-    const config = useStore().config
+    const store = useStore()
+    const config = store.config
     return (
         <div class={clsx('Page', styles.Config_container)}>
             <div class={clsx(styles.Config_cell, styles.Config_cell_left)} style={{ bottom: `${110 + 75 * 5}px` }}>
@@ -67,7 +68,10 @@ const Config: Component = () => {
             </Clone>
             <Button class={styles.Config_bottom_back_title} onClick={() => router.navigate('')} />
             {/* 原作hover效果在点击后移除 */}
-            <Button class={styles.Config_bottom_reset} onClick={resetConfig} />
+            <Button
+                class={styles.Config_bottom_reset}
+                onClick={async () => config((await CustomDefaultStore()).config)}
+            />
         </div>
     )
 }
