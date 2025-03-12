@@ -12,7 +12,7 @@
         "lint:all": "concurrently \"pnpm run lint:prettier\" \"pnpm run lint:style\" \"pnpm run lint:fix\""
     },
     "devDependencies": {
-        "@capacitor/cli": "^7.0.0",
+        "@capacitor/cli": "^7.0.1",
         "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
         "@types/animejs": "^3.1.12",
         "@types/mustache": "^4.2.5",
@@ -24,8 +24,8 @@
         "eslint-plugin-prettier": "^5.2.1",
         "eslint-plugin-solid": "^0.14.3",
         "postcss-scss": "^4.0.9",
-        "prettier": "^3.1.0",
-        "prettier-eslint": "^16.1.2",
+        "prettier": "^3.3.3",
+        "prettier-eslint": "^16.3.0",
         "rollup": "2.25.0",
         "rollup-plugin-visualizer": "^5.12.0",
         "sass": "^1.77.8",
@@ -48,7 +48,7 @@
         "@better-scroll/mouse-wheel": "^2.5.1",
         "@capacitor/android": "^7.0.0",
         "@capacitor/clipboard": "^7.0.0",
-        "@capacitor/core": "^7.0.0",
+        "@capacitor/core": "^7.0.1",
         "@capacitor/device": "^7.0.0",
         "@msgpack/msgpack": "3.0.0-beta2",
         "animejs": "^3.2.2",

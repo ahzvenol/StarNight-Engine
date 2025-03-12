@@ -40,17 +40,21 @@ export class PromiseX<T> extends Promise<T> {
         )
     }
 
+    public static isFulfilled = (p: Promise<unknown>) => {
+        return new Promise<boolean>((res) =>
+            this.status(p).then((state) => (state === PromiseState.Fulfilled ? res(true) : res(false)))
+        )
+    }
+
+    public static isRejected = (p: Promise<unknown>) => {
+        return new Promise<boolean>((res) =>
+            this.status(p).then((state) => (state === PromiseState.Rejected ? res(true) : res(false)))
+        )
+    }
+
     public static isSettled = (p: Promise<unknown>) => {
         return new Promise<boolean>((res) =>
             this.status(p).then((state) => (state !== PromiseState.Pending ? res(true) : res(false)))
         )
-    }
-
-    public static whenPending = (p: Promise<unknown>) => {
-        return new Promise<void>((res) => this.isPending(p).then((isPending) => isPending && res()))
-    }
-
-    public static whenSettled = (p: Promise<unknown>) => {
-        return new Promise<void>((res) => this.isSettled(p).then((isSettled) => isSettled && res()))
     }
 }

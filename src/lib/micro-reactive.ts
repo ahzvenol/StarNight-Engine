@@ -1,6 +1,3 @@
-/* eslint-disable */
-import { property } from 'es-toolkit/compat'
-
 /**
  * 读取值的函数
  * @public
@@ -27,16 +24,16 @@ export interface Signal<T> {
  * @public
  */
 export type Reactive<T> = Signal<T> &
-  (T extends object
-    ? { readonly [key in keyof T]: Reactive<T[key]> } & (T extends Array<any> ? Array<unknown> : {})
-    : {});
+    (T extends object
+        ? { readonly [key in keyof T]: Reactive<T[key]> } & (T extends Array<any> ? Array<unknown> : {})
+        : {})
 
 /**
  * 只读响应式对象
  * @public
  */
 export type ReadonlyReactive<T> = Getter<T> &
-  (T extends object ? { readonly [key in keyof T]: ReadonlyReactive<T[key]> } : {});
+    (T extends object ? { readonly [key in keyof T]: ReadonlyReactive<T[key]> } : {})
 
 /**
  * 响应式对象的内部值
@@ -80,11 +77,11 @@ export const getId = (
 export function createAccessor(path: PropertyKey[]) {
     return {
         get() {
-            return property(path)(state)
+            return path.reduce((obj, k) => obj[k], state)
         },
         set<T>(value: T) {
             const i = path.at(-1)!
-            const obj = property(path.slice(0, -1))(state)
+            const obj = path.slice(0, -1).reduce((obj, k) => obj[k], state)
             obj[i] = value
         }
     }

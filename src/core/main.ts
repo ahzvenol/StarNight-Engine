@@ -5,8 +5,8 @@ import { match } from 'ts-pattern'
 import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { Option } from '@/utils/fp/Option'
 import { log } from '@/utils/logger'
-import { PromiseState, PromiseX } from '@/utils/PromiseX'
-import { RangeSet } from '@/utils/zipNumArray'
+import { PromiseX } from '@/utils/PromiseX'
+import { RangeSet } from '@/utils/RangeSet'
 import { Fork } from './commands/system/schedule'
 import {
     ActEndEvent,
@@ -117,7 +117,7 @@ export async function run({ book, local, global }: GameStartOptions) {
               : Option.none<number>()
         index(jump.isDefined() ? jump.get() : index() + 1)
         // 游戏实例已销毁时退出,初始化时不判断以优化初始化速度
-        const isCleanup = state() !== GameState.Init && (await PromiseX.status(destroy)) !== PromiseState.Pending
+        const isCleanup = state() !== GameState.Init && (await PromiseX.isSettled(destroy))
         // 通过end命令退出 || 超过最后一幕自动退出
         const isEnd = output['end'] === true || index() >= (await book.length())
         if (isEnd) return Promise.resolve()

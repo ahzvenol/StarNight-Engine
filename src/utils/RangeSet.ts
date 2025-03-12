@@ -22,7 +22,7 @@ function arrayToRanges(list: Array<number>): Array<[number, number]> {
     return collection
 }
 
-class RangeSet {
+export class RangeSet {
     private constructor(private ranges: Array<[number, number]> = []) {}
     static fromRanges = (arr: Array<[number, number]>) => new RangeSet(arr)
     static fromArray = (arr: Array<number>) => new RangeSet(arrayToRanges(arr))
@@ -36,5 +36,3 @@ class RangeSet {
     getRanges = (): Array<[number, number]> => this.ranges
     getArray = (): Array<number> => this.ranges.flatMap((e) => range(e[0], e[1] + 1))
 }
-
-export { RangeSet }

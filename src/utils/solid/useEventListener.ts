@@ -18,10 +18,7 @@ export function useEventListener(type: string, listener: EventListener, options:
     const { target = window, passive = false, capture = false } = options
 
     if (target && !attached) {
-        target.addEventListener(type, listener, {
-            capture,
-            passive
-        })
+        target.addEventListener(type, listener, { capture, passive })
         attached = true
     }
 
