@@ -1,4 +1,3 @@
-import './effect'
 import type { ReactiveStore, Store } from './default'
 import { debounce, toMerged } from 'es-toolkit'
 import localforage from 'localforage'

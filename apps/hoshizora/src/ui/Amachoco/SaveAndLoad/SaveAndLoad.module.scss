@@ -1,0 +1,135 @@
+.Save_Load_container {
+    background-image: url('/static/Texture2D/saveload_window.webp');
+}
+
+.Save_Load_title {
+    top: 60px;
+    left: 114px;
+    width: 88px;
+    height: 39px;
+}
+
+.Save_Load_top_button_container {
+    position: relative;
+    top: 145px;
+    right: 90px;
+
+    :global(.mobile) & {
+        transform: scale(1.25);
+        transform-origin: right bottom;
+    }
+}
+
+.Save_Load_top_button_list {
+    right: 33px;
+    display: flex;
+    justify-content: space-between;
+    width: 435px;
+    height: 30px;
+}
+
+.Save_Load_top_button {
+    position: initial;
+    width: 30px;
+    border-radius: 50%;
+    transition: 0.15s;
+}
+
+.Save_Load_top_arrow {
+    width: 18px;
+    height: 30px;
+    background-image: url('/static/Texture2D/ShiftArrow.webp');
+    background-repeat: no-repeat;
+    background-position: left;
+}
+
+.Save_Load_top_arrow_left {
+    left: 780px;
+    transform: rotate(180deg);
+
+    @media (hover: hover) {
+        &:hover {
+            width: 18 + 32px;
+            transform: rotate(180deg) scale(1.01);
+            filter: drop-shadow(-32px 0 #909090);
+        }
+    }
+}
+
+.Save_Load_top_arrow_right {
+    right: 0;
+
+    @media (hover: hover) {
+        &:hover {
+            width: 18 + 32px;
+            transform: scale(1.01);
+            filter: drop-shadow(32px 0 #909090);
+        }
+    }
+}
+
+.Save_Load_content {
+    bottom: 98px;
+    left: 60px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(3, auto);
+    justify-content: space-between;
+    width: 1160px;
+    height: 420px;
+}
+
+.Save_Load_content_element {
+    position: relative;
+    width: 380px;
+    height: 134px;
+    color: white;
+
+    &::before {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-image: url('/static/Texture2D/saveload_frame.webp');
+        content: '';
+    }
+}
+
+.Save_Load_content_element_hover {
+    @media (hover: hover) {
+        &:hover::before {
+            opacity: 0.412;
+        }
+    }
+}
+
+.Save_Load_content_element_image,
+.Save_Load_content_element_empty_image {
+    top: 26.5px;
+    left: 10px;
+    width: 180px;
+    height: 100px;
+    pointer-events: none;
+}
+
+.Save_Load_content_element_empty_image {
+    background-image: url('/static/Texture2D/saveload_thumb.webp');
+}
+/* tag:这用的大概不是江城圆体 */
+.Save_Load_content_element_index,
+.Save_Load_content_element_date {
+    top: 7.5px;
+}
+
+.Save_Load_content_element_index {
+    left: 13.5px;
+}
+
+.Save_Load_content_element_date {
+    left: 200px;
+}
+
+.Save_Load_content_text {
+    top: 36px;
+    left: 195px;
+    font-family: initial;
+}

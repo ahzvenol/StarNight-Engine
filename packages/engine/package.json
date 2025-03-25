@@ -1,0 +1,30 @@
+{
+    "name": "starnight",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "main": "dist/index.cjs",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": {
+                "require": "./dist/index.d.cts",
+                "import": "./dist/index.d.ts"
+            },
+            "require": "./dist/index.cjs",
+            "import": "./dist/index.js"
+        }
+    },
+    "scripts": {
+        "build": "tsup src/index.ts --dts --format cjs,esm --minify --clean",
+        "test": "vitest run",
+        "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
+        "lint:prettier": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\""
+    },
+    "devDependencies": { "tsup": "^8.4.0" },
+    "dependencies": {
+        "es-toolkit": "^1.30.1",
+        "micro-reactive-solid": "^1.0.0"
+    }
+}
