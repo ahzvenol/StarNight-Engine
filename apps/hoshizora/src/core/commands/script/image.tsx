@@ -1,10 +1,10 @@
-import type { CommandArg, ExtendArgs } from '@/core/types/Command'
+import type { CommandArg, ExtendArgs } from 'starnight'
 import anime from 'animejs'
 import { isNil, isUndefined } from 'es-toolkit'
-import { Dynamic, NonBlocking } from '@/core/decorator'
-import { ActEndEvent, ActStartEvent, InitCompleteEvent } from '@/core/event'
-import { GameState } from '@/core/types/Game'
-import { useGameScopeSignal } from '@/core/utils/useScopeSignal'
+import { Dynamic, NonBlocking } from 'starnight'
+import { ActEndEvent, ActStartEvent, GameInitCompleteEvent } from 'starnight'
+import { GameState } from 'starnight'
+import { useGameScopeSignal } from 'starnight'
 import { Y } from '@/utils/fp'
 
 // anime.suspendWhenDocumentHidden = true;
@@ -55,7 +55,7 @@ const _tween: Function1<
 
 export const UIStage = useGameScopeSignal<HTMLDivElement>(() => document.createElement('div'))
 
-InitCompleteEvent.subscribe(() =>
+GameInitCompleteEvent.subscribe(() =>
     Y<Element, void>((rec) => (displayObject) => {
         Array.from(displayObject.children).forEach(rec)
         if (displayObject instanceof HTMLImageElement) {

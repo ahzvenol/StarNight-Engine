@@ -1,5 +1,4 @@
-import type { CommandEntitys } from '@/core/types/Command'
-import type { MacroFunction } from '@/core/types/Marco'
+import type { CommandEntities, MacroFunction } from 'starnight'
 
 export type SayCommandArgs = { text: string; name?: string; file?: string }
 
@@ -16,7 +15,7 @@ export const say: MacroFunction<SayCommandArgs> = ({ text, name, file }) => {
                     : { key: 'backlog', args: { text, name } },
                 { key: 'text', await: true, args: { text } },
                 { key: 'icon', args: {} }
-            ].filter((row) => row !== undefined) as CommandEntitys[]
+            ].filter((row) => row !== undefined) as CommandEntities[]
         }
     ]
 }

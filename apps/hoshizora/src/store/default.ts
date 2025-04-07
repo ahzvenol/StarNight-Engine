@@ -1,9 +1,8 @@
 import type { Reactive } from 'micro-reactive-solid'
-import type { GameConfig, GameGlobalData, GameLocalData } from '@/core/types/Game'
+import type { GameConfig, GameGlobalData, GameLocalData } from 'starnight'
 import { isMobile } from '@/utils/checkEnv'
 import { randomUUID } from '@/utils/randomUUID'
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ExtraConfig {
     fullscreen: boolean
     textboxopacity: number
@@ -14,12 +13,10 @@ export interface ExtraConfig {
 
 export type Config = ExtraConfig & GameConfig
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ExtraGlobalSaveData {}
 
 export type SaveGlobalData = ExtraGlobalSaveData & GameGlobalData
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ExtraLocalSaveData {
     date: number
     snapshot: string
@@ -37,7 +34,7 @@ const system = {
     releasedate: '2025.2'
 }
 
-const config: Config = {
+const config = {
     fullscreen: isMobile() ? true : false,
     textboxopacity: 0.85,
     readtextcolor: '#FEFB8F',
@@ -54,12 +51,13 @@ const config: Config = {
     uisevolume: 0.3,
     textspeed: 0.5,
     autoreadspeed: 0.8,
+    fastreadspeed: 0.8,
     backlogmaxlength: 50
-}
+} satisfies Config
 
-const global: SaveGlobalData = { unlock: [], readsegment: [], achievement: {} }
+const global = { unlock: [], readsegment: [], achievement: {} } as SaveGlobalData
 
-const local = {} as Record<number, SaveLocalData> & { [-1]: GameLocalData | undefined }
+const local = {} as Record<number, SaveLocalData> & { [-1]?: GameLocalData }
 
 const extra = {
     uid: randomUUID(),

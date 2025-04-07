@@ -9,52 +9,37 @@ import { punch, shake } from './script/shake'
 import { icon, name, text, textbox, textpreview } from './script/textbox'
 import { unlock } from './script/unlock'
 import { video } from './script/video'
-import { wait } from './script/wait'
-import { Continue, End, Jump, label } from './system/branch'
-import { Chain, Fork, Par } from './system/schedule'
 
-// 高阶命令循环引用commands,所以这里使用lazy初始化
-export const commands = () =>
-    ({
-        // ----
-        continue: Continue,
-        jump: Jump,
-        end: End,
-        label,
-        // ----
-        fork: Fork,
-        par: Par,
-        chain: Chain,
-        // ----
-        achievement,
-        // ----
-        setimage,
-        tweenimage,
-        closeimage,
-        // ----
-        setaudio,
-        fadeaudio,
-        closeaudio,
-        // ----
-        addchoice,
-        showchoices,
-        // ----
-        name,
-        text,
-        icon,
-        backlog,
-        textpreview,
-        // ----
-        wait,
-        video,
-        unlock,
-        shake,
-        punch,
-        click,
-        check,
-        textbox,
-        blind
-    }) as const
+export const commands = {
+    // ----
+    achievement,
+    // ----
+    setimage,
+    tweenimage,
+    closeimage,
+    // ----
+    setaudio,
+    fadeaudio,
+    closeaudio,
+    // ----
+    addchoice,
+    showchoices,
+    // ----
+    name,
+    text,
+    icon,
+    backlog,
+    textpreview,
+    // ----
+    video,
+    unlock,
+    shake,
+    punch,
+    click,
+    check,
+    textbox,
+    blind
+} as const
 
 // 文本:text
 // 名称:name

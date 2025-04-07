@@ -97,7 +97,7 @@ export interface ScheduledStandardResolvedCommand extends MetaFunction {
     apply: StandardResolvedCommandFunction
 }
 
-export type Command = StandardCommand<CommandArgs> | StandardCommand0<CommandArgs> | ScheduledHighLevelCommand
+export type Command = StandardCommand<any> | ScheduledHighLevelCommand
 
 // ----
 

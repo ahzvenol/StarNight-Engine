@@ -19,7 +19,7 @@ export type MacroOutput = MacroEntities | CommandEntities
 
 // ----
 
-export type Macros = Array<Macro<string, CommandArgs>>
+export type Macros = Array<Macro<string, any>>
 // 已注册的全部程序宏
 // export type Macros = typeof macros
 

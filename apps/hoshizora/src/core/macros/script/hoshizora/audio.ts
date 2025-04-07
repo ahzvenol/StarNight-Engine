@@ -1,9 +1,8 @@
+import type { CommandEntities, MacroFunction } from 'starnight'
 import type { SetAudioCommandArgs } from '@/core/commands/script/audio'
-import type { CommandEntitys } from '@/core/types/Command'
-import type { MacroFunction } from '@/core/types/Marco'
 
 export const audio: MacroFunction<SetAudioCommandArgs & { duration?: number }> = (args) => {
-    const array = Array<CommandEntitys>()
+    const array = Array<CommandEntities>()
     if (args.type === 'BGM') {
         args.loop = true
         array.push({ key: 'unlock', args: { file: args.file } })
@@ -24,7 +23,7 @@ export const audio: MacroFunction<SetAudioCommandArgs & { duration?: number }> =
 }
 
 export const closeaudio: MacroFunction<{ target?: string; duration?: number }> = (args) => {
-    const array = Array<CommandEntitys>()
+    const array = Array<CommandEntities>()
     if (args.target !== undefined) {
         array.push({
             key: 'tweenA',

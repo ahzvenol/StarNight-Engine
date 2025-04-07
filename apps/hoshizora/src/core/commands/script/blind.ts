@@ -1,6 +1,6 @@
-import { ActScope, DynamicBlocking } from '@/core/decorator'
-import { SwitchState } from '@/core/types/Meta'
-import { useActScopeSignal } from '@/core/utils/useScopeSignal'
+import { ActScope, DynamicBlocking } from 'starnight'
+import { SwitchState } from 'starnight'
+import { useActScopeSignal } from 'starnight'
 import { wait } from './wait'
 
 export const UIBlindState = useActScopeSignal(SwitchState.Disabled)

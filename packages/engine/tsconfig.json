@@ -1,0 +1,18 @@
+{
+    "include": ["**/*.ts"],
+    "compilerOptions": {
+        "strict": true,
+        "target": "ES2019",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "noEmit": true,
+        "isolatedModules": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        },
+        "noErrorTruncation": true,
+    }
+}

@@ -1,7 +1,7 @@
-import { Blocking, NonBlocking } from '@/core/decorator'
-import { GameState } from '@/core/types/Game'
-import { SwitchState } from '@/core/types/Meta'
-import { useActScopeSignal, useGameScopeSignal } from '@/core/utils/useScopeSignal'
+import { Blocking, NonBlocking } from 'starnight'
+import { GameState } from 'starnight'
+import { SwitchState } from 'starnight'
+import { useActScopeSignal, useGameScopeSignal } from 'starnight'
 import { Try } from '@/utils/fp/Try'
 import { PromiseX } from '@/utils/PromiseX'
 import { Jump } from '../system/branch'
@@ -33,7 +33,7 @@ export const addchoice = NonBlocking<{ text: string; target: number | string; di
         }
 )
 
-declare module '@/core/types/Game' {
+declare module 'starnight' {
     interface GameLocalData {
         choice?: Array<number | string>
     }

@@ -1,7 +1,7 @@
-import { DynamicBlocking, NonBlocking } from '@/core/decorator'
-import { onClick } from '@/core/event'
-import { SwitchState } from '@/core/types/Meta'
-import { useGameScopeSignal } from '@/core/utils/useScopeSignal'
+import { DynamicBlocking, NonBlocking } from 'starnight'
+import { onClick } from 'starnight'
+import { SwitchState } from 'starnight'
+import { useGameScopeSignal } from'starnight'
 
 export const UIClickState = useGameScopeSignal<SwitchState>(SwitchState.Enabled)
 

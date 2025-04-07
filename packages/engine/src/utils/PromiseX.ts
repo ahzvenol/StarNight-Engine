@@ -3,7 +3,6 @@ import { noop } from 'es-toolkit'
 type PromiseConstructorType<T> = ConstructorParameters<typeof Promise<T>>[0]
 type ResolveType<T> = Parameters<PromiseConstructorType<T>>[0]
 type RejectType<T> = Parameters<PromiseConstructorType<T>>[1]
-type ThenType<T> = Parameters<Promise<T>['then']>[1]
 
 export enum PromiseState {
     Pending,

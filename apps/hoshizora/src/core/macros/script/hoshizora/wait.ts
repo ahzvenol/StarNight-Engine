@@ -1,4 +1,4 @@
-import type { MacroFunction } from '@/core/types/Marco'
+import type { MacroFunction } from 'starnight'
 
 export const wait: MacroFunction<{ duration: number }> = ({ duration }) => {
     return [

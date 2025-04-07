@@ -1,4 +1,4 @@
-import { Macro } from '../types/Marco'
+import { Macro } from 'starnight'
 import { audio, closeaudio } from './script/hoshizora/audio'
 import { bg, sprite } from './script/hoshizora/image'
 import { say } from './script/hoshizora/say'

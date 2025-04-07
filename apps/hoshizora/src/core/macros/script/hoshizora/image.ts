@@ -1,4 +1,4 @@
-import type { MacroFunction } from '@/core/types/Marco'
+import type { MacroFunction } from 'starnight'
 import type { SetImageCommandArgs } from '../../../commands/script/image'
 import { omit } from 'es-toolkit'
 import { renameKeys } from '@/utils/renameKeys'

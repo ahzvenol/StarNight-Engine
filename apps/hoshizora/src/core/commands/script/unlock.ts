@@ -1,6 +1,6 @@
-import { NonBlocking } from '@/core/decorator'
+import { NonBlocking } from 'starnight'
 
-declare module '@/core/types/Game' {
+declare module 'starnight' {
     interface GameGlobalData {
         unlock: Array<string>
     }

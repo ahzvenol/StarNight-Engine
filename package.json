@@ -5,8 +5,8 @@
     "description": "",
     "packageManager": "pnpm@10.6.1",
     "scripts": {
-        "dev": "vite",
-        "build": "vite build",
+        "dev": "pnpm --filter starnight build && pnpm --filter hoshizora dev",
+        "build": "pnpm --filter starnight build",
         "serve": "vite preview",
         "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
         "lint:prettier": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\"",

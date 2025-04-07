@@ -1,20 +1,20 @@
-import type { ExtendArgs } from '@/core/types/Command'
+import type { ExtendArgs } from 'starnight'
 import type { Howl, HowlConstructor, HowlOptions } from '@/lib/howler'
 import { delay, isUndefined } from 'es-toolkit'
 import { createEffect } from 'solid-js'
-import { Dynamic, NonBlocking } from '@/core/decorator'
+import { Dynamic, NonBlocking } from 'starnight'
 import {
     ActStartEvent,
     GameDestroyEvent,
     GameSleepEvent,
     GameWakeEvent,
-    InitCompleteEvent,
-    SetupConfigEvent
-} from '@/core/event'
-import { GameState } from '@/core/types/Game'
+    GameInitCompleteEvent,
+    SetupConfig
+} from 'starnight'
+import { GameState } from 'starnight'
 import { HowlerInstance } from '@/lib/howler'
 
-declare module '@/core/types/Game' {
+declare module 'starnight' {
     interface GameConfig {
         interruptclip: boolean
         globalvolume: number
@@ -27,7 +27,7 @@ declare module '@/core/types/Game' {
 
 const types: Record<string, HowlConstructor> = {}
 
-SetupConfigEvent.once(({ globalvolume, bgmvolume, sevolume, clipvolume, uisevolume }) => {
+SetupConfig.then(({ globalvolume, bgmvolume, sevolume, clipvolume, uisevolume }) => {
     const { Howler: BGMGlobal, Howl: BGMConstructor } = HowlerInstance()
     const { Howler: SEGlobal, Howl: SEConstructor } = HowlerInstance()
     const { Howler: ClipGlobal, Howl: ClipConstructor } = HowlerInstance()
@@ -44,7 +44,7 @@ SetupConfigEvent.once(({ globalvolume, bgmvolume, sevolume, clipvolume, uisevolu
 
 const tracks = new Map<string, Howl>()
 
-InitCompleteEvent.subscribe(() => tracks.forEach((audio) => audio.load().play()))
+GameInitCompleteEvent.subscribe(() => tracks.forEach((audio) => audio.load().play()))
 
 ActStartEvent.subscribe(({ config }) => {
     if (config.interruptclip()) tracks.get('Clip')?.unload()

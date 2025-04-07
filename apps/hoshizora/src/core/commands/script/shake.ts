@@ -1,6 +1,6 @@
 import anime from 'animejs'
 import { isUndefined } from 'es-toolkit'
-import { Dynamic, EffectScope } from '../../decorator'
+import { Dynamic, EffectScope } from 'starnight'
 import { UIStage } from './image'
 
 // 目前,这里索引到hoshizora的stageView

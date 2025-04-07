@@ -1,9 +1,9 @@
-import { SwitchState } from '@/core/types/Meta'
-import { useActScopeSignal } from '@/core/utils/useScopeSignal'
-import { ActScope, Dynamic, NonBlocking } from '../../decorator'
+import { SwitchState } from 'starnight'
+import { useActScopeSignal } from 'starnight'
+import { ActScope, Dynamic, NonBlocking } from 'starnight'
 import { wait } from './wait'
 
-declare module '@/core/types/Game' {
+declare module 'starnight' {
     interface GameLocalData {
         textpreview?: string
     }
@@ -23,7 +23,7 @@ export const icon = ActScope(
     })
 )
 
-declare module '@/core/types/Game' {
+declare module 'starnight' {
     interface GameConfig {
         textspeed: number
     }

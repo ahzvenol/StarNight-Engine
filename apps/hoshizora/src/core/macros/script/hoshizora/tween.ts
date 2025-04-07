@@ -1,5 +1,5 @@
+import type { MacroFunction } from 'starnight'
 import type { TweenImageCommandArgs } from '@/core/commands/script/image'
-import type { MacroFunction } from '@/core/types/Marco'
 import { mapValues } from 'es-toolkit'
 import { renameKeys } from '@/utils/renameKeys'
 

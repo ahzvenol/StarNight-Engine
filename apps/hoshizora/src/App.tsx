@@ -1,7 +1,9 @@
 import type { Component } from 'solid-js'
 import { createEffect, createResource, Match, Switch } from 'solid-js'
 import { KeepAliveProvider } from 'solid-keep-alive'
-import { GameSleepEvent, GameWakeEvent } from './core/event'
+import { GameSleepEvent, GameWakeEvent, SetupCommands, SetupMarcos, SystemCommands } from 'starnight'
+import { commands } from './core/commands'
+import { macros } from './core/macros'
 import { onStoreReady } from './store'
 import { Context } from './store/context'
 import UI from './ui/Hoshizora'
@@ -38,6 +40,9 @@ onStoreReady.then((store) => {
         })
     }
 })
+
+SetupCommands.set(Object.assign(SystemCommands, commands))
+SetupMarcos.set([...macros])
 
 // 整个配置文件在这里分发
 const App: Component = () => (
