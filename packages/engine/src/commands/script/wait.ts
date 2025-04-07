@@ -1,5 +1,5 @@
 import { ActScope, DynamicBlocking } from '../../Decorator'
-import { GameVisibilityEvent } from '../../Event'
+import { GameVisibilityEvent } from '../../Events'
 import { isGameVisible } from '../../main'
 import { PromiseX } from '../../utils/PromiseX'
 import { TimeoutController } from '../../utils/TimeoutController'

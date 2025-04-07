@@ -1,10 +1,10 @@
+import type { Reactive } from 'micro-reactive-solid'
 import type { Component, JSX } from 'solid-js'
-import type { Reactive } from '@/lib/micro-reactive'
 import BScroll from '@better-scroll/core'
 import MouseWheel from '@better-scroll/mouse-wheel'
+import { useSignal } from 'micro-reactive-solid'
 import { children, createEffect, getOwner, on, onCleanup, onMount, runWithOwner } from 'solid-js'
 import { useEventListener } from '@/utils/solid/useEventListener'
-import { useSignal } from '@/utils/solid/useSignal'
 
 BScroll.use(MouseWheel)
 

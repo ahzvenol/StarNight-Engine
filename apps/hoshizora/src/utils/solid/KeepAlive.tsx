@@ -1,8 +1,8 @@
+import type { Signal } from 'micro-reactive-solid'
 import type { Accessor, Component, ParentProps } from 'solid-js'
-import type { Signal } from '../solid/useSignal'
+import { useSignal } from 'micro-reactive-solid'
 import { createEffect, on, runWithOwner, Show } from 'solid-js'
 import { KeepAlive, useKeepAlive } from 'solid-keep-alive'
-import { useSignal } from '../solid/useSignal'
 
 const signals = new Map<string, Signal<number>>()
 

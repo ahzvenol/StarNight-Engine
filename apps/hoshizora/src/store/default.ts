@@ -1,5 +1,5 @@
+import type { Reactive } from 'micro-reactive-solid'
 import type { GameConfig, GameGlobalData, GameLocalData } from '@/core/types/Game'
-import type { Reactive } from '@/lib/micro-reactive'
 import { isMobile } from '@/utils/checkEnv'
 import { randomUUID } from '@/utils/randomUUID'
 

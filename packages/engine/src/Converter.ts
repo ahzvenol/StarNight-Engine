@@ -1,7 +1,7 @@
 import type { Commands, RuntimeCommandEntities, RuntimeCommandLike } from './types/Command'
 import type { Macro, Macros } from './types/Marco'
 
-export class Convert {
+export class Converter {
     constructor(
         private readonly commands: Commands,
         private readonly macros: Macros

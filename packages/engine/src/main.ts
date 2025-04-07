@@ -17,7 +17,7 @@ import {
     onFast,
     onGameDestroy,
     onGameVisibilityChange
-} from './Event'
+} from './Events'
 import { SetupConfig } from './Setup'
 import { GameState } from './types/Game'
 import { PromiseX } from './utils/PromiseX'

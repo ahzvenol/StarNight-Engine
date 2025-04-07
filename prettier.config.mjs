@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     // 一行最多 120 字符
     printWidth: 120,
     // 使用 4 个空格缩进
@@ -25,7 +25,7 @@ module.exports = {
     endOfLine: 'crlf',
     // 格式化字符串中的代码
     embeddedLanguageFormatting: 'auto',
-    plugins: ['@ianvs/prettier-plugin-sort-imports'],
+    plugins: ['@ianvs/prettier-plugin-sort-imports'], // 替换为导入的插件对象
     importOrder: [
         '<TYPES>',
         '<TYPES>^@(/.*)$',

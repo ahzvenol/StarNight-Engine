@@ -67,7 +67,7 @@ export const showchoices = Blocking<{ index: number }>(
                 }
             })
             UIChoicesState(SwitchState.Disabled)
-            current.choice!([...(current.choice?.() || []), target])
+            current.choice([...(current.choice?.() || []), target])
             return Jump.apply()({ target }).then((jump) =>
                 stopfastonselection ? Object.assign(jump, { state: GameState.Normal }) : jump
             )

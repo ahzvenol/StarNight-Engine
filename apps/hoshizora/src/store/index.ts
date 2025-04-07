@@ -4,7 +4,7 @@ import localforage from 'localforage'
 import { createEffect, on } from 'solid-js'
 import { unwrap } from 'solid-js/store'
 import { log } from '@/utils/logger'
-import { useReactive } from '@/utils/solid/useReactive'
+import { useReactive } from 'micro-reactive-solid'
 import { CustomDefaultStore } from './custom'
 import { SystemDefaultStore } from './default'
 

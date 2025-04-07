@@ -1,7 +1,5 @@
-import type { Reactive } from '@/lib/micro-reactive'
-import type { Signal } from '@/utils/solid/useSignal'
-import { useReactive } from '@/lib/micro-reactive'
-import { useSignal } from '@/utils/solid/useSignal'
+import type { Reactive, Signal } from 'micro-reactive-solid'
+import { useReactive, useSignal } from 'micro-reactive-solid'
 import { ActStartEvent, GameStartEvent } from '../event'
 
 export function useGameScopeSignal(initialValue: string): Signal<string>
@@ -32,7 +30,7 @@ export function useGameScopeReactive<T>(initialValue: T extends Primitive ? T : 
 export function useGameScopeReactive<T>(initialValue: T extends Primitive ? T : Function0<T>) {
     const isPrimitive = typeof initialValue !== 'function'
     const signal = useReactive(isPrimitive ? initialValue : initialValue())
-    GameStartEvent.subscribe(() => signal(isPrimitive ? initialValue : initialValue()))
+    GameStartEvent.subscribe(() => signal(() => (isPrimitive ? initialValue : initialValue())))
     return signal as Reactive<T>
 }
 
@@ -64,6 +62,6 @@ export function useActScopeReactive<T>(initialValue: T extends Primitive ? T : F
 export function useActScopeReactive<T>(initialValue: T extends Primitive ? T : Function0<T>) {
     const isPrimitive = typeof initialValue !== 'function'
     const reactive = useReactive(isPrimitive ? initialValue : initialValue())
-    ActStartEvent.subscribe(() => reactive(isPrimitive ? initialValue : initialValue()))
+    ActStartEvent.subscribe(() => reactive(() => (isPrimitive ? initialValue : initialValue())))
     return reactive as Reactive<T>
 }

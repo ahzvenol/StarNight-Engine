@@ -1,6 +1,6 @@
 import type { Reactive, Signal } from 'micro-reactive-solid'
 import { useReactive, useSignal } from 'micro-reactive-solid'
-import { ActStartEvent, GameStartEvent } from '../Event'
+import { ActStartEvent, GameStartEvent } from '../Events'
 import { Function0, Primitive } from '../types/Meta'
 
 export function useGameScopeSignal(initialValue: string): Signal<string>

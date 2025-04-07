@@ -11,7 +11,7 @@ declare module '@/core/types/Game' {
 
 export const textpreview = ActScope(
     NonBlocking<{ text: string }>(({ current }) => ({ text }) => {
-        current.textpreview!(text)
+        current.textpreview(text)
     })
 )
 

@@ -1,4 +1,4 @@
-import type { Reactive } from '@/lib/micro-reactive'
+import type { Reactive } from 'micro-reactive-solid'
 import type { GameBook, GameConfig, GameRuntimeContext } from './types/Game'
 import { omit } from 'es-toolkit'
 import { log } from '@/utils/logger'

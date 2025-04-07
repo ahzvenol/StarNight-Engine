@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     extends: [
         'stylelint-config-standard',
         'stylelint-config-standard-scss',
@@ -33,7 +33,7 @@ module.exports = {
         'selector-class-pattern': null, // 强制选择器类名的格式
         'value-no-vendor-prefix': null, // 关闭 vendor-prefix (为了解决多行省略 -webkit-box)
         'no-descending-specificity': null, // 不允许较低特异性的选择器出现在覆盖较高特异性的选择器
-        'selector-pseudo-class-no-unknown': null, // stylelint无法正确识别:global()选择器
+        'selector-pseudo-class-no-unknown': null // stylelint无法正确识别:global()选择器
     },
     ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts']
 }

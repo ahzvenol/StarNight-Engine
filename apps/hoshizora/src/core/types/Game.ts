@@ -1,4 +1,4 @@
-import type { Reactive } from '@/lib/micro-reactive'
+import type { Reactive } from 'micro-reactive-solid'
 import type { SaveGlobalData } from '@/store/default'
 import type { RuntimeCommandLike } from './Command'
 

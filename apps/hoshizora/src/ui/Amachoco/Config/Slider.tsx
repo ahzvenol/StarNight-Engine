@@ -1,5 +1,5 @@
+import type { Reactive } from 'micro-reactive-solid'
 import type { Component } from 'solid-js'
-import type { Reactive } from '@/lib/micro-reactive'
 import BaseSlider from '@/ui/Slider'
 import styles from './Slider.module.scss'
 

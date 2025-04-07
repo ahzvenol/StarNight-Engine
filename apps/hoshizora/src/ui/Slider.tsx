@@ -1,5 +1,5 @@
+import type { Reactive } from 'micro-reactive-solid'
 import type { Component, JSX } from 'solid-js'
-import type { Reactive } from '@/lib/micro-reactive'
 import { children, createEffect, getOwner, runWithOwner } from 'solid-js'
 import { useEventListener } from '@/utils/solid/useEventListener'
 

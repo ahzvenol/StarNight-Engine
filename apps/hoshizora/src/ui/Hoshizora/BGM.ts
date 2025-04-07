@@ -2,7 +2,7 @@ import type { Howl, HowlConstructor, HowlOptions } from '@/lib/howler'
 import { createEffect } from 'solid-js'
 import { HowlerInstance } from '@/lib/howler'
 import { onStoreReady } from '@/store'
-import { useSignal } from '@/utils/solid/useSignal'
+import { useSignal } from 'micro-reactive-solid'
 
 function suspendWhenDocumentHidden(audio: Howl) {
     let wasPlaying = false
