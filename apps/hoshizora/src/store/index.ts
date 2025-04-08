@@ -1,10 +1,10 @@
 import type { ReactiveStore, Store } from './default'
 import { debounce, toMerged } from 'es-toolkit'
 import localforage from 'localforage'
+import { useReactive } from 'micro-reactive-solid'
 import { createEffect, on } from 'solid-js'
 import { unwrap } from 'solid-js/store'
 import { log } from '@/utils/logger'
-import { useReactive } from 'micro-reactive-solid'
 import { CustomDefaultStore } from './custom'
 import { SystemDefaultStore } from './default'
 
@@ -16,16 +16,9 @@ async function initializeStore() {
     const local = (await localforage.getItem<Store['local'] | null>('local')) || {}
     const extra = (await localforage.getItem<Store['extra'] | null>('extra')) || {}
 
-    // 这里是默认配置与storage配置之间的关系逻辑
     const store = useReactive(toMerged(SystemDefaultStore(), { config, global, local, extra }))
 
-    return store
-}
-
-// 各模块对store数据的依赖关系通过使用onStoreReady定义在effects中
-export const onStoreReady = initializeStore()
-
-onStoreReady.then((store) =>
+    // 自动同步本地存储
     Object.keys(store()).forEach((key) => {
         createEffect(
             on(
@@ -37,6 +30,11 @@ onStoreReady.then((store) =>
             )
         )
     })
-)
+
+    return store
+}
+
+// 各模块对store数据的依赖关系通过使用onStoreReady定义在effects中
+export const onStoreReady = initializeStore()
 
 onStoreReady.then((store) => log.info('Store初始化完毕:', store()))

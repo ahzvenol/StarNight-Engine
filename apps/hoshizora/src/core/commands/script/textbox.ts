@@ -1,7 +1,6 @@
-import { SwitchState } from 'starnight'
+import { SwitchState, SystemCommands } from 'starnight'
 import { useActScopeSignal } from 'starnight'
 import { ActScope, Dynamic, NonBlocking } from 'starnight'
-import { wait } from './wait'
 
 declare module 'starnight' {
     interface GameLocalData {
@@ -35,7 +34,7 @@ export const text = ActScope(
         (context) =>
             function* ({ text }) {
                 while (text.length >= 1) {
-                    yield wait.apply(context)({
+                    yield SystemCommands.wait.apply(context)({
                         duration: 100 - context.config.textspeed() * 100
                     })
                     UIText((i) => i + text.charAt(0))

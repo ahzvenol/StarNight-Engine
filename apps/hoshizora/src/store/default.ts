@@ -1,13 +1,12 @@
 import type { Reactive } from 'micro-reactive-solid'
 import type { GameConfig, GameGlobalData, GameLocalData } from 'starnight'
+import { cloneDeep } from 'es-toolkit'
 import { isMobile } from '@/utils/checkEnv'
 import { randomUUID } from '@/utils/randomUUID'
 
 export interface ExtraConfig {
     fullscreen: boolean
     textboxopacity: number
-    readtextcolor: string
-    unreadtextcolor: string
     language: string
 }
 
@@ -24,33 +23,31 @@ export interface ExtraLocalSaveData {
 
 export type SaveLocalData = ExtraLocalSaveData & GameLocalData
 
-const version = 1
+const version = 32
 
 const system = {
-    name: '巧克甜恋',
-    key: 'Amachoco',
+    name: '星空列车与白的旅行',
+    key: 'Hoshizora',
     versioncode: version,
-    versionname: '1.0',
-    releasedate: '2025.2'
+    versionname: 'next',
+    releasedate: '2025.x'
 }
 
 const config = {
     fullscreen: isMobile() ? true : false,
-    textboxopacity: 0.85,
-    readtextcolor: '#FEFB8F',
-    unreadtextcolor: '#FEFEFE',
+    textboxopacity: 0.3,
     language: 'zh-CN',
     interruptclip: true,
     fastforwardunread: true,
     stopfastonselection: true,
     stopautoonselection: true,
-    globalvolume: 0.85,
-    bgmvolume: 0.65,
-    sevolume: 0.75,
-    clipvolume: 0.85,
-    uisevolume: 0.3,
+    globalvolume: 1,
+    bgmvolume: 0.5,
+    sevolume: 0.7,
+    clipvolume: 0.7,
+    uisevolume: 1,
     textspeed: 0.5,
-    autoreadspeed: 0.8,
+    autoreadspeed: 0.5,
     fastreadspeed: 0.8,
     backlogmaxlength: 50
 } satisfies Config
@@ -76,7 +73,7 @@ QQ交流群：<a href="https://cusky.tk/group/hoshizora" target="_blank">8164861
 软件下载/更新链接：<a href="https://cusky.tk/download/hoshizora" target="_blank">cusky.tk/download/hoshizora</a>`
 }
 
-export const SystemDefaultStore = () => ({ system, config, global, local, extra }) as const
+export const SystemDefaultStore = () => cloneDeep({ system, config, global, local, extra } as const)
 
 export type Store = ReturnType<typeof SystemDefaultStore>
 export type ReactiveStore = Reactive<Store>

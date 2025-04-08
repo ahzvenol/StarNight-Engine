@@ -8,7 +8,7 @@ export const tweenimage: MacroFunction<TweenImageCommandArgs> = ({ target, ease,
     const offsetArgs = mapValues(renamedArgs as Record<string, number>, (arg) => '+=' + arg)
     return [
         {
-            key: 'tweenI',
+            key: 'tweenimage',
             args: {
                 target,
                 ease,

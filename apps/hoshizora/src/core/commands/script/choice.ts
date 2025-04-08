@@ -1,10 +1,9 @@
-import { Blocking, NonBlocking } from 'starnight'
+import { Blocking, NonBlocking, SystemCommands } from 'starnight'
 import { GameState } from 'starnight'
 import { SwitchState } from 'starnight'
 import { useActScopeSignal, useGameScopeSignal } from 'starnight'
 import { Try } from '@/utils/fp/Try'
 import { PromiseX } from '@/utils/PromiseX'
-import { Jump } from '../system/branch'
 
 type ChoiceItem = {
     text: string
@@ -68,7 +67,7 @@ export const showchoices = Blocking<{ index: number }>(
             })
             UIChoicesState(SwitchState.Disabled)
             current.choice([...(current.choice?.() || []), target])
-            return Jump.apply()({ target }).then((jump) =>
+            return SystemCommands.jump.apply()({ target }).then((jump) =>
                 stopfastonselection ? Object.assign(jump, { state: GameState.Normal }) : jump
             )
         }

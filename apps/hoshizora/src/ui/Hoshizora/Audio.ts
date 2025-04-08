@@ -1,8 +1,8 @@
 import type { Howl, HowlConstructor, HowlOptions } from '@/lib/howler'
+import { useSignal } from 'micro-reactive-solid'
 import { createEffect } from 'solid-js'
 import { HowlerInstance } from '@/lib/howler'
 import { onStoreReady } from '@/store'
-import { useSignal } from 'micro-reactive-solid'
 
 function suspendWhenDocumentHidden(audio: Howl) {
     let wasPlaying = false
@@ -31,4 +31,23 @@ onStoreReady.then(({ config: { globalvolume } }) => createEffect(() => HowlerGlo
 
 export const Howler = wrapHowlWithSuspend(HowlerConstructor)
 
-export const AudioMutex = useSignal('')
+export const UISE = (options: HowlOptions) => {
+    const howl = Howler(options)
+    onStoreReady.then(({ config: { uisevolume } }) => createEffect(() => HowlerGlobal.volume(uisevolume())))
+    return howl
+}
+
+export const Clip = (options: HowlOptions) => {
+    const howl = Howler(options)
+    onStoreReady.then(({ config: { clipvolume } }) => createEffect(() => HowlerGlobal.volume(clipvolume())))
+    return howl
+}
+
+export enum AudioIds {
+    Title,
+    GalleryAudio,
+    GalleryVideo,
+    Game
+}
+
+export const AudioMutex = useSignal<AudioIds>(AudioIds.Title)

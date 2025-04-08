@@ -7,18 +7,18 @@ import { useStore } from '@/store/context'
 import { Clone, Variable } from '@/ui/Elements'
 import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/logger'
-import { AudioMutex, Howler } from '../BGM'
+import { AudioIds, AudioMutex, Howler } from '../Audio'
 import { Button } from '../Button'
 import { Pages } from '../Pages'
 import styles from './Title.module.scss'
+import { restartGame } from '../Game/Game'
 
-const ID = 'Title'
 const audio = Howler({ loop: true, src: './static/AudioClip/bgm01.flac' })
 createEffect(
     on(
         AudioMutex,
         () => {
-            if (AudioMutex() !== ID) audio.pause()
+            if (AudioMutex() !== AudioIds.Title) audio.stop()
         },
         { defer: false }
     )
@@ -32,6 +32,7 @@ const Title: Component = () => {
     const system = store.system
     const local = store.extra
     onMount(() => {
+        if (AudioMutex() !== AudioIds.Title) AudioMutex(AudioIds.Title)
         if (!audio.playing()) audio.play()
     })
     return (
@@ -62,6 +63,7 @@ const Title: Component = () => {
                                             'background-image': `url('./static/Texture2D/title_${imageId}.webp')`
                                         }}
                                         onClick={() => {
+                                            if (index === 0) restartGame({ index: 1 })
                                             router.navigate(
                                                 [Pages.Game, Pages.Load, Pages.Config, Pages.Gallery][index]
                                             )

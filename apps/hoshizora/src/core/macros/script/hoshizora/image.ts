@@ -16,11 +16,11 @@ export type SetBGMacroArgs = {
 export const sprite: MacroFunction<SetImageCommandArgs & SetBGMacroArgs & { z?: number }> = (args) => {
     args.file = `./static/ImageAsset/${args.file}.webp`
     const renamedArgs = renameKeys(args, { x: 'translateX', y: 'translateY', z: 'zIndex', w: 'width', h: 'height' })
-    const imageArgs = Object.assign({ opacity: 1 }, omit(renamedArgs, ['duration']), { zIndex: 1 })
-    const tweenArgs = { target: args.name, ease: 'easeInQuad', duration: 175, opacity: 0 }
+    const imageArgs = Object.assign({ opacity: 1 }, omit(renamedArgs, ['duration']), { zIndex: 1, inherit: false })
+    const tweenArgs = { target: args.name, ease: 'easeInQuad', duration: 175, opacity: 0, inherit: false }
     return [
-        { key: 'tweenI', args: tweenArgs },
-        { key: 'setI', args: imageArgs as unknown as SetImageCommandArgs }
+        { key: 'tweenimage', args: tweenArgs },
+        { key: 'setimage', args: imageArgs as unknown as SetImageCommandArgs }
     ]
 }
 
@@ -36,11 +36,11 @@ export const bg: MacroFunction<SetImageCommandArgs & SetBGMacroArgs> = (args) =>
               : { scaleX: 1.021, scaleY: 1.021 }
     args.file = `./static/ImageAsset/${args.file}.webp`
     const renamedArgs = renameKeys(args, { x: 'translateX', y: 'translateY', z: 'zIndex', w: 'width', h: 'height' })
-    const tweenArgs = { target: args.name, ease: 'easeInQuad', duration: args.duration, opacity: 0 }
+    const tweenArgs = { target: args.name, ease: 'easeInQuad', duration: args.duration, opacity: 0, inherit: false }
     const imageArgs = Object.assign({ opacity: 1 }, omit(renamedArgs, ['duration']), scale)
     return [
-        { key: 'tweenI', args: tweenArgs },
-        { key: 'setI', args: imageArgs as unknown as SetImageCommandArgs },
+        { key: 'tweenimage', args: tweenArgs },
+        { key: 'setimage', args: imageArgs as unknown as SetImageCommandArgs },
         { key: 'unlock', args: { file: rawFile } }
     ]
 }

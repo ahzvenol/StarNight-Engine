@@ -1,7 +1,6 @@
-import { ActScope, DynamicBlocking } from 'starnight'
+import { ActScope, DynamicBlocking, SystemCommands } from 'starnight'
 import { SwitchState } from 'starnight'
 import { useActScopeSignal } from 'starnight'
-import { wait } from './wait'
 
 export const UIBlindState = useActScopeSignal(SwitchState.Disabled)
 
@@ -10,7 +9,7 @@ export const blind = ActScope(
         (context) =>
             function* () {
                 UIBlindState(SwitchState.Enabled)
-                yield wait.apply(context)({ duration: 300 })
+                yield SystemCommands.wait.apply(context)({ duration: 300 })
                 UIBlindState(SwitchState.Disabled)
             }
     )

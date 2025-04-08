@@ -17,7 +17,7 @@
         }
     },
     "scripts": {
-        "build": "tsup src/index.ts --dts --format cjs,esm --minify --clean",
+        "build": "tsup src/index.ts --dts --format cjs,esm --minify --clean --sourcemap",
         "test": "vitest run",
         "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
         "lint:prettier": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\""

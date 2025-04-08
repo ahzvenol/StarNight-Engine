@@ -78,7 +78,7 @@ ActEndEvent.subscribe(() =>
 export type SetImageCommandArgs = {
     name: string
     file: string
-    zIndex?: string
+    zIndex?: number
 } & ExtendArgs<AnimatedPropertys>
 
 export const setimage = NonBlocking<SetImageCommandArgs>((context) => ({ name, file, zIndex, ...args }) => {
@@ -93,7 +93,7 @@ export const setimage = NonBlocking<SetImageCommandArgs>((context) => ({ name, f
         newBitmap = document.createElement('img')
         stage.appendChild(container)
     }
-    if (!isUndefined(zIndex)) container.style.zIndex = zIndex
+    if (!isUndefined(zIndex)) container.style.zIndex = zIndex.toString()
     const attr = context.state === GameState.Init ? 'data-src' : 'src'
     newBitmap.setAttribute(attr, file)
     anime.set(newBitmap, args)

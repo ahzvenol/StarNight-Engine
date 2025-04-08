@@ -22,7 +22,7 @@ import { SetupConfig } from './Setup'
 import { GameState } from './types/Game'
 import { PromiseX } from './utils/PromiseX'
 import { RangeSet } from './utils/RangeSet'
-import { useActScopeSignal, useGameScopeReactive, useGameScopeSignal } from './utils/useScopeSignal'
+import { useGameScopeReactive, useGameScopeSignal } from './utils/useScopeSignal'
 
 // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕
 // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
@@ -42,11 +42,11 @@ export const isGameVisible = useGameScopeSignal(true)
 GameVisibilityEvent.subscribe((visible) => isGameVisible(visible))
 
 // 已读/未读标记
-export const isRead = useActScopeSignal(false)
+export const isRead = useGameScopeSignal(false)
 
 // 游戏状态
 export const state = useGameScopeSignal(GameState.Init)
-export const current = useGameScopeReactive<GameLocalData>(() => ({ index: 1 }))
+export const current = useGameScopeReactive<GameLocalData>(() => ({ index: 0 }))
 
 // 在循环开始前预取book.fulls会使快速读档变得很慢,由此换取10%的加载速度提升是不值得的
 export async function run({ book, local, global }: GameStartOptions) {
@@ -80,7 +80,7 @@ export async function run({ book, local, global }: GameStartOptions) {
         ActEndEvent.publish(context)
         if (output['state'] && state() !== GameState.Init) state(output['state'])
         // 等待过程受continue命令影响
-        if (state() !== GameState.Init && output['continue'] !== true) {
+        if (state() === GameState.Init || output['continue'] === true) {
         } else if (state() === GameState.Fast) {
             await delay(config.fastreadspeed())
         } else if (state() === GameState.Auto) {
