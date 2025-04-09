@@ -40,7 +40,8 @@ export type GameRuntimeContext = {
 }
 
 export type GameStartOptions = {
-    book: GameBook
+    book: GameBook,
+    config: Reactive<GameConfig>
     global: Reactive<GameGlobalData>
     readonly local: GameLocalData
 }

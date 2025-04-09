@@ -6,7 +6,7 @@ import type {
     StandardResolvedCommandFunction
 } from '../../types/Command'
 import { merge, omit } from 'es-toolkit'
-import { SetupCommands } from '../../Setup'
+import { StarNight } from '../../StarNight'
 import { Schedule } from '../../types/Command'
 import { Function1 } from '../../types/Meta'
 import { splitEffect } from '../../utils/splitEffect'
@@ -53,9 +53,9 @@ const _fork: Function1<Array<ScheduledStandardResolvedCommand>, StandardResolved
 
 // meta.key只用于调试
 
-export const Fork: ScheduledHighLevelCommand = {
+export const fork: ScheduledHighLevelCommand = {
     apply: (context) => async (rows) => {
-        const commands = await SetupCommands
+        const commands = StarNight.commands
         return _fork(
             rows.flatMap((row) => {
                 const cmd = commands[row.key]
@@ -68,9 +68,9 @@ export const Fork: ScheduledHighLevelCommand = {
     }
 }
 
-export const Par: ScheduledHighLevelCommand = {
+export const par: ScheduledHighLevelCommand = {
     apply: (context) => async (rows) => {
-        const commands = await SetupCommands
+        const commands = StarNight.commands
         return _par(
             rows.flatMap((row) => {
                 const cmd = commands[row.key]
@@ -83,9 +83,9 @@ export const Par: ScheduledHighLevelCommand = {
     }
 }
 
-export const Chain: ScheduledHighLevelCommand = {
+export const chain: ScheduledHighLevelCommand = {
     apply: (context) => async (rows) => {
-        const commands = await SetupCommands
+        const commands = StarNight.commands
         return _chain(
             rows.flatMap((row) => {
                 const cmd = commands[row.key]

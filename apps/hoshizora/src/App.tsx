@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { createEffect, createResource, Match, Switch } from 'solid-js'
 import { KeepAliveProvider } from 'solid-keep-alive'
-import { GameSleepEvent, GameWakeEvent, SetupCommands, SetupConfig, SetupMarcos, SystemCommands } from 'starnight'
+import { GameSleepEvent, GameWakeEvent, StarNight } from 'starnight'
 import { commands } from './core/commands'
 import { macros } from './core/macros'
 import { onStoreReady } from './store'
@@ -40,10 +40,6 @@ onStoreReady.then((store) => {
         })
     }
 })
-
-SetupCommands.resolve(Object.assign(SystemCommands, commands))
-SetupMarcos.resolve([...macros])
-onStoreReady.then((store) => SetupConfig.resolve(store.config))
 
 // 整个配置文件在这里分发
 const App: Component = () => (

@@ -1,15 +1,11 @@
 import { cloneDeep, merge } from 'es-toolkit'
 import { Converter } from './Converter'
-import { SetupCommands, SetupMarcos } from './Setup'
 import { GameBookProcessed, GameBookRaw } from './types/Game'
 import { Function0, Function1 } from './types/Meta'
 
 export class GameBook {
-    static create = async (raw: GameBookRaw): Promise<GameBook> => {
-        const commands = await SetupCommands
-        const macros = await SetupMarcos
-        const convert = new Converter(commands, macros)
-        const result = raw.map((act) => convert.filterRealCommandsRecursively(convert.applyMacrosToCommandsNodes(act)))
+    static create = async (raw: GameBookRaw, converter: Converter): Promise<GameBook> => {
+        const result = raw.map(converter.applyMacrosToCommandsNodes).map(converter.filterRealCommandsRecursively)
         const label = result
             .map((act) => act.filter((item) => item.key === 'label'))
             .flatMap((act, index) => (act.length === 0 ? [] : [{ [act[0]['args']['name']]: index }]))

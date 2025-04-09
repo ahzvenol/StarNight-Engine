@@ -1,7 +1,12 @@
-import { Blocking, NonBlocking, SystemCommands } from 'starnight'
-import { GameState } from 'starnight'
-import { SwitchState } from 'starnight'
-import { useActScopeSignal, useGameScopeSignal } from 'starnight'
+import {
+    Blocking,
+    GameState,
+    NonBlocking,
+    StarNight,
+    SwitchState,
+    useActScopeSignal,
+    useGameScopeSignal
+} from 'starnight'
 import { Try } from '@/utils/fp/Try'
 import { PromiseX } from '@/utils/PromiseX'
 
@@ -67,8 +72,8 @@ export const showchoices = Blocking<{ index: number }>(
             })
             UIChoicesState(SwitchState.Disabled)
             current.choice([...(current.choice?.() || []), target])
-            return SystemCommands.jump.apply()({ target }).then((jump) =>
-                stopfastonselection ? Object.assign(jump, { state: GameState.Normal }) : jump
-            )
+            return StarNight.commands.jump
+                .apply()({ target })
+                .then((jump) => (stopfastonselection ? Object.assign(jump, { state: GameState.Normal }) : jump))
         }
 )

@@ -1,6 +1,6 @@
+import { StarNight } from '@/StarNight'
 import { ActScope, DynamicBlocking } from '../../Decorator'
 import { GameVisibilityEvent } from '../../Events'
-import { isGameVisible } from '../../main'
 import { PromiseX } from '../../utils/PromiseX'
 import { TimeoutController } from '../../utils/TimeoutController'
 
@@ -15,7 +15,7 @@ export const wait = ActScope(
                 const id = GameVisibilityEvent.subscribe((visible) =>
                     visible ? controller.start() : controller.pause()
                 )
-                if (isGameVisible()) controller.start()
+                if (StarNight.isGameVisible()) controller.start()
                 yield promise
                 GameVisibilityEvent.unsubscribe(id)
             }

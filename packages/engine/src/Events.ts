@@ -60,7 +60,9 @@ GameInitCompleteEvent.subscribe(() => console.info('Game:初始化完成'))
 ActStartEvent.subscribe(({ state, current: { index } }) =>
     state === GameState.Init ? console.info(`正在初始化第${index}幕`) : console.info(`开始执行第${index}幕...`)
 )
-ActEndEvent.subscribe(({ state, current: { index } }) => state !== GameState.Init && console.info(`第${index}幕执行结束`))
+ActEndEvent.subscribe(
+    ({ state, current: { index } }) => state !== GameState.Init && console.info(`第${index}幕执行结束`)
+)
 ActSecondClickEvent.subscribe(() => console.info('一幕内第二次点击,立即执行'))
 
 export const ActJumpEvent = new EventDispatcher<{ index: number }>()
