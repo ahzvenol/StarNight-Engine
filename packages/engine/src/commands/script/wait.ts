@@ -6,12 +6,12 @@ import { TimeoutController } from '../../utils/TimeoutController'
 
 export const wait = ActScope(
     DynamicBlocking<{ duration: number }>(
-        ({ immediate }) =>
+        ({ onActRush: rush }) =>
             function* ({ duration }) {
                 if (duration === 0) return
                 const promise = new PromiseX<void>()
                 const controller = new TimeoutController(promise.resolve, duration)
-                immediate.then(() => controller.immediateExecution())
+                rush.then(() => controller.immediateExecution())
                 const id = GameVisibilityEvent.subscribe((visible) =>
                     visible ? controller.start() : controller.pause()
                 )

@@ -2,86 +2,81 @@ import type { GameRuntimeContext } from './types/Game'
 import { GameState } from './types/Game'
 import { EventDispatcher, on } from './utils/EventDispatcher'
 
-// 新游戏实例挂载的事件
-// 同时只会存在一个游戏实例,用户开始新游戏时:
-// 先触发CleanupEvent,接着触发MountEvent
-export const GameStartEvent = new EventDispatcher<void>()
-export const onGameStart = on(GameStartEvent)
-// 旧游戏实例销毁的事件
-export const GameDestroyEvent = new EventDispatcher<void>()
-export const onGameDestroy = on(GameDestroyEvent)
+// 游戏实例事件
+export class GameEvents {
+    public readonly start = new EventDispatcher<void>()
+    public readonly end = new EventDispatcher<void>()
+    public readonly destroy = new EventDispatcher<void>()
+    public readonly exit = new EventDispatcher<void>()
+    public readonly visibility = new EventDispatcher<boolean>()
+    public readonly suspend = new EventDispatcher<void>()
+    public readonly resume = new EventDispatcher<void>()
 
-GameStartEvent.subscribe(() => console.info('Game:游戏开始'))
-GameDestroyEvent.subscribe(() => console.info('Game:游戏结束'))
+    public readonly onStart = on(this.start)
+    public readonly onEnd = on(this.end)
+    public readonly onDestroy = on(this.destroy)
+    public readonly onExit = on(this.exit)
+    public readonly onVisibilityChange = on(this.visibility)
+    public readonly onSuspend = on(this.suspend)
+    public readonly onResume = on(this.resume)
 
-// 游戏挂起
-// 此状态下游戏的某些效果仍保持,如从游戏页面中进入设置、存档页、Backconsole.log
-export const GameSuspendEvent = new EventDispatcher<void>()
-export const onGameSuspend = on(GameSuspendEvent)
-// 游戏从挂起中恢复
-export const GameResumeEvent = new EventDispatcher<void>()
-export const onGameResume = on(GameResumeEvent)
-// 游戏停止
-// 此状态下游戏所有命令彻底停止,如从游戏页面中退回到标题页
-export const GameSleepEvent = new EventDispatcher<void>()
-export const onGameSleep = on(GameSleepEvent)
-// 游戏从停止中恢复
-export const GameWakeEvent = new EventDispatcher<void>()
-export const onGameWake = on(GameWakeEvent)
-// 游戏可见性改变的事件
-export const GameVisibilityEvent = new EventDispatcher<boolean>()
-export const onGameVisibilityChange = on(GameVisibilityEvent)
+    constructor() {
+        this.start.subscribe(() => console.info('Game:游戏开始'))
+        this.end.subscribe(() => console.info('Game:游戏结束'))
+        this.destroy.subscribe(() => console.info('Game:游戏销毁'))
+        this.exit.subscribe(() => console.info('Game:游戏退出'))
+        this.end.subscribe(() => this.exit.publish())
+        this.destroy.subscribe(() => this.exit.publish())
+        this.suspend.subscribe(() => console.info('Game:游戏挂起'))
+        this.resume.subscribe(() => console.info('Game:游戏从挂起中恢复'))
+        this.visibility.subscribe((visible) => console.info(`Game:游戏可见性变动:可见性:${visible}`))
+        this.suspend.subscribe(() => this.visibility.publish(false))
+        this.resume.subscribe(() => this.visibility.publish(true))
+    }
+}
 
-GameSuspendEvent.subscribe(() => console.info('Game:游戏挂起'))
-GameResumeEvent.subscribe(() => console.info('Game:游戏从挂起中恢复'))
-GameSleepEvent.subscribe(() => console.info('Game:游戏停止'))
-GameWakeEvent.subscribe(() => console.info('Game:游戏从停止中恢复'))
-GameSuspendEvent.subscribe(() => GameVisibilityEvent.publish(false))
-GameResumeEvent.subscribe(() => GameVisibilityEvent.publish(true))
-GameSleepEvent.subscribe(() => GameVisibilityEvent.publish(false))
-GameWakeEvent.subscribe(() => GameVisibilityEvent.publish(true))
-GameVisibilityEvent.subscribe((visible) => console.info(`Game:游戏可见性变动:可见性:${visible}`))
+// 幕循环事件
+export class ActEvents {
+    public readonly ready = new EventDispatcher<{ index: number }>()
+    public readonly start = new EventDispatcher<GameRuntimeContext>()
+    public readonly end = new EventDispatcher<GameRuntimeContext>()
+    public readonly rush = new EventDispatcher<GameRuntimeContext>()
+    public readonly jump = new EventDispatcher<{ index: number }>()
 
-// 游戏实例初始化完毕事件
-export const GameInitCompleteEvent = new EventDispatcher<{ index: number }>()
-export const onGameInitComplete = on(GameInitCompleteEvent)
+    public readonly onReady = on(this.ready)
+    public readonly onStart = on(this.start)
+    public readonly onEnd = on(this.end)
+    public readonly onRush = on(this.rush)
+    public readonly onJump = on(this.jump)
 
-export const ActStartEvent = new EventDispatcher<GameRuntimeContext>()
-export const onActStart = on(ActStartEvent)
-
-export const ActEndEvent = new EventDispatcher<GameRuntimeContext>()
-export const onActEnd = on(ActEndEvent)
-
-export const ActSecondClickEvent = new EventDispatcher<GameRuntimeContext>()
-export const onActSecondClick = on(ActSecondClickEvent)
-
-GameInitCompleteEvent.subscribe(() => console.info('Game:初始化完成'))
-
-ActStartEvent.subscribe(({ state, current: { index } }) =>
-    state === GameState.Init ? console.info(`正在初始化第${index}幕`) : console.info(`开始执行第${index}幕...`)
-)
-ActEndEvent.subscribe(
-    ({ state, current: { index } }) => state !== GameState.Init && console.info(`第${index}幕执行结束`)
-)
-ActSecondClickEvent.subscribe(() => console.info('一幕内第二次点击,立即执行'))
-
-export const ActJumpEvent = new EventDispatcher<{ index: number }>()
-export const onActJump = on(ActJumpEvent)
+    constructor() {
+        this.ready.subscribe((index) => console.info(`Act:初始化完成,当前是第${index}幕`))
+        this.start.subscribe(({ state, current: { index } }) =>
+            state === GameState.Init
+                ? console.info(`Act:正在初始化第${index}幕`)
+                : console.info(`Act:开始执行第${index}幕...`)
+        )
+        this.end.subscribe(
+            ({ state, current: { index } }) => state !== GameState.Init && console.info(`Act:第${index}幕执行结束`)
+        )
+        this.rush.subscribe(() => console.info('Act:执行单幕快进'))
+        this.jump.subscribe((target) => console.info(`Act:跳转到第${target}幕`))
+    }
+}
 
 // 游戏点击事件
-// 所有游戏实例都依赖于同一组点击事件
-// 在新实例挂载时会清理订阅,以此避免影响旧实例
-// 需要注意这个情况,小心使用这些事件
-export const GameClickEvent = new EventDispatcher<void>()
-export const onClick = on(GameClickEvent)
-export const FastButtonClickEvent = new EventDispatcher<void>()
-export const onFast = on(FastButtonClickEvent)
-export const AutoButtonClickEvent = new EventDispatcher<void>()
-export const onAuto = on(AutoButtonClickEvent)
+export class ClickEvents {
+    public readonly step = new EventDispatcher<void>()
+    public readonly fast = new EventDispatcher<void>()
+    public readonly auto = new EventDispatcher<void>()
 
-GameDestroyEvent.subscribe(GameClickEvent.unsubscribeAll)
-GameDestroyEvent.subscribe(FastButtonClickEvent.unsubscribeAll)
-GameDestroyEvent.subscribe(AutoButtonClickEvent.unsubscribeAll)
-GameStartEvent.subscribe(() => GameClickEvent.subscribe(() => console.info('触发点击事件')))
-GameStartEvent.subscribe(() => FastButtonClickEvent.subscribe(() => console.info('触发快进/解除快进事件')))
-GameStartEvent.subscribe(() => AutoButtonClickEvent.subscribe(() => console.info('触发自动/解除自动切换事件')))
+    public readonly onStep = on(this.step)
+    public readonly onFast = on(this.fast)
+    public readonly onAuto = on(this.auto)
+
+    constructor() {
+        this.step.subscribe(() => console.info('ClickEvent:触发点击事件'))
+        this.fast.subscribe(() => console.info('ClickEvent:触发快进/解除快进事件'))
+        this.auto.subscribe(() => console.info('ClickEvent:触发自动/解除自动事件'))
+    }
+}

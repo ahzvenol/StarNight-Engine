@@ -9,8 +9,8 @@ import type {
 import { isPlainObject, merge } from 'es-toolkit'
 import { Schedule } from './types/Command'
 import { GameState } from './types/Game'
-import { run } from './utils/runGenerator'
 import { Function0 } from './types/Meta'
+import { run } from './utils/runGenerator'
 
 // 只在本幕内产生效果的命令,由此不需要初始化
 export function ActScope<T extends CommandArgs>(cmd: StandardCommand<T>): StandardCommand<T> {
@@ -45,9 +45,9 @@ function normalizeOutput(output: Function0<unknown>): Promise<CommandOutput> {
 export function Dynamic<T extends CommandArgs>(fn: DynamicCommandFunction<T>): StandardCommand<T> {
     return {
         apply: (context) => (args) => {
-            const { immediate, destroy } = context
+            const { onActRush: rush, onGameDestroy: destroy } = context
             const generator = fn(context)(args)
-            return normalizeOutput(() => run(generator, { immediate, destroy }))
+            return normalizeOutput(() => run(generator, { rush, destroy }))
         }
     }
 }
@@ -57,9 +57,9 @@ export function DynamicBlocking<T extends CommandArgs>(fn: DynamicCommandFunctio
     return {
         meta: { schedule: Schedule.Await },
         apply: (context) => (args) => {
-            const { immediate, destroy } = context
+            const { onActRush: rush, onGameDestroy: destroy } = context
             const generator = fn(context)(args)
-            return normalizeOutput(() => run(generator, { immediate, destroy }))
+            return normalizeOutput(() => run(generator, { rush, destroy }))
         }
     }
 }

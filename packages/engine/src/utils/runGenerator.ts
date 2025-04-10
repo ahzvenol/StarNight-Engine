@@ -2,7 +2,7 @@ import { noop } from 'es-toolkit'
 
 export async function run<TRetrun>(
     generator: Generator<Promise<unknown>, TRetrun, void>,
-    { immediate, destroy }: { immediate: Promise<void>; destroy: Promise<void> }
+    { rush, destroy }: { rush: Promise<void>; destroy: Promise<void> }
 ): Promise<TRetrun | undefined> {
     let flag: 'Normal' | 'Fast' | 'Destroy' = 'Normal'
     // eslint-disable-next-line no-constant-condition
@@ -14,7 +14,7 @@ export async function run<TRetrun>(
             if (flag !== 'Fast') {
                 flag = await Promise.race([
                     value.then(() => 'Normal' as const),
-                    immediate.then(() => 'Fast' as const),
+                    rush.then(() => 'Fast' as const),
                     destroy.then(() => 'Destroy' as const)
                 ])
             }

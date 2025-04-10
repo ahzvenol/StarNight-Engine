@@ -55,13 +55,13 @@ const _fork: Function1<Array<ScheduledStandardResolvedCommand>, StandardResolved
 
 export const fork: ScheduledHighLevelCommand = {
     apply: (context) => async (rows) => {
-        const commands = StarNight.commands
+        const commands = StarNight.Commands
         return _fork(
             rows.flatMap((row) => {
                 const cmd = commands[row.key]
                 if (cmd.meta?.exclude !== undefined && context.state in cmd.meta.exclude) return []
                 const schedule = cmd.meta?.schedule || (row.await ? Schedule.Await : Schedule.Async)
-                const apply = () => cmd.apply(context)(row.args as any)
+                const apply = () => cmd.apply(context)(row.args)
                 return [{ meta: { key: row.key, schedule }, apply }]
             })
         )()
@@ -70,13 +70,13 @@ export const fork: ScheduledHighLevelCommand = {
 
 export const par: ScheduledHighLevelCommand = {
     apply: (context) => async (rows) => {
-        const commands = StarNight.commands
+        const commands = StarNight.Commands
         return _par(
             rows.flatMap((row) => {
                 const cmd = commands[row.key]
                 if (cmd.meta?.exclude !== undefined && context.state in cmd.meta.exclude) return []
                 const schedule = Schedule.Async
-                const apply = () => cmd.apply(context)(row.args as any)
+                const apply = () => cmd.apply(context)(row.args)
                 return [{ meta: { key: row.key, schedule }, apply }]
             })
         )()
@@ -85,13 +85,13 @@ export const par: ScheduledHighLevelCommand = {
 
 export const chain: ScheduledHighLevelCommand = {
     apply: (context) => async (rows) => {
-        const commands = StarNight.commands
+        const commands = StarNight.Commands
         return _chain(
             rows.flatMap((row) => {
                 const cmd = commands[row.key]
                 if (cmd.meta?.exclude !== undefined && context.state in cmd.meta.exclude) return []
                 const schedule = Schedule.Await
-                const apply = () => cmd.apply(context)(row.args as any)
+                const apply = () => cmd.apply(context)(row.args)
                 return [{ meta: { key: row.key, schedule }, apply }]
             })
         )()

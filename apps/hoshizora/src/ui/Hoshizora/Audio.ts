@@ -31,6 +31,8 @@ onStoreReady.then(({ config: { globalvolume } }) => createEffect(() => HowlerGlo
 
 export const Howler = wrapHowlWithSuspend(HowlerConstructor)
 
+// fix:回滚到前一个方案
+
 export const UISE = (options: HowlOptions) => {
     const howl = Howler(options)
     onStoreReady.then(({ config: { uisevolume } }) => createEffect(() => HowlerGlobal.volume(uisevolume())))

@@ -81,7 +81,7 @@ export type SetImageCommandArgs = {
     zIndex?: number
 } & ExtendArgs<AnimatedPropertys>
 
-export const setimage = NonBlocking<SetImageCommandArgs>((context) => ({ name, file, zIndex, ...args }) => {
+export const setimage = NonBlocking<SetImageCommandArgs>(({ state }) => ({ name, file, zIndex, ...args }) => {
     const stage = UIStage()
     let container = stage.querySelector(`[data-name="${name}"]`) as HTMLDivElement
     let newBitmap!: HTMLImageElement
@@ -94,7 +94,7 @@ export const setimage = NonBlocking<SetImageCommandArgs>((context) => ({ name, f
         stage.appendChild(container)
     }
     if (!isUndefined(zIndex)) container.style.zIndex = zIndex.toString()
-    const attr = context.state === GameState.Init ? 'data-src' : 'src'
+    const attr = state === GameState.Init ? 'data-src' : 'src'
     newBitmap.setAttribute(attr, file)
     anime.set(newBitmap, args)
     container.insertBefore(newBitmap, container.firstChild)
