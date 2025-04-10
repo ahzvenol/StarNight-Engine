@@ -2,45 +2,28 @@ import type { ExtendArgs } from 'starnight'
 import type { Howl, HowlConstructor, HowlOptions } from '@/lib/howler'
 import { delay, isUndefined } from 'es-toolkit'
 import { createEffect } from 'solid-js'
-import { Dynamic, NonBlocking } from 'starnight'
 import {
     ActStartEvent,
+    Dynamic,
     GameDestroyEvent,
-    GameSleepEvent,
-    GameWakeEvent,
     GameInitCompleteEvent,
+    GameSleepEvent,
+    GameState,
+    GameWakeEvent,
+    NonBlocking,
     SetupConfig
 } from 'starnight'
-import { GameState } from 'starnight'
 import { HowlerInstance } from '@/lib/howler'
 
 declare module 'starnight' {
     interface GameConfig {
         interruptclip: boolean
-        globalvolume: number
-        bgmvolume: number
-        sevolume: number
-        clipvolume: number
-        uisevolume: number
+    }
+
+    interface GameUIData {
+        audiotracks: Record<string, HowlConstructor>
     }
 }
-
-const types: Record<string, HowlConstructor> = {}
-
-SetupConfig.then(({ globalvolume, bgmvolume, sevolume, clipvolume, uisevolume }) => {
-    const { Howler: BGMGlobal, Howl: BGMConstructor } = HowlerInstance()
-    const { Howler: SEGlobal, Howl: SEConstructor } = HowlerInstance()
-    const { Howler: ClipGlobal, Howl: ClipConstructor } = HowlerInstance()
-    const { Howler: UISEGlobal, Howl: UISEConstructor } = HowlerInstance()
-    createEffect(() => BGMGlobal.volume(globalvolume() * bgmvolume()))
-    createEffect(() => SEGlobal.volume(globalvolume() * sevolume()))
-    createEffect(() => ClipGlobal.volume(globalvolume() * clipvolume()))
-    createEffect(() => UISEGlobal.volume(globalvolume() * uisevolume()))
-    types['BGM'] = BGMConstructor
-    types['SE'] = SEConstructor
-    types['Clip'] = ClipConstructor
-    types['UISE'] = UISEConstructor
-})
 
 const tracks = new Map<string, Howl>()
 

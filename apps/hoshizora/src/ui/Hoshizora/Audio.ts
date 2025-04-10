@@ -4,6 +4,15 @@ import { createEffect } from 'solid-js'
 import { HowlerInstance } from '@/lib/howler'
 import { onStoreReady } from '@/store'
 
+export enum AudioIds {
+    Title,
+    GalleryAudio,
+    GalleryVideo,
+    Game
+}
+
+export const AudioMutex = useSignal<AudioIds>(AudioIds.Title)
+
 function suspendWhenDocumentHidden(audio: Howl) {
     let wasPlaying = false
     document.addEventListener('visibilitychange', () => {
@@ -26,30 +35,21 @@ function wrapHowlWithSuspend(HowlClass: HowlConstructor) {
 }
 
 const { Howler: HowlerGlobal, Howl: HowlerConstructor } = HowlerInstance()
-
-onStoreReady.then(({ config: { globalvolume } }) => createEffect(() => HowlerGlobal.volume(globalvolume())))
+const { Howler: BGMGlobal, Howl: BGMConstructor } = HowlerInstance()
+const { Howler: SEGlobal, Howl: SEConstructor } = HowlerInstance()
+const { Howler: ClipGlobal, Howl: ClipConstructor } = HowlerInstance()
+const { Howler: UISEGlobal, Howl: UISEConstructor } = HowlerInstance()
 
 export const Howler = wrapHowlWithSuspend(HowlerConstructor)
+export const BGM = wrapHowlWithSuspend(BGMConstructor)
+export const SE = wrapHowlWithSuspend(SEConstructor)
+export const Clip = wrapHowlWithSuspend(ClipConstructor)
+export const UISE = wrapHowlWithSuspend(UISEConstructor)
 
-// fix:回滚到前一个方案
-
-export const UISE = (options: HowlOptions) => {
-    const howl = Howler(options)
-    onStoreReady.then(({ config: { uisevolume } }) => createEffect(() => HowlerGlobal.volume(uisevolume())))
-    return howl
-}
-
-export const Clip = (options: HowlOptions) => {
-    const howl = Howler(options)
-    onStoreReady.then(({ config: { clipvolume } }) => createEffect(() => HowlerGlobal.volume(clipvolume())))
-    return howl
-}
-
-export enum AudioIds {
-    Title,
-    GalleryAudio,
-    GalleryVideo,
-    Game
-}
-
-export const AudioMutex = useSignal<AudioIds>(AudioIds.Title)
+onStoreReady.then(({ config: { globalvolume, bgmvolume, sevolume, clipvolume, uisevolume } }) => {
+    createEffect(() => HowlerGlobal.volume(globalvolume()))
+    createEffect(() => BGMGlobal.volume(globalvolume() * bgmvolume()))
+    createEffect(() => SEGlobal.volume(globalvolume() * sevolume()))
+    createEffect(() => ClipGlobal.volume(globalvolume() * clipvolume()))
+    createEffect(() => UISEGlobal.volume(globalvolume() * uisevolume()))
+})

@@ -34,18 +34,21 @@ export interface GameTempData {}
 
 export interface GameUIData {}
 
-export type GameRuntimeContext = {
+export type GameContext = {
     current: Reactive<GameLocalData>
     config: Reactive<GameConfig>
     global: Reactive<GameGlobalData>
-    ui: GameUIData
-    temp: GameTempData
     readonly local: GameLocalData
-    readonly state: GameState
-    readonly onActRush: Promise<void>
-    readonly onGameDestroy: Promise<void>
+    temp: GameTempData
+    ui: Reactive<GameUIData>
     readonly instance: StarNight
 }
+
+export type GameRuntimeContext = {
+    readonly state: GameState
+    readonly onActRush: Promise<GameRuntimeContext>
+    readonly onGameDestroy: Promise<GameContext>
+} & GameContext
 
 export type GameStartOptions = {
     book: GameBook

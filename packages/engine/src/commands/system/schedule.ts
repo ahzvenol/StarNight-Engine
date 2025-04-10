@@ -4,12 +4,12 @@ import type {
     ScheduledHighLevelCommand,
     ScheduledStandardResolvedCommand,
     StandardResolvedCommandFunction
-} from '../../types/Command'
+} from '@/types/Command'
 import { merge, omit } from 'es-toolkit'
-import { StarNight } from '../../StarNight'
-import { Schedule } from '../../types/Command'
-import { Function1 } from '../../types/Meta'
-import { splitEffect } from '../../utils/splitEffect'
+import { StarNight } from '@/StarNight'
+import { Schedule } from '@/types/Command'
+import { Function1 } from '@/types/Meta'
+import { splitEffect } from '@/utils/splitEffect'
 
 const _result: Function1<Array<Promise<CommandOutput>>, Promise<CommandOutput>> = (array) =>
     Promise.all(array).then((results) => results.reduce(merge, {}))

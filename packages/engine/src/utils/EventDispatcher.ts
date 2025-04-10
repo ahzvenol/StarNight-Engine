@@ -7,10 +7,10 @@ export type Publisher<T> = { publish: (e: T) => void }
 export class EventDispatcher<T> {
     private callbacks: Map<symbol, EventListener<T>> = new Map()
 
-    public publish = (e: T) => {
+    public publish = (payload: T) => {
         this.callbacks.forEach((fn) => {
             try {
-                fn(e)
+                fn(payload)
             } catch (e) {
                 console.error(e)
             }
@@ -33,9 +33,9 @@ export class EventDispatcher<T> {
 
     public once = (listener: EventListener<T>) => {
         const symbol = Symbol()
-        this.callbacks.set(symbol, (e) => {
+        this.callbacks.set(symbol, (payload) => {
             this.callbacks.delete(symbol)
-            listener(e)
+            listener(payload)
         })
     }
 }
