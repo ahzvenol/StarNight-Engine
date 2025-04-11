@@ -47,7 +47,7 @@ GameDestroyEvent.subscribe(() => {
 
 // 跨幕环境变量file,需要收集副作用
 export type SetAudioCommandArgs = {
-    type: keyof typeof types
+    type: string
     file: string
     name?: string
 } & ExtendArgs<HowlOptions>

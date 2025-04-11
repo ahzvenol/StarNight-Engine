@@ -1,5 +1,5 @@
+import type { Function0 } from '../types/Meta'
 import { PromiseX } from './PromiseX'
-import { Function0 } from '../types/Meta'
 
 export type Effect<T> = {
     execute: Function0<Promise<void>>

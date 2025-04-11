@@ -1,5 +1,5 @@
 import type { CommandArgs, CommandEntities } from './Command'
-import { Function1 } from './Meta'
+import type { Function1 } from './Meta'
 
 // 程序宏输入一个宏命令数据块,输出一组类型安全的命令数据块,其中可能包括普通命令和宏命令
 export type MacroFunction<T extends CommandArgs> = Function1<T, Array<MacroOutput>>
@@ -19,6 +19,7 @@ export type MacroOutput = MacroEntities | CommandEntities
 
 // ----
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Macros = Array<Macro<string, any>>
 // 已注册的全部程序宏
 // export type Macros = typeof macros

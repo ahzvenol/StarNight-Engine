@@ -1,9 +1,17 @@
+import type { Converter } from './Converter'
+import type { GameBookProcessed, GameBookRaw } from './types/Game'
+import type { Function0, Function1 } from './types/Meta'
 import { cloneDeep, merge } from 'es-toolkit'
-import { Converter } from './Converter'
-import { GameBookProcessed, GameBookRaw } from './types/Game'
-import { Function0, Function1 } from './types/Meta'
 
-export class GameBook {
+export abstract class AbstractGameBook {
+    abstract length(): number
+
+    abstract act(index: number): GameBookProcessed[number]
+
+    abstract label(label: string): number
+}
+
+export class GameBook extends AbstractGameBook {
     static create = async (raw: GameBookRaw, converter: Converter): Promise<GameBook> => {
         const result = raw.map(converter.applyMacrosToCommandsNodes).map(converter.filterRealCommandsRecursively)
         const label = result
@@ -17,7 +25,9 @@ export class GameBook {
     constructor(
         readonly _result: GameBookProcessed,
         readonly _label: Record<string, number>
-    ) {}
+    ) {
+        super()
+    }
 
     length: Function0<number> = () => this._result.length
 

@@ -1,4 +1,3 @@
-export * from './utils/useScopeSignal'
 export * from './StarNight'
 export * from './Book'
 export * from './Events'

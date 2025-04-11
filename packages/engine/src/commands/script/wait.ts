@@ -10,12 +10,10 @@ export const wait = ActScope(
                 const promise = new PromiseX<void>()
                 const controller = new TimeoutController(promise.resolve, duration)
                 onActRush.then(() => controller.immediateExecution())
-                const id = GameEvents.visibility.subscribe((visible) =>
-                    visible ? controller.start() : controller.pause()
-                )
+                const id = GameEvents.active.subscribe((visible) => (visible ? controller.start() : controller.pause()))
                 if (isGameVisible()) controller.start()
                 yield promise
-                GameEvents.visibility.unsubscribe(id)
+                GameEvents.active.unsubscribe(id)
             }
     )
 )

@@ -1,7 +1,7 @@
-import type { Reactive } from 'micro-reactive-solid'
+import type { Reactive } from 'micro-reactive-wrapper'
+import type { StarNightInstance } from '@/StarNight'
+import type { AbstractGameBook } from '../Book'
 import type { RuntimeCommandEntities, RuntimeCommandLike } from './Command'
-import { StarNight } from '@/StarNight'
-import { GameBook } from '../Book'
 
 export enum GameState {
     Init,
@@ -30,29 +30,34 @@ export interface GameGlobalData {
     readsegment: Array<[number, number]>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface GameTempData {}
 
-export interface GameUIData {}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface GameExternalUIData {}
 
-export type GameContext = {
-    current: Reactive<GameLocalData>
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface GameInternalUIData {}
+
+export type GameConstructorParams = {
+    book: AbstractGameBook
     config: Reactive<GameConfig>
     global: Reactive<GameGlobalData>
     readonly local: GameLocalData
-    temp: GameTempData
-    ui: Reactive<GameUIData>
-    readonly instance: StarNight
+    ui: GameExternalUIData
 }
+
+export type GameContext = {
+    current: Reactive<GameLocalData>
+    temp: GameTempData
+    ui: GameInternalUIData
+    isRead: Reactive<boolean>
+    isGameVisible: Reactive<boolean>
+    readonly instance: StarNightInstance
+} & Omit<GameConstructorParams, 'book'>
 
 export type GameRuntimeContext = {
     readonly state: GameState
     readonly onActRush: Promise<GameRuntimeContext>
-    readonly onGameDestroy: Promise<GameContext>
+    readonly onGameStop: Promise<GameContext>
 } & GameContext
-
-export type GameStartOptions = {
-    book: GameBook
-    config: Reactive<GameConfig>
-    global: Reactive<GameGlobalData>
-    readonly local: GameLocalData
-}

@@ -21,4 +21,3 @@ export enum SwitchState {
 
 // 通用类型,表示永远不会失败的Promise
 export type NeverFailingPromise<T> = Promise<T>
-

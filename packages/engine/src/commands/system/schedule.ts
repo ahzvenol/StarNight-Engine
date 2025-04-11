@@ -1,14 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
     CommandOutput,
     ScheduledHighLevelCommand,
     ScheduledStandardResolvedCommand,
     StandardResolvedCommandFunction
 } from '@/types/Command'
+import type { Function1 } from '@/types/Meta'
 import { merge, omit } from 'es-toolkit'
 import { StarNight } from '@/StarNight'
 import { Schedule } from '@/types/Command'
-import { Function1 } from '@/types/Meta'
 import { splitEffect } from '@/utils/splitEffect'
 
 const _result: Function1<Array<Promise<CommandOutput>>, Promise<CommandOutput>> = (array) =>

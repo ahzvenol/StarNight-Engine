@@ -19,7 +19,7 @@ export class Converter {
                     return [row]
                 }
             } else {
-                // @ts-expect-error
+                // @ts-expect-error 类型“never”上不存在属性“key”。
                 console.error(`找不到命令:${row.key}`, row.args)
                 return []
             }

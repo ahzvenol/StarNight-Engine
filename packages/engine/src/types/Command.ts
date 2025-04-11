@@ -1,6 +1,5 @@
-import type { GameRuntimeContext } from './Game'
+import type { GameRuntimeContext, GameState } from './Game'
 import type { Function0, Function1, MetaFunction, NeverFailingPromise } from './Meta'
-import { GameState } from './Game'
 
 // 命令参数可能的类型
 export type CommandArg = string | number | boolean
@@ -97,6 +96,7 @@ export interface ScheduledStandardResolvedCommand extends MetaFunction {
     apply: StandardResolvedCommandFunction
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Command = StandardCommand<any> | ScheduledHighLevelCommand
 
 // ----

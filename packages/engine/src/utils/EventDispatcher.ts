@@ -1,10 +1,15 @@
-import { Function1 } from '../types/Meta'
+import type { Function1 } from '../types/Meta'
 
 type EventListener<T> = Function1<T, void>
 
 export type Publisher<T> = { publish: (e: T) => void }
 
 export class EventDispatcher<T> {
+    public static on =
+        <T>(event: EventDispatcher<T>) =>
+        () =>
+            new Promise<T>(event.once)
+
     private callbacks: Map<symbol, EventListener<T>> = new Map()
 
     public publish = (payload: T) => {
@@ -39,8 +44,3 @@ export class EventDispatcher<T> {
         })
     }
 }
-
-export const on =
-    <T>(event: EventDispatcher<T>) =>
-    () =>
-        new Promise<T>(event.once)
