@@ -13,9 +13,9 @@ export class GameEvents {
     // 终止,结束/退出
     public static readonly exit = new EventDispatcher<GameContext>()
     // 挂起
-    public static readonly suspend = new EventDispatcher<void>()
+    public static readonly suspend = new EventDispatcher<GameContext>()
     // 恢复
-    public static readonly resume = new EventDispatcher<void>()
+    public static readonly resume = new EventDispatcher<GameContext>()
     // 挂起/恢复
     public static readonly active = new EventDispatcher<boolean>()
 
@@ -44,8 +44,8 @@ export class GameEvents {
     public readonly end = new EventDispatcher<GameContext>()
     public readonly stop = new EventDispatcher<GameContext>()
     public readonly exit = new EventDispatcher<GameContext>()
-    public readonly suspend = new EventDispatcher<void>()
-    public readonly resume = new EventDispatcher<void>()
+    public readonly suspend = new EventDispatcher<GameContext>()
+    public readonly resume = new EventDispatcher<GameContext>()
     public readonly active = new EventDispatcher<boolean>()
 
     public readonly onSetup = EventDispatcher.on(this.setup)

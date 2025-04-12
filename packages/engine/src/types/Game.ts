@@ -34,23 +34,23 @@ export interface GameGlobalData {
 export interface GameTempData {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface GameExternalUIData {}
+export interface GameUIExternalData {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface GameInternalUIData {}
+export interface GameUIInternalData {}
 
 export type GameConstructorParams = {
     book: AbstractGameBook
     config: Reactive<GameConfig>
     global: Reactive<GameGlobalData>
     readonly local: GameLocalData
-    ui: GameExternalUIData
+    ui: GameUIExternalData
 }
 
 export type GameContext = {
     current: Reactive<GameLocalData>
     temp: GameTempData
-    ui: GameInternalUIData
+    ui: GameUIInternalData
     isRead: Reactive<boolean>
     isGameVisible: Reactive<boolean>
     readonly instance: StarNightInstance

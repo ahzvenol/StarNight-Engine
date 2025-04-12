@@ -1,49 +1,39 @@
 import type { ExtendArgs } from 'starnight'
 import type { Howl, HowlConstructor, HowlOptions } from '@/lib/howler'
 import { delay, isUndefined } from 'es-toolkit'
-import { createEffect } from 'solid-js'
-import {
-    ActStartEvent,
-    Dynamic,
-    GameDestroyEvent,
-    GameInitCompleteEvent,
-    GameSleepEvent,
-    GameState,
-    GameWakeEvent,
-    NonBlocking,
-    SetupConfig
-} from 'starnight'
-import { HowlerInstance } from '@/lib/howler'
+import { Dynamic, GameState, NonBlocking, StarNight } from 'starnight'
 
 declare module 'starnight' {
     interface GameConfig {
         interruptclip: boolean
     }
-
-    interface GameUIData {
-        audiotracks: Record<string, HowlConstructor>
+    interface GameTempData {
+        audios: Map<string, Howl>
+    }
+    interface GameUIExternalData {
+        audioTracks: Record<string, Function1<HowlOptions, Howl>>
     }
 }
 
-const tracks = new Map<string, Howl>()
-
-GameInitCompleteEvent.subscribe(() => tracks.forEach((audio) => audio.load().play()))
-
-ActStartEvent.subscribe(({ config }) => {
-    if (config.interruptclip()) tracks.get('Clip')?.unload()
+StarNight.GameEvents.setup.subscribe(({ temp }) => {
+    temp.audios = new Map()
 })
 
-GameWakeEvent.subscribe(() =>
-    tracks.forEach((audio) => {
+StarNight.ActEvents.ready.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.load().play()))
+
+StarNight.ActEvents.start.subscribe(({ config, temp: { audios } }) => {
+    if (config.interruptclip()) audios.get('Clip')?.unload()
+})
+
+StarNight.GameEvents.suspend.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.pause()))
+
+StarNight.GameEvents.resume.subscribe(({ temp: { audios } }) =>
+    audios.forEach((audio) => {
         if (!audio.playing()) audio.play()
     })
 )
-GameSleepEvent.subscribe(() => tracks.forEach((audio) => audio.pause()))
 
-GameDestroyEvent.subscribe(() => {
-    tracks.forEach((audio) => audio.unload())
-    tracks.clear()
-})
+StarNight.GameEvents.exit.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.unload()))
 
 // 跨幕环境变量file,需要收集副作用
 export type SetAudioCommandArgs = {
@@ -53,7 +43,7 @@ export type SetAudioCommandArgs = {
 } & ExtendArgs<HowlOptions>
 
 export const setaudio = Dynamic<SetAudioCommandArgs>(
-    ({ state }) =>
+    ({ state, ui: { audioTracks }, temp: { audios } }) =>
         function* ({ type, name = type, file, ...configs }) {
             // Clip的生命周期是幕,所以不用初始化
             if (
@@ -63,7 +53,7 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
                 return
             }
             // 挂载新音频
-            const audio = new types[type]({
+            const audio = audioTracks[type]({
                 ...configs,
                 pool: 1,
                 src: file,
@@ -71,13 +61,13 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
                 preload: state !== GameState.Init
             })
 
-            tracks.set(name, audio)
+            audios.set(name, audio)
             // 如果音频不是循环的,就不希望它播放完毕之后再被其他事件调用play()了
             if (!configs.loop) {
                 audio.once('end', () => {
                     audio.unload()
-                    if (tracks.get(name) === audio) {
-                        tracks.delete(name)
+                    if (audios.get(name) === audio) {
+                        audios.delete(name)
                     }
                 })
             }
@@ -88,10 +78,12 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
         }
 )
 
-export const fadeaudio = Dynamic<{ target: string; volume: number; duration?: number }>(
-    () =>
+export type FadeAudioCommandArgs = { target: string; volume: number; duration?: number }
+
+export const fadeaudio = Dynamic<FadeAudioCommandArgs>(
+    ({ temp: { audios } }) =>
         function* ({ target, volume, duration = 0 }) {
-            const audio = tracks.get(target)
+            const audio = audios.get(target)
             // 要设置的音量如果和当前音量相同不会触发fade事件
             if (!audio || audio.volume() === volume) return
             // 非loaded状态的音频无法调整音量,也不能触发fade事件
@@ -111,11 +103,11 @@ export type CloseAudioCommandArgs = { target?: string }
 
 // 根据名称关闭音轨
 // 如果省略了target,关闭全部轨道
-export const closeaudio = NonBlocking<CloseAudioCommandArgs>(() => ({ target }) => {
-    const targets = isUndefined(target) ? tracks.keys() : [target]
+export const closeaudio = NonBlocking<CloseAudioCommandArgs>(({ temp: { audios } }) => ({ target }) => {
+    const targets = isUndefined(target) ? audios.keys() : [target]
     for (const key of targets) {
-        const audio = tracks.get(key)
-        tracks.delete(key)
+        const audio = audios.get(key)
+        audios.delete(key)
         audio?.unload()
     }
 })

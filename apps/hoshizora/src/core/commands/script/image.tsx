@@ -1,50 +1,11 @@
-import type { CommandArg, ExtendArgs } from 'starnight'
+import type { ExtendArgs } from 'starnight'
 import anime from 'animejs'
 import { isNil, isUndefined } from 'es-toolkit'
-import { Dynamic, NonBlocking } from 'starnight'
-import { ActEndEvent, ActStartEvent, GameInitCompleteEvent } from 'starnight'
-import { GameState } from 'starnight'
-import { useGameScopeSignal } from 'starnight'
+import { Dynamic, EffectScope, GameState, NonBlocking, StarNight } from 'starnight'
 import { Y } from '@/utils/fp'
 
 // anime.suspendWhenDocumentHidden = true;
 // test:缓动库自带了一个暂停,但是不知道有没有用
-
-export type TweenCommandArgs = { target: object; ease?: string; duration: number }
-
-const activeTimelines = new Map<object, anime.AnimeTimelineInstance>()
-
-ActStartEvent.subscribe(() => activeTimelines.clear())
-
-// 这里只保证同一个物体的缓动被顺序应用
-const _tween: Function1<
-    TweenCommandArgs,
-    Function1<Record<string, CommandArg | undefined>, anime.AnimeTimelineInstance>
-> =
-    ({ target, ease, duration }) =>
-    (args) => {
-        if (!activeTimelines.has(target)) {
-            activeTimelines.set(
-                target,
-                anime.timeline({
-                    targets: target,
-                    easing: ease || 'linear'
-                })
-            )
-        }
-        const sequence = activeTimelines.get(target)!
-        // animejs可以正确处理duration=0的情况
-        // 但是必须在timeline结束之前订阅finished才有效
-        const finished = sequence.finished
-        const currentTime = sequence.currentTime
-        sequence.add({ ...args, duration })
-        // 因为调用add后默认重新从头开始
-        sequence.seek(currentTime)
-        // 神秘代码,防止一个已经结束的sequence在seek后仍然从头开始
-        sequence.pause()
-        sequence.play()
-        return { ...sequence, finished }
-    }
 
 // hoshizora特化的image命令
 // 为了实现在角色移动时进行表情变化,需要重新引入容器
@@ -53,52 +14,68 @@ const _tween: Function1<
 // 同时层级关系被容器掩盖,z-index必须直接赋值给容器
 // 这些区分带来了一些混乱,但确实增强了功能,暂时不知道是好是坏
 
-export const UIStage = useGameScopeSignal<HTMLDivElement>(() => document.createElement('div'))
+declare module 'starnight' {
+    interface GameTempData {
+        activeTimelines: Map<object, anime.AnimeTimelineInstance>
+    }
+    interface GameUIInternalData {
+        stage: HTMLDivElement
+    }
+}
 
-GameInitCompleteEvent.subscribe(() =>
+StarNight.GameEvents.setup.subscribe(({ temp, ui }) => {
+    temp.activeTimelines = new Map()
+    ui.stage = document.createElement('div')
+})
+
+StarNight.ActEvents.start.subscribe(({ temp: { activeTimelines } }) => {
+    activeTimelines.clear()
+})
+
+StarNight.ActEvents.ready.subscribe(({ ui: { stage } }) => {
     Y<Element, void>((rec) => (displayObject) => {
         Array.from(displayObject.children).forEach(rec)
         if (displayObject instanceof HTMLImageElement) {
             displayObject.src = displayObject.getAttribute('data-src')!
             displayObject.removeAttribute('data-src')!
         }
-    })(UIStage())
-)
+    })(stage)
+})
 
-// 一幕结束之后清理过期的图片元素
-ActEndEvent.subscribe(() =>
-    Array.from(UIStage().children).forEach((child) =>
+StarNight.ActEvents.end.subscribe(({ ui: { stage } }) => {
+    Array.from(stage.children).forEach((child) =>
         Array.from(child.children)
             .slice(1)
             .forEach((child) => child.remove())
     )
-)
+})
 
-// 跨幕环境变量file,需要收集副作用
 export type SetImageCommandArgs = {
     name: string
     file: string
     zIndex?: number
 } & ExtendArgs<AnimatedPropertys>
 
-export const setimage = NonBlocking<SetImageCommandArgs>(({ state }) => ({ name, file, zIndex, ...args }) => {
-    const stage = UIStage()
-    let container = stage.querySelector(`[data-name="${name}"]`) as HTMLDivElement
-    let newBitmap!: HTMLImageElement
-    if (container) {
-        const oldBitmap = container.firstChild!
-        newBitmap = oldBitmap.cloneNode() as HTMLImageElement
-    } else {
-        container = (<div data-name={name} />) as HTMLDivElement
-        newBitmap = document.createElement('img')
-        stage.appendChild(container)
-    }
-    if (!isUndefined(zIndex)) container.style.zIndex = zIndex.toString()
-    const attr = state === GameState.Init ? 'data-src' : 'src'
-    newBitmap.setAttribute(attr, file)
-    anime.set(newBitmap, args)
-    container.insertBefore(newBitmap, container.firstChild)
-})
+export const setimage = NonBlocking<SetImageCommandArgs>(
+    ({ state, ui: { stage } }) =>
+        ({ name, file, zIndex, ...args }) => {
+            let container = stage.querySelector(`[data-name="${name}"]`) as HTMLDivElement
+            let newBitmap!: HTMLImageElement
+            if (container) {
+                const oldBitmap = container.firstChild!
+                newBitmap = oldBitmap.cloneNode() as HTMLImageElement
+            } else {
+                container = (<div data-name={name} />) as HTMLDivElement
+                newBitmap = document.createElement('img')
+                stage.appendChild(container)
+            }
+            if (!isUndefined(zIndex)) container.style.zIndex = zIndex.toString()
+            const attr = state === GameState.Init ? 'data-src' : 'src'
+            newBitmap.setAttribute(attr, file)
+            anime.set(newBitmap, args)
+            container.insertBefore(newBitmap, container.firstChild)
+        }
+)
 
 export type TweenImageCommandArgs = {
     target: string
@@ -108,16 +85,36 @@ export type TweenImageCommandArgs = {
 } & ExtendArgs<AnimatedPropertys>
 
 export const tweenimage = Dynamic<TweenImageCommandArgs>(
-    ({ state }) =>
+    ({ state, ui: { stage }, temp: { activeTimelines } }) =>
         function* ({ target, ease, duration = 0, inherit = true, ...args }) {
-            const container = UIStage().querySelector(`[data-name="${target}"]`)
+            const container = stage.querySelector(`[data-name="${target}"]`)
             const tweenTarget = inherit ? container : container?.firstChild
             if (isNil(tweenTarget)) return
             if (state === GameState.Init) {
                 anime.set(tweenTarget, args)
             } else {
-                const sequence = _tween({ target: tweenTarget, ease, duration })(args)
-                yield sequence.finished
+                // 保证对同一个物体的缓动被顺序应用
+                if (!activeTimelines.has(tweenTarget)) {
+                    activeTimelines.set(
+                        tweenTarget,
+                        anime.timeline({
+                            targets: target,
+                            easing: ease || 'linear'
+                        })
+                    )
+                }
+                const sequence = activeTimelines.get(tweenTarget)!
+                // animejs可以正确处理duration=0的情况
+                // 但是必须在timeline结束之前订阅finished才有效
+                const finished = sequence.finished
+                const currentTime = sequence.currentTime
+                sequence.add({ ...args, duration })
+                // 因为调用add后默认重新从头开始
+                sequence.seek(currentTime)
+                // 神秘代码,防止一个已经结束的sequence在seek后仍然从头开始
+                sequence.pause()
+                sequence.play()
+                yield finished
                 sequence.seek(sequence.duration)
             }
         }
@@ -125,11 +122,63 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
 
 export type CloseImageCommandArgs = XOR<{ target: string }, { exclude?: string }>
 
-export const closeimage = NonBlocking<CloseImageCommandArgs>(() => ({ target, exclude }) => {
-    for (const e of UIStage().children) {
+export const closeimage = NonBlocking<CloseImageCommandArgs>(({ ui: { stage } }) => ({ target, exclude }) => {
+    for (const e of stage.children) {
         const condition = isUndefined(target)
             ? e.getAttribute('data-name') !== exclude
             : e.getAttribute('data-name') === target
         if (condition) e.remove()
     }
 })
+
+export type ShakePunchCommandArgs = { target?: string; x?: number; y?: number; duration: number; iteration?: number }
+
+// 因为tween命令使用translate参数,这里使用left和top避免冲突
+export const shake = EffectScope(
+    Dynamic<ShakePunchCommandArgs>(
+        ({ ui: { stage } }) =>
+            function* ({ target, x = 0, y = 0, duration, iteration = 10 }) {
+                const realTarget = isUndefined(target) ? stage : stage.querySelector(`[data-name="${target}"]`)
+                const originX = 0
+                const originY = 0
+                const sequence = anime.timeline({
+                    targets: realTarget,
+                    easing: 'linear'
+                })
+                const dur = duration / 2 / iteration
+                for (let i = 0; i < iteration; i++) {
+                    const percentage = i / iteration
+                    const diminishing = 1 - percentage
+                    const nextX = originX + Math.random() * (x * diminishing * 2) - x * diminishing
+                    const nextY = originY + Math.random() * (y * diminishing * 2) - y * diminishing
+                    sequence.add({ left: nextX, top: nextY, duration: dur, direction: 'alternate' })
+                }
+                sequence.add({ left: originX, top: originY, duration: dur, direction: 'alternate' })
+                yield sequence.finished
+            }
+    )
+)
+
+export const punch = EffectScope(
+    Dynamic<ShakePunchCommandArgs>(
+        ({ ui: { stage } }) =>
+            function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
+                const realTarget = isUndefined(target) ? stage : stage.querySelector(`[data-name="${target}"]`)
+                const originX = 0
+                const originY = 0
+                const sequence = anime.timeline({
+                    targets: realTarget,
+                    easing: 'linear'
+                })
+                const dur = duration / 2 / iteration
+                for (let i = 0; i < iteration; i++) {
+                    const coef = i % 2 === 0 ? 1 : -1
+                    const nextX = originX + (coef * x) / (i + 1)
+                    const nextY = originY + (coef * y) / (i + 1)
+                    sequence.add({ left: nextX, top: nextY, duration: dur, direction: 'alternate' })
+                }
+                sequence.add({ left: originX, top: originY, duration: dur, direction: 'alternate' })
+                yield sequence.finished
+            }
+    )
+)

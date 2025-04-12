@@ -1,41 +1,6 @@
-import {
-    Blocking,
-    GameState,
-    NonBlocking,
-    StarNight,
-    SwitchState,
-    useActScopeSignal,
-    useGameScopeSignal
-} from 'starnight'
+import { Blocking, GameState, NonBlocking, Reactive, StarNight, SwitchState } from 'starnight'
 import { Try } from '@/utils/fp/Try'
 import { PromiseX } from '@/utils/PromiseX'
-
-type ChoiceItem = {
-    text: string
-    disable: boolean
-    target: number | string
-    choose: () => void
-}
-
-export const choices = useActScopeSignal<Array<ChoiceItem>>(() => [])
-
-export const UIChoicesState = useActScopeSignal(SwitchState.Disabled)
-
-const promises = useActScopeSignal<Array<Promise<number | string>>>(() => [])
-
-export const addchoice = NonBlocking<{ text: string; target: number | string; disable?: boolean }>(
-    () =>
-        ({ text, target, disable = false }) => {
-            const promise = new PromiseX<number | string>()
-            choices().push({
-                text,
-                disable,
-                target,
-                choose: () => promise.resolve(target)
-            })
-            promises().push(promise)
-        }
-)
 
 declare module 'starnight' {
     interface GameLocalData {
@@ -45,22 +10,50 @@ declare module 'starnight' {
         stopfastonselection: boolean
         stopautoonselection: boolean
     }
+    interface GameUIInternalData {
+        choices: Array<ChoiceItem>
+        choicesState: Reactive<SwitchState>
+    }
+    interface GameTempData {
+        choicePointer: number
+    }
 }
 
-const pointer = useGameScopeSignal(-1)
+type ChoiceItem = {
+    text: string
+    disable: boolean
+    target: number | string
+    choose: () => void
+    promise: Promise<number | string>
+}
+
+StarNight.GameEvents.setup.subscribe(({ ui, temp }) => {
+    temp.choicePointer = -1
+    ui.choicesState = StarNight.useReactive(SwitchState.Disabled)
+})
+
+StarNight.ActEvents.start.subscribe(({ ui }) => {
+    ui.choices = []
+})
+
+export const addchoice = NonBlocking<{ text: string; target: number | string; disable?: boolean }>(
+    ({ ui: { choices } }) =>
+        ({ text, target, disable = false }) => {
+            const promise = new PromiseX<number | string>()
+            choices.push({ text, disable, target, promise, choose: () => promise.resolve(target) })
+        }
+)
 
 export const showchoices = Blocking<{ index: number }>(
-    ({ current, local, global, state, config }) =>
+    ({ current, local, global, state, config, ui: { choices, choicesState }, temp }) =>
         async function ({ index }) {
-            UIChoicesState(SwitchState.Enabled)
-            const history = state === GameState.Init ? local.choice?.[pointer((i) => i + 1)] : undefined
-            const target = history ?? (await Promise.race(promises()))
+            choicesState(SwitchState.Enabled)
+            const history = state === GameState.Init ? local.choice?.[temp.choicePointer++] : undefined
+            const target = history ?? (await Promise.race(choices.map((e) => e.promise)))
             const stopfastonselection = config.stopfastonselection() && state === GameState.Fast
             Try.apply(() => {
                 const achievement = global.achievement
-                const i = choices()
-                    .map((e) => e.target)
-                    .findIndex((e) => e === target)
+                const i = choices.map((e) => e.target).findIndex((e) => e === target)
                 const last = achievement[1 << index]
                 if ((last() & (1 << 2)) === 0) {
                     if (state === GameState.Fast || state === GameState.Init) {
@@ -70,9 +63,9 @@ export const showchoices = Blocking<{ index: number }>(
                     }
                 }
             })
-            UIChoicesState(SwitchState.Disabled)
+            choicesState(SwitchState.Disabled)
             current.choice([...(current.choice?.() || []), target])
-            return StarNight.commands.jump
+            return StarNight.SystemCommands.jump
                 .apply()({ target })
                 .then((jump) => (stopfastonselection ? Object.assign(jump, { state: GameState.Normal }) : jump))
         }

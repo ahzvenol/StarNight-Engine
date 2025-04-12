@@ -4,33 +4,26 @@ import { backlog } from './script/backlog'
 import { blind } from './script/blind'
 import { addchoice, showchoices } from './script/choice'
 import { check, click } from './script/click'
-import { closeimage, setimage, tweenimage } from './script/image'
-import { punch, shake } from './script/shake'
+import { closeimage, punch, setimage, shake, tweenimage } from './script/image'
 import { icon, name, text, textbox, textpreview } from './script/textbox'
 import { unlock } from './script/unlock'
 import { video } from './script/video'
 
 export const commands = {
-    // ----
     achievement,
-    // ----
     setimage,
     tweenimage,
     closeimage,
-    // ----
     setaudio,
     fadeaudio,
     closeaudio,
-    // ----
     addchoice,
     showchoices,
-    // ----
     name,
     text,
     icon,
     backlog,
     textpreview,
-    // ----
     video,
     unlock,
     shake,

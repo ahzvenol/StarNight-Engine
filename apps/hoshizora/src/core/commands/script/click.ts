@@ -1,18 +1,23 @@
-import { DynamicBlocking, NonBlocking } from 'starnight'
-import { onClick } from 'starnight'
-import { SwitchState } from 'starnight'
-import { useGameScopeSignal } from'starnight'
+import { DynamicBlocking, NonBlocking, Reactive, StarNight, SwitchState } from 'starnight'
 
-export const UIClickState = useGameScopeSignal<SwitchState>(SwitchState.Enabled)
+declare module 'starnight' {
+    interface GameUIInternalData {
+        clickState: Reactive<SwitchState>
+    }
+}
 
-export const click = NonBlocking<{ enable: boolean }>(() => ({ enable }) => {
-    if (enable) UIClickState(SwitchState.Enabled)
-    else UIClickState(SwitchState.Disabled)
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
+    ui.clickState = StarNight.useReactive(SwitchState.Enabled)
+})
+
+export const click = NonBlocking<{ enable: boolean }>(({ ui: { clickState } }) => ({ enable }) => {
+    if (enable) clickState(SwitchState.Enabled)
+    else clickState(SwitchState.Disabled)
 })
 
 export const check = DynamicBlocking(
-    () =>
+    ({ instance: { ClickEvents } }) =>
         function* () {
-            yield onClick()
+            yield ClickEvents.onStep()
         }
 )

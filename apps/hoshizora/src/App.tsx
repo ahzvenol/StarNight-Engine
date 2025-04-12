@@ -1,9 +1,6 @@
 import type { Component } from 'solid-js'
 import { createEffect, createResource, Match, Switch } from 'solid-js'
 import { KeepAliveProvider } from 'solid-keep-alive'
-import { GameSleepEvent, GameWakeEvent, StarNight } from 'starnight'
-import { commands } from './core/commands'
-import { macros } from './core/macros'
 import { onStoreReady } from './store'
 import { Context } from './store/context'
 import UI from './ui/Hoshizora'
@@ -15,17 +12,9 @@ document.oncontextmenu = document.onmousedown = () => false
 
 if (isMobile() || likeMobile()) document.documentElement.classList.add('mobile')
 
-addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') {
-        GameSleepEvent.publish()
-    } else if (document.visibilityState === 'visible') {
-        GameWakeEvent.publish()
-    }
-})
-
 const [store] = createResource(() => onStoreReady)
 
-onStoreReady.then((store) => (document.title = store().system.name))
+onStoreReady.then((store) => (document.title = store.system.name()))
 
 // 并没有办法把用户使用F11等按键触发的全屏同步到变量,因为浏览器不会返回相关信息
 onStoreReady.then((store) => {

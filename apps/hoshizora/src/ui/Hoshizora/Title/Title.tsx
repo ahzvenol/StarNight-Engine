@@ -9,9 +9,9 @@ import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/logger'
 import { AudioIds, AudioMutex, Howler } from '../Audio'
 import { Button } from '../Button'
+import { restartGame } from '../Game/Game'
 import { Pages } from '../Pages'
 import styles from './Title.module.scss'
-import { restartGame } from '../Game/Game'
 
 const audio = Howler({ loop: true, src: './static/AudioClip/bgm01.flac' })
 createEffect(
@@ -62,8 +62,8 @@ const Title: Component = () => {
                                         style={{
                                             'background-image': `url('./static/Texture2D/title_${imageId}.webp')`
                                         }}
-                                        onClick={() => {
-                                            if (index === 0) restartGame({ index: 1 })
+                                        onClick={async () => {
+                                            if (index === 0) await restartGame({ index: 1 })
                                             router.navigate(
                                                 [Pages.Game, Pages.Load, Pages.Config, Pages.Gallery][index]
                                             )

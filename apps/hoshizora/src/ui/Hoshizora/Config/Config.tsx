@@ -1,5 +1,6 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
+import { Signal } from 'micro-reactive-solid'
 import { router } from '@/router'
 import { useStore } from '@/store/context'
 import { CustomDefaultStore } from '@/store/custom'

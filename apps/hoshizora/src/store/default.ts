@@ -8,6 +8,11 @@ export interface ExtraConfig {
     fullscreen: boolean
     textboxopacity: number
     language: string
+    globalvolume: number,
+    bgmvolume: number,
+    sevolume: number,
+    clipvolume: number,
+    uisevolume: number,
 }
 
 export type Config = ExtraConfig & GameConfig

@@ -13,6 +13,8 @@ import { PromiseX } from './utils/PromiseX'
 import { randomUUID } from './utils/randomUUID'
 import { RangeSet } from './utils/RangeSet'
 
+export type { Reactive } from 'micro-reactive-wrapper'
+
 export class StarNight {
     // 宏表
     public static Marcos: Macros = []
@@ -29,6 +31,10 @@ export class StarNight {
 
     public static useReactive: <T>(value: T) => Reactive<T> = useReactiveWrapper(<T>(v: T) => v)
 
+    public static instance = (params: GameConstructorParams) => new StarNightInstance(params)
+
+    private constructor() {}
+
     static {
         // 事件日志绑定
         // 游戏初始化计时器
@@ -44,15 +50,19 @@ export class StarNight {
         StarNight.GameEvents.active.subscribe((active) => console.info(`Game:游戏活动状态:${active}`))
 
         StarNight.ActEvents.ready.subscribe(() => console.info(`Act:初始化完成`))
-        StarNight.ActEvents.start.subscribe(({ state, current: { index } }) =>
-            state === GameState.Init
-                ? console.info(`Act:正在初始化第${index}幕`)
-                : console.info(`Act:开始执行第${index}幕...`)
-        )
+        StarNight.ActEvents.start.subscribe(({ state, current: { index } }) => {
+            if (state === GameState.Init) {
+                console.info(`Act:开始初始化第${index}幕...`)
+            } else {
+                console.info(`Act:开始执行第${index}幕...`)
+            }
+        })
         StarNight.ActEvents.end.subscribe(
             ({ state, current: { index } }) => state !== GameState.Init && console.info(`Act:第${index}幕执行结束`)
         )
-        StarNight.ActEvents.rush.subscribe(() => console.info('Act:执行单幕快进'))
+        StarNight.ActEvents.rush.subscribe(({ state }) => {
+            if (state !== GameState.Init) console.info('Act:执行单幕快进')
+        })
         StarNight.ActEvents.jump.subscribe((target) => console.info(`Act:跳转到第${target}幕`))
 
         StarNight.ClickEvents.step.subscribe(() => console.info('ClickEvent:触发点击事件'))
@@ -107,6 +117,10 @@ export class StarNightInstance {
     public start = () => this.GameEvents.start.publish(this.context)
 
     public stop = () => this.GameEvents.stop.publish(this.context)
+
+    public suspend = () => this.GameEvents.suspend.publish(this.context)
+
+    public resume = () => this.GameEvents.resume.publish(this.context)
 }
 
 // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕
