@@ -16,7 +16,7 @@ export type SetBGMacroArgs = {
 export const sprite: MacroFunction<SetImageCommandArgs & SetBGMacroArgs & { z?: number }> = (args) => {
     args.file = `./static/ImageAsset/${args.file}.webp`
     const renamedArgs = renameKeys(args, { x: 'translateX', y: 'translateY', z: 'zIndex', w: 'width', h: 'height' })
-    const imageArgs = Object.assign({ opacity: 1 }, omit(renamedArgs, ['duration']), { zIndex: 1, inherit: false })
+    const imageArgs = Object.assign({ opacity: 1 }, omit(renamedArgs, ['duration']), { zIndex: 1 })
     const tweenArgs = { target: args.name, ease: 'easeInQuad', duration: 175, opacity: 0, inherit: false }
     return [
         { key: 'tweenimage', args: tweenArgs },

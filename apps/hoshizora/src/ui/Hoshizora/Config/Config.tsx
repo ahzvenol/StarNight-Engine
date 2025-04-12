@@ -15,6 +15,7 @@ const Config: Component = () => {
     log.info('Config组件函数被调用')
     const store = useStore()
     const config = store.config
+
     return (
         <div class={clsx('Page', styles.Config_container)}>
             <div class={clsx(styles.Config_cell, styles.Config_cell_left)} style={{ bottom: `${110 + 75 * 5}px` }}>
@@ -58,8 +59,24 @@ const Config: Component = () => {
                                         config.bgmvolume,
                                         config.sevolume,
                                         config.clipvolume,
-                                        config.textspeed,
-                                        config.autoreadspeed
+                                        ((value) => {
+                                            if (value === undefined) return 1 - config.textspeed(value) / 100
+                                            else
+                                                return value instanceof Function
+                                                    ? config.autoreadspeed(
+                                                          100 - (value(1 - config.textspeed(value)) / 100) * 100
+                                                      )
+                                                    : config.textspeed(100 - value * 100)
+                                        }) as Signal<number>,
+                                        ((value) => {
+                                            if (value === undefined) return 1 - config.autoreadspeed(value) / 2000
+                                            else
+                                                return value instanceof Function
+                                                    ? config.autoreadspeed(
+                                                          2000 - (value(1 - config.autoreadspeed(value)) / 2000) * 2000
+                                                      )
+                                                    : config.autoreadspeed(2000 - value * 2000)
+                                        }) as Signal<number>
                                     ][index]
                                 }
                             />

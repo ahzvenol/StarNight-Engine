@@ -1,7 +1,7 @@
 import type { Reactive } from 'micro-reactive-solid'
 import type { GameConfig, GameGlobalData, GameLocalData } from 'starnight'
 import { cloneDeep } from 'es-toolkit'
-import { isMobile } from '@/utils/checkEnv'
+import { isDevelopment, isMobile, isNative } from '@/utils/checkEnv'
 import { randomUUID } from '@/utils/randomUUID'
 
 export interface ExtraConfig {
@@ -51,9 +51,9 @@ const config = {
     sevolume: 0.7,
     clipvolume: 0.7,
     uisevolume: 1,
-    textspeed: 0.5,
-    autoreadspeed: 0.5,
-    fastreadspeed: 0.8,
+    textspeed: 50,
+    autoreadspeed: 1000,
+    fastreadspeed: isNative() || isDevelopment() ? 10 : 100,
     backlogmaxlength: 50
 } satisfies Config
 

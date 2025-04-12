@@ -48,7 +48,7 @@ export const showchoices = Blocking<{ index: number }>(
     ({ current, local, global, state, config, ui: { choices, choicesState }, temp }) =>
         async function ({ index }) {
             choicesState(SwitchState.Enabled)
-            const history = state === GameState.Init ? local.choice?.[temp.choicePointer++] : undefined
+            const history = state === GameState.Init ? local.choice?.[++temp.choicePointer] : undefined
             const target = history ?? (await Promise.race(choices.map((e) => e.promise)))
             const stopfastonselection = config.stopfastonselection() && state === GameState.Fast
             Try.apply(() => {

@@ -52,13 +52,13 @@ export class StarNight {
         StarNight.ActEvents.ready.subscribe(() => console.info(`Act:初始化完成`))
         StarNight.ActEvents.start.subscribe(({ state, current: { index } }) => {
             if (state === GameState.Init) {
-                console.info(`Act:开始初始化第${index}幕...`)
+                console.info(`Act:开始初始化第${index()}幕...`)
             } else {
-                console.info(`Act:开始执行第${index}幕...`)
+                console.info(`Act:开始执行第${index()}幕...`)
             }
         })
         StarNight.ActEvents.end.subscribe(
-            ({ state, current: { index } }) => state !== GameState.Init && console.info(`Act:第${index}幕执行结束`)
+            ({ state, current: { index } }) => state !== GameState.Init && console.info(`Act:第${index()}幕执行结束`)
         )
         StarNight.ActEvents.rush.subscribe(({ state }) => {
             if (state !== GameState.Init) console.info('Act:执行单幕快进')
@@ -118,9 +118,17 @@ export class StarNightInstance {
 
     public stop = () => this.GameEvents.stop.publish(this.context)
 
-    public suspend = () => this.GameEvents.suspend.publish(this.context)
+    public suspend = () => {
+        if (this.isGameVisible()) {
+            this.GameEvents.suspend.publish(this.context)
+        }
+    }
 
-    public resume = () => this.GameEvents.resume.publish(this.context)
+    public resume = () => {
+        if (!this.isGameVisible()) {
+            this.GameEvents.resume.publish(this.context)
+        }
+    }
 }
 
 // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕
@@ -151,10 +159,10 @@ async function ActLoop(this: StarNightInstance) {
             this.ActEvents.ready.publish(this.context)
             // 这时才应该允许状态转换,否则影响初始化
             this.ClickEvents.auto.subscribe(() =>
-                this.state(this.state() === GameState.Auto ? GameState.Normal : GameState.Auto)
+                this.state((state) => (state === GameState.Auto ? GameState.Normal : GameState.Auto))
             )
             this.ClickEvents.fast.subscribe(() =>
-                this.state(this.state() === GameState.Fast ? GameState.Normal : GameState.Fast)
+                this.state((state) => (state === GameState.Fast ? GameState.Normal : GameState.Fast))
             )
         }
         // 由幕循环维护已读幕,这一操作需要在ActStart之前完成,所以不能借助事件

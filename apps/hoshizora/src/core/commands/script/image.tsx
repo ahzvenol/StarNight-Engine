@@ -77,6 +77,8 @@ export const setimage = NonBlocking<SetImageCommandArgs>(
         }
 )
 
+export type TweenCommandArgs = { target: object; ease?: string; duration: number }
+
 export type TweenImageCommandArgs = {
     target: string
     ease?: string
@@ -93,13 +95,12 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
             if (state === GameState.Init) {
                 anime.set(tweenTarget, args)
             } else {
-                // 保证对同一个物体的缓动被顺序应用
+                // // 保证对同一个物体的缓动被顺序应用
                 if (!activeTimelines.has(tweenTarget)) {
                     activeTimelines.set(
                         tweenTarget,
                         anime.timeline({
-                            targets: target,
-                            easing: ease || 'linear'
+                            targets: tweenTarget
                         })
                     )
                 }
@@ -108,7 +109,7 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
                 // 但是必须在timeline结束之前订阅finished才有效
                 const finished = sequence.finished
                 const currentTime = sequence.currentTime
-                sequence.add({ ...args, duration })
+                sequence.add({ easing: ease || 'linear', duration, ...args })
                 // 因为调用add后默认重新从头开始
                 sequence.seek(currentTime)
                 // 神秘代码,防止一个已经结束的sequence在seek后仍然从头开始

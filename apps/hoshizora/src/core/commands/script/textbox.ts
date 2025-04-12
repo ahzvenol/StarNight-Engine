@@ -53,7 +53,7 @@ export const text = ActScope(
             function* ({ text }) {
                 while (text.length >= 1) {
                     yield StarNight.SystemCommands.wait.apply(context)({
-                        duration: 100 - context.config.textspeed() * 100
+                        duration: context.config.textspeed()
                     })
                     context.ui.text((i) => i + text.charAt(0))
                     text = text.slice(1)
