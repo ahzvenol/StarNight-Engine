@@ -105,8 +105,6 @@ export class StarNightInstance {
             ...params,
             current: this.current,
             temp: {},
-            isRead: this.isRead,
-            isGameVisible: this.isGameVisible,
             instance: this
         } as GameContext
         this.GameEvents.setup.publish(this.context)

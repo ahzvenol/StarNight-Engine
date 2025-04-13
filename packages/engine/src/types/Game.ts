@@ -51,8 +51,6 @@ export type GameContext = {
     current: Reactive<GameLocalData>
     temp: GameTempData
     ui: GameUIInternalData
-    isRead: Reactive<boolean>
-    isGameVisible: Reactive<boolean>
     readonly instance: StarNightInstance
 } & Omit<GameConstructorParams, 'book'>
 

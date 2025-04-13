@@ -1,5 +1,5 @@
 import type { ExtendArgs } from 'starnight'
-import type { Howl, HowlConstructor, HowlOptions } from '@/lib/howler'
+import type { Howl, HowlOptions } from '@/lib/howler'
 import { delay, isUndefined } from 'es-toolkit'
 import { Dynamic, GameState, NonBlocking, StarNight } from 'starnight'
 

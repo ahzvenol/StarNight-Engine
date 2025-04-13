@@ -1,4 +1,5 @@
-import { DynamicBlocking, NonBlocking, Reactive, StarNight, SwitchState } from 'starnight'
+import { SwitchState } from '@/core/SwitchState'
+import { DynamicBlocking, NonBlocking, Reactive, StarNight} from 'starnight'
 
 declare module 'starnight' {
     interface GameUIInternalData {

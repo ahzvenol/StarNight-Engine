@@ -1,6 +1,7 @@
-import { Blocking, GameState, NonBlocking, Reactive, StarNight, SwitchState } from 'starnight'
+import { Blocking, GameState, NonBlocking, Reactive, StarNight } from 'starnight'
+import { PromiseX } from '@/core/PromiseX'
+import { SwitchState } from '@/core/SwitchState'
 import { Try } from '@/utils/fp/Try'
-import { PromiseX } from '@/utils/PromiseX'
 
 declare module 'starnight' {
     interface GameLocalData {

@@ -11,6 +11,8 @@ export enum PromiseState {
 }
 
 export class PromiseX<T> extends Promise<T> {
+    public resolve!: ResolveType<T>
+    public reject!: RejectType<T>
     public constructor(executor: void = noop as unknown as void) {
         let resolver!: ResolveType<T>
         let rejector!: RejectType<T>
@@ -24,8 +26,6 @@ export class PromiseX<T> extends Promise<T> {
         this.resolve = resolver
         this.reject = rejector
     }
-    public resolve!: Parameters<ConstructorParameters<typeof Promise<T>>[0]>[0]
-    public reject!: Parameters<ConstructorParameters<typeof Promise<T>>[0]>[1]
 
     public static status = (p: Promise<unknown>) => {
         const t = {}
