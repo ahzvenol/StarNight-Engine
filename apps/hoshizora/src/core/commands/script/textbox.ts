@@ -16,21 +16,21 @@ export const textpreview = ActScope(
 
 declare module 'starnight' {
     interface GameUIInternalData {
-        iconState: Reactive<SwitchState>
+        iconstate: Reactive<SwitchState>
     }
 }
 
 StarNight.GameEvents.start.subscribe(({ ui }) => {
-    ui.iconState = StarNight.useReactive(SwitchState.Disabled)
+    ui.iconstate = StarNight.useReactive(SwitchState.Disabled)
 })
 
 StarNight.ActEvents.start.subscribe(({ ui }) => {
-    ui.iconState(SwitchState.Disabled)
+    ui.iconstate(SwitchState.Disabled)
 })
 
 export const icon = ActScope(
-    NonBlocking(({ ui: { iconState } }) => () => {
-        iconState(SwitchState.Enabled)
+    NonBlocking(({ ui: { iconstate } }) => () => {
+        iconstate(SwitchState.Enabled)
     })
 )
 
@@ -85,19 +85,19 @@ export const name = ActScope(
 
 declare module 'starnight' {
     interface GameUIInternalData {
-        textboxState: Reactive<SwitchState>
+        textboxstate: Reactive<SwitchState>
     }
 }
 
 StarNight.GameEvents.start.subscribe(({ ui }) => {
-    ui.textboxState = StarNight.useReactive(SwitchState.Enabled)
+    ui.textboxstate = StarNight.useReactive(SwitchState.Enabled)
 })
 
-StarNight.ActEvents.start.subscribe(({ ui }) => ui.textboxState(SwitchState.Enabled))
+StarNight.ActEvents.start.subscribe(({ ui }) => ui.textboxstate(SwitchState.Enabled))
 
 export const textbox = ActScope(
-    NonBlocking<{ enable: boolean }>(({ ui: { textboxState } }) => ({ enable }) => {
-        if (enable) textboxState(SwitchState.Enabled)
-        else textboxState(SwitchState.Disabled)
+    NonBlocking<{ enable: boolean }>(({ ui: { textboxstate } }) => ({ enable }) => {
+        if (enable) textboxstate(SwitchState.Enabled)
+        else textboxstate(SwitchState.Disabled)
     })
 )

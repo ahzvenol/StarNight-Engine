@@ -25,7 +25,7 @@ const Config: Component = () => {
             <Clone count={3}>
                 {(index) => (
                     <Variable
-                        value={config[(['interruptclip', 'fastforwardunread', 'stopfastonselection'] as const)[index]]}>
+                        value={config[(['interruptclip', 'fastforwardunread', 'stopfastonchoice'] as const)[index]]}>
                         {(item) => (
                             <div
                                 class={clsx(styles.Config_cell, styles.Config_cell_left)}

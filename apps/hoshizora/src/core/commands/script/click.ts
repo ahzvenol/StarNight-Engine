@@ -4,17 +4,17 @@ import { SwitchState } from '@/core/SwitchState'
 
 declare module 'starnight' {
     interface GameUIInternalData {
-        clickState: Reactive<SwitchState>
+        clickstate: Reactive<SwitchState>
     }
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.clickState = StarNight.useReactive(SwitchState.Enabled)
+    ui.clickstate = StarNight.useReactive(SwitchState.Enabled)
 })
 
-export const click = NonBlocking<{ enable: boolean }>(({ ui: { clickState } }) => ({ enable }) => {
-    if (enable) clickState(SwitchState.Enabled)
-    else clickState(SwitchState.Disabled)
+export const click = NonBlocking<{ enable: boolean }>(({ ui: { clickstate } }) => ({ enable }) => {
+    if (enable) clickstate(SwitchState.Enabled)
+    else clickstate(SwitchState.Disabled)
 })
 
 export const check = DynamicBlocking(

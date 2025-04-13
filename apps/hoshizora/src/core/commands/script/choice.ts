@@ -6,18 +6,18 @@ import { Try } from '@/utils/fp/Try'
 
 declare module 'starnight' {
     interface GameLocalData {
-        choice?: Array<number | string>
+        choicehistory?: Array<number | string>
     }
     interface GameConfig {
-        stopfastonselection: boolean
-        stopautoonselection: boolean
+        stopfastonchoice: boolean
+        stopautoonchoice: boolean
     }
     interface GameUIInternalData {
         choices: Array<ChoiceItem>
-        choicesState: Reactive<SwitchState>
+        choicesstate: Reactive<SwitchState>
     }
     interface GameTempData {
-        choicePointer: number
+        choicepointer: number
     }
 }
 
@@ -30,8 +30,8 @@ type ChoiceItem = {
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui, temp }) => {
-    temp.choicePointer = -1
-    ui.choicesState = StarNight.useReactive(SwitchState.Disabled)
+    temp.choicepointer = -1
+    ui.choicesstate = StarNight.useReactive(SwitchState.Disabled)
 })
 
 StarNight.ActEvents.start.subscribe(({ ui }) => {
@@ -47,12 +47,12 @@ export const addchoice = NonBlocking<{ text: string; target: number | string; di
 )
 
 export const showchoices = Blocking<{ index: number }>(
-    ({ current, local, global, state, config, ui: { choices, choicesState }, temp }) =>
+    ({ current, local, global, state, config, ui: { choices, choicesstate }, temp }) =>
         async function ({ index }) {
-            choicesState(SwitchState.Enabled)
-            const history = state === GameState.Init ? local.choice?.[++temp.choicePointer] : undefined
+            choicesstate(SwitchState.Enabled)
+            const history = state === GameState.Init ? local.choicehistory?.[++temp.choicepointer] : undefined
             const target = history ?? (await Promise.race(choices.map((e) => e.promise)))
-            const stopfastonselection = config.stopfastonselection() && state === GameState.Fast
+            const stopfastonchoice = config.stopfastonchoice() && state === GameState.Fast
             Try.apply(() => {
                 const achievement = global.achievement
                 const i = choices.map((e) => e.target).findIndex((e) => e === target)
@@ -65,10 +65,10 @@ export const showchoices = Blocking<{ index: number }>(
                     }
                 }
             })
-            choicesState(SwitchState.Disabled)
-            current.choice([...(current.choice?.() || []), target])
+            choicesstate(SwitchState.Disabled)
+            current.choicehistory([...(current.choicehistory?.() || []), target])
             return StarNight.SystemCommands.jump
                 .apply()({ target })
-                .then((jump) => (stopfastonselection ? Object.assign(jump, { state: GameState.Normal }) : jump))
+                .then((jump) => (stopfastonchoice ? Object.assign(jump, { state: GameState.Normal }) : jump))
         }
 )

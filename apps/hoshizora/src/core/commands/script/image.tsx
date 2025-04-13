@@ -16,7 +16,7 @@ import { Y } from '@/utils/fp'
 
 declare module 'starnight' {
     interface GameTempData {
-        activeTimelines: Map<object, anime.AnimeTimelineInstance>
+        activetimelines: Map<object, anime.AnimeTimelineInstance>
     }
     interface GameUIInternalData {
         stage: HTMLDivElement
@@ -24,12 +24,12 @@ declare module 'starnight' {
 }
 
 StarNight.GameEvents.setup.subscribe(({ temp, ui }) => {
-    temp.activeTimelines = new Map()
+    temp.activetimelines = new Map()
     ui.stage = document.createElement('div')
 })
 
-StarNight.ActEvents.start.subscribe(({ temp: { activeTimelines } }) => {
-    activeTimelines.clear()
+StarNight.ActEvents.start.subscribe(({ temp: { activetimelines: activetimelines } }) => {
+    activetimelines.clear()
 })
 
 StarNight.ActEvents.ready.subscribe(({ ui: { stage } }) => {
@@ -87,7 +87,7 @@ export type TweenImageCommandArgs = {
 } & ExtendArgs<AnimatedPropertys>
 
 export const tweenimage = Dynamic<TweenImageCommandArgs>(
-    ({ state, ui: { stage }, temp: { activeTimelines } }) =>
+    ({ state, ui: { stage }, temp: { activetimelines: activetimelines } }) =>
         function* ({ target, ease, duration = 0, inherit = true, ...args }) {
             const container = stage.querySelector(`[data-name="${target}"]`)
             const tweenTarget = inherit ? container : container?.firstChild
@@ -96,15 +96,15 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
                 anime.set(tweenTarget, args)
             } else {
                 // // 保证对同一个物体的缓动被顺序应用
-                if (!activeTimelines.has(tweenTarget)) {
-                    activeTimelines.set(
+                if (!activetimelines.has(tweenTarget)) {
+                    activetimelines.set(
                         tweenTarget,
                         anime.timeline({
                             targets: tweenTarget
                         })
                     )
                 }
-                const sequence = activeTimelines.get(tweenTarget)!
+                const sequence = activetimelines.get(tweenTarget)!
                 // animejs可以正确处理duration=0的情况
                 // 但是必须在timeline结束之前订阅finished才有效
                 const finished = sequence.finished

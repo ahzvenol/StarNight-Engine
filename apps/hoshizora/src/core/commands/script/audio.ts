@@ -11,7 +11,7 @@ declare module 'starnight' {
         audios: Map<string, Howl>
     }
     interface GameUIExternalData {
-        audioTracks: Record<string, Function1<HowlOptions, Howl>>
+        audiotracks: Record<string, Function1<HowlOptions, Howl>>
     }
 }
 
@@ -43,7 +43,7 @@ export type SetAudioCommandArgs = {
 } & ExtendArgs<HowlOptions>
 
 export const setaudio = Dynamic<SetAudioCommandArgs>(
-    ({ state, ui: { audioTracks }, temp: { audios } }) =>
+    ({ state, ui: { audiotracks }, temp: { audios } }) =>
         function* ({ type, name = type, file, ...configs }) {
             // Clip的生命周期是幕,所以不用初始化
             if (
@@ -53,7 +53,7 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
                 return
             }
             // 挂载新音频
-            const audio = audioTracks[type]({
+            const audio = audiotracks[type]({
                 ...configs,
                 pool: 1,
                 src: file,
