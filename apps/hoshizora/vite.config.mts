@@ -29,7 +29,7 @@ export default defineConfig(({ command }) => ({
         strictPort: true // 设为 true 时若端口已被占用则会直接退出，而不是尝试下一个可用端口
     },
     build: {
-        target: 'esnext',
+        target: 'es2015',
         sourcemap: false,
         minify: 'terser',
         terserOptions: {

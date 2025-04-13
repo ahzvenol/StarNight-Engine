@@ -59,9 +59,9 @@ export const showchoices = Blocking<{ index: number }>(
                 const last = achievement[1 << index]
                 if ((last() & (1 << 2)) === 0) {
                     if (state === GameState.Fast || state === GameState.Init) {
-                        last(Number((BigInt(last()) & ~0b11n) | BigInt(1 << 2)) + 3)
+                        last(Number((BigInt(last()) & ~BigInt(3)) | BigInt(1 << 2)) + 3)
                     } else {
-                        last(Number((BigInt(last()) & ~0b11n) | BigInt(1 << 2)) + i)
+                        last(Number((BigInt(last()) & ~BigInt(3)) | BigInt(1 << 2)) + i)
                     }
                 }
             })

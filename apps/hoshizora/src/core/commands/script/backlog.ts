@@ -1,6 +1,5 @@
 import type { GameLocalData, Reactive } from 'starnight'
 import { cloneDeep } from 'es-toolkit'
-import { unwrap } from 'solid-js/store'
 import { NonBlocking, StarNight } from 'starnight'
 
 export type BacklogCommandArgs = { text: string; name?: string; file?: string }
