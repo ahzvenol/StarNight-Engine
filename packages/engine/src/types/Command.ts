@@ -1,3 +1,4 @@
+import type { Signal } from 'micro-reactive-wrapper'
 import type { GameRuntimeContext, GameState } from './Game'
 import type { Function0, Function1, MetaFunction, NeverFailingPromise } from './Meta'
 
@@ -11,32 +12,26 @@ export type CommandArgs = Partial<Record<string, CommandArg>> | Array<CommandRow
 export type CommandRow = { key: string; args: CommandArgs }
 
 // 会在幕循环中被处理的特殊值
-export interface CommandOutput {
-    continue?: boolean
-    jump?: number | string
-    end?: boolean
-    state?: GameState
+export type CommandOutput = {
+    cont: Signal<boolean>
+    jump: Signal<number | string | undefined>
+    end: Signal<boolean>
+    state: Signal<GameState | undefined>
 }
-
-// 实际上命令可以返回任何值,但是只有CommandOutput有意义
-export type RuntimeCommandOutput = unknown | CommandOutput
 
 // 使用生成器函数定义一个耗时无阻塞命令
 export type DynamicCommandFunction<T extends CommandArgs> = Function1<
     GameRuntimeContext,
-    Function1<T, Generator<Promise<unknown>, RuntimeCommandOutput, void>>
+    Function1<T, Generator<Promise<unknown>, unknown, void>>
 >
 
 // 使用普通函数定义一个不耗时无阻塞命令
-export type NonBlockingCommandFunction<T extends CommandArgs> = Function1<
-    GameRuntimeContext,
-    Function1<T, RuntimeCommandOutput>
->
+export type NonBlockingCommandFunction<T extends CommandArgs> = Function1<GameRuntimeContext, Function1<T, unknown>>
 
 // 使用异步函数定义一个耗时阻塞命令
 export type BlockingCommandFunction<T extends CommandArgs> = Function1<
     GameRuntimeContext,
-    Function1<T, Promise<RuntimeCommandOutput>>
+    Function1<T, Promise<unknown>>
 >
 
 // 在命令的类型声明中定义的应该是命令需要的参数
@@ -47,10 +42,10 @@ export type CommandFunction<T extends CommandArgs> =
     | BlockingCommandFunction<T>
 
 // Resolved命令已经传入全部参数
-export type ResolvedCommandFunction = Function0<RuntimeCommandOutput>
+export type ResolvedCommandFunction = Function0<unknown>
 
 // 具有Resolved和Standard性质的命令
-export type StandardResolvedCommandFunction = Function0<NeverFailingPromise<CommandOutput>>
+export type StandardResolvedCommandFunction = Function0<NeverFailingPromise<unknown>>
 
 // 使用这两个标记的目的是使用外部数据对象控制程序的阻塞/并行调度
 export enum Schedule {
@@ -61,11 +56,7 @@ export enum Schedule {
 // 标准命令返回一个永不失败的Promise
 export type StandardCommandFunction<T extends CommandArgs> = Function1<
     GameRuntimeContext,
-    Function1<T, NeverFailingPromise<CommandOutput>>
->
-
-export type StandardCommandFunction0<T extends CommandArgs> = Function0<
-    Function1<T, NeverFailingPromise<CommandOutput>>
+    Function1<T, NeverFailingPromise<unknown>>
 >
 
 // 高阶命令最终映射到基本命令,基本命令已进行异常处理,所以高阶命令无需再处理异常
@@ -77,12 +68,6 @@ export type HighLevelCommandFunction = StandardCommandFunction<Array<CommandEnti
 export interface StandardCommand<T extends CommandArgs> extends MetaFunction {
     meta?: { schedule?: Schedule; exclude?: Partial<Record<GameState, undefined>> }
     apply: StandardCommandFunction<T>
-}
-
-// 显式不需要Context的命令,临时解决方案,方便命令间互相调用
-export interface StandardCommand0<T extends CommandArgs> extends MetaFunction {
-    meta?: { schedule?: Schedule; exclude?: Partial<Record<GameState, undefined>> }
-    apply: StandardCommandFunction0<T>
 }
 
 // 附加了作用域标志的高阶命令

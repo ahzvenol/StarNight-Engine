@@ -1,7 +1,7 @@
 import type { Reactive } from 'micro-reactive-wrapper'
 import type { StarNightInstance } from '@/StarNight'
 import type { AbstractGameBook } from '../Book'
-import type { RuntimeCommandEntities, RuntimeCommandLike } from './Command'
+import type { CommandOutput, RuntimeCommandEntities, RuntimeCommandLike } from './Command'
 
 export enum GameState {
     Init,
@@ -56,6 +56,7 @@ export type GameContext = {
 
 export type GameRuntimeContext = {
     readonly state: GameState
+    readonly output: CommandOutput
     readonly onActRush: Promise<GameRuntimeContext>
     readonly onGameStop: Promise<GameContext>
 } & GameContext

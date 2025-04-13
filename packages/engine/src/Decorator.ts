@@ -1,13 +1,12 @@
 import type {
     BlockingCommandFunction,
     CommandArgs,
-    CommandOutput,
     DynamicCommandFunction,
     NonBlockingCommandFunction,
     StandardCommand
 } from './types/Command'
 import type { Function0 } from './types/Meta'
-import { isPlainObject, merge } from 'es-toolkit'
+import { merge } from 'es-toolkit'
 import { Schedule } from './types/Command'
 import { GameState } from './types/Game'
 import { run } from './utils/runGenerator'
@@ -35,10 +34,8 @@ export function VirtualScope<T extends CommandArgs>(cmd: StandardCommand<T>): St
 }
 
 // 辅助函数,标准化命令输出以方便下一环节处理
-function normalizeOutput(output: Function0<unknown>): Promise<CommandOutput> {
-    return new Promise((res) => res(output()))
-        .catch((error) => console.error('命令运行出错:', error))
-        .then((result) => (isPlainObject(result) ? result : {}))
+function normalize(output: Function0<unknown>): Promise<unknown> {
+    return new Promise((res) => res(output())).catch((error) => console.error('命令运行出错:', error))
 }
 
 // 具有一定的执行时间,但也可以立即完成命令行为,由引擎调度是否阻塞的动态命令
@@ -47,7 +44,7 @@ export function Dynamic<T extends CommandArgs>(fn: DynamicCommandFunction<T>): S
         apply: (context) => (args) => {
             const { onActRush: rush, onGameStop: stop } = context
             const generator = fn(context)(args)
-            return normalizeOutput(() => run(generator, { rush, stop }))
+            return normalize(() => run(generator, { rush, stop }))
         }
     }
 }
@@ -59,7 +56,7 @@ export function DynamicBlocking<T extends CommandArgs>(fn: DynamicCommandFunctio
         apply: (context) => (args) => {
             const { onActRush: rush, onGameStop: stop } = context
             const generator = fn(context)(args)
-            return normalizeOutput(() => run(generator, { rush, stop }))
+            return normalize(() => run(generator, { rush, stop }))
         }
     }
 }
@@ -68,7 +65,7 @@ export function DynamicBlocking<T extends CommandArgs>(fn: DynamicCommandFunctio
 export function NonBlocking<T extends CommandArgs>(fn: NonBlockingCommandFunction<T>): StandardCommand<T> {
     return {
         meta: { schedule: Schedule.Async },
-        apply: (context) => (args) => normalizeOutput(() => fn(context)(args))
+        apply: (context) => (args) => normalize(() => fn(context)(args))
     }
 }
 
@@ -76,6 +73,6 @@ export function NonBlocking<T extends CommandArgs>(fn: NonBlockingCommandFunctio
 export function Blocking<T extends CommandArgs>(fn: BlockingCommandFunction<T>): StandardCommand<T> {
     return {
         meta: { schedule: Schedule.Await },
-        apply: (context) => (args) => normalizeOutput(() => fn(context)(args))
+        apply: (context) => (args) => normalize(() => fn(context)(args))
     }
 }

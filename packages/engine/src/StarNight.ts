@@ -1,6 +1,6 @@
 import type { Reactive } from 'micro-reactive-wrapper'
 import type { AbstractGameBook } from './Book'
-import type { CommandEntities, Commands } from './types/Command'
+import type { CommandEntities, CommandOutput, Commands } from './types/Command'
 import type { GameConstructorParams, GameContext, GameLocalData } from './types/Game'
 import type { Macros } from './types/Marco'
 import { delay, isString } from 'es-toolkit'
@@ -175,18 +175,24 @@ async function ActLoop(this: StarNightInstance) {
         }
         // ActStart前的初始化工作
         const onActRush = this.ActEvents.onRush()
-        const context = { ...this.context, state: this.state(), onActRush, onGameStop }
+        const output = {
+            cont: StarNight.useReactive(false),
+            jump: StarNight.useReactive(undefined),
+            end: StarNight.useReactive(false),
+            state: StarNight.useReactive(undefined)
+        } as CommandOutput
+        const context = { ...this.context, state: this.state(), output, onActRush, onGameStop }
         if (this.state() === GameState.Init || this.state() === GameState.Fast) this.ActEvents.rush.publish(context)
         // ActStart
         this.ActEvents.start.publish(context)
         // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-        const output = await fork.apply(context)(this.book.act(this.current.index()) as CommandEntities[])
+        await fork.apply(context)(this.book.act(this.current.index()) as CommandEntities[])
         // ActEnd
         this.ActEvents.end.publish(context)
-        if (output['state'] && this.state() !== GameState.Init) this.state(output['state'])
+        if (output.state() && this.state() !== GameState.Init) this.state(output.state()!)
         // 等待过程受continue命令影响
         // eslint-disable-next-line no-empty
-        if (this.state() === GameState.Init || output['continue'] === true) {
+        if (this.state() === GameState.Init || output.cont()) {
         } else if (this.state() === GameState.Fast) {
             await delay(this.context.config.fastreadspeed())
         } else if (this.state() === GameState.Auto) {
@@ -195,14 +201,14 @@ async function ActLoop(this: StarNightInstance) {
             await Promise.race([this.ClickEvents.onStep(), this.ClickEvents.onAuto(), this.ClickEvents.onFast()])
         }
         // jump命令修改接下来一幕的index
-        const jump = output['jump']
+        const jump = output.jump()
         const target = isString(jump) ? this.book.label(jump) : Number.isFinite(jump) ? jump : undefined
         this.current.index(target !== undefined ? target : this.current.index() + 1)
         // 游戏实例已销毁时退出,初始化时不判断以优化初始化速度
         const isStop = this.state() !== GameState.Init && (await PromiseX.isSettled(onGameStop))
         if (isStop) return this.GameEvents.stop.publish(this.context)
         // 通过end命令退出 || 超过最后一幕自动退出
-        const isEnd = output['end'] === true || this.current.index() >= this.book.length()
+        const isEnd = output.end() || this.current.index() >= this.book.length()
         if (isEnd) return this.GameEvents.end.publish(this.context)
         // 没有因为某种原因退出才发布跳转事件
         if (target !== undefined) this.ActEvents.jump.publish({ index: target })

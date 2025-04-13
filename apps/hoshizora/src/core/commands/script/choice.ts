@@ -47,8 +47,10 @@ export const addchoice = NonBlocking<{ text: string; target: number | string; di
 )
 
 export const showchoices = Blocking<{ index: number }>(
-    ({ current, local, global, state, config, ui: { choices, choicesstate }, temp }) =>
+    (context) =>
         async function ({ index }) {
+            const { current, local, global, state, config, ui, temp, output } = context
+            const { choices, choicesstate } = ui
             choicesstate(SwitchState.Enabled)
             const history = state === GameState.Init ? local.choicehistory?.[++temp.choicepointer] : undefined
             const target = history ?? (await Promise.race(choices.map((e) => e.promise)))
@@ -67,8 +69,7 @@ export const showchoices = Blocking<{ index: number }>(
             })
             choicesstate(SwitchState.Disabled)
             current.choicehistory([...(current.choicehistory?.() || []), target])
-            return StarNight.SystemCommands.jump
-                .apply()({ target })
-                .then((jump) => (stopfastonchoice ? Object.assign(jump, { state: GameState.Normal }) : jump))
+            StarNight.SystemCommands.jump.apply(context)({ target })
+            if (stopfastonchoice) output.state(GameState.Normal)
         }
 )

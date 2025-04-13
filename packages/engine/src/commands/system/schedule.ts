@@ -1,53 +1,38 @@
 import type {
-    CommandOutput,
     ScheduledHighLevelCommand,
     ScheduledStandardResolvedCommand,
     StandardResolvedCommandFunction
 } from '@/types/Command'
 import type { Function1 } from '@/types/Meta'
-import { merge, omit } from 'es-toolkit'
 import { StarNight } from '@/StarNight'
 import { Schedule } from '@/types/Command'
-import { splitEffect } from '@/utils/splitEffect'
-
-const _result: Function1<Array<Promise<CommandOutput>>, Promise<CommandOutput>> = (array) =>
-    Promise.all(array).then((results) => results.reduce(merge, {}))
 
 // 并行执行接收到全部命令,无论Flow的具体类型
 // 完成时间是传入的命令中所需时间最长的那个
 const _par: Function1<Array<ScheduledStandardResolvedCommand>, StandardResolvedCommandFunction> =
     (array) => async () => {
-        const effects = array.map((e) => splitEffect(e.apply))
-        for (const effect of effects) {
-            effect.execute()
-        }
-        return _result(effects.map((e) => e.result))
+        await Promise.all(array.map((e) => e.apply()))
     }
-
 // 串行执行接收到全部命令,无论Flow的具体类型
 // 完成时间是传入的所有命令所需执行时间的和
 const _chain: Function1<Array<ScheduledStandardResolvedCommand>, StandardResolvedCommandFunction> =
     (array) => async () => {
-        const effects = array.map((e) => splitEffect(e.apply))
-        for (const effect of effects) {
-            await effect.execute()
-        }
-        return _result(effects.map((e) => e.result))
+        await array.reduce<Promise<unknown>>((acc, e) => acc.then(e.apply), Promise.resolve())
     }
 
 // 根据Flow的具体类型,对Await标识的命令阻塞等待，对Async的命令并行执行
 // 完成时间是最后一个Await命令执行完毕之后,还在执行的命令,剩余执行时间最长的那个
 const _fork: Function1<Array<ScheduledStandardResolvedCommand>, StandardResolvedCommandFunction> =
     (array) => async () => {
-        const effects = array.map((e) => ({ ...omit(e, ['apply']), ...splitEffect(e.apply) }))
-        for (const effect of effects) {
-            if (effect.meta.schedule === Schedule.Await) {
-                await effect.execute()
-            } else if (effect.meta.schedule === Schedule.Async) {
-                effect.execute()
+        const tasks = []
+        for (const cmd of array) {
+            if (cmd.meta.schedule === Schedule.Await) {
+                await cmd.apply()
+            } else if (cmd.meta.schedule === Schedule.Async) {
+                tasks.push(cmd.apply())
             }
         }
-        return _result(effects.map((e) => e.result))
+        await Promise.all(tasks)
     }
 
 // meta.key只用于调试
