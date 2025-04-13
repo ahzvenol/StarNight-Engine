@@ -1,4 +1,5 @@
-import { ActScope, DynamicBlocking, Reactive, StarNight } from 'starnight'
+import type { Reactive } from 'starnight'
+import { ActScope, DynamicBlocking, StarNight } from 'starnight'
 import { SwitchState } from '@/core/SwitchState'
 
 declare module 'starnight' {

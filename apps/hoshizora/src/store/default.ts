@@ -8,14 +8,15 @@ export interface ExtraConfig {
     fullscreen: boolean
     textboxopacity: number
     language: string
-    bgmvolume: number,
-    sevolume: number,
-    clipvolume: number,
-    uisevolume: number,
+    bgmvolume: number
+    sevolume: number
+    clipvolume: number
+    uisevolume: number
 }
 
 export type Config = ExtraConfig & GameConfig
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ExtraGlobalSaveData {}
 
 export type SaveGlobalData = ExtraGlobalSaveData & GameGlobalData

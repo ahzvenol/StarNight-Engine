@@ -1,4 +1,5 @@
-import { Blocking, GameState, NonBlocking, Reactive, StarNight } from 'starnight'
+import type { Reactive } from 'starnight'
+import { Blocking, GameState, NonBlocking, StarNight } from 'starnight'
 import { PromiseX } from '@/core/PromiseX'
 import { SwitchState } from '@/core/SwitchState'
 import { Try } from '@/utils/fp/Try'

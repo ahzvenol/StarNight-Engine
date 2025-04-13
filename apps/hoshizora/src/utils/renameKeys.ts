@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { mapKeys } from 'es-toolkit'
 
 export const renameKeys = <O extends Record<PropertyKey, unknown>, M extends Partial<Record<keyof O, PropertyKey>>>(

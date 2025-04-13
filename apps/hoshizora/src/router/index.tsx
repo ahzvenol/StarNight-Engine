@@ -1,8 +1,8 @@
 import type { JSX, ParentProps } from 'solid-js'
 import { isFunction, isString } from 'es-toolkit'
+import { useSignal } from 'micro-reactive-solid'
 import { createEffect, Show } from 'solid-js'
 import { log } from '@/utils/logger'
-import { useSignal } from 'micro-reactive-solid'
 
 const active = useSignal('')
 

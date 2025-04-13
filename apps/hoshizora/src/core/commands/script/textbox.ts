@@ -1,5 +1,6 @@
+import type { Reactive } from 'starnight'
+import { ActScope, Dynamic, NonBlocking, StarNight } from 'starnight'
 import { SwitchState } from '@/core/SwitchState'
-import { ActScope, Dynamic, NonBlocking, Reactive, StarNight } from 'starnight'
 
 declare module 'starnight' {
     interface GameLocalData {
