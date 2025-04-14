@@ -69,7 +69,7 @@ export class ActEvents {
     // 单幕快进
     public static readonly rush = new EventDispatcher<GameRuntimeContext>()
     // 跳转
-    public static readonly jump = new EventDispatcher<{ index: number }>()
+    public static readonly jump = new EventDispatcher<GameContext>()
 
     public static readonly onReady = EventDispatcher.on(this.ready)
     public static readonly onStart = EventDispatcher.on(this.start)
@@ -89,7 +89,7 @@ export class ActEvents {
     public readonly start = new EventDispatcher<GameRuntimeContext>()
     public readonly end = new EventDispatcher<GameRuntimeContext>()
     public readonly rush = new EventDispatcher<GameRuntimeContext>()
-    public readonly jump = new EventDispatcher<{ index: number }>()
+    public readonly jump = new EventDispatcher<GameContext>()
 
     public readonly onReady = EventDispatcher.on(this.ready)
     public readonly onStart = EventDispatcher.on(this.start)

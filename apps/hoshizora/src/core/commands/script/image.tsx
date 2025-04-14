@@ -1,7 +1,7 @@
 import type { ExtendArgs } from 'starnight'
 import anime from 'animejs'
 import { isNil, isUndefined } from 'es-toolkit'
-import { Dynamic, EffectScope, GameState, NonBlocking, StarNight } from 'starnight'
+import { Dynamic, EffectScope, NonBlocking, StarNight } from 'starnight'
 import { Y } from '@/utils/fp'
 
 // anime.suspendWhenDocumentHidden = true;
@@ -70,7 +70,7 @@ export const setimage = NonBlocking<SetImageCommandArgs>(
                 stage.appendChild(container)
             }
             if (!isUndefined(zIndex)) container.style.zIndex = zIndex.toString()
-            const attr = state === GameState.Init ? 'data-src' : 'src'
+            const attr = state.isInitializing ? 'data-src' : 'src'
             newBitmap.setAttribute(attr, file)
             anime.set(newBitmap, args)
             container.insertBefore(newBitmap, container.firstChild)
@@ -92,7 +92,7 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
             const container = stage.querySelector(`[data-name="${target}"]`)
             const tweenTarget = inherit ? container : container?.firstChild
             if (isNil(tweenTarget)) return
-            if (state === GameState.Init) {
+            if (state.isInitializing) {
                 anime.set(tweenTarget, args)
             } else {
                 // // 保证对同一个物体的缓动被顺序应用

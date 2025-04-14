@@ -20,17 +20,17 @@ export class StarNight {
     public static Marcos: Macros = []
     // 命令表
     public static Commands: Commands = StarNightSystemCommands
-
+    // 命令预设
     public static readonly SystemCommands = StarNightSystemCommands
-
+    // 游戏实例事件
     public static readonly GameEvents = GameEvents
-
+    // 幕循环事件
     public static readonly ActEvents = ActEvents
-
+    // 主点击事件
     public static readonly ClickEvents = ClickEvents
-
+    // 全局响应式函数
     public static useReactive: <T>(value: T) => Reactive<T> = useReactiveWrapper(<T>(v: T) => v)
-
+    // 实例工厂方法
     public static instance = (params: GameConstructorParams) => new StarNightInstance(params)
 
     private constructor() {}
@@ -51,17 +51,17 @@ export class StarNight {
 
         StarNight.ActEvents.ready.subscribe(() => console.info(`Act:初始化完成`))
         StarNight.ActEvents.start.subscribe(({ state, current: { index } }) => {
-            if (state === GameState.Init) {
+            if (state.isInitializing) {
                 console.info(`Act:开始初始化第${index()}幕...`)
             } else {
                 console.info(`Act:开始执行第${index()}幕...`)
             }
         })
-        StarNight.ActEvents.end.subscribe(
-            ({ state, current: { index } }) => state !== GameState.Init && console.info(`Act:第${index()}幕执行结束`)
-        )
+        StarNight.ActEvents.end.subscribe(({ state, current: { index } }) => {
+            if (!state.isInitializing) console.info(`Act:第${index()}幕执行结束`)
+        })
         StarNight.ActEvents.rush.subscribe(({ state }) => {
-            if (state !== GameState.Init) console.info('Act:执行单幕快进')
+            if (!state.isInitializing) console.info('Act:执行单幕快进')
         })
         StarNight.ActEvents.jump.subscribe((target) => console.info(`Act:跳转到第${target}幕`))
 
@@ -71,7 +71,57 @@ export class StarNight {
     }
 }
 
+export class StarNightState {
+    public readonly now = StarNight.useReactive(GameState.Initializing)
+
+    public get isInitializing(): boolean {
+        return this.now() === GameState.Initializing
+    }
+
+    public get isNormal(): boolean {
+        return this.now() === GameState.Normal
+    }
+
+    public get isAuto() {
+        return this.now() === GameState.Auto
+    }
+
+    public get isFast() {
+        return this.now() === GameState.Fast
+    }
+
+    public toNormal = () => this.now(GameState.Normal)
+
+    public toAuto = () => this.now(GameState.Auto)
+
+    public toFast = () => this.now(GameState.Fast)
+}
+
+export class StarNightStateStatic {
+    constructor(public readonly now: number) {}
+
+    public get isInitializing(): boolean {
+        return this.now === GameState.Initializing
+    }
+
+    public get isNormal(): boolean {
+        return this.now === GameState.Normal
+    }
+
+    public get isAuto() {
+        return this.now === GameState.Auto
+    }
+
+    public get isFast() {
+        return this.now === GameState.Fast
+    }
+}
+
 export class StarNightInstance {
+    // 宏表
+    public static Marcos: Macros = StarNight.Marcos
+    // 命令表
+    public static Commands: Commands = StarNight.Commands
     // 游戏实例事件
     public readonly GameEvents = new GameEvents()
     // 幕循环事件
@@ -87,13 +137,16 @@ export class StarNightInstance {
     // 游戏可见性,当游戏不可见时停止自动播放
     public readonly isGameVisible = StarNight.useReactive(true)
     // 游戏运行状态,从初始化状态进入普通/自动/快进三态转换
-    public readonly state = StarNight.useReactive(GameState.Init)
+    public readonly state = new StarNightState()
     // 游戏本地状态,用于存档/读档功能
     public readonly current = StarNight.useReactive<GameLocalData>({ index: 0 })
     // 游戏实例上下文,是除单幕上下文外的基本上下文数据
     public readonly context: GameContext
 
     constructor(params: GameConstructorParams) {
+        if (params.Marcos) StarNight.Marcos = params.Marcos
+        if (params.Commands) StarNight.Commands = params.Commands
+
         this.GameEvents.active.subscribe((visible) => this.isGameVisible(visible))
         this.GameEvents.suspend.subscribe(() => this.GameEvents.active.publish(false))
         this.GameEvents.resume.subscribe(() => this.GameEvents.active.publish(true))
@@ -134,7 +187,7 @@ export class StarNightInstance {
 StarNight.ActEvents.start.subscribe(async (context) => {
     const { state, onGameStop, instance } = context
     const { ClickEvents, ActEvents } = instance
-    if (state === GameState.Init || state === GameState.Fast) return
+    if (state.isInitializing || state.isFast) return
     const flag = new PromiseX<'Fast' | 'Stop'>()
     Promise.race([ClickEvents.onStep(), ClickEvents.onFast()]).then(() => flag.resolve('Fast'))
     Promise.race([ActEvents.onEnd(), onGameStop]).then(() => flag.resolve('Stop'))
@@ -153,15 +206,11 @@ async function ActLoop(this: StarNightInstance) {
         if (!this.isGameVisible()) await this.GameEvents.onActiveChange()
         // 幕循环进行到存档幕,游戏本地状态已恢复,发布ready事件,转换到普通运行状态
         if (this.current.index() === this.context.local.index) {
-            this.state(GameState.Normal)
+            this.state.toNormal()
             this.ActEvents.ready.publish(this.context)
             // 这时才应该允许状态转换,否则影响初始化
-            this.ClickEvents.auto.subscribe(() =>
-                this.state((state) => (state === GameState.Auto ? GameState.Normal : GameState.Auto))
-            )
-            this.ClickEvents.fast.subscribe(() =>
-                this.state((state) => (state === GameState.Fast ? GameState.Normal : GameState.Fast))
-            )
+            this.ClickEvents.auto.subscribe(() => (this.state.isAuto ? this.state.toNormal() : this.state.toAuto()))
+            this.ClickEvents.fast.subscribe(() => (this.state.isFast ? this.state.toNormal() : this.state.toFast()))
         }
         // 由幕循环维护已读幕,这一操作需要在ActStart之前完成,所以不能借助事件
         const range = RangeSet.fromRanges(this.context.global.readsegment())
@@ -169,9 +218,7 @@ async function ActLoop(this: StarNightInstance) {
         if (!this.isRead()) {
             this.context.global.readsegment(range.push(this.current.index()).getRanges())
             // 处理在未读文本处解除快进的设置项
-            if (this.state() === GameState.Fast && !this.context.config.fastforwardunread()) {
-                this.state(GameState.Normal)
-            }
+            if (this.state.isFast && !this.context.config.fastforwardunread()) this.state.toNormal()
         }
         // ActStart前的初始化工作
         const onActRush = this.ActEvents.onRush()
@@ -181,21 +228,22 @@ async function ActLoop(this: StarNightInstance) {
             end: StarNight.useReactive(false),
             state: StarNight.useReactive(undefined)
         } as CommandOutput
-        const context = { ...this.context, state: this.state(), output, onActRush, onGameStop }
-        if (this.state() === GameState.Init || this.state() === GameState.Fast) this.ActEvents.rush.publish(context)
+        const state = new StarNightStateStatic(this.state.now())
+        const context = { ...this.context, state, output, onActRush, onGameStop }
+        if (this.state.isInitializing || this.state.isFast) this.ActEvents.rush.publish(context)
         // ActStart
         this.ActEvents.start.publish(context)
         // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
         await fork.apply(context)(this.book.act(this.current.index()) as CommandEntities[])
         // ActEnd
         this.ActEvents.end.publish(context)
-        if (output.state() && this.state() !== GameState.Init) this.state(output.state()!)
+        if (output.state() && !this.state.isInitializing) this.state.now(output.state()!)
         // 等待过程受continue命令影响
         // eslint-disable-next-line no-empty
-        if (this.state() === GameState.Init || output.cont()) {
-        } else if (this.state() === GameState.Fast) {
+        if (this.state.isInitializing || output.cont()) {
+        } else if (this.state.isFast) {
             await delay(this.context.config.fastreadspeed())
-        } else if (this.state() === GameState.Auto) {
+        } else if (this.state.isAuto) {
             await delay(this.context.config.autoreadspeed())
         } else {
             await Promise.race([this.ClickEvents.onStep(), this.ClickEvents.onAuto(), this.ClickEvents.onFast()])
@@ -205,12 +253,12 @@ async function ActLoop(this: StarNightInstance) {
         const target = isString(jump) ? this.book.label(jump) : Number.isFinite(jump) ? jump : undefined
         this.current.index(target !== undefined ? target : this.current.index() + 1)
         // 游戏实例已销毁时退出,初始化时不判断以优化初始化速度
-        const isStop = this.state() !== GameState.Init && (await PromiseX.isSettled(onGameStop))
+        const isStop = !this.state.isInitializing && (await PromiseX.isSettled(onGameStop))
         if (isStop) return this.GameEvents.stop.publish(this.context)
         // 通过end命令退出 || 超过最后一幕自动退出
         const isEnd = output.end() || this.current.index() >= this.book.length()
         if (isEnd) return this.GameEvents.end.publish(this.context)
         // 没有因为某种原因退出才发布跳转事件
-        if (target !== undefined) this.ActEvents.jump.publish({ index: target })
+        if (target !== undefined) this.ActEvents.jump.publish(this.context)
     }
 }

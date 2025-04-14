@@ -13,18 +13,18 @@ import { run } from './utils/runGenerator'
 
 // 只在本幕内产生效果的命令,由此不需要初始化
 export function ActScope<T extends CommandArgs>(cmd: StandardCommand<T>): StandardCommand<T> {
-    return merge(cmd, { meta: { exclude: { [GameState.Init]: undefined } } })
+    return merge(cmd, { meta: { exclude: { [GameState.Initializing]: undefined } } })
 }
 // 只在执行过程中产生效果的命令,这样的命令应当也是ActScope的
 export function EffectScope<T extends CommandArgs>(cmd: StandardCommand<T>): StandardCommand<T> {
-    return merge(cmd, { meta: { exclude: { [GameState.Init]: undefined, [GameState.Fast]: undefined } } })
+    return merge(cmd, { meta: { exclude: { [GameState.Initializing]: undefined, [GameState.Fast]: undefined } } })
 }
 // 不产生任何效果的虚拟命令
 export function VirtualScope<T extends CommandArgs>(cmd: StandardCommand<T>): StandardCommand<T> {
     return merge(cmd, {
         meta: {
             exclude: {
-                [GameState.Init]: undefined,
+                [GameState.Initializing]: undefined,
                 [GameState.Fast]: undefined,
                 [GameState.Normal]: undefined,
                 [GameState.Auto]: undefined

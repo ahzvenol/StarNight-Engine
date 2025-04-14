@@ -64,7 +64,6 @@ export const text = ActScope(
     )
 )
 
-// 类型声明（已包含在 GameUIInternalData 中）
 declare module 'starnight' {
     interface GameUIInternalData {
         name: Reactive<string>

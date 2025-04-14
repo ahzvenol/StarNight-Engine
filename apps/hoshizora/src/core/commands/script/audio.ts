@@ -1,7 +1,7 @@
 import type { ExtendArgs } from 'starnight'
 import type { Howl, HowlOptions } from '@/lib/howler'
 import { delay, isUndefined } from 'es-toolkit'
-import { Dynamic, GameState, NonBlocking, StarNight } from 'starnight'
+import { Dynamic, NonBlocking, StarNight } from 'starnight'
 
 declare module 'starnight' {
     interface GameConfig {
@@ -47,7 +47,7 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
         function* ({ type, name = type, file, ...configs }) {
             // Clip的生命周期是幕,所以不用初始化
             if (
-                (state === GameState.Init || state === GameState.Fast) &&
+                (state.isInitializing || state.isFast) &&
                 (type === 'Clip' || (type === 'SE' && configs.loop !== true))
             ) {
                 return
@@ -58,7 +58,7 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
                 pool: 1,
                 src: file,
                 autoplay: true,
-                preload: state !== GameState.Init
+                preload: !state.isInitializing
             })
 
             audios.set(name, audio)
@@ -72,7 +72,7 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
                 })
             }
             // tag:自动模式需要对Clip计时,目前先打一个临时的补丁
-            if (type === 'Clip' && state === GameState.Auto) {
+            if (type === 'Clip' && state.isAuto) {
                 yield new Promise((res) => audio.once('end', res))
             }
         }

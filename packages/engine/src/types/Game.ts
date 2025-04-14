@@ -1,13 +1,14 @@
 import type { Reactive } from 'micro-reactive-wrapper'
-import type { StarNightInstance } from '@/StarNight'
+import type { StarNightInstance, StarNightStateStatic } from '@/StarNight'
 import type { AbstractGameBook } from '../Book'
-import type { CommandOutput, RuntimeCommandEntities, RuntimeCommandLike } from './Command'
+import type { CommandOutput, Commands, RuntimeCommandEntities, RuntimeCommandLike } from './Command'
+import type { Macros } from './Marco'
 
 export enum GameState {
-    Init,
-    Normal,
-    Fast,
-    Auto
+    Initializing = 0,
+    Normal = 1,
+    Fast = 2,
+    Auto = 3
 }
 
 export interface GameConfig {
@@ -45,6 +46,8 @@ export type GameConstructorParams = {
     global: Reactive<GameGlobalData>
     readonly local: GameLocalData
     ui: GameUIExternalData
+    Marcos?: Macros
+    Commands?: Commands
 }
 
 export type GameContext = {
@@ -55,7 +58,7 @@ export type GameContext = {
 } & Omit<GameConstructorParams, 'book'>
 
 export type GameRuntimeContext = {
-    readonly state: GameState
+    readonly state: StarNightStateStatic
     readonly output: CommandOutput
     readonly onActRush: Promise<GameRuntimeContext>
     readonly onGameStop: Promise<GameContext>
