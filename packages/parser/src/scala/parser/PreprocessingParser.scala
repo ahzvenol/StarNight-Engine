@@ -1,0 +1,26 @@
+package parser
+
+import scala.util.parsing.combinator.JavaTokenParsers
+
+object PreprocessingParser extends PreprocessingParser {
+  def parse(str: String): String =
+    println(parseAll(content, str))
+    parseAll(content, str).get
+  end parse
+}
+
+class PreprocessingParser extends JavaTokenParsers {
+  override def skipWhitespace = false
+
+  def sanitize(str: String): String =
+    str.split("\\R").mkString
+
+  def other: Parser[String] = s"""[^/"]+""".r ^^ sanitize
+
+  def comment: Parser[String] = "///.*".r ^^ (_ => "")
+
+  def string: Parser[String] =
+    """"([^"\x00-\x1F\x7F\\]|\\[\\/'"bfnrt]|\\u[a-fA-F0-9]{4})*""".r | """/([^/\x00-\x1F\x7F\\]|\\[\\/'"bfnrt]|\\u[a-fA-F0-9]{4})*/""".r
+
+  def content: Parser[String] = rep(other | comment | string) ^^ (_.mkString)
+}
