@@ -22,7 +22,7 @@ export function isMobile(): boolean {
     return isAndroid() || isIOS()
 }
 
-export function likeMobile(): boolean {
+export function isMobileLike(): boolean {
     return window.matchMedia('(hover: none)').matches
 }
 

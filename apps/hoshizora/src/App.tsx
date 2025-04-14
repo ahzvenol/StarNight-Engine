@@ -4,13 +4,13 @@ import { KeepAliveProvider } from 'solid-keep-alive'
 import { onStoreReady } from './store'
 import { Context } from './store/context'
 import UI from './ui/Hoshizora'
-import { isMobile, likeMobile } from './utils/checkEnv'
+import { isMobile, isMobileLike } from './utils/checkEnv'
 import { log } from './utils/logger'
 
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false
 
-if (isMobile() || likeMobile()) document.documentElement.classList.add('mobile')
+if (isMobile() || isMobileLike()) document.documentElement.classList.add('mobile')
 
 const [store] = createResource(() => onStoreReady)
 
