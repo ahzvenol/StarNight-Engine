@@ -52,15 +52,15 @@ export const showchoices = Blocking<{ index: number }>(
             const { current, local, global, state, config, ui, temp, output } = context
             const { choices, choicesstate } = ui
             choicesstate(SwitchState.Enabled)
-            const history = state.isInitializing ? local.choicehistory?.[++temp.choicepointer] : undefined
+            const history = state.isInitializing() ? local.choicehistory?.[++temp.choicepointer] : undefined
             const target = history ?? (await Promise.race(choices.map((e) => e.promise)))
-            const stopfastonchoice = config.stopfastonchoice() && state.isFast
+            const stopfastonchoice = config.stopfastonchoice() && state.isFast()
             Try.apply(() => {
                 const achievement = global.achievement
                 const i = choices.map((e) => e.target).findIndex((e) => e === target)
                 const last = achievement[1 << index]
                 if ((last() & (1 << 2)) === 0) {
-                    if (state.isFast || state.isInitializing) {
+                    if (state.isFast() || state.isInitializing()) {
                         last(Number((BigInt(last()) & ~BigInt(3)) | BigInt(1 << 2)) + 3)
                     } else {
                         last(Number((BigInt(last()) & ~BigInt(3)) | BigInt(1 << 2)) + i)

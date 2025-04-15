@@ -51,9 +51,9 @@ export const showchoices = Blocking(
             const { current, local, state, config, ui, temp, output } = context
             const { choices, choicesstate } = ui
             choicesstate(SwitchState.Enabled)
-            const history = state.isInitializing ? local.choicehistory?.[++temp.choicepointer] : undefined
+            const history = state.isInitializing() ? local.choicehistory?.[++temp.choicepointer] : undefined
             const target = history ?? (await Promise.race(choices.map((e) => e.promise)))
-            const stopfastonchoice = config.stopfastonchoice() && state.isFast
+            const stopfastonchoice = config.stopfastonchoice() && state.isFast()
             choicesstate(SwitchState.Disabled)
             current.choicehistory([...(current.choicehistory?.() || []), target])
             StarNight.SystemCommands.jump.apply(context)({ target })

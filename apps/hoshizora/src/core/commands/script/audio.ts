@@ -47,7 +47,7 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
         function* ({ type, name = type, file, ...configs }) {
             // Clip的生命周期是幕,所以不用初始化
             if (
-                (state.isInitializing || state.isFast) &&
+                (state.isInitializing() || state.isFast()) &&
                 (type === 'Clip' || (type === 'SE' && configs.loop !== true))
             ) {
                 return
@@ -58,7 +58,7 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
                 pool: 1,
                 src: file,
                 autoplay: true,
-                preload: !state.isInitializing
+                preload: !state.isInitializing()
             })
 
             audios.set(name, audio)
@@ -72,7 +72,7 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
                 })
             }
             // tag:自动模式需要对Clip计时,目前先打一个临时的补丁
-            if (type === 'Clip' && state.isAuto) {
+            if (type === 'Clip' && state.isAuto()) {
                 yield new Promise((res) => audio.once('end', res))
             }
         }

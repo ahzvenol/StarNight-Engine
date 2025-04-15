@@ -70,7 +70,7 @@ export const setimage = NonBlocking<SetImageCommandArgs>(
                 stage.appendChild(container)
             }
             if (!isUndefined(zIndex)) container.style.zIndex = zIndex.toString()
-            const attr = state.isInitializing ? 'data-src' : 'src'
+            const attr = state.isInitializing() ? 'data-src' : 'src'
             newBitmap.setAttribute(attr, file)
             anime.set(newBitmap, args)
             container.insertBefore(newBitmap, container.firstChild)
@@ -92,7 +92,7 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
             const container = stage.querySelector(`[data-name="${target}"]`)
             const tweenTarget = inherit ? container : container?.firstChild
             if (isNil(tweenTarget)) return
-            if (state.isInitializing) {
+            if (state.isInitializing()) {
                 anime.set(tweenTarget, args)
             } else {
                 // // 保证对同一个物体的缓动被顺序应用

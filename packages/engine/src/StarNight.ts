@@ -51,17 +51,17 @@ export class StarNight {
 
         StarNight.ActEvents.ready.subscribe(() => console.info(`Act:初始化完成`))
         StarNight.ActEvents.start.subscribe(({ state, current: { index } }) => {
-            if (state.isInitializing) {
+            if (state.isInitializing()) {
                 console.info(`Act:开始初始化第${index()}幕...`)
             } else {
                 console.info(`Act:开始执行第${index()}幕...`)
             }
         })
         StarNight.ActEvents.end.subscribe(({ state, current: { index } }) => {
-            if (!state.isInitializing) console.info(`Act:第${index()}幕执行结束`)
+            if (!state.isInitializing()) console.info(`Act:第${index()}幕执行结束`)
         })
         StarNight.ActEvents.rush.subscribe(({ state }) => {
-            if (!state.isInitializing) console.info('Act:执行单幕快进')
+            if (!state.isInitializing()) console.info('Act:执行单幕快进')
         })
         StarNight.ActEvents.jump.subscribe((target) => console.info(`Act:跳转到第${target}幕`))
 
@@ -74,21 +74,13 @@ export class StarNight {
 export class StarNightState {
     public readonly now = StarNight.useReactive(GameState.Initializing)
 
-    public get isInitializing(): boolean {
-        return this.now() === GameState.Initializing
-    }
+    public isInitializing = () => this.now() === GameState.Initializing
 
-    public get isNormal(): boolean {
-        return this.now() === GameState.Normal
-    }
+    public isNormal = () => this.now() === GameState.Normal
 
-    public get isAuto() {
-        return this.now() === GameState.Auto
-    }
+    public isAuto = () => this.now() === GameState.Auto
 
-    public get isFast() {
-        return this.now() === GameState.Fast
-    }
+    public isFast = () => this.now() === GameState.Fast
 
     public toNormal = () => this.now(GameState.Normal)
 
@@ -100,21 +92,13 @@ export class StarNightState {
 export class StarNightStateStatic {
     constructor(public readonly now: number) {}
 
-    public get isInitializing(): boolean {
-        return this.now === GameState.Initializing
-    }
+    public isInitializing = () => this.now === GameState.Initializing
 
-    public get isNormal(): boolean {
-        return this.now === GameState.Normal
-    }
+    public isNormal = () => this.now === GameState.Normal
 
-    public get isAuto() {
-        return this.now === GameState.Auto
-    }
+    public isAuto = () => this.now === GameState.Auto
 
-    public get isFast() {
-        return this.now === GameState.Fast
-    }
+    public isFast = () => this.now === GameState.Fast
 }
 
 export class StarNightInstance {
@@ -187,7 +171,7 @@ export class StarNightInstance {
 StarNight.ActEvents.start.subscribe(async (context) => {
     const { state, onGameStop, instance } = context
     const { ClickEvents, ActEvents } = instance
-    if (state.isInitializing || state.isFast) return
+    if (state.isInitializing() || state.isFast()) return
     const flag = new PromiseX<'Fast' | 'Stop'>()
     Promise.race([ClickEvents.onStep(), ClickEvents.onFast()]).then(() => flag.resolve('Fast'))
     Promise.race([ActEvents.onEnd(), onGameStop]).then(() => flag.resolve('Stop'))
@@ -209,8 +193,8 @@ async function ActLoop(this: StarNightInstance) {
             this.state.toNormal()
             this.ActEvents.ready.publish(this.context)
             // 这时才应该允许状态转换,否则影响初始化
-            this.ClickEvents.auto.subscribe(() => (this.state.isAuto ? this.state.toNormal() : this.state.toAuto()))
-            this.ClickEvents.fast.subscribe(() => (this.state.isFast ? this.state.toNormal() : this.state.toFast()))
+            this.ClickEvents.auto.subscribe(() => (this.state.isAuto() ? this.state.toNormal() : this.state.toAuto()))
+            this.ClickEvents.fast.subscribe(() => (this.state.isFast() ? this.state.toNormal() : this.state.toFast()))
         }
         // 由幕循环维护已读幕,这一操作需要在ActStart之前完成,所以不能借助事件
         const range = RangeSet.fromRanges(this.context.global.readsegment())
@@ -218,7 +202,7 @@ async function ActLoop(this: StarNightInstance) {
         if (!this.isRead()) {
             this.context.global.readsegment(range.push(this.current.index()).getRanges())
             // 处理在未读文本处解除快进的设置项
-            if (this.state.isFast && !this.context.config.fastforwardunread()) this.state.toNormal()
+            if (this.state.isFast() && !this.context.config.fastforwardunread()) this.state.toNormal()
         }
         // ActStart前的初始化工作
         const onActRush = this.ActEvents.onRush()
@@ -230,20 +214,20 @@ async function ActLoop(this: StarNightInstance) {
         } as CommandOutput
         const state = new StarNightStateStatic(this.state.now())
         const context = { ...this.context, state, output, onActRush, onGameStop }
-        if (this.state.isInitializing || this.state.isFast) this.ActEvents.rush.publish(context)
+        if (this.state.isInitializing() || this.state.isFast()) this.ActEvents.rush.publish(context)
         // ActStart
         this.ActEvents.start.publish(context)
         // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
         await fork.apply(context)(this.book.act(this.current.index()) as CommandEntities[])
         // ActEnd
         this.ActEvents.end.publish(context)
-        if (output.state() && !this.state.isInitializing) this.state.now(output.state()!)
+        if (output.state() && !this.state.isInitializing()) this.state.now(output.state()!)
         // 等待过程受continue命令影响
         // eslint-disable-next-line no-empty
-        if (this.state.isInitializing || output.cont()) {
-        } else if (this.state.isFast) {
+        if (this.state.isInitializing() || output.cont()) {
+        } else if (this.state.isFast()) {
             await delay(this.context.config.fastreadspeed())
-        } else if (this.state.isAuto) {
+        } else if (this.state.isAuto()) {
             await delay(this.context.config.autoreadspeed())
         } else {
             await Promise.race([this.ClickEvents.onStep(), this.ClickEvents.onAuto(), this.ClickEvents.onFast()])
@@ -253,7 +237,7 @@ async function ActLoop(this: StarNightInstance) {
         const target = isString(jump) ? this.book.label(jump) : Number.isFinite(jump) ? jump : undefined
         this.current.index(target !== undefined ? target : this.current.index() + 1)
         // 游戏实例已销毁时退出,初始化时不判断以优化初始化速度
-        const isStop = !this.state.isInitializing && (await PromiseX.isSettled(onGameStop))
+        const isStop = !this.state.isInitializing() && (await PromiseX.isSettled(onGameStop))
         if (isStop) return this.GameEvents.stop.publish(this.context)
         // 通过end命令退出 || 超过最后一幕自动退出
         const isEnd = output.end() || this.current.index() >= this.book.length()
