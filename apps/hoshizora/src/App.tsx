@@ -5,7 +5,7 @@ import { onStoreReady } from './store'
 import { Context } from './store/context'
 import UI from './ui/Hoshizora'
 import { isMobile, isMobileLike } from './utils/checkEnv'
-import { log } from './utils/logger'
+import { log } from './utils/Logger'
 
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false
