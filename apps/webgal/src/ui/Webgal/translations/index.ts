@@ -5,22 +5,30 @@ import { toMerged } from 'es-toolkit'
 import { useReactive } from 'micro-reactive-solid'
 import { createEffect, on } from 'solid-js'
 import { onStoreReady } from '@/store'
-import { log } from '@/utils/logger'
+import { log } from '@/utils/Logger'
 import { ChineseSimplified } from './ChineseSimplified'
+import { ChineseTraditional } from './ChineseTraditional'
 import { English } from './English'
+import { French } from './French'
+import { German } from './German'
 import { Japanese } from './Japanese'
 
 export const language = {
     'zh-CN': ChineseSimplified,
+    'zh-TW': ChineseTraditional,
     en: English,
-    jp: Japanese
+    jp: Japanese,
+    fr: French,
+    de: German
 }
 
-// 因为需要合并选择的语言和默认语言的翻译,所以对语言名称的描述不能写在翻译里
 export const description = {
-    'zh-CN': '中文',
+    'zh-CN': '简体中文',
     en: 'English',
-    jp: '日本語'
+    jp: '日本語',
+    fr: 'Français',
+    de: 'Deutsch',
+    'zh-TW': '繁體中文'
 }
 
 // 可选as Reactive<typeof language[keyof typeof language]>,这时类型系统可以检测出翻译的缺失并要求全部可选语言都具备对应值的翻译
