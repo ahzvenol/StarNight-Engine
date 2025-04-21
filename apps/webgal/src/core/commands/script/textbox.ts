@@ -15,12 +15,24 @@ export const textpreview = ActScope(
 )
 
 declare module 'starnight' {
+    interface GameLocalData {
+        namepreview?: string
+    }
+}
+
+export const namepreview = ActScope(
+    NonBlocking<{ name: string }>(({ current }) => ({ name }) => {
+        current.namepreview(name)
+    })
+)
+
+declare module 'starnight' {
     interface GameUIInternalData {
         iconstate: Reactive<SwitchState>
     }
 }
 
-StarNight.GameEvents.start.subscribe(({ ui }) => {
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.iconstate = StarNight.useReactive(SwitchState.Disabled)
 })
 
@@ -43,7 +55,7 @@ declare module 'starnight' {
     }
 }
 
-StarNight.GameEvents.start.subscribe(({ ui }) => {
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.text = StarNight.useReactive('')
 })
 
@@ -64,14 +76,13 @@ export const text = ActScope(
     )
 )
 
-// 类型声明（已包含在 GameUIInternalData 中）
 declare module 'starnight' {
     interface GameUIInternalData {
         name: Reactive<string>
     }
 }
 
-StarNight.GameEvents.start.subscribe(({ ui }) => {
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.name = StarNight.useReactive('')
 })
 
@@ -89,7 +100,7 @@ declare module 'starnight' {
     }
 }
 
-StarNight.GameEvents.start.subscribe(({ ui }) => {
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.textboxstate = StarNight.useReactive(SwitchState.Enabled)
 })
 

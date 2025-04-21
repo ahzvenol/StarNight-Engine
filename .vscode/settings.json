@@ -21,9 +21,21 @@
         "source.fixAll": "explicit",
         "source.fixAll.stylelint": "explicit"
     },
-    "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+    ],
     "css.validate": false,
     "less.validate": false,
     "scss.validate": false,
-    "stylelint.validate": ["css", "less", "postcss", "scss", "sass"]
+    "stylelint.validate": [
+        "css",
+        "less",
+        "postcss",
+        "scss",
+        "sass"
+    ],
+    "typescript.tsdk": "node_modules\\typescript\\lib"
 }

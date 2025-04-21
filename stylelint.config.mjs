@@ -33,7 +33,8 @@ export default {
         'selector-class-pattern': null, // 强制选择器类名的格式
         'value-no-vendor-prefix': null, // 关闭 vendor-prefix (为了解决多行省略 -webkit-box)
         'no-descending-specificity': null, // 不允许较低特异性的选择器出现在覆盖较高特异性的选择器
-        'selector-pseudo-class-no-unknown': null // stylelint无法正确识别:global()选择器
+        'selector-pseudo-class-no-unknown': null, // stylelint无法正确识别:global()选择器
+        'property-no-vendor-prefix': null // 允许-webkit-等前缀
     },
     ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts']
 }

@@ -5,6 +5,8 @@ import { isDevelopment, isMobile, isNative } from '@/utils/checkEnv'
 
 export interface ExtraConfig {
     fullscreen: boolean
+    textboxfont: '思源宋体' | 'LXGW' | 'WebgalUI'
+    textboxfontsize: '155%' | '205%' | '230%'
     textboxopacity: number
     language: string
     bgmvolume: number
@@ -39,7 +41,9 @@ const system = {
 
 const config = {
     fullscreen: isMobile() ? true : false,
-    textboxopacity: 0.3,
+    textboxfont: 'WebgalUI',
+    textboxfontsize: '155%',
+    textboxopacity: 0.75,
     language: 'zh-CN',
     interruptclip: true,
     fastforwardunread: true,
@@ -58,7 +62,7 @@ const config = {
 
 const global = { unlock: [], readsegment: [], achievement: {} } as SaveGlobalData
 
-const local = {} as Record<number, SaveLocalData> & { [-1]?: GameLocalData }
+const local = {} as Record<number, SaveLocalData> & { [0]?: GameLocalData } & { [-1]?: GameLocalData }
 
 const extra = {}
 

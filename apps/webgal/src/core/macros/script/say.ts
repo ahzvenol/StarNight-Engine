@@ -9,6 +9,7 @@ export const say: MacroFunction<SayCommandArgs> = ({ text, name, file }) => {
             args: [
                 file !== undefined ? { key: 'audio', args: { type: 'Clip', file } } : undefined,
                 { key: 'textpreview', args: { text } },
+                { key: 'namepreview', args: { name } },
                 name !== undefined ? { key: 'name', args: { name } } : undefined,
                 file !== undefined
                     ? { key: 'backlog', args: { text, name, file: `./static/AudioClip/${file}.flac` } }

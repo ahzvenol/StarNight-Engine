@@ -172,8 +172,8 @@ StarNight.ActEvents.start.subscribe(async (context) => {
     const { state, onGameStop, instance } = context
     const { ClickEvents, ActEvents } = instance
     if (state.isInitializing() || state.isFast()) return
-    const flag = new PromiseX<'Fast' | 'Stop'>()
-    Promise.race([ClickEvents.onStep(), ClickEvents.onFast()]).then(() => flag.resolve('Fast'))
+    const flag = new PromiseX<'Rush' | 'Stop'>()
+    Promise.race([ClickEvents.onStep(), ClickEvents.onFast()]).then(() => flag.resolve('Rush'))
     Promise.race([ActEvents.onEnd(), onGameStop]).then(() => flag.resolve('Stop'))
     if ((await flag) === 'Stop') return
     ActEvents.rush.publish(context)

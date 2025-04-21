@@ -1,10 +1,10 @@
 import { Macro } from 'starnight'
-import { audio, closeaudio } from './script/hoshizora/audio'
-import { bg, sprite } from './script/hoshizora/image'
-import { say } from './script/hoshizora/say'
-import { tweenimage } from './script/hoshizora/tween'
-import { video } from './script/hoshizora/video'
-import { wait } from './script/hoshizora/wait'
+import { audio, closeaudio } from './script/audio'
+import { bg, sprite } from './script/image'
+import { say } from './script/say'
+import { tweenimage } from './script/tween'
+import { video } from './script/video'
+import { wait } from './script/wait'
 
 // 宏存在顺序依赖
 // 逐个应用宏,单个宏被应用过后就不会再次应用

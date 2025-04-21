@@ -5,6 +5,8 @@
     "description": "",
     "packageManager": "pnpm@10.6.1",
     "scripts": {
+        "hoshizora:dev": "pnpm --filter hoshizora dev",
+        "webgal:dev": "pnpm --filter webgal dev",
         "core:build": "pnpm --filter starnight build",
         "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
         "lint:prettier": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\"",

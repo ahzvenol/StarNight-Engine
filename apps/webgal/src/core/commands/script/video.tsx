@@ -22,8 +22,8 @@ StarNight.GameEvents.resume.subscribe(({ ui }) => {
 })
 
 export type VideoCommandArgs = { file: string }
-// 作为Blocking命令的原因是快进时需要阻塞
 
+// 作为Blocking命令的原因是快进时需要阻塞
 export const video = ActScope(
     Blocking<VideoCommandArgs>((context) => async ({ file }) => {
         const { config, ui } = context

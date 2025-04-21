@@ -1,5 +1,6 @@
 import type { Reactive } from 'starnight'
 import { DynamicBlocking, NonBlocking, StarNight } from 'starnight'
+import { PromiseX } from '@/core/PromiseX'
 import { SwitchState } from '@/core/SwitchState'
 
 declare module 'starnight' {
@@ -17,9 +18,22 @@ export const click = NonBlocking<{ enable: boolean }>(({ ui: { clickstate } }) =
     else clickstate(SwitchState.Disabled)
 })
 
+declare module 'starnight' {
+    interface GameUIInternalData {
+        check: Reactive<null | Function0<void>>
+    }
+}
+
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
+    ui.check = StarNight.useReactive(null)
+})
+
 export const check = DynamicBlocking(
-    ({ instance: { ClickEvents } }) =>
+    ({ ui: { check } }) =>
         function* () {
-            yield ClickEvents.onStep()
+            const promise = new PromiseX<void>()
+            check(() => () => promise.resolve())
+            yield promise
+            check(() => null)
         }
 )

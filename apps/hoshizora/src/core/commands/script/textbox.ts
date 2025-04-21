@@ -20,7 +20,7 @@ declare module 'starnight' {
     }
 }
 
-StarNight.GameEvents.start.subscribe(({ ui }) => {
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.iconstate = StarNight.useReactive(SwitchState.Disabled)
 })
 
@@ -43,7 +43,7 @@ declare module 'starnight' {
     }
 }
 
-StarNight.GameEvents.start.subscribe(({ ui }) => {
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.text = StarNight.useReactive('')
 })
 
@@ -70,7 +70,7 @@ declare module 'starnight' {
     }
 }
 
-StarNight.GameEvents.start.subscribe(({ ui }) => {
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.name = StarNight.useReactive('')
 })
 
@@ -88,7 +88,7 @@ declare module 'starnight' {
     }
 }
 
-StarNight.GameEvents.start.subscribe(({ ui }) => {
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.textboxstate = StarNight.useReactive(SwitchState.Enabled)
 })
 
