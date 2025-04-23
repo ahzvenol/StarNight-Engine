@@ -59,7 +59,7 @@ const HowlC: Component<HowlOptions> = (props) => {
     const howl = createMemo(() => Howler(props))
 
     useEventListener('visibilitychange', () => (document.visibilityState === 'hidden' ? howl().pause() : howl().play()))
-q@q1q@q1
+
     createEffect(
         on(
             howl,
