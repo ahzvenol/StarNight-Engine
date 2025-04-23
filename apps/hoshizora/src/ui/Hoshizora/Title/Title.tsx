@@ -20,7 +20,7 @@ createEffect(
         () => {
             if (AudioMutex() !== AudioIds.Title) audio.stop()
         },
-        { defer: false }
+        { defer: true }
     )
 )
 
