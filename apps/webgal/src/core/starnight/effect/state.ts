@@ -24,21 +24,23 @@ createEffect(
     on(
         router.active,
         (now, prev) => {
-            // 返回标题页时暂停游戏,回到标题页时恢复
-            if (now === Pages.Title) {
-                starnight()?.suspend()
-            } else if (now === Pages.Game) {
-                starnight()?.resume()
-                // 在游戏页面离开标签页时暂停游戏,回到标签页时恢复
-                useEventListener('visibilitychange', function () {
-                    if (document.visibilityState === 'hidden') {
-                        starnight()?.suspend()
-                    } else if (document.visibilityState === 'visible') {
-                        starnight()?.resume()
-                    }
-                })
-            } else if (prev === Pages.Game) {
-                handleAutoAndFast()
+            if (starnight()) {
+                // 返回标题页时暂停游戏,回到标题页时恢复
+                if (now === Pages.Title) {
+                    starnight().suspend()
+                } else if (now === Pages.Game) {
+                    starnight().resume()
+                    // 在游戏页面离开标签页时暂停游戏,回到标签页时恢复
+                    useEventListener('visibilitychange', function () {
+                        if (document.visibilityState === 'hidden') {
+                            starnight().suspend()
+                        } else if (document.visibilityState === 'visible') {
+                            starnight().resume()
+                        }
+                    })
+                } else if (prev === Pages.Game) {
+                    handleAutoAndFast()
+                }
             }
         },
         { defer: true }

@@ -35,12 +35,9 @@ export const description = {
 // 目前采用的策略是以默认语言为最大集合,合并选择的语言和默认语言的翻译,通过默认语言补全翻译缺失的值
 export const translation = useReactive({}) as Reactive<(typeof language)['zh-CN']>
 
-// 通过在修改lang前判断lang是否真正修改减少视图渲染,同时需要贯彻"只在使用响应式变量的地方调用它"的原则
-// 否则,无论是计算属性,还是间接赋值,每次修改lang都会使整个子组件树更新
 onStoreReady.then((store) => {
     const lang = store.config.language as Reactive<keyof typeof language>
     const defaultLang = lang() as 'zh-CN'
-    // tag:最新版本好像这里判不判断都没啥动静了,都不会重复渲染
     createEffect(
         on(lang as Accessor<UnwrapReactive<typeof lang>>, (now, prev) => {
             if (now !== prev) {
