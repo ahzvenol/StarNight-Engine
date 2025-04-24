@@ -15,9 +15,7 @@ target/
 .env.production.local
 .env.local
 
-public/static/
-
-public/
+static/
 
 stats.html
 
