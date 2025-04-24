@@ -8,6 +8,8 @@ import { log } from '@/utils/Logger'
 import { CustomDefaultStore } from './custom'
 import { SystemDefaultStore } from './default'
 
+export const store = useReactive<Store>(null as unknown as Store)
+
 async function initializeStore() {
     localforage.config({ name: (await CustomDefaultStore()).system.key })
 
@@ -16,7 +18,7 @@ async function initializeStore() {
     const local = (await localforage.getItem<Store['local'] | null>('local')) || {}
     const extra = (await localforage.getItem<Store['extra'] | null>('extra')) || {}
 
-    const store = useReactive(toMerged(SystemDefaultStore(), { config, global, local, extra }))
+    store(toMerged(SystemDefaultStore(), { config, global, local, extra }))
 
     // 自动同步本地存储
     Object.keys(store()).forEach((key) => {
