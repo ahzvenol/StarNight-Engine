@@ -124,12 +124,12 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
 export type CloseImageCommandArgs = XOR<{ target: string }, { exclude?: string }>
 
 export const closeimage = NonBlocking<CloseImageCommandArgs>(({ ui: { stage } }) => ({ target, exclude }) => {
-    for (const e of stage.children) {
+    Array.from(stage.children).forEach((e) => {
         const condition = isUndefined(target)
             ? e.getAttribute('data-name') !== exclude
             : e.getAttribute('data-name') === target
         if (condition) e.remove()
-    }
+    })
 })
 
 export type ShakePunchCommandArgs = { target?: string; x?: number; y?: number; duration: number; iteration?: number }
