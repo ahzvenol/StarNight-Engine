@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js'
-import { ui } from '@/store/starnight'
 import Scale from '@/core/ui/Scale'
+import { ui } from '@/store/starnight'
 import styles from './Stage.module.scss'
 
 export const Stage: Component = () => {

@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
+import { Content } from '@/core/ui/Elements'
 import { store } from '@/store'
 import { ui } from '@/store/starnight'
-import { Content } from '@/core/ui/Elements'
 import { useEventListener } from '@/utils/solid/useEventListener'
 import styles from './Video.module.scss'
 
