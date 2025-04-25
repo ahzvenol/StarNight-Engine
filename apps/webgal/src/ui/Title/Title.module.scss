@@ -1,0 +1,70 @@
+.Title_main {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.Title_button_list {
+    position: absolute;
+    left: 0;
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-width: 25%;
+    height: 100%;
+    padding-left: 120px;
+    transition: background 0.75s;
+}
+
+.Title_button {
+    flex: 0 1 auto;
+    margin: 20px 0;
+    padding: 1em 2em;
+    font-weight: bold;
+    text-align: center;
+    background: rgb(255 255 255 / 15%);
+    background: linear-gradient(to right, rgb(0 0 0 / 30%), rgb(0 0 0 / 10%));
+    border-radius: 4px;
+    transform: skewX(-10deg);
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    transition: all 0.33s;
+
+    @media (hover: hover) {
+        &:hover {
+            padding: 1em 6em 1em 3em;
+            text-shadow: 0 0 10px rgb(255 255 255 / 100%);
+        }
+    }
+}
+
+.Title_button_text {
+    padding: 0 0.5em;
+    color: transparent;
+    font-size: 200%;
+    font-family:
+        WebgalUI,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        'Fira Sans',
+        'Droid Sans',
+        'Helvetica Neue',
+        sans-serif;
+    letter-spacing: 0.15em;
+    background: linear-gradient(135deg, #fdfbfb 0%, #dcddde 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.Title_backup_background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #fdfbfb 0%, #dcddde 100%);
+}

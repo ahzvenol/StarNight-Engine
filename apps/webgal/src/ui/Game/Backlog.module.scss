@@ -1,0 +1,171 @@
+.Game_Backlog_container {
+    position: absolute;
+    top: 0;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 2em 0;
+    font-family: '思源宋体', serif;
+    background: rgb(0 0 0 / 70%);
+}
+
+.Game_Backlog_top {
+    display: flex;
+    height: 10%;
+    padding: 0 0 0 1em;
+}
+
+.Game_Backlog_top_title {
+    height: 100%;
+    color: transparent;
+    font-weight: bold;
+    font-size: 360%;
+    line-height: 100%;
+    background: linear-gradient(
+        150deg,
+        rgb(255 255 255 / 100%) 0%,
+        rgb(255 255 255 / 100%) 35%,
+        rgb(165 212 228 / 100%) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.Game_Backlog_top_icon {
+    padding: 0.6em 0.6em 0;
+    border-radius: 1000px;
+    transform: translate(0, -13px);
+    cursor: pointer;
+
+    @media (hover: hover) {
+        &:hover {
+            background: rgb(255 255 255 / 25%);
+            animation: backlog-icon-softin 0.25s ease-out forwards;
+        }
+    }
+}
+
+.Game_Backlog_content {
+    position: absolute;
+    box-sizing: border-box;
+    width: 100%;
+    height: 80%;
+    padding: 1em 10em;
+    overflow: hidden;
+    font-weight: normal;
+
+    > * {
+        display: flex;
+        flex-direction: column-reverse;
+        min-height: 100%;
+    }
+}
+
+.Game_Backlog_item {
+    display: flex;
+    width: 100%;
+    margin: 1.25em 0 0;
+    color: white;
+    font-size: 165%;
+    opacity: 0;
+    animation: backlog-item-in 0.5s ease-out forwards;
+}
+
+.Game_Backlog_item_layout_1 {
+    display: flex;
+    flex-flow: row;
+    align-items: flex-start;
+    width: 30%;
+}
+
+.Game_Backlog_item_layout_2 {
+    box-sizing: border-box;
+    width: 82.5%;
+    padding: 0.2em 0 0 1em;
+    font-size: 115%;
+    letter-spacing: 0.05em;
+}
+
+.Game_Backlog_item_clip,
+.Game_Backlog_item_back {
+    display: flex;
+    margin: 0 0 0 0.5em;
+    padding: 0.01em 0.75em 0;
+    background: rgb(255 255 255 / 7.5%);
+    border-radius: 7px;
+    cursor: pointer;
+
+    @media (hover: hover) {
+        &:hover {
+            background: rgb(255 255 255 / 25%);
+        }
+    }
+}
+
+.Game_Backlog_item_name {
+    box-sizing: border-box;
+    width: 30%;
+    margin: 0 0 0 auto;
+    padding: 0.2em 0.5em;
+    color: transparent;
+    font-weight: bold;
+    font-size: 115%;
+    letter-spacing: 0.1em;
+    text-align: left;
+    overflow-wrap: break-word;
+    background: linear-gradient(
+        150deg,
+        rgb(255 255 255 / 100%) 0%,
+        rgb(255 255 255 / 100%) 35%,
+        rgb(165 212 228 / 100%) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    border-radius: 7px;
+}
+
+.Game_Backlog_item_text {
+    box-sizing: border-box;
+}
+
+.Game_Backlog_Scrollbar_track {
+    position: absolute;
+    top: 13%;
+    right: 0;
+    width: 8px;
+    height: 80%;
+    background: rgb(255 255 255 / 20%);
+    border-radius: 10px;
+    -webkit-box-shadow: 0 0 10px rgb(255 255 255 / 20%);
+    box-shadow: 0 0 10px rgb(255 255 255 / 20%);
+}
+
+.Game_Backlog_Scrollbar_thumb {
+    width: 100%;
+    background: rgb(255 255 255 / 50%);
+    border-radius: 10px;
+    -webkit-box-shadow: 0 0 10px rgb(0 0 0 / 15%);
+    box-shadow: 0 0 10px rgb(0 0 0 / 15%);
+}
+
+@keyframes backlog-icon-softin {
+    0% {
+        background: rgb(255 255 255 / 0%);
+    }
+
+    100% {
+        background: rgb(255 255 255 / 25%);
+    }
+}
+
+@keyframes backlog-item-in {
+    0% {
+        transform: scale(1.05, 1.05) translate(-15px, 10px) rotateX(-5deg) rotateY(-5deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1, 1) translate(0, 0);
+        opacity: 1;
+    }
+}

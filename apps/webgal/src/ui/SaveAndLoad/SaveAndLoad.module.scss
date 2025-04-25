@@ -1,0 +1,235 @@
+.Save_Load_main {
+    position: absolute;
+    width: 100%;
+    height: 90%;
+    cursor: default;
+}
+
+.Save_Load_top {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 10%;
+    animation: elements-in ease-out 1s forwards;
+}
+
+.Save_Load_title {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    z-index: -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: auto;
+    min-width: 350px;
+    font-size: 500%;
+    font-family: '思源宋体', serif;
+    letter-spacing: 0.1em;
+    transform: translateY(-10px);
+    opacity: 0.2;
+}
+
+.Save_title_text {
+    color: transparent;
+    font-weight: bold;
+    text-shadow: 2px 2px 15px rgb(255 255 255 / 50%);
+    background: linear-gradient(135deg, #77428d 0%, #b28fce 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.Load_title_text {
+    color: transparent;
+    font-weight: bold;
+    text-shadow: 2px 2px 15px rgb(255 255 255 / 50%);
+    background: linear-gradient(135deg, #005caf 0%, #2ea9df 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.Save_Load_top_buttonList {
+    display: flex;
+    height: 100%;
+}
+
+.Save_Load_top_button {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    width: 2.05em;
+    color: rgb(0 0 0 / 50%);
+    font-size: 200%;
+    text-align: center;
+    border-bottom: 4px solid rgb(0 0 0 / 0%);
+    cursor: pointer;
+    transition:
+        background-color 0.7s,
+        border-bottom-width 0.7s;
+
+    &:first-child > div {
+        border-left: 2px solid rgb(0 0 0 / 0%);
+    }
+}
+
+.Save_Load_top_button_text {
+    width: 100%;
+    padding: 0 0 3px;
+    text-align: center;
+    border-left: 2px solid rgb(0 0 0 / 10%);
+}
+
+.Save_Load_top_button_active {
+    color: #77428d;
+    font-weight: bold;
+    background-color: rgb(119 66 141 / 5%);
+    border-bottom: 4px solid #77428d;
+}
+
+@media (hover: hover) {
+    .Save_Load_top_button:hover {
+        color: #77428d;
+        font-weight: bold;
+        border-bottom: 4px solid #77428d;
+    }
+}
+
+.Load_top_button_active {
+    color: #005caf;
+    font-weight: bold;
+    background-color: rgb(0 92 175 / 10%);
+    border-bottom: 5px solid #005caf;
+}
+
+@media (hover: hover) {
+    .Load_top_button:hover {
+        color: #005caf;
+        font-weight: bold;
+        border-bottom: 5px solid #005caf;
+    }
+}
+
+.Save_Load_content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 90%;
+}
+
+.Save_Load_content_element {
+    width: 17.5%;
+    height: 45%;
+    overflow: hidden;
+    background: linear-gradient(-45deg, rgb(0 0 0 / 5%), rgb(0 0 0 / 7.5%));
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition:
+        transform 0.25s,
+        box-shadow 0.25s;
+    animation:
+        elements-in 1s ease-out forwards,
+        elements-in-transform 1s ease-out;
+
+    @media (hover: hover) {
+        &:hover {
+            transform: scale(1.05, 1.05) translate(-0.2em, -0.2em);
+        }
+    }
+}
+
+.Save_Load_content_element_top {
+    display: flex;
+    width: 100%;
+    height: 12%;
+    font-family: '思源宋体', serif;
+}
+
+.Save_Load_content_element_top_index {
+    width: 20%;
+    height: 100%;
+    color: rgb(255 255 255 / 100%);
+    font-size: 155%;
+    text-align: center;
+    background-color: #b28fce;
+}
+
+.Load_content_element_top_index {
+    background-color: #51a8dd;
+}
+
+.Save_Load_content_element_top_date {
+    width: 80%;
+    height: 100%;
+    padding: 0.425em 0 0 0.5em;
+    color: rgb(255 255 255 / 100%);
+    font-size: 115%;
+    font-family: WebgalUI, serif;
+    letter-spacing: 0.1em;
+    background-color: #77428d;
+}
+
+.Load_content_element_top_date {
+    background-color: #005caf;
+}
+
+.Save_Load_content_text {
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    height: 40%;
+    color: #373c38;
+    font-size: 120%;
+    font-family: WebgalUI, sans-serif;
+    letter-spacing: 0.05em;
+    background: linear-gradient(-45deg, rgb(255 255 255 / 75%) 0%, rgb(255 255 255 / 100%) 100%);
+}
+
+.Save_Load_content_text_padding {
+    padding: 0.2em 0.75em;
+}
+
+.Save_Load_content_name {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.35em 0.8em 0.25em;
+    color: #77428d;
+    font-weight: bold;
+    border-bottom: 1px solid rgb(0 0 0 / 10%);
+}
+
+.Load_content_name {
+    color: #005caf;
+}
+
+.Save_Load_content_image {
+    position: relative;
+    width: 100%;
+    height: 48%;
+    background-size: cover;
+}
+
+@keyframes elements-in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes elements-in-transform {
+    0% {
+        transform: scale(1.05, 1.05) translate(-25px, -20px) rotateY(15deg) rotateX(-15deg);
+    }
+
+    100% {
+        transform: scale(1, 1) translate(0, 0);
+    }
+}

@@ -1,0 +1,48 @@
+.Game_Choice_container {
+    position: absolute;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: rgb(0 0 0 / 5%);
+}
+
+.Game_Choice_item,
+.Game_Choice_item_disabled {
+    width: 50%;
+    margin: 0.25em 0;
+    padding: 0.25em 1em;
+    font-size: 265%;
+    font-family: WebgalUI, serif;
+    text-align: center;
+    border: 3px solid rgb(0 0 0 / 0%);
+    border-radius: 4px;
+    box-shadow: 0 0 25px rgb(0 0 0 / 25%);
+    transition:
+        background-color 0.5s,
+        border 0.5s,
+        font-weight 0.5s,
+        box-shadow 0.5s;
+}
+
+.Game_Choice_item {
+    color: #8e354a;
+    background: rgb(255 255 255 / 65%);
+    cursor: pointer;
+
+    @media (hover: hover) {
+        &:hover {
+            background: rgb(255 255 255 / 90%);
+            border: 3px solid #8e354a;
+            box-shadow: 0 0 25px rgb(0 0 0 / 35%);
+        }
+    }
+}
+
+.Game_Choice_item_disabled {
+    color: rgb(142 53 74 / 50%);
+    background: rgb(255 255 255 / 50%);
+    cursor: not-allowed;
+}

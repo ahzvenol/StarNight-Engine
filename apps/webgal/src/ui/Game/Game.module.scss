@@ -1,0 +1,34 @@
+.Game_mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.Game_Backlog_in {
+    animation: backlog-soft-in 0.7s ease-out forwards;
+}
+
+.Game_Backlog_out {
+    background: rgb(0 0 0 / 70%);
+    animation: backlog-soft-out 0.7s ease-out forwards;
+}
+
+@keyframes backlog-soft-in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes backlog-soft-out {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
