@@ -73,7 +73,7 @@ export const GameRoot: Component = () => {
             <Show when={starnight} keyed>
                 <Game />
             </Show>
-            <Content onContextMenu={stopPropagation(() => GUIGameRootState('Game'))}>
+            <Content ref={stopPropagation('contextmenu')} onContextMenu={() => GUIGameRootState('Game')}>
                 <Show when={['Config', 'Save', 'Load'].includes(GUIGameRootState())}>
                     <Menu>
                         <Show when={GUIGameRootState() === 'Config'}>

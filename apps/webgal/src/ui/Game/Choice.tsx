@@ -7,7 +7,7 @@ import styles from './Choice.module.scss'
 
 export const Choice: Component = () => {
     return (
-        <div class={styles.Game_Choice_container} onClick={stopPropagation}>
+        <div ref={stopPropagation('click')} class={styles.Game_Choice_container}>
             <For each={ui().choices}>
                 {(choice) => (
                     <div

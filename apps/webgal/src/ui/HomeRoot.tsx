@@ -24,7 +24,7 @@ export const HomeRoot: Component = () => {
     return (
         <>
             <Title />
-            <Content onContextMenu={stopPropagation(() => GUIHomeRootState('Title'))}>
+            <Content ref={stopPropagation('contextmenu')} onContextMenu={() => GUIHomeRootState('Title')}>
                 <Show when={['Config', 'Save', 'Load'].includes(GUIHomeRootState())}>
                     <Menu>
                         <Show when={GUIHomeRootState() === 'Config'}>

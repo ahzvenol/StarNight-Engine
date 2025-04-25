@@ -14,7 +14,10 @@ import styles from './Backlog.module.scss'
 export const Backlog: Component = () => {
     const t = translation.gaming
     return (
-        <div class={styles.Game_Backlog_container} onContextMenu={stopPropagation(() => GUIGameRootState('Game'))}>
+        <div
+            ref={stopPropagation('contextmenu')}
+            class={styles.Game_Backlog_container}
+            onContextMenu={() => GUIGameRootState('Game')}>
             <div ref={useSoundEffect('Click', 'Enter')} class={styles.Game_Backlog_top}>
                 <CloseSmall
                     class={styles.Game_Backlog_top_icon}
