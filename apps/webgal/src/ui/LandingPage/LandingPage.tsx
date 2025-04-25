@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js'
 import { useSignal } from 'micro-reactive-solid'
-import { GUIRootState } from '../Root/Root'
+import { GUIRootState } from '../GUIRoot'
 import styles from './LandingPage.module.scss'
 
 const LandingPage: Component = () => {
