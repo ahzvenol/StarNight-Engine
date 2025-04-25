@@ -104,8 +104,6 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.textboxstate = StarNight.useReactive(SwitchState.Enabled)
 })
 
-StarNight.ActEvents.start.subscribe(({ ui }) => ui.textboxstate(SwitchState.Enabled))
-
 export const textbox = ActScope(
     NonBlocking<{ enable: boolean }>(({ ui: { textboxstate } }) => ({ enable }) => {
         if (enable) textboxstate(SwitchState.Enabled)

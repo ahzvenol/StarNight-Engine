@@ -5,7 +5,6 @@ import { Converter, GameBook, StarNight } from 'starnight'
 import { commands } from '@/core/commands'
 import { macros } from '@/core/macros'
 import { resource } from '@/utils/request'
-import '../core/effect/preload'
 
 Object.assign(StarNight.Commands, commands)
 

@@ -1,9 +1,8 @@
 import type { Howl, HowlConstructor, HowlOptions } from '@/lib/howler'
 import { useSignal } from 'micro-reactive-solid'
-import { Component, createEffect, createMemo, on } from 'solid-js'
+import { createEffect } from 'solid-js'
 import { HowlerInstance } from '@/lib/howler'
 import { onStoreReady } from '@/store'
-import { useEventListener } from '@/utils/solid/useEventListener'
 
 export enum AudioIds {
     Title,
@@ -54,22 +53,3 @@ onStoreReady.then(({ config: { globalvolume, bgmvolume, sevolume, clipvolume, ui
     createEffect(() => ClipGlobal.volume(globalvolume() * clipvolume()))
     createEffect(() => UISEGlobal.volume(globalvolume() * uisevolume()))
 })
-
-const HowlC: Component<HowlOptions> = (props) => {
-    const howl = createMemo(() => Howler(props))
-
-    useEventListener('visibilitychange', () => (document.visibilityState === 'hidden' ? howl().pause() : howl().play()))
-
-    createEffect(
-        on(
-            howl,
-            (now, prev) => {
-                prev?.unload()
-                now.play()
-            },
-            { defer: true }
-        )
-    )
-
-    return null
-}
