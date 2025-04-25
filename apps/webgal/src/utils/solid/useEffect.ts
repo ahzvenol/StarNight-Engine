@@ -1,7 +1,7 @@
 import type { EffectFunction, EffectOptions } from 'solid-js'
 import { createEffect, createRoot, onCleanup } from 'solid-js'
 
-// 可以主动解除监听的createEffect,解除操作对micro-reactive创建的变量无效
+// 可以主动解除监听的createEffect
 export function useEffect<Next>(fn: EffectFunction<undefined | NoInfer<Next>, Next>): () => void
 export function useEffect<Next, Init = Next>(
     fn: EffectFunction<Init | Next, Next>,

@@ -1,17 +1,7 @@
 import type { Howl, HowlConstructor, HowlOptions } from '@/lib/howler'
-import { useSignal } from 'micro-reactive-solid'
 import { createEffect } from 'solid-js'
 import { HowlerInstance } from '@/lib/howler'
 import { onStoreReady } from '@/store'
-
-export enum AudioIds {
-    Title,
-    GalleryAudio,
-    GalleryVideo,
-    Game
-}
-
-export const AudioMutex = useSignal<AudioIds>(AudioIds.Title)
 
 function suspendWhenDocumentHidden(audio: Howl) {
     let wasPlaying = false

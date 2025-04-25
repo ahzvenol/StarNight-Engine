@@ -228,9 +228,6 @@ importers:
       solid-js:
         specifier: ^1.9.5
         version: 1.9.5
-      solid-keep-alive:
-        specifier: ^0.2.3
-        version: 0.2.3(solid-js@1.9.5)
       solid-styled:
         specifier: ^0.9.0
         version: 0.9.0(solid-js@1.9.5)
@@ -9548,10 +9545,6 @@ snapshots:
   solid-keep-alive@0.2.3(solid-js@1.9.4):
     dependencies:
       solid-js: 1.9.4
-
-  solid-keep-alive@0.2.3(solid-js@1.9.5):
-    dependencies:
-      solid-js: 1.9.5
 
   solid-refresh@0.6.3(solid-js@1.9.4):
     dependencies:
