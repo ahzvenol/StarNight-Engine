@@ -4,7 +4,7 @@ import mouse_enter from '@/assets/mouse-enter.mp3'
 import page_flip_1 from '@/assets/page-flip-1.mp3'
 import switch_1 from '@/assets/switch-1.mp3'
 import { useEventListener } from '@/utils/solid/useEventListener'
-import { UISE } from './Audio'
+import { UISE } from '../store/audio'
 
 const SEEnter = UISE({ src: mouse_enter })
 const SEClick = UISE({ src: click_se })
