@@ -5,17 +5,17 @@ export const audio: MacroFunction<SetAudioCommandArgs & { duration?: number }> =
     const array = Array<CommandEntities>()
     if (args.type === 'BGM') {
         args.loop = true
-        array.push({ key: 'unlock', args: { file: args.file } })
+        array.push({ key: 'unlock', args: { src: args.src } })
     }
-    if (args.file !== undefined) args.file = `./static/AudioClip/${args.file}.flac`
-    if (args.name === undefined) args.name = args.type
+    if (args.src !== undefined) args.src = `./static/AudioClip/${args.src}.flac`
+    if (args.id === undefined) args.id = args.type
     if (args.duration) {
-        array.push({ key: 'fadeaudio', await: true, args: { target: args.name, volume: 0, duration: args.duration } })
-        array.push({ key: 'closeaudio', args: { target: args.name } })
+        array.push({ key: 'fadeaudio', await: true, args: { target: args.id, volume: 0, duration: args.duration } })
+        array.push({ key: 'closeaudio', args: { target: args.id } })
         array.push({ key: 'setaudio', args: Object.assign({ volume: 0 }, args) })
-        array.push({ key: 'fadeaudio', args: { target: args.name, volume: args.volume || 1, duration: args.duration } })
+        array.push({ key: 'fadeaudio', args: { target: args.id, volume: args.volume || 1, duration: args.duration } })
     } else {
-        array.push({ key: 'closeaudio', args: { target: args.name } })
+        array.push({ key: 'closeaudio', args: { target: args.id } })
         array.push({ key: 'setaudio', args: Object.assign({ volume: args.volume || 1 }, args) })
     }
 

@@ -1,4 +1,3 @@
-import type { ExtendArgs } from 'starnight'
 import type { Howl, HowlOptions } from '@/lib/howler'
 import { delay, isUndefined } from 'es-toolkit'
 import { Dynamic, NonBlocking, StarNight } from 'starnight'
@@ -35,39 +34,44 @@ StarNight.GameEvents.resume.subscribe(({ temp: { audios } }) =>
 
 StarNight.GameEvents.exit.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.unload()))
 
-// 跨幕环境变量file,需要收集副作用
 export type SetAudioCommandArgs = {
     type: string
-    file: string
-    name?: string
-} & ExtendArgs<HowlOptions>
+    src: string
+    id?: string
+} & {
+    volume?: number
+    html5?: boolean | undefined
+    loop?: boolean | undefined
+    mute?: boolean | undefined
+    rate?: number | undefined
+}
 
 export const setaudio = Dynamic<SetAudioCommandArgs>(
     ({ state, ui: { audiotracks }, temp: { audios } }) =>
-        function* ({ type, name = type, file, ...configs }) {
+        function* ({ type, id = type, src, ...args }) {
             // Clip的生命周期是幕,所以不用初始化
             if (
                 (state.isInitializing() || state.isFast()) &&
-                (type === 'Clip' || (type === 'SE' && configs.loop !== true))
+                (type === 'Clip' || (type === 'SE' && args.loop !== true))
             ) {
                 return
             }
             // 挂载新音频
             const audio = audiotracks[type]({
-                ...configs,
+                ...args,
                 pool: 1,
-                src: file,
+                src: src,
                 autoplay: true,
                 preload: !state.isInitializing()
             })
 
-            audios.set(name, audio)
+            audios.set(id, audio)
             // 如果音频不是循环的,就不希望它播放完毕之后再被其他事件调用play()了
-            if (!configs.loop) {
+            if (!args.loop) {
                 audio.once('end', () => {
                     audio.unload()
-                    if (audios.get(name) === audio) {
-                        audios.delete(name)
+                    if (audios.get(id) === audio) {
+                        audios.delete(id)
                     }
                 })
             }
@@ -92,7 +96,7 @@ export const fadeaudio = Dynamic<FadeAudioCommandArgs>(
                 audio.volume(volume)
             } else {
                 audio.fade(audio.volume(), volume, duration)
-                // 为了避免fade到一半被unload等极端情况导致不触发fade事件,使用race和delay在时间已到时强制释放
+                // 为了避免fade到一半被unload等极端情况导致不触发fade事件,使用delay在时间已到时强制释放
                 const fade = new Promise<void>((res) => audio.once('fade', () => res()))
                 yield Promise.race([fade, delay(duration)])
             }

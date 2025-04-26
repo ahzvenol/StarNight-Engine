@@ -42,8 +42,8 @@ export const Backlog: Component = () => {
                                         onClick={() => useGame(act.local)}>
                                         <Return theme="outline" size="0.8em" fill="#ffffff" strokeWidth={3} />
                                     </div>
-                                    <Show when={act.file}>
-                                        <Variable value={Clip({ src: act.file! })}>
+                                    <Show when={act.clip}>
+                                        <Variable value={Clip({ src: act.clip! })}>
                                             {(clip) => (
                                                 <div
                                                     ref={useSoundEffect('Click', 'Enter')}

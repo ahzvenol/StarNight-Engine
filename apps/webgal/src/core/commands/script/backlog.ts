@@ -2,7 +2,7 @@ import type { GameLocalData, Reactive } from 'starnight'
 import { cloneDeep } from 'es-toolkit'
 import { NonBlocking, StarNight } from 'starnight'
 
-export type BacklogCommandArgs = { text: string; name?: string; file?: string }
+export type BacklogCommandArgs = { text: string; name?: string; clip?: string }
 
 export type BacklogActData = { local: GameLocalData } & BacklogCommandArgs
 
@@ -21,8 +21,8 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
 
 export const backlog = NonBlocking<BacklogCommandArgs>(
     ({ current, config, ui: { backlog } }) =>
-        ({ text, name, file }) => {
-            backlog().unshift({ local: cloneDeep(current()), text, name, file })
+        ({ text, name, clip }) => {
+            backlog().unshift({ local: cloneDeep(current()), text, name, clip })
             if (backlog().length > config.backlogmaxlength()) backlog().pop()
         }
 )

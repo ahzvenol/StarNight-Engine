@@ -30,14 +30,14 @@ StarNight.ActEvents.start.subscribe(({ instance: { state }, current: { index }, 
     }
 })
 
-// 基于命名约定的预加载,搜索所有名称为file的参数
+// 基于命名约定的预加载,搜索所有名称为src的参数
 function loadByNamingConvention(rows: Array<RuntimeCommandLike>) {
     rows.forEach((row) => {
         if (Array.isArray(row.args)) {
             loadByNamingConvention(row.args)
         } else if (isPlainObject(row.args)) {
             Object.entries(row.args)
-                .filter(([key]) => key === 'file')
+                .filter(([key]) => key === 'src')
                 .map((kv) => kv[1])
                 .filter((value) => isString(value))
                 .forEach((url) => {

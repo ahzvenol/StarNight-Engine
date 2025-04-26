@@ -7,7 +7,6 @@ import { Y } from '@/utils/fp'
 // anime.suspendWhenDocumentHidden = true;
 // test:缓动库自带了一个暂停,但是不知道有没有用
 
-// hoshizora特化的image命令
 // 为了实现在角色移动时进行表情变化,需要重新引入容器
 // 角色表情切换以及背景的缓动都是用透明度做的,透明度不能直接应用给容器
 // 但是移动必须直接应用给容器,来实现让几张同角色立绘一起移动
@@ -51,30 +50,31 @@ StarNight.ActEvents.end.subscribe(({ ui: { stage } }) => {
 })
 
 export type SetImageCommandArgs = {
-    name: string
-    file: string
+    id: string
+    src: string
     zIndex?: number
 } & ExtendArgs<AnimatedPropertys>
 
 export const setimage = NonBlocking<SetImageCommandArgs>(
     ({ state, ui: { stage } }) =>
-        ({ name, file, zIndex, ...args }) => {
-            let container = stage.querySelector(`[data-name="${name}"]`) as HTMLDivElement
+        ({ id, src, zIndex, ...args }) => {
+            let container = stage.querySelector(`[data-id="${id}"]`) as HTMLElement
             let newBitmap!: HTMLImageElement
             if (container) {
                 const oldBitmap = container.firstChild!
                 newBitmap = oldBitmap.cloneNode() as HTMLImageElement
             } else {
-                container = (<div data-name={name} />) as HTMLDivElement
+                container = document.createElement('div')
+                container.setAttribute('data-id', id)
                 newBitmap = document.createElement('img')
                 stage.appendChild(container)
             }
             if (!isUndefined(zIndex)) container.style.zIndex = zIndex.toString()
             const attr = state.isInitializing() ? 'data-src' : 'src'
-            newBitmap.setAttribute(attr, file)
+            newBitmap.setAttribute(attr, src)
             anime.set(newBitmap, args)
             container.insertBefore(newBitmap, container.firstChild)
-            if (state.isNormal()) console.log(stage.innerHTML, name)
+            if (state.isNormal()) console.log(stage.innerHTML, id)
         }
 )
 
@@ -90,7 +90,7 @@ export type TweenImageCommandArgs = {
 export const tweenimage = Dynamic<TweenImageCommandArgs>(
     ({ state, ui: { stage }, temp: { activetimelines: activetimelines } }) =>
         function* ({ target, ease, duration = 0, inherit = true, ...args }) {
-            const container = stage.querySelector(`[data-name="${target}"]`)
+            const container = stage.querySelector(`[data-id="${target}"]`)
             const tweenTarget = inherit ? container : container?.firstChild
             if (isNil(tweenTarget)) return
             if (state.isInitializing()) {
@@ -127,8 +127,8 @@ export type CloseImageCommandArgs = XOR<{ target: string }, { exclude?: string }
 export const closeimage = NonBlocking<CloseImageCommandArgs>(({ ui: { stage } }) => ({ target, exclude }) => {
     Array.from(stage.children).forEach((e) => {
         const condition = isUndefined(target)
-            ? e.getAttribute('data-name') !== exclude
-            : e.getAttribute('data-name') === target
+            ? e.getAttribute('data-id') !== exclude
+            : e.getAttribute('data-id') === target
         if (condition) e.remove()
     })
 })
@@ -140,7 +140,7 @@ export const shake = EffectScope(
     Dynamic<ShakePunchCommandArgs>(
         ({ ui: { stage } }) =>
             function* ({ target, x = 0, y = 0, duration, iteration = 10 }) {
-                const realTarget = isUndefined(target) ? stage : stage.querySelector(`[data-name="${target}"]`)
+                const realTarget = isUndefined(target) ? stage : stage.querySelector(`[data-id="${target}"]`)
                 const originX = 0
                 const originY = 0
                 const sequence = anime.timeline({
@@ -165,7 +165,7 @@ export const punch = EffectScope(
     Dynamic<ShakePunchCommandArgs>(
         ({ ui: { stage } }) =>
             function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
-                const realTarget = isUndefined(target) ? stage : stage.querySelector(`[data-name="${target}"]`)
+                const realTarget = isUndefined(target) ? stage : stage.querySelector(`[data-id="${target}"]`)
                 const originX = 0
                 const originY = 0
                 const sequence = anime.timeline({
