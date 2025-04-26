@@ -17,7 +17,7 @@ export const language = {
     'zh-CN': ChineseSimplified,
     'zh-TW': ChineseTraditional,
     en: English,
-    jp: Japanese,
+    ja: Japanese,
     fr: French,
     de: German
 }
@@ -25,11 +25,11 @@ export const language = {
 export const description = {
     'zh-CN': '简体中文',
     en: 'English',
-    jp: '日本語',
+    ja: '日本語',
     fr: 'Français',
     de: 'Deutsch',
     'zh-TW': '繁體中文'
-}
+} satisfies Record<keyof typeof language, string>
 
 // 可选as Reactive<typeof language[keyof typeof language]>,这时类型系统可以检测出翻译的缺失并要求全部可选语言都具备对应值的翻译
 // 目前采用的策略是以默认语言为最大集合,合并选择的语言和默认语言的翻译,通过默认语言补全翻译缺失的值
