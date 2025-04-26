@@ -47,7 +47,7 @@ const VIDEO_EXTENSIONS = [
 
 type MediaElement = HTMLImageElement | HTMLAudioElement | HTMLVideoElement
 
-export class Loader {
+export class AssetLoader {
     public static loaded = new Map<string, Promise<MediaElement>>()
 
     public static load(url: string): Promise<MediaElement> {

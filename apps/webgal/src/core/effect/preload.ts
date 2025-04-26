@@ -1,7 +1,7 @@
 import type { RuntimeCommandLike } from 'starnight'
 import { isPlainObject, isString, range } from 'es-toolkit'
 import { StarNight } from 'starnight'
-import { Loader } from '@/utils/Loader'
+import { AssetLoader } from '@/utils/AssetLoader'
 import { log } from '@/utils/Logger'
 
 // 预加载游戏初始坐标后N幕资源
@@ -41,9 +41,9 @@ function loadByNamingConvention(rows: Array<RuntimeCommandLike>) {
                 .map((kv) => kv[1])
                 .filter((value) => isString(value))
                 .forEach((url) => {
-                    if (Loader.loaded.has(url)) log.info(`资源'${url}'已预加载过`)
+                    if (AssetLoader.loaded.has(url)) log.info(`资源'${url}'已预加载过`)
                     else {
-                        Loader.load(url)
+                        AssetLoader.load(url)
                             .then(() => log.info(`预加载资源'${url}'成功`))
                             .catch((err) => log.info(`预加载资源'${url}'失败:${err}`))
                     }
