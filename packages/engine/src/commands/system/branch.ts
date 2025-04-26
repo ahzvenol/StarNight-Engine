@@ -19,4 +19,4 @@ export const end = NonBlocking(
             end(true)
 )
 
-export const label = VirtualScope(NonBlocking<{ name: string }>(() => () => {}))
+export const label = VirtualScope(NonBlocking<{ id: string }>(() => () => {}))

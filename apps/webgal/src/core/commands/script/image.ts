@@ -74,7 +74,6 @@ export const setimage = NonBlocking<SetImageCommandArgs>(
             newBitmap.setAttribute(attr, src)
             anime.set(newBitmap, args)
             container.insertBefore(newBitmap, container.firstChild)
-            if (state.isNormal()) console.log(stage.innerHTML, id)
         }
 )
 

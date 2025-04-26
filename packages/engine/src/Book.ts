@@ -16,7 +16,7 @@ export class GameBook extends AbstractGameBook {
         const result = raw.map(converter.applyMacrosToCommandsNodes).map(converter.filterRealCommandsRecursively)
         const label = result
             .map((act) => act.filter((item) => item.key === 'label'))
-            .flatMap((act, index) => (act.length === 0 ? [] : [{ [act[0]['args']['name']]: index }]))
+            .flatMap((act, index) => (act.length === 0 ? [] : [{ [act[0]['args']['id']]: index }]))
             .reduce<Record<string, number>>(merge, {})
 
         return new GameBook(result, label)

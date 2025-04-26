@@ -21,8 +21,8 @@ declare module 'starnight' {
 }
 
 export const namepreview = ActScope(
-    NonBlocking<{ name: string }>(({ current }) => ({ name }) => {
-        current.namepreview(name)
+    NonBlocking<{ text: string }>(({ current }) => ({ text }) => {
+        current.namepreview(text)
     })
 )
 
@@ -89,8 +89,8 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
 StarNight.ActEvents.start.subscribe(({ ui }) => ui.name(''))
 
 export const name = ActScope(
-    NonBlocking<{ name: string }>((context) => ({ name }) => {
-        context.ui.name(name)
+    NonBlocking<{ text: string }>((context) => ({ text }) => {
+        context.ui.name(text)
     })
 )
 
