@@ -103,9 +103,9 @@ export type CommandsArgs<T extends CommandsKeys> = Parameters<ReturnType<Command
 // 程序宏使用,产生一个类型安全的命令数据块
 export type CommandEntity<T extends CommandsKeys> = {
     [K in CommandsKeys]: {
+        readonly condition?: Function1<GameRuntimeContext, Function1<CommandsArgs<K>, boolean>>
         readonly key: K
         readonly await?: true
-        readonly if?: Function1<GameRuntimeContext, boolean>
         readonly args: CommandsArgs<K>
     }
 }[T]

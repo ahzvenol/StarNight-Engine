@@ -44,6 +44,7 @@ export const fork: ScheduledHighLevelCommand = {
             rows.flatMap((row) => {
                 const cmd = commands[row.key]
                 if (cmd.meta?.exclude !== undefined && context.state.now in cmd.meta.exclude) return []
+                if (row.condition !== undefined && !row.condition(context)(row.args)) return []
                 const schedule = cmd.meta?.schedule || (row.await ? Schedule.Await : Schedule.Async)
                 const apply = () => cmd.apply(context)(row.args)
                 return [{ meta: { key: row.key, schedule }, apply }]
@@ -59,6 +60,7 @@ export const par: ScheduledHighLevelCommand = {
             rows.flatMap((row) => {
                 const cmd = commands[row.key]
                 if (cmd.meta?.exclude !== undefined && context.state.now in cmd.meta.exclude) return []
+                if (row.condition !== undefined && !row.condition(context)(row.args)) return []
                 const schedule = Schedule.Async
                 const apply = () => cmd.apply(context)(row.args)
                 return [{ meta: { key: row.key, schedule }, apply }]
@@ -74,6 +76,7 @@ export const chain: ScheduledHighLevelCommand = {
             rows.flatMap((row) => {
                 const cmd = commands[row.key]
                 if (cmd.meta?.exclude !== undefined && context.state.now in cmd.meta.exclude) return []
+                if (row.condition !== undefined && !row.condition(context)(row.args)) return []
                 const schedule = Schedule.Await
                 const apply = () => cmd.apply(context)(row.args)
                 return [{ meta: { key: row.key, schedule }, apply }]
