@@ -19,7 +19,7 @@ scalaJSLinkerConfig ~= {
 
 Compile / mainClass := Some("Main")
 
-Compile / unmanagedSourceDirectories := Seq(baseDirectory.value / "src" / "scala")
+Compile / unmanagedSourceDirectories := Seq(baseDirectory.value / "src" / "main")
 
 Compile / fastLinkJS / scalaJSLinkerOutputDirectory := baseDirectory.value / "dist"
 Compile / fullLinkJS / scalaJSLinkerOutputDirectory := baseDirectory.value / "dist"

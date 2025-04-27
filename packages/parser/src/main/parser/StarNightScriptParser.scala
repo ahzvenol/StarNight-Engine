@@ -1,6 +1,7 @@
 package parser
 
 import scala.scalajs.js
+import scala.scalajs.js.undefined
 import scala.util.parsing.combinator.RegexParsers
 
 object StarNightScriptParser extends StarNightScriptParser {
@@ -44,9 +45,7 @@ class StarNightScriptParser extends RegexParsers {
 
   def boolean: Parser[Boolean] = "(true|false)".r ^^ (_.toBoolean)
 
-  def undefined: Parser[Primitive] = "undefined".r ^^ (_ => js.undefined)
-
-  def primitive: Parser[Primitive] = number | boolean | string | undefined
+  def primitive: Parser[Primitive] = number | boolean | string
 
   def asyncCommandKey: Parser[String] = "@" ~> key <~ "\\s+".r
 
