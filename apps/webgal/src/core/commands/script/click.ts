@@ -1,9 +1,9 @@
-import type { Reactive } from 'starnight'
-import { DynamicBlocking, NonBlocking, StarNight } from 'starnight'
+import type { Reactive } from '@starnight/core'
+import { DynamicBlocking, NonBlocking, StarNight } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
 import { SwitchState } from '@/core/SwitchState'
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameUIInternalData {
         clickstate: Reactive<SwitchState>
     }
@@ -18,7 +18,7 @@ export const click = NonBlocking<{ enable: boolean }>(({ ui: { clickstate } }) =
     else clickstate(SwitchState.Disabled)
 })
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameUIInternalData {
         check: Reactive<null | Function0<void>>
     }

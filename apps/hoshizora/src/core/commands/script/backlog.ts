@@ -1,12 +1,12 @@
-import type { GameLocalData, Reactive } from 'starnight'
+import type { GameLocalData, Reactive } from '@starnight/core'
 import { cloneDeep } from 'es-toolkit'
-import { NonBlocking, StarNight } from 'starnight'
+import { NonBlocking, StarNight } from '@starnight/core'
 
 export type BacklogCommandArgs = { text: string; name?: string; file?: string }
 
 export type BacklogActData = { local: GameLocalData } & BacklogCommandArgs
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameConfig {
         backlogmaxlength: number
     }

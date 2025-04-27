@@ -7,7 +7,8 @@
     "scripts": {
         "hoshizora:dev": "pnpm --filter hoshizora dev",
         "webgal:dev": "pnpm --filter webgal dev",
-        "core:build": "pnpm --filter starnight build",
+        "core:build": "pnpm --filter @starnight/core build",
+        "parser:build": "pnpm --filter @starnight/parser build",
         "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
         "lint:prettier": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\"",
         "lint:style": "stylelint src\"/**/*.+(css|scss|less|stylus|sass|postcss)\" --fix",

@@ -1,10 +1,10 @@
-import type { Reactive } from 'starnight'
-import { Blocking, GameState, NonBlocking, StarNight } from 'starnight'
+import type { Reactive } from '@starnight/core'
+import { Blocking, GameState, NonBlocking, StarNight } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
 import { SwitchState } from '@/core/SwitchState'
 import { Try } from '@/utils/fp/Try'
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameLocalData {
         choicehistory?: Array<number | string>
     }

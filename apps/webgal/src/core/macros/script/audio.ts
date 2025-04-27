@@ -1,4 +1,4 @@
-import type { CommandEntities, MacroFunction } from 'starnight'
+import type { CommandEntities, MacroFunction } from '@starnight/core'
 import type { SetAudioCommandArgs } from '@/core/commands/script/audio'
 
 export const audio: MacroFunction<SetAudioCommandArgs & { duration?: number }> = (args) => {

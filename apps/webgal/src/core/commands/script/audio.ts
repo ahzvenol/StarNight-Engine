@@ -1,8 +1,8 @@
 import type { Howl, HowlOptions } from '@/lib/howler'
+import { Dynamic, NonBlocking, StarNight } from '@starnight/core'
 import { delay, isUndefined } from 'es-toolkit'
-import { Dynamic, NonBlocking, StarNight } from 'starnight'
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameConfig {
         interruptclip: boolean
     }

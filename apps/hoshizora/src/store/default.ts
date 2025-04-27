@@ -1,5 +1,5 @@
+import type { GameConfig, GameGlobalData, GameLocalData } from '@starnight/core'
 import type { Reactive } from 'micro-reactive-solid'
-import type { GameConfig, GameGlobalData, GameLocalData } from 'starnight'
 import { cloneDeep } from 'es-toolkit'
 import { isDevelopment, isMobile, isNative } from '@/utils/checkEnv'
 import { randomUUID } from '@/utils/randomUUID'

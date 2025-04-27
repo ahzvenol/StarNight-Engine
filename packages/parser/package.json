@@ -1,5 +1,5 @@
 {
-    "name": "parser",
+    "name": "@starnight/parser",
     "version": "1.0.0",
     "private": true,
     "type": "module",
@@ -10,7 +10,6 @@
         "build": "sbt fullLinkJS"
     },
     "devDependencies": {
-        "starnight": "workspace:*"
+        "@starnight/core": "workspace:*"
     }
 }
-

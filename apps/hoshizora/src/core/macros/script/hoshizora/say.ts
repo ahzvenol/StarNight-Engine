@@ -1,4 +1,4 @@
-import type { CommandEntities, MacroFunction } from 'starnight'
+import type { CommandEntities, MacroFunction } from '@starnight/core'
 
 export type SayCommandArgs = { text: string; name?: string; file?: string }
 

@@ -1,4 +1,4 @@
-import { Macro } from 'starnight'
+import { Macro } from '@starnight/core'
 import { audio, closeaudio } from './script/audio'
 import { bg, sprite } from './script/image'
 import { say } from './script/say'

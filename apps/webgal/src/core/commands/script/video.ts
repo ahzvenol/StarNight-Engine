@@ -1,8 +1,8 @@
-import type { Reactive } from 'starnight'
-import { ActScope, Blocking, StarNight } from 'starnight'
+import type { Reactive } from '@starnight/core'
+import { ActScope, Blocking, StarNight } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameConfig {
         globalvolume: number
     }

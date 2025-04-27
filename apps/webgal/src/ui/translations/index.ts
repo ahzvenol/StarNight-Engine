@@ -1,6 +1,6 @@
+import type { Reactive } from '@starnight/core'
 import type { UnwrapReactive } from 'micro-reactive-solid'
 import type { Accessor } from 'solid-js'
-import type { Reactive } from 'starnight'
 import { toMerged } from 'es-toolkit'
 import { useReactive } from 'micro-reactive-solid'
 import { createEffect, on } from 'solid-js'

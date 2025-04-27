@@ -1,8 +1,8 @@
-import type { Reactive } from 'starnight'
-import { DynamicBlocking, NonBlocking, StarNight } from 'starnight'
+import type { Reactive } from '@starnight/core'
+import { DynamicBlocking, NonBlocking, StarNight } from '@starnight/core'
 import { SwitchState } from '@/core/SwitchState'
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameUIInternalData {
         clickstate: Reactive<SwitchState>
     }

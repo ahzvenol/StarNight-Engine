@@ -1,4 +1,4 @@
-import type { MacroFunction } from 'starnight'
+import type { MacroFunction } from '@starnight/core'
 import type { VideoCommandArgs } from '@/core/commands/script/video'
 
 export const video: MacroFunction<VideoCommandArgs> = (args) => {

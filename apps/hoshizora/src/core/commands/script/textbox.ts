@@ -1,8 +1,8 @@
-import type { Reactive } from 'starnight'
-import { ActScope, Dynamic, NonBlocking, StarNight } from 'starnight'
+import type { Reactive } from '@starnight/core'
+import { ActScope, Dynamic, NonBlocking, StarNight } from '@starnight/core'
 import { SwitchState } from '@/core/SwitchState'
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameLocalData {
         textpreview?: string
     }
@@ -14,7 +14,7 @@ export const textpreview = ActScope(
     })
 )
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameUIInternalData {
         iconstate: Reactive<SwitchState>
     }
@@ -34,7 +34,7 @@ export const icon = ActScope(
     })
 )
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameConfig {
         textspeed: number
     }
@@ -64,7 +64,7 @@ export const text = ActScope(
     )
 )
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameUIInternalData {
         name: Reactive<string>
     }
@@ -82,7 +82,7 @@ export const name = ActScope(
     })
 )
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameUIInternalData {
         textboxstate: Reactive<SwitchState>
     }

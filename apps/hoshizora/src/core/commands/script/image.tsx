@@ -1,7 +1,7 @@
-import type { ExtendArgs } from 'starnight'
+import type { ExtendArgs } from '@starnight/core'
 import anime from 'animejs'
 import { isNil, isUndefined } from 'es-toolkit'
-import { Dynamic, EffectScope, NonBlocking, StarNight } from 'starnight'
+import { Dynamic, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import { Y } from '@/utils/fp'
 
 // anime.suspendWhenDocumentHidden = true;
@@ -14,7 +14,7 @@ import { Y } from '@/utils/fp'
 // 同时层级关系被容器掩盖,z-index必须直接赋值给容器
 // 这些区分带来了一些混乱,但确实增强了功能,暂时不知道是好是坏
 
-declare module 'starnight' {
+declare module '@starnight/core' {
     interface GameTempData {
         activetimelines: Map<object, anime.AnimeTimelineInstance>
     }

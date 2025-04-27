@@ -1,6 +1,6 @@
-import type { RuntimeCommandLike } from 'starnight'
+import type { RuntimeCommandLike } from '@starnight/core'
+import { StarNight } from '@starnight/core'
 import { isPlainObject, isString, range } from 'es-toolkit'
-import { StarNight } from 'starnight'
 import { AssetLoader } from '@/utils/AssetLoader'
 import { log } from '@/utils/Logger'
 
