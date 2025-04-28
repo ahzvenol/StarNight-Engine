@@ -42,7 +42,6 @@ export type SetAudioCommandArgs = {
     volume?: number
     html5?: boolean | undefined
     loop?: boolean | undefined
-    mute?: boolean | undefined
     rate?: number | undefined
 }
 

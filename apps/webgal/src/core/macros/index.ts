@@ -1,8 +1,7 @@
 import { Macro } from '@starnight/core'
 import { audio, closeaudio } from './script/audio'
-import { bg, sprite } from './script/image'
+import { bg, sprite, tweenimage } from './script/gasp-pixi'
 import { say } from './script/say'
-import { tweenimage } from './script/tween'
 import { video } from './script/video'
 import { wait } from './script/wait'
 
