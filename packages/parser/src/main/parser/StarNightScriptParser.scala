@@ -1,21 +1,16 @@
 package parser
 
-import scala.scalajs.js
-import scala.scalajs.js.undefined
 import scala.util.parsing.combinator.RegexParsers
 
 object StarNightScriptParser extends StarNightScriptParser {
   def parse(target: String): Either[String, List[List[Map[String, Any]]]] =
-    (parseAll(actions, target): @unchecked) match
+    parseAll(ActionSeq, target) match
       case Success(result, _) => Right(result)
       case NoSuccess(msg, next) => Left(s"[${next.pos}] : $msg\n\n${next.pos.longString}")
 }
 
 class StarNightScriptParser extends RegexParsers {
-
   override def skipWhitespace = false
-
-  type Primitive = js.UndefOr[Double | Boolean | String]
 
   def unescape(str: String): String =
     str
@@ -30,40 +25,35 @@ class StarNightScriptParser extends RegexParsers {
       .replaceAll("""\\\\""", "\\")
   end unescape
 
+  def identifier: Parser[String] = """[\u4e00-\u9fa5_a-zA-Z0-9]+""".r
 
-  def whitespace: Parser[String] = "\\s*".r
+  def actionSeparator: Parser[String] = """\s*-{4,}\s*""".r
 
-  def kvSeparator: Parser[String] = "=".r
+  def floatingPointLiteral: Parser[Double] = """-?(\d+(\.\d*)?|\d*\.\d+)([eE][+-]?\d+)?[fFdD]?""".r ^^ (_.toDouble)
 
-  def key: Parser[String] = """[\u4e00-\u9fa5_a-zA-Z0-9]+""".r
-
-  def number: Parser[Double] = """-?(\d+(\.\d*)?|\d*\.\d+)([eE][+-]?\d+)?[fFdD]?""".r ^^ (_.toDouble)
-
-  def string: Parser[String] =
-    ("\"".r ~> """([^"\x00-\x1F\x7F\\]|\\[\\/'"bfnrt]|\\u[a-fA-F0-9]{4})*""".r <~ "\"".r |
+  def stringLiteral: Parser[String] =
+    (""""""".r ~> """([^"\x00-\x1F\x7F\\]|\\[\\/'"bfnrt]|\\u[a-fA-F0-9]{4})*""".r <~ """"""".r |
       "/".r ~> """([^/\x00-\x1F\x7F\\]|\\[\\/'"bfnrt]|\\u[a-fA-F0-9]{4})*""".r <~ "/".r) ^^ unescape
 
-  def boolean: Parser[Boolean] = "(true|false)".r ^^ (_.toBoolean)
+  def booleanLiteral: Parser[Boolean] = "(true|false)".r ^^ (_.toBoolean)
 
-  def primitive: Parser[Primitive] = number | boolean | string
+  def Literal: Parser[Double | Boolean | String] = floatingPointLiteral | booleanLiteral | stringLiteral
 
-  def asyncCommandKey: Parser[String] = "@" ~> key <~ "\\s+".r
+  def Argument: Parser[(String, Double | Boolean | String)] =
+    identifier ~ "=" ~ Literal ^^ { case key ~ _ ~ value => (key, value) }
 
-  def awaitCommandKey: Parser[String] = "#" ~> key <~ "\\s+".r
+  def Command: Parser[Map[String, Any]] =
+    ("@" | "#") ~ identifier ~ rep("""\s+""".r ~> Argument) <~ """\s*""".r ^^ {
+      case "@" ~ key ~ args => Map("key" -> key, "args" -> args.toMap)
+      case "#" ~ key ~ args => Map("key" -> key, "await" -> true, "args" -> args.toMap)
+    }
 
-  def commandArg: Parser[(String, Primitive)] =
-    (key <~ kvSeparator <~ whitespace) ~ primitive ^^ { case k ~ v => (k, v) }
+  def ForkBlock: Parser[Map[String, Any]] =
+    ("{" ~> CommandSeq <~ "}") ^^ (cmds => Map("key" -> "fork", "args" -> cmds))
 
-  def command: Parser[Map[String, Any]] =
-    asyncCommandKey ~ rep(commandArg <~ whitespace) ^^ { case key ~ args => Map("key" -> key, "args" -> args.toMap) } |
-      awaitCommandKey ~ rep(commandArg <~ whitespace) ^^ { case key ~ args => Map("key" -> key, "await" -> true, "args" -> args.toMap) }
+  def CommandSeq: Parser[List[Map[String, Any]]] = rep(Command | ForkBlock)
 
-  def fork: Parser[Map[String, Any]] =
-    ("\\{".r ~> commands <~ "}".r) ^^ (cmds => Map("key" -> "fork", "args" -> cmds))
+  def Action: Parser[List[Map[String, Any]]] = CommandSeq <~ actionSeparator
 
-  def commands: Parser[List[Map[String, Any]]] = rep(command | fork)
-
-  def actionSeparator: Parser[String] = """-{4,}""".r
-
-  def actions: Parser[List[List[Map[String, Any]]]] = actionSeparator ~> rep(commands <~ actionSeparator)
+  def ActionSeq: Parser[List[List[Map[String, Any]]]] = actionSeparator ~> rep(Action)
 }

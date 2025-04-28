@@ -3,10 +3,7 @@ package parser
 import scala.util.parsing.combinator.JavaTokenParsers
 
 object PreprocessingParser extends PreprocessingParser {
-  def parse(str: String): String =
-    println(parseAll(content, str))
-    parseAll(content, str).get
-  end parse
+  def parse(str: String): String = parseAll(content, str).get
 }
 
 class PreprocessingParser extends JavaTokenParsers {

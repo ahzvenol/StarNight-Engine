@@ -6,11 +6,10 @@ import scala.scalajs.js.JSConverters.*
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 object Main {
-
   @JSExportTopLevel("compile")
   def compile(raw: String): js.Array[js.Array[js.Dictionary[Any]]] | js.UndefOr[Nothing] = {
-    (raw |> PreprocessingParser.parse |> StarNightScriptParser.parse).
-      map(_.map(_.map(_.toJSDictionary).toJSArray).toJSArray).getOrElse(js.undefined)
+    (raw |> PreprocessingParser.parse |> StarNightScriptParser.parse)
+      .map(_.map(_.map(_.toJSDictionary).toJSArray).toJSArray)
+      .getOrElse(js.undefined)
   }
-
 }
