@@ -1,3 +1,4 @@
+import type { ExtendArgs } from '@starnight/core'
 import type { DisplayObject } from 'pixi.js'
 import { Dynamic, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import { isNil, isUndefined } from 'es-toolkit'
@@ -7,9 +8,6 @@ import { PixiPlugin } from 'gsap/PixiPlugin'
 import * as PIXI from 'pixi.js'
 import { Application, Container, Sprite, Texture } from 'pixi.js'
 import { Y } from '@/utils/fp'
-
-// anime.suspendWhenDocumentHidden = true;
-// test:缓动库自带了一个暂停,但是不知道有没有用
 
 // 为了实现在角色移动时进行表情变化,需要重新引入容器
 // 角色表情切换以及背景的缓动都是用透明度做的,透明度不能直接应用给容器
@@ -33,7 +31,6 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
         width: 1280,
         height: 720
     })
-    console.log(ui.pixi.stage)
 })
 
 StarNight.ActEvents.ready.subscribe(({ ui: { pixi } }) => {
@@ -57,7 +54,7 @@ export type SetImageCommandArgs = {
     id: string
     src: string
     zIndex?: number
-} & PixiPlugin.Vars
+} & ExtendArgs<PixiPlugin.Vars>
 
 export const setimage = NonBlocking<SetImageCommandArgs>(
     ({
@@ -115,7 +112,7 @@ export type TweenImageCommandArgs = {
     ease?: string
     duration?: number
     inherit?: boolean
-} & PixiPlugin.Vars
+} & ExtendArgs<PixiPlugin.Vars>
 
 export const tweenimage = Dynamic<TweenImageCommandArgs>(
     ({
@@ -123,7 +120,7 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
         ui: {
             pixi: { stage }
         },
-        temp: { activetimelines: activetimelines }
+        temp: { activetimelines }
     }) =>
         function* ({ target, ease, duration = 0, inherit = true, ...args }) {
             const outerContainer = stage.getChildByName<Container<Container<Sprite>>>(target)

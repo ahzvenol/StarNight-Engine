@@ -25,29 +25,30 @@ function snapshot() {
     return canvas.toDataURL('image/webp', 0.5)
 }
 
+function record(slot: Reactive<SaveLocalData>) {
+    slot({
+        ...starnight().current(),
+        date: dayjs().valueOf(),
+        snapshot: snapshot()
+    })
+}
+
 export const SaveLoadElement: Component<SaveLoadElementProps> = ({ i, mode, index, slot }) => {
     const clickEffect = mode === 'Load' ? 'Click' : slot() !== undefined ? 'DialogOpen' : 'PageChange'
-    const save = () =>
-        slot({
-            ...starnight().current(),
-            date: dayjs().valueOf(),
-            snapshot: snapshot()
-        })
-
     const onSave = () => {
         if (mode === 'Save') {
-            if (slot() === undefined) save()
+            if (slot() === undefined) record(slot)
             else
                 useDialog({
                     title: translation.menu.saving.isOverwrite(),
                     leftText: translation.common.yes(),
                     rightText: translation.common.no(),
-                    leftFunc: save
+                    leftFunc: () => record(slot)
                 })
         }
     }
-    const onLoad = async () => {
-        if (slot() !== undefined) await useGame(slot()!)
+    const onLoad = () => {
+        if (slot() !== undefined) useGame(slot()!)
     }
     return (
         <div

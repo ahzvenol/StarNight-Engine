@@ -7,8 +7,6 @@ export type SetBGMacroArgs = {
     duration?: number
     x?: number
     y?: number
-    w?: number
-    h?: number
 }
 
 // 由于设置了新图片之后就获取不到旧图片,需要先对旧图片施加变换,但是这样一来透明度就变了,所以需要重新指定透明度
