@@ -14,8 +14,6 @@ import { Stage } from './Stage'
 import { TextBox } from './TextBox'
 import { Video } from './Video'
 
-export const GameRef = useSignal<HTMLDivElement | null>(null)
-
 export const showBox = useSignal(true)
 
 const Game: Component = () => {
@@ -36,7 +34,7 @@ const Game: Component = () => {
         { edges: ['leading'] }
     )
     return (
-        <Content ref={GameRef}>
+        <Content>
             <Stage />
             <Show when={showBox() && ui().textboxstate() && !ui().choicesstate() && GUIGameRootState() !== 'Backlog'}>
                 <TextBox />

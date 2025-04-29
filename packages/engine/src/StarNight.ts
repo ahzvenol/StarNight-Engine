@@ -63,7 +63,7 @@ export class StarNight {
         StarNight.ActEvents.rush.subscribe(({ state }) => {
             if (!state.isInitializing()) console.info('Act:执行单幕快进')
         })
-        StarNight.ActEvents.jump.subscribe((target) => console.info(`Act:跳转到第${target}幕`))
+        StarNight.ActEvents.jump.subscribe(({ current: { index } }) => console.info(`Act:跳转到第${index()}幕`))
 
         StarNight.ClickEvents.step.subscribe(() => console.info('ClickEvent:触发点击事件'))
         StarNight.ClickEvents.fast.subscribe(() => console.info('ClickEvent:触发快进/解除快进事件'))

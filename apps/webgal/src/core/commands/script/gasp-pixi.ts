@@ -1,11 +1,11 @@
-import type { ExtendArgs } from '@starnight/core'
+import type { DisplayObject } from 'pixi.js'
 import { Dynamic, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import { isNil, isUndefined } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
 import { PixiPlugin } from 'gsap/PixiPlugin'
 import * as PIXI from 'pixi.js'
-import { PromiseX } from '@/core/PromiseX'
+import { Application, Container, Sprite, Texture } from 'pixi.js'
 import { Y } from '@/utils/fp'
 
 // anime.suspendWhenDocumentHidden = true;
@@ -20,34 +20,34 @@ import { Y } from '@/utils/fp'
 PixiPlugin.registerPIXI(PIXI)
 gsap.registerPlugin(CustomEase)
 gsap.registerPlugin(PixiPlugin)
+gsap.defaults({ ease: 'none' })
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
-        stage: PIXI.Application
+        pixi: Application<HTMLCanvasElement>
     }
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.stage = new PIXI.Application({
+    ui.pixi = new Application({
         width: 1280,
-        height: 720,
-        backgroundColor: 0x000000,
-        autoStart: true
+        height: 720
     })
+    console.log(ui.pixi.stage)
 })
 
-StarNight.ActEvents.ready.subscribe(({ ui: { stage } }) => {
-    Y<PIXI.DisplayObject, void>((rec) => (displayObject) => {
-        if (displayObject instanceof PIXI.Container) {
+StarNight.ActEvents.ready.subscribe(({ ui: { pixi } }) => {
+    Y<DisplayObject, void>((rec) => (displayObject) => {
+        if (displayObject instanceof Sprite) {
+            displayObject.texture = Texture.from(displayObject.name!)
+        } else if (displayObject instanceof Container) {
             displayObject.children.forEach(rec)
-        } else if (displayObject instanceof PIXI.Sprite) {
-            displayObject.texture = PIXI.Texture.from(displayObject.name!)
         }
-    })(stage.stage)
+    })(pixi.stage)
 })
 
-StarNight.ActEvents.end.subscribe(({ ui: { stage } }) => {
-    const containers = stage.stage.children as PIXI.Container[]
+StarNight.ActEvents.end.subscribe(({ ui: { pixi } }) => {
+    const containers = pixi.stage.children as Container[]
     containers.forEach((container) => {
         container.children.slice(1).forEach((child) => child.destroy())
     })
@@ -57,37 +57,46 @@ export type SetImageCommandArgs = {
     id: string
     src: string
     zIndex?: number
-} & ExtendArgs<AnimatedPropertys>
+} & PixiPlugin.Vars
 
 export const setimage = NonBlocking<SetImageCommandArgs>(
-    ({ state, ui: { stage } }) =>
+    ({
+        state,
+        ui: {
+            pixi: { stage }
+        }
+    }) =>
         ({ id, src, zIndex, ...args }) => {
-            let container = stage.stage.getChildByName(id) as PIXI.Container
-            let newSprite: PIXI.Sprite
-            if (container) {
-                const oldSprite = container.getChildAt(0) as PIXI.Sprite
-                newSprite = new PIXI.Sprite()
-                newSprite.transform = oldSprite.transform
+            let outerContainer: Container<Container<Sprite>>
+            let innerContainer: Container<Sprite>
+            const newSprite = new Sprite()
+            if (stage.getChildByName(id)) {
+                outerContainer = stage.getChildByName(id)!
+                innerContainer = outerContainer.getChildAt(0)
+                const oldSprite = innerContainer.getChildAt(0)
+                newSprite.transform.position.copyFrom(oldSprite.transform.position)
+                newSprite.transform.scale.copyFrom(oldSprite.transform.scale)
+                newSprite.transform.rotation = oldSprite.transform.rotation
+                newSprite.transform.pivot.copyFrom(oldSprite.transform.pivot)
+                newSprite.transform.skew.copyFrom(oldSprite.transform.skew)
             } else {
-                container = new PIXI.Container()
-                container.name = id
-                newSprite = new PIXI.Sprite()
-                stage.stage.addChild(container)
+                outerContainer = new Container()
+                outerContainer.name = id
+                innerContainer = new Container()
+                outerContainer.addChild(innerContainer)
+                stage.addChild(outerContainer)
             }
-            if (!isUndefined(zIndex)) container.zIndex = zIndex
-            if (state.isInitializing()) {
-                newSprite.name = src
-            } else {
-                newSprite.texture = PIXI.Texture.from(src)
-            }
-            gsap.set(newSprite, args)
-            container.addChildAt(newSprite, 0)
+            if (!isUndefined(zIndex)) outerContainer.zIndex = zIndex
+            if (state.isInitializing()) newSprite.name = src
+            else newSprite.texture = Texture.from(src)
+            gsap.set(newSprite, { pixi: args })
+            innerContainer.addChildAt(newSprite, 0)
         }
 )
 
 declare module '@starnight/core' {
     interface GameTempData {
-        activetimelines: Map<object, { timeline: gsap.core.Timeline; promises: PromiseX<void>[] }>
+        activetimelines: Map<object, gsap.core.Timeline>
     }
 }
 
@@ -106,13 +115,20 @@ export type TweenImageCommandArgs = {
     ease?: string
     duration?: number
     inherit?: boolean
-} & ExtendArgs<AnimatedPropertys>
+} & PixiPlugin.Vars
 
 export const tweenimage = Dynamic<TweenImageCommandArgs>(
-    ({ state, ui: { stage }, temp: { activetimelines: activetimelines } }) =>
-        function* ({ target, ease = 'none', duration = 0, inherit = true, ...args }) {
-            const container = stage.stage.getChildByName(target) as PIXI.Container
-            const tweenTarget = inherit ? container : container?.getChildAt(0)
+    ({
+        state,
+        ui: {
+            pixi: { stage }
+        },
+        temp: { activetimelines: activetimelines }
+    }) =>
+        function* ({ target, ease, duration = 0, inherit = true, ...args }) {
+            const outerContainer = stage.getChildByName<Container<Container<Sprite>>>(target)
+            const innerContainer = outerContainer?.getChildAt(0)
+            const tweenTarget = inherit ? innerContainer : innerContainer?.getChildAt(0)
             if (isNil(tweenTarget)) return
             if (state.isInitializing()) {
                 gsap.set(tweenTarget, args)
@@ -120,83 +136,89 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
                 // 保证对同一个物体的缓动被顺序应用
                 if (!activetimelines.has(tweenTarget)) {
                     const timeline = gsap.timeline({ paused: false })
-                    activetimelines.set(tweenTarget, { timeline, promises: [] })
+                    activetimelines.set(tweenTarget, timeline)
                 }
-                const timeline = activetimelines.get(tweenTarget)!.timeline
-                const promises = activetimelines.get(tweenTarget)!.promises
-                const promise = new PromiseX<void>()
-                timeline.to(tweenTarget, {
-                    ease,
-                    duration: duration / 1000,
-                    pixi: args,
-                    onComplete: promise.resolve
-                })
-                promises.push(promise)
+                const timeline = activetimelines.get(tweenTarget)!
+                const promise = new Promise<void>((res) =>
+                    timeline.to(tweenTarget, {
+                        ease,
+                        duration: duration / 1000,
+                        pixi: args,
+                        onComplete: res
+                    })
+                )
+                const current = timeline.duration()
                 yield promise
-                promises.forEach((p) => p.resolve())
-                promises.length = 0
-                // timeline.seek(timeline.duration())
+                if (current === timeline.duration()) timeline.seek(timeline.duration())
             }
         }
 )
 
 export type CloseImageCommandArgs = XOR<{ target: string }, { exclude?: string }>
 
-export const closeimage = NonBlocking<CloseImageCommandArgs>(({ ui: { stage } }) => ({ target, exclude }) => {
-    stage.stage.children.forEach((container) => {
-        const condition = isUndefined(target) ? container.name !== exclude : container.name === target
-        if (condition) container.destroy({ children: true })
-    })
-})
+export const closeimage = NonBlocking<CloseImageCommandArgs>(
+    ({
+        ui: {
+            pixi: { stage }
+        }
+    }) =>
+        ({ target, exclude }) => {
+            stage.children
+                .filter((container) => (isUndefined(target) ? container.name !== exclude : container.name === target))
+                .forEach((container) => stage.removeChild(container))
+        }
+)
 
 export type ShakePunchCommandArgs = { target?: string; x?: number; y?: number; duration: number; iteration?: number }
 
 // 因为tween命令使用translate参数,这里使用left和top避免冲突
-// export const shake = EffectScope(
-//     Dynamic<ShakePunchCommandArgs>(
-//         ({ ui: { stage } }) =>
-//             function* ({ target, x = 0, y = 0, duration, iteration = 10 }) {
-//                 const realTarget = isUndefined(target) ? stage.stage : stage.stage.getChildByName(target)
-//                 const originX = 0
-//                 const originY = 0
-//                 const sequence = anime.timeline({
-//                     targets: realTarget,
-//                     easing: 'linear'
-//                 })
-//                 const dur = duration / 2 / iteration
-//                 for (let i = 0; i < iteration; i++) {
-//                     const percentage = i / iteration
-//                     const diminishing = 1 - percentage
-//                     const nextX = originX + Math.random() * (x * diminishing * 2) - x * diminishing
-//                     const nextY = originY + Math.random() * (y * diminishing * 2) - y * diminishing
-//                     sequence.add({ left: nextX, top: nextY, duration: dur, direction: 'alternate' })
-//                 }
-//                 sequence.add({ left: originX, top: originY, duration: dur, direction: 'alternate' })
-//                 yield sequence.finished
-//             }
-//     )
-// )
+export const shake = EffectScope(
+    Dynamic<ShakePunchCommandArgs>(
+        ({
+            ui: {
+                pixi: { stage }
+            }
+        }) =>
+            function* ({ target, x = 0, y = 0, duration, iteration = 10 }) {
+                const tweenTarget = isUndefined(target) ? stage : stage.getChildByName(target)
+                const originX = 0
+                const originY = 0
+                const timeline = gsap.timeline()
+                const dur = duration / 2 / iteration
+                for (let i = 0; i < iteration; i++) {
+                    const percentage = i / iteration
+                    const diminishing = 1 - percentage
+                    const nextX = originX + Math.random() * (x * diminishing * 2) - x * diminishing
+                    const nextY = originY + Math.random() * (y * diminishing * 2) - y * diminishing
+                    timeline.to(tweenTarget, { pixi: { x: nextX, y: nextY }, duration: dur / 1000 })
+                }
+                timeline.to(tweenTarget, { pixi: { x: originX, y: originY }, duration: dur / 1000 })
+                yield new Promise((res) => timeline.eventCallback('onComplete', res))
+            }
+    )
+)
 
-// export const punch = EffectScope(
-//     Dynamic<ShakePunchCommandArgs>(
-//         ({ ui: { stage } }) =>
-//             function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
-//                 const realTarget = isUndefined(target) ? stage : stage.querySelector(`[data-id="${target}"]`)
-//                 const originX = 0
-//                 const originY = 0
-//                 const sequence = anime.timeline({
-//                     targets: realTarget,
-//                     easing: 'linear'
-//                 })
-//                 const dur = duration / 2 / iteration
-//                 for (let i = 0; i < iteration; i++) {
-//                     const coef = i % 2 === 0 ? 1 : -1
-//                     const nextX = originX + (coef * x) / (i + 1)
-//                     const nextY = originY + (coef * y) / (i + 1)
-//                     sequence.add({ left: nextX, top: nextY, duration: dur, direction: 'alternate' })
-//                 }
-//                 sequence.add({ left: originX, top: originY, duration: dur, direction: 'alternate' })
-//                 yield sequence.finished
-//             }
-//     )
-// )
+export const punch = EffectScope(
+    Dynamic<ShakePunchCommandArgs>(
+        ({
+            ui: {
+                pixi: { stage }
+            }
+        }) =>
+            function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
+                const tweenTarget = isUndefined(target) ? stage : stage.getChildByName(target)
+                const originX = 0
+                const originY = 0
+                const timeline = gsap.timeline()
+                const dur = duration / 2 / iteration
+                for (let i = 0; i < iteration; i++) {
+                    const coef = i % 2 === 0 ? 1 : -1
+                    const nextX = originX + (coef * x) / (i + 1)
+                    const nextY = originY + (coef * y) / (i + 1)
+                    timeline.to(tweenTarget!, { pixi: { x: nextX, y: nextY }, duration: dur / 1000 })
+                }
+                timeline.to(tweenTarget!, { pixi: { x: originX, y: originY }, duration: dur / 1000 })
+                yield new Promise((res) => timeline.eventCallback('onComplete', res))
+            }
+    )
+)
