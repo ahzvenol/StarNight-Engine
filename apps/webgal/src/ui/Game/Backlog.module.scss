@@ -40,7 +40,7 @@
     @media (hover: hover) {
         &:hover {
             background: rgb(255 255 255 / 25%);
-            animation: backlog-icon-softin 0.25s ease-out forwards;
+            animation: Backlog_icon_soft_in 0.25s ease-out forwards;
         }
     }
 }
@@ -68,7 +68,7 @@
     color: white;
     font-size: 165%;
     opacity: 0;
-    animation: backlog-item-in 0.5s ease-out forwards;
+    animation: Backlog_item_in 0.5s ease-out forwards;
 }
 
 .Game_Backlog_item_layout_1 {
@@ -148,7 +148,7 @@
     box-shadow: 0 0 10px rgb(0 0 0 / 15%);
 }
 
-@keyframes backlog-icon-softin {
+@keyframes Backlog_icon_soft_in {
     0% {
         background: rgb(255 255 255 / 0%);
     }
@@ -158,7 +158,7 @@
     }
 }
 
-@keyframes backlog-item-in {
+@keyframes Backlog_item_in {
     0% {
         transform: scale(1.05, 1.05) translate(-15px, 10px) rotateX(-5deg) rotateY(-5deg);
         opacity: 0;

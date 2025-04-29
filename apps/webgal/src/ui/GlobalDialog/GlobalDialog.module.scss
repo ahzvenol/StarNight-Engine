@@ -10,7 +10,7 @@
     font-family: '思源宋体', serif;
     background: rgb(15 37 64 / 39%);
     opacity: 0.5;
-    animation: show-global-dialog 0.33s forwards;
+    animation: GlobalDialog_show 0.33s forwards;
 }
 
 .GlobalDialog_container_inner {
@@ -81,7 +81,7 @@
     }
 }
 
-@keyframes show-global-dialog {
+@keyframes GlobalDialog_show {
     0% {
         opacity: 0;
     }

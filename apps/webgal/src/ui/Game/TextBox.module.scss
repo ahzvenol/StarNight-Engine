@@ -2,7 +2,7 @@
 
 $height: 330px;
 
-@keyframes show-softly {
+@keyframes TextBox_show_softly {
     0% {
         opacity: 0;
     }
@@ -18,7 +18,7 @@ $height: 330px;
     width: 100%;
     height: $height;
     font-weight: bold;
-    animation: show-softly 0.7s ease-out forwards;
+    animation: TextBox_show_softly 0.7s ease-out forwards;
 }
 
 .Game_TextBox_text_background {
@@ -52,7 +52,7 @@ $height: 330px;
     }
 }
 
-@keyframes text-delay-show {
+@keyframes TextBox_char_delay_show {
     0% {
         opacity: 0;
     }
@@ -64,7 +64,7 @@ $height: 330px;
 
 .Game_TextBox_char {
     opacity: 0;
-    animation: text-delay-show 1000ms ease-out forwards;
+    animation: TextBox_char_delay_show 1000ms ease-out forwards;
 }
 
 .Game_TextBox_name_container {

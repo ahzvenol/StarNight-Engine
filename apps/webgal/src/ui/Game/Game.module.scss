@@ -5,15 +5,15 @@
 }
 
 .Game_Backlog_in {
-    animation: backlog-soft-in 0.7s ease-out forwards;
+    animation: Backlog_soft_in 0.7s ease-out forwards;
 }
 
 .Game_Backlog_out {
     background: rgb(0 0 0 / 70%);
-    animation: backlog-soft-out 0.7s ease-out forwards;
+    animation: Backlog_soft_out 0.7s ease-out forwards;
 }
 
-@keyframes backlog-soft-in {
+@keyframes Backlog_soft_in {
     0% {
         opacity: 0;
     }
@@ -23,7 +23,7 @@
     }
 }
 
-@keyframes backlog-soft-out {
+@keyframes Backlog_soft_out {
     0% {
         opacity: 1;
     }

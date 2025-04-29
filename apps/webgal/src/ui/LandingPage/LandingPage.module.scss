@@ -16,10 +16,10 @@
     white-space: nowrap;
     transform: translate(-50%, -50%);
     transition: text-shadow 1s;
-    animation: blink 4s infinite;
+    animation: LandingPage_blink 4s infinite;
 }
 
-@keyframes blink {
+@keyframes LandingPage_blink {
     0% {
         text-shadow: 0 0 15px rgb(0 0 0 / 65%);
     }

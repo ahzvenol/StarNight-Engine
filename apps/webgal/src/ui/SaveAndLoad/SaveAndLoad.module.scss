@@ -10,7 +10,7 @@
     justify-content: center;
     width: 100%;
     height: 10%;
-    animation: elements-in ease-out 1s forwards;
+    animation: Save_Load_element_in ease-out 1s forwards;
 }
 
 .Save_Load_title {
@@ -131,8 +131,8 @@
         transform 0.25s,
         box-shadow 0.25s;
     animation:
-        elements-in 1s ease-out forwards,
-        elements-in-transform 1s ease-out;
+        Save_Load_element_in 1s ease-out forwards,
+        Save_Load_element_in_transform 1s ease-out;
 
     @media (hover: hover) {
         &:hover {
@@ -214,7 +214,7 @@
     height: 48%;
 }
 
-@keyframes elements-in {
+@keyframes Save_Load_element_in {
     0% {
         opacity: 0;
     }
@@ -224,7 +224,7 @@
     }
 }
 
-@keyframes elements-in-transform {
+@keyframes Save_Load_element_in_transform {
     0% {
         transform: scale(1.05, 1.05) translate(-25px, -20px) rotateY(15deg) rotateX(-15deg);
     }
