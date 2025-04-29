@@ -122,7 +122,7 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
         },
         temp: { activetimelines }
     }) =>
-        function* ({ target, ease, duration = 0, inherit = true, ...args }) {
+        function* ({ target, ease = 'none', duration = 0, inherit = true, ...args }) {
             const outerContainer = stage.getChildByName<Container<Container<Sprite>>>(target)
             const innerContainer = outerContainer?.getChildAt(0)
             const tweenTarget = inherit ? innerContainer : innerContainer?.getChildAt(0)
@@ -138,9 +138,9 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
                 const timeline = activetimelines.get(tweenTarget)!
                 const promise = new Promise<void>((res) =>
                     timeline.to(tweenTarget, {
-                        ease,
-                        duration: duration / 1000,
                         pixi: args,
+                        ease: gsap.parseEase(ease),
+                        duration: duration / 1000,
                         onComplete: res
                     })
                 )
