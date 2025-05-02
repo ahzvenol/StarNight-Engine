@@ -1,4 +1,4 @@
-import parser.{PreprocessingParser, StarNightScriptParser}
+import parser.StarNightScriptParser
 import util.FPUtil.|>
 
 object Test {
@@ -15,16 +15,18 @@ object Test {
         |}
         |{
         |
-        |@背景 文件=/{bg001.jpg----}/
+        |@背景 文件=/{bg001.jpg----}/ ///11
         |
         |{
         |#背景 文件=/bg001.jpg/
         |}
-        |@对话 名称="鸽子" 文本="咕///咕\n///咕" 文件=/咕.mp3/
+        |@对话 名称="鸽子" 文本="咕///咕\n///咕" 文件=/咕.mp3/ ///11
         |}
         |  ----
         |""".stripMargin
-
-    println(target |> PreprocessingParser.parse |> StarNightScriptParser.parse)
+    val either = target |> StarNightScriptParser.parse
+    either match
+      case Right(result) => println(result)
+      case Left(error) => println(error)
   }
 }

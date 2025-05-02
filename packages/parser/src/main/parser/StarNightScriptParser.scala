@@ -1,16 +1,18 @@
 package parser
 
+import scala.util.matching.Regex
 import scala.util.parsing.combinator.RegexParsers
 
 object StarNightScriptParser extends StarNightScriptParser {
   def parse(target: String): Either[String, List[List[Map[String, Any]]]] =
     parseAll(ActionSeq, target) match
       case Success(result, _) => Right(result)
-      case NoSuccess(msg, next) => Left(s"[${next.pos}] : $msg\n\n${next.pos.longString}")
+      case NoSuccess(msg, next) => Left(s"[${next.pos}] : $msg\n\n${next.pos.longString}".replaceAll("\\R", "\r\n"))
+  end parse
 }
 
 class StarNightScriptParser extends RegexParsers {
-  override def skipWhitespace = false
+  override val whiteSpace: Regex = "\\R|///.*\\R*".r
 
   def unescape(str: String): String =
     str
@@ -49,7 +51,7 @@ class StarNightScriptParser extends RegexParsers {
     }
 
   def ForkBlock: Parser[Map[String, Any]] =
-    ("{" ~> CommandSeq <~ "}") ^^ (cmds => Map("key" -> "fork", "args" -> cmds))
+    ("{" ~> """\s*""".r ~> CommandSeq <~ """\s*""".r <~ "}") ^^ (cmds => Map("key" -> "fork", "args" -> cmds))
 
   def CommandSeq: Parser[List[Map[String, Any]]] = rep(Command | ForkBlock)
 
