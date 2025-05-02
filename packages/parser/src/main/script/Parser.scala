@@ -1,66 +1,75 @@
 package script
 
-import script.Ast.{Action, Argument, Command, Identifier, Literal, Script}
+import script.Ast.{Action, Argument, Block, Command, Identifier, Literal, Runnable, Script}
 
-import scala.util.matching.Regex
 import scala.util.parsing.combinator.RegexParsers
 
 object Parser extends Parser {
-  def parse(target: String): Either[String, Script] =
-    parse(actionSeq, target) match
-      case Success(result, _) => Right(result)
-      case NoSuccess(msg, next) => Left(s"[${next.pos}] : $msg\n\n${next.pos.longString}".replaceAll("\\R", "\r\n"))
+  def parse(target: String): Script | String =
+    parseAll(script, target) match {
+      case Success(result, _) => result
+      case Failure(msg, next) => s"[${next.pos}] failure: $msg\n\n${next.pos.longString}".replaceAll("\\R", "\r\n")
+      case Error(msg, next) => s"[${next.pos}] error: $msg\n\n${next.pos.longString}".replaceAll("\\R", "\r\n")
+    }
   end parse
 }
 
 class Parser extends RegexParsers {
-  override val whiteSpace: Regex = "\\R|///.*\\R*".r
+  override val skipWhitespace = false
 
   def unescape(str: String): String =
     str
-      .replaceAll("""\\/""", "/")
-      .replaceAll("""\\'""", "\'")
-      .replaceAll("""\\"""", "\"")
-      .replaceAll("""\\b""", "\b")
-      .replaceAll("""\\f""", "\f")
-      .replaceAll("""\\n""", "\n")
-      .replaceAll("""\\r""", "\r")
-      .replaceAll("""\\t""", "\t")
-      .replaceAll("""\\\\""", "\\")
+      .replaceAll("""(?<!\\)\\(?!\\)/""", "/")
+      .replaceAll("""(?<!\\)\\(?!\\)'""", "\'")
+      .replaceAll("""(?<!\\)\\(?!\\)"""", "\"")
+      .replaceAll("""(?<!\\)\\(?!\\)b""", "\b")
+      .replaceAll("""(?<!\\)\\(?!\\)f""", "\f")
+      .replaceAll("""(?<!\\)\\(?!\\)n""", "\n")
+      .replaceAll("""(?<!\\)\\(?!\\)r""", "\r")
+      .replaceAll("""(?<!\\)\\(?!\\)t""", "\t")
+      .replace("""\\""", "\\")
   end unescape
+
+
+  def space: Parser[String] = """[\s\t\r\n]+""".r
+
+  def comment: Parser[String] = """///.*""".r
+
+  def ignored: Parser[List[String]] = rep(comment | space)
 
   def identifier: Parser[Identifier] = """[\u4e00-\u9fa5_a-zA-Z0-9]+""".r ^^ Identifier.apply
 
-  def actionSeparator: Parser[String] = """\s*-{4,}\s*""".r
-
-  def floatingPointLiteral: Parser[Literal.NumberLiteral] =
+  def number: Parser[Literal.NumberLiteral] =
     """-?(\d+(\.\d*)?|\d*\.\d+)([eE][+-]?\d+)?[fFdD]?""".r ^^ (_.toDouble) ^^ Literal.NumberLiteral.apply
 
-  def stringLiteral: Parser[Literal.StringLiteral] =
-    (""""""".r ~> """([^"\x00-\x1F\x7F\\]|\\[\\/'"bfnrt]|\\u[a-fA-F0-9]{4})*""".r <~ """"""".r |
-      "/".r ~> """([^/\x00-\x1F\x7F\\]|\\[\\/'"bfnrt]|\\u[a-fA-F0-9]{4})*""".r <~ "/".r)
-      ^^ unescape ^^ Literal.StringLiteral.apply
+  def string: Parser[Literal.StringLiteral] =
+    (""""""".r ~> """([^"\\]|\\[\\/'"bfnrt]|\\u[a-fA-F0-9]{4})*""".r <~ """"""".r |
+      "/".r ~> """([^/\\]|\\[\\/'"bfnrt]|\\u[a-fA-F0-9]{4})*""".r <~ "/".r)
+      ^^ unescape ^^ (_.stripMargin) ^^ Literal.StringLiteral.apply
 
-  def booleanLiteral: Parser[Literal.BooleanLiteral] =
+  def boolean: Parser[Literal.BooleanLiteral] =
     "(true|false)".r ^^ (_.toBoolean) ^^ Literal.BooleanLiteral.apply
 
-  def literal: Parser[Literal] = floatingPointLiteral | booleanLiteral | stringLiteral
+  def literal: Parser[Literal] = number | boolean | string
 
   def argument: Parser[Argument] =
     identifier ~ "=" ~ literal ^^ { case key ~ _ ~ value => Argument(key, value) }
 
+  def marker: Parser["@" | "#"] = ("@" | "#").asInstanceOf[Parser["@" | "#"]]
+
   def command: Parser[Command] =
-    ("@" | "#") ~ identifier ~ rep("""\s+""".r ~> argument) <~ """\s*""".r ^^ {
+    marker ~ identifier ~ rep(ignored ~> argument) ^^ {
       case "@" ~ key ~ args => Command.Async(key, args)
       case "#" ~ key ~ args => Command.Await(key, args)
     }
 
-  def forkBlock: Parser[Command.Async] =
-    ("{" ~> """\s*""".r ~> commandSeq <~ """\s*""".r <~ "}") ^^ (cmds => Command.Async(Identifier("fork"), cmds))
+  def fork: Parser[Block.Fork] =
+    "{" ~> ignored.? ~> rep(runnable) <~ ignored.? <~ "}" ^^ Block.Fork.apply
 
-  def commandSeq: Parser[List[Command]] = rep(command | forkBlock)
+  def runnable: Parser[Runnable] = ignored.? ~> (command | fork) <~ ignored.?
 
-  def action: Parser[Action] = commandSeq <~ actionSeparator ^^ Action.apply
+  def action: Parser[Action] = rep(runnable) ^^ Action.apply
 
-  def actionSeq: Parser[Script] = actionSeparator ~> rep(action) ^^ Script.apply
+  def script: Parser[Script] =
+    ignored.? ~> """-{4,}""".r ~> rep(action <~ """-{4,}""".r <~ ignored.?) ^^ Script.apply
 }

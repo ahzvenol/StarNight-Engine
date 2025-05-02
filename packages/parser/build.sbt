@@ -14,7 +14,7 @@ scalaJSUseMainModuleInitializer := false
 
 scalaJSLinkerConfig ~= {
   _.withModuleKind(ModuleKind.ESModule)
-    .withESFeatures(_.withESVersion(ESVersion.ES2015))
+    .withESFeatures(_.withESVersion(ESVersion.ES2018))
 }
 
 Compile / mainClass := Some("Main")
