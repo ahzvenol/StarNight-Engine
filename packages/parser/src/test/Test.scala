@@ -1,4 +1,4 @@
-import parser.StarNightScriptParser
+import script.Parser
 import util.FPUtil.|>
 
 object Test {
@@ -24,7 +24,7 @@ object Test {
         |}
         |  ----
         |""".stripMargin
-    val either = target |> StarNightScriptParser.parse
+    val either = target |> Parser.parse
     either match
       case Right(result) => println(result)
       case Left(error) => println(error)

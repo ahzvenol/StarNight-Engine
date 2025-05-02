@@ -3,13 +3,13 @@
     "version": "1.0.0",
     "private": true,
     "type": "module",
-    "main": "dist/index.js",
-    "module": "dist/index.js",
+    "main": "dist/main.js",
+    "module": "dist/main.js",
     "types": "index.d.ts",
     "scripts": {
         "build": "sbt fullLinkJS"
     },
-    "devDependencies": {
+    "peerDependencies": {
         "@starnight/core": "workspace:*"
     }
 }
