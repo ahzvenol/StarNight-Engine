@@ -16,7 +16,7 @@ StarNight.ActEvents.ready.subscribe(({ current: { index }, instance: { book } })
 // 预加载跳转目标后N幕资源
 StarNight.ActEvents.jump.subscribe(({ instance: { state }, current: { index }, instance: { book } }) => {
     range(index(), index() + 5).forEach(() => {
-        if (!state.isInitializing && index() < book.length()) {
+        if (!state.isInitializing() && index() < book.length()) {
             const rows = book.act(index())
             loadByNamingConvention(rows)
         }
@@ -24,7 +24,7 @@ StarNight.ActEvents.jump.subscribe(({ instance: { state }, current: { index }, i
 })
 // 预加载本幕后第N幕的资源
 StarNight.ActEvents.start.subscribe(({ instance: { state }, current: { index }, instance: { book } }) => {
-    if (!state.isInitializing && index() < book.length()) {
+    if (!state.isInitializing() && index() < book.length()) {
         const rows = book.act(index())
         loadByNamingConvention(rows)
     }

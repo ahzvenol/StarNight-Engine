@@ -143,7 +143,7 @@ importers:
         version: 9.1.0(eslint@9.23.0(jiti@2.4.2))
       postcss-scss:
         specifier: ^4.0.9
-        version: 4.0.9(postcss@8.5.1)
+        version: 4.0.9(postcss@8.5.3)
       rollup:
         specifier: 2.25.0
         version: 2.25.0
@@ -195,6 +195,9 @@ importers:
       '@starnight/core':
         specifier: workspace:*
         version: link:../../packages/engine
+      '@starnight/parser':
+        specifier: workspace:*
+        version: link:../../packages/parser
       animejs:
         specifier: ^3.2.2
         version: 3.2.2
@@ -267,7 +270,7 @@ importers:
         version: 9.1.0(eslint@9.23.0(jiti@2.4.2))
       postcss-scss:
         specifier: ^4.0.9
-        version: 4.0.9(postcss@8.5.3)
+        version: 4.0.9(postcss@8.5.1)
       rollup:
         specifier: 2.25.0
         version: 2.25.0
@@ -304,7 +307,7 @@ importers:
         version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(typescript@5.8.2)
 
   packages/parser:
-    devDependencies:
+    dependencies:
       '@starnight/core':
         specifier: workspace:*
         version: link:../engine

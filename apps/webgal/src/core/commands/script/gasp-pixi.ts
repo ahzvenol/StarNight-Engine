@@ -123,8 +123,8 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
         temp: { activetimelines }
     }) =>
         function* ({ target, ease = 'none', duration = 0, inherit = true, ...args }) {
-            const outerContainer = stage.getChildByName<Container<Container<Sprite>>>(target)
-            const innerContainer = outerContainer?.getChildAt(0)
+            const outerContainer = stage.getChildByName<Container>(target)
+            const innerContainer = outerContainer?.getChildAt(0) as Container<Sprite>
             const tweenTarget = inherit ? innerContainer : innerContainer?.getChildAt(0)
             if (isNil(tweenTarget)) return
             if (state.isInitializing()) {

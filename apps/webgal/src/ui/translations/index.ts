@@ -1,6 +1,4 @@
 import type { Reactive } from '@starnight/core'
-import type { UnwrapReactive } from 'micro-reactive-solid'
-import type { Accessor } from 'solid-js'
 import { toMerged } from 'es-toolkit'
 import { useReactive } from 'micro-reactive-solid'
 import { createEffect, on } from 'solid-js'
@@ -39,10 +37,10 @@ onStoreReady.then((store) => {
     const lang = store.config.language as Reactive<keyof typeof language>
     const defaultLang = lang() as 'zh-CN'
     createEffect(
-        on(lang as Accessor<UnwrapReactive<typeof lang>>, (now, prev) => {
+        on(lang, (now, prev) => {
             if (now !== prev) {
-                translation(toMerged(language[defaultLang], language[lang()]))
-                log.info('当前语言:' + description[lang()])
+                translation(toMerged(language[defaultLang], language[now]))
+                log.info('当前语言:' + description[now])
             }
         })
     )

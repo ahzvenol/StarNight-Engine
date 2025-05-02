@@ -36,18 +36,16 @@ StarNight.GameEvents.exit.subscribe(({ temp: { audios } }) => audios.forEach((au
 
 export type SetAudioCommandArgs = {
     type: string
-    src: string
     id?: string
-} & {
+    src: string
     volume?: number
     html5?: boolean | undefined
     loop?: boolean | undefined
     rate?: number | undefined
 }
-
 export const setaudio = Dynamic<SetAudioCommandArgs>(
     ({ state, ui: { audiotracks }, temp: { audios } }) =>
-        function* ({ type, id = type, src, ...args }) {
+        function* ({ type, id = type, ...args }) {
             // Clip的生命周期是幕,所以不用初始化
             if (
                 (state.isInitializing() || state.isFast()) &&
@@ -59,11 +57,9 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
             const audio = audiotracks[type]({
                 ...args,
                 pool: 1,
-                src: src,
                 autoplay: true,
                 preload: !state.isInitializing()
             })
-
             audios.set(id, audio)
             // 如果音频不是循环的,就不希望它播放完毕之后再被其他事件调用play()了
             if (!args.loop) {

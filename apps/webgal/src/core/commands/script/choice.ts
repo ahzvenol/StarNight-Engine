@@ -28,8 +28,9 @@ type ChoiceItem = {
     promise: Promise<number | string>
 }
 
-StarNight.GameEvents.setup.subscribe(({ ui, temp }) => {
+StarNight.GameEvents.setup.subscribe(({ current, ui, temp }) => {
     temp.choicepointer = -1
+    current.choicehistory((arr) => arr || [])
     ui.choicesstate = StarNight.useReactive(SwitchState.Disabled)
 })
 
@@ -55,7 +56,7 @@ export const showchoices = Blocking(
             const target = history ?? (await Promise.race(choices.map((e) => e.promise)))
             const stopfastonchoice = config.stopfastonchoice() && state.isFast()
             choicesstate(SwitchState.Disabled)
-            current.choicehistory([...(current.choicehistory?.() || []), target])
+            current.choicehistory((arr) => [...arr!, target])
             StarNight.SystemCommands.jump.apply(context)({ target })
             if (stopfastonchoice) output.state(GameState.Normal)
         }
