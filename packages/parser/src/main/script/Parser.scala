@@ -4,7 +4,8 @@ import script.Ast.{Action, Argument, Block, Command, Identifier, Literal, Runnab
 
 import scala.util.parsing.combinator.RegexParsers
 
-object Parser extends Parser {
+object Parser extends Parser:
+
   def parse(target: String): Script | String =
     parseAll(script, target) match {
       case Success(result, _) => result
@@ -12,9 +13,11 @@ object Parser extends Parser {
       case Error(msg, next) => s"[${next.pos}] error: $msg\n\n${next.pos.longString}".replaceAll("\\R", "\r\n")
     }
   end parse
-}
 
-class Parser extends RegexParsers {
+end Parser
+
+class Parser extends RegexParsers:
+
   override val skipWhitespace = false
 
   def unescape(str: String): String =
@@ -37,7 +40,7 @@ class Parser extends RegexParsers {
 
   def ignored: Parser[List[String]] = rep(comment | space)
 
-  def identifier: Parser[Identifier] = """[\u4e00-\u9fa5_a-zA-Z0-9]+""".r ^^ Identifier.apply
+  def identifier: Parser[Identifier] = """[\u4e00-\u9fa5\-_a-zA-Z0-9]+""".r ^^ Identifier.apply
 
   def number: Parser[Literal.NumberLiteral] =
     """-?(\d+(\.\d*)?|\d*\.\d+)([eE][+-]?\d+)?[fFdD]?""".r ^^ (_.toDouble) ^^ Literal.NumberLiteral.apply
@@ -72,4 +75,6 @@ class Parser extends RegexParsers {
 
   def script: Parser[Script] =
     ignored.? ~> """-{4,}""".r ~> rep(action <~ """-{4,}""".r <~ ignored.?) ^^ Script.apply
-}
+
+end Parser
+

@@ -3,6 +3,7 @@ package script
 import scala.util.parsing.input.Position
 
 object Ast:
+  
   sealed trait Ranged(start: Position, end: Position)
 
   case class Script(actions: List[Action])
