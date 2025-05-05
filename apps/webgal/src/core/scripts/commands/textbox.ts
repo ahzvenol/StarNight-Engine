@@ -1,5 +1,5 @@
 import type { Reactive } from '@starnight/core'
-import { ActScope, Dynamic, NonBlocking, StarNight } from '@starnight/core'
+import { ActScope, Dynamic, NonBlocking, StarNight, SystemCommands } from '@starnight/core'
 
 declare module '@starnight/core' {
     interface GameLocalData {
@@ -66,7 +66,7 @@ export const text = ActScope(
             function* (arg0) {
                 context.ui.text(arg0)
                 while (arg0.length >= 1) {
-                    yield StarNight.SystemCommands.wait(context.config.textspeed())(context)
+                    yield SystemCommands.wait(context.config.textspeed())(context)
                     arg0 = arg0.slice(1)
                 }
             }

@@ -1,8 +1,0 @@
-export * as Audio from './command/audio'
-export * as Backlog from './command/backlog'
-export * as Choice from './command/choice'
-export * as GaspPixi from './command/gasp-pixi'
-export * as Input from './command/input'
-export * as Textbox from './command/textbox'
-export * as Var from './command/var'
-export * as Video from './command/video'

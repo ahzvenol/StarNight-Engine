@@ -1,7 +1,6 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
 import { For, Show } from 'solid-js'
-import { SwitchState } from '@/core/SwitchState'
 import { store } from '@/store'
 import { ui } from '@/store/starnight'
 import styles from './TextBox.module.scss'
@@ -17,12 +16,12 @@ export const TextBox: Component = () => {
                     {(char, i) => (
                         <Show when={char !== '\n'} fallback={<br />}>
                             <span
-                                class={clsx({ [styles.Game_TextBox_char]: ui().iconstate() !== SwitchState.Enabled })}
+                                class={clsx({ [styles.Game_TextBox_char]: !ui().iconstate() })}
                                 style={Object.assign(
                                     {
                                         'animation-delay': `${config.textspeed() * i()}ms`
                                     },
-                                    ui().iconstate() === SwitchState.Enabled ? { opacity: 1 } : {}
+                                    ui().iconstate() ? { opacity: 1 } : {}
                                 )}
                                 innerText={char}
                             />

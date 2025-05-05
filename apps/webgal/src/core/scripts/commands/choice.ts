@@ -1,5 +1,5 @@
 import type { Reactive } from '@starnight/core'
-import { Blocking, GameState, NonBlocking, StarNight } from '@starnight/core'
+import { Blocking, GameState, NonBlocking, StarNight, SystemCommands } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
 import { SwitchState } from '@/core/SwitchState'
 
@@ -55,6 +55,6 @@ export const end = Blocking((context) => async () => {
     const stopfastonchoice = config.stopfastonchoice() && state.isFast()
     choicesstate(SwitchState.Disabled)
     current.choicehistory((arr) => [...arr!, target])
-    StarNight.SystemCommands.jump(target)(context)
+    SystemCommands.jump(target)(context)
     if (stopfastonchoice) output.state(GameState.Normal)
 })

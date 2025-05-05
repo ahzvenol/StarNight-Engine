@@ -1,10 +1,9 @@
 import type { Reactive } from 'micro-reactive-wrapper'
 import type { AbstractGameBook } from './Book'
-import type { CommandOutput, Commands } from './types/Command'
+import type { CommandOutput } from './types/Command'
 import type { GameConstructorParams, GameContext, GameLocalData } from './types/Game'
 import { delay, isString } from 'es-toolkit'
 import { useReactiveWrapper } from 'micro-reactive-wrapper'
-import { StarNightSystemCommands } from './commands'
 import { fork } from './Decorator'
 import { ActEvents, ClickEvents, GameEvents } from './Events'
 import { GameState } from './types/Game'
@@ -15,10 +14,6 @@ import { RangeSet } from './utils/RangeSet'
 export type { Reactive } from 'micro-reactive-wrapper'
 
 export class StarNight {
-    // 命令表
-    public static Commands: Commands = StarNightSystemCommands
-    // 命令预设
-    public static readonly SystemCommands = StarNightSystemCommands
     // 游戏实例事件
     public static readonly GameEvents = GameEvents
     // 幕循环事件
@@ -99,8 +94,6 @@ export class StarNightStateStatic {
 }
 
 export class StarNightInstance {
-    // 命令表
-    public static Commands: Commands = StarNight.Commands
     // 游戏实例事件
     public readonly GameEvents = new GameEvents()
     // 幕循环事件
@@ -123,8 +116,6 @@ export class StarNightInstance {
     public readonly context: GameContext
 
     constructor(params: GameConstructorParams) {
-        if (params.Commands) StarNight.Commands = params.Commands
-
         this.GameEvents.active.subscribe((visible) => this.isGameVisible(visible))
         this.GameEvents.suspend.subscribe(() => this.GameEvents.active.publish(false))
         this.GameEvents.resume.subscribe(() => this.GameEvents.active.publish(true))

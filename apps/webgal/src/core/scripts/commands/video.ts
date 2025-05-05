@@ -1,5 +1,5 @@
 import type { Reactive } from '@starnight/core'
-import { ActScope, Blocking, StarNight } from '@starnight/core'
+import { ActScope, Blocking, StarNight, SystemCommands } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
 
 declare module '@starnight/core' {
@@ -30,6 +30,6 @@ export const use = ActScope(
         const promise = new PromiseX<void>()
         video({ src, race: promise.resolve })
         await promise.then(() => video(null))
-        StarNight.SystemCommands.continue()(context)
+        SystemCommands.continue()(context)
     })
 )

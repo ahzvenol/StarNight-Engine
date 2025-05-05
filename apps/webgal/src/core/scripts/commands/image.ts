@@ -30,6 +30,7 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
         width: 1280,
         height: 720
     })
+    globalThis.__PIXI_APP__ = ui.pixi;
 })
 
 StarNight.ActEvents.ready.subscribe(({ ui: { pixi } }) => {

@@ -1,7 +1,7 @@
-import type { SetImageCommandArgs, TweenImageCommandArgs } from '../command/gasp-pixi'
+import type { SetImageCommandArgs, TweenImageCommandArgs } from '../commands/image'
 import { Macro } from '@starnight/core'
 import { mapValues, omit } from 'es-toolkit'
-import { GaspPixi, Var } from '..'
+import { Image, Var } from '../commands'
 
 export type SetBGMacroArgs = {
     duration?: number
@@ -17,10 +17,8 @@ export const sprite = Macro<SetImageCommandArgs & SetBGMacroArgs>(
             args.src = `./static/ImageAsset/${args.src}.webp`
             args.zIndex = args.z
             delete args.z
-            yield to({ target: args.id, ease: 'power1.in', duration: 175, alpha: 0, inherit: false })
-            yield GaspPixi.set(
-                Object.assign({ alpha: 1 }, omit(args, ['duration']), { zIndex: 1 }) as SetImageCommandArgs
-            )
+            yield Image.to({ target: args.id, ease: 'power1.in', duration: 175, alpha: 0, inherit: false })
+            yield Image.set(Object.assign({ alpha: 1 }, omit(args, ['duration']), { zIndex: 1 }) as SetImageCommandArgs)
         }
 )
 
@@ -39,8 +37,8 @@ export const bg = Macro<SetImageCommandArgs & SetBGMacroArgs>(
             args.src = `./static/ImageAsset/${args.src}.webp`
             args.zIndex = args.z
             delete args.z
-            yield to({ target: args.id, ease: 'power1.in', duration: args.duration, alpha: 0, inherit: false })
-            yield GaspPixi.set(Object.assign({ alpha: 1 }, omit(args, ['duration']), scale) as SetImageCommandArgs)
+            yield Image.to({ target: args.id, ease: 'power1.in', duration: args.duration, alpha: 0, inherit: false })
+            yield Image.set(Object.assign({ alpha: 1 }, omit(args, ['duration']), scale) as SetImageCommandArgs)
             yield Var.unlock(raw)
         }
 )
@@ -49,6 +47,6 @@ export const to = Macro<TweenImageCommandArgs>(
     () =>
         async function* ({ target, ease, duration, ...args }) {
             const offsetArgs = mapValues(args, (arg) => '+=' + arg)
-            yield GaspPixi.to({ target, ease, duration, ...offsetArgs })
+            yield Image.to({ target, ease, duration, ...offsetArgs })
         }
 )

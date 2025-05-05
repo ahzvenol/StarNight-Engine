@@ -1,6 +1,6 @@
-import type { SetAudioCommandArgs } from '../command/audio'
+import type { SetAudioCommandArgs } from '../commands/audio'
 import { Macro } from '@starnight/core'
-import { Audio, Var } from '..'
+import { Audio, Var } from '../commands'
 
 export const set = Macro<SetAudioCommandArgs & { duration?: number }>(
     () =>
