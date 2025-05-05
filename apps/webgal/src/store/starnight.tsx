@@ -1,14 +1,11 @@
-import type { GameBookRaw, StarNightInstance } from '@starnight/core'
+import type { StarNightInstance } from '@starnight/core'
 import * as msgpack from '@msgpack/msgpack'
-import { Converter, GameBook, StarNight } from '@starnight/core'
+import { StarNight } from '@starnight/core'
 import { useReactive, useSignal } from 'micro-reactive-solid'
-import { commands } from '@/core/commands'
-import { macros } from '@/core/macros'
+import { commands } from '@/core/script'
 import { resource } from '@/utils/request'
 
 Object.assign(StarNight.Commands, commands)
-
-Array.prototype.push.call(StarNight.Marcos, ...macros)
 
 StarNight.useReactive = useReactive
 

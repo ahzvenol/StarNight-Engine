@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { Reactive } from 'micro-reactive-wrapper'
 import type { StarNightInstance, StarNightStateStatic } from '@/StarNight'
 import type { AbstractGameBook } from '../Book'
-import type { CommandOutput, Commands, RuntimeCommandEntities, RuntimeCommandLike } from './Command'
-import type { Macros } from './Marco'
+import type { CommandOutput, Commands } from './Command'
+import type { Function1 } from './Meta'
 
 export enum GameState {
     Initializing = 0,
@@ -17,11 +18,10 @@ export interface GameConfig {
     autoreadspeed: number
 }
 
-export type GameActRaw = Array<RuntimeCommandLike>
-export type GameBookRaw = Array<GameActRaw>
-
-export type GameActProcessed = Array<RuntimeCommandEntities>
-export type GameBookProcessed = Array<GameActProcessed>
+export type GameAct = Function1<
+    GameRuntimeContext,
+    AsyncGenerator<Function1<GameRuntimeContext, Promise<unknown>>, void, GameRuntimeContext>
+>
 
 export interface GameLocalData {
     index: number
@@ -31,13 +31,10 @@ export interface GameGlobalData {
     readsegment: Array<[number, number]>
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface GameTempData {}
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface GameUIExternalData {}
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface GameUIInternalData {}
 
 export type GameConstructorParams = {
@@ -46,7 +43,6 @@ export type GameConstructorParams = {
     global: Reactive<GameGlobalData>
     readonly local: GameLocalData
     ui: GameUIExternalData
-    Marcos?: Macros
     Commands?: Commands
 }
 

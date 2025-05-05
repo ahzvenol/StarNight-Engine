@@ -3,9 +3,9 @@ import { PromiseX } from '../../utils/PromiseX'
 import { TimeoutController } from '../../utils/TimeoutController'
 
 export const wait = ActScope(
-    DynamicBlocking<{ duration: number }>(
+    DynamicBlocking<number>(
         ({ onActRush, instance: { isGameVisible, GameEvents } }) =>
-            function* ({ duration }) {
+            function* (duration) {
                 if (duration === 0) return
                 const promise = new PromiseX<void>()
                 const controller = new TimeoutController(promise.resolve, duration)

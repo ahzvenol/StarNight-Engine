@@ -43,7 +43,7 @@ export type SetAudioCommandArgs = {
     loop?: boolean | undefined
     rate?: number | undefined
 }
-export const setaudio = Dynamic<SetAudioCommandArgs>(
+export const set = Dynamic<SetAudioCommandArgs>(
     ({ state, ui: { audiotracks }, temp: { audios } }) =>
         function* ({ type, id = type, ...args }) {
             // Clip的生命周期是幕,所以不用初始化
@@ -79,7 +79,7 @@ export const setaudio = Dynamic<SetAudioCommandArgs>(
 
 export type FadeAudioCommandArgs = { target: string; volume: number; duration?: number }
 
-export const fadeaudio = Dynamic<FadeAudioCommandArgs>(
+export const volume = Dynamic<FadeAudioCommandArgs>(
     ({ temp: { audios } }) =>
         function* ({ target, volume, duration = 0 }) {
             const audio = audios.get(target)
@@ -102,7 +102,7 @@ export type CloseAudioCommandArgs = { target?: string }
 
 // 根据名称关闭音轨
 // 如果省略了target,关闭全部轨道
-export const closeaudio = NonBlocking<CloseAudioCommandArgs>(({ temp: { audios } }) => ({ target }) => {
+export const close = NonBlocking<CloseAudioCommandArgs>(({ temp: { audios } }) => ({ target }) => {
     const targets = isUndefined(target) ? audios.keys() : [target]
     for (const key of targets) {
         const audio = audios.get(key)

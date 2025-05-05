@@ -38,7 +38,7 @@ StarNight.ActEvents.start.subscribe(({ ui }) => {
     ui.choices = []
 })
 
-export const addchoice = NonBlocking<{ text: string; target: number | string; disable?: boolean }>(
+export const add = NonBlocking<{ text: string; target: number | string; disable?: boolean }>(
     ({ ui: { choices } }) =>
         ({ text, target, disable = false }) => {
             const promise = new PromiseX<number | string>()
@@ -46,18 +46,15 @@ export const addchoice = NonBlocking<{ text: string; target: number | string; di
         }
 )
 
-export const showchoices = Blocking(
-    (context) =>
-        async function () {
-            const { current, local, state, config, ui, temp, output } = context
-            const { choices, choicesstate } = ui
-            choicesstate(SwitchState.Enabled)
-            const history = state.isInitializing() ? local.choicehistory?.[++temp.choicepointer] : undefined
-            const target = history ?? (await Promise.race(choices.map((e) => e.promise)))
-            const stopfastonchoice = config.stopfastonchoice() && state.isFast()
-            choicesstate(SwitchState.Disabled)
-            current.choicehistory((arr) => [...arr!, target])
-            StarNight.SystemCommands.jump.apply(context)({ target })
-            if (stopfastonchoice) output.state(GameState.Normal)
-        }
-)
+export const end = Blocking((context) => async () => {
+    const { current, local, state, config, ui, temp, output } = context
+    const { choices, choicesstate } = ui
+    choicesstate(SwitchState.Enabled)
+    const history = state.isInitializing() ? local.choicehistory?.[++temp.choicepointer] : undefined
+    const target = history ?? (await Promise.race(choices.map((e) => e.promise)))
+    const stopfastonchoice = config.stopfastonchoice() && state.isFast()
+    choicesstate(SwitchState.Disabled)
+    current.choicehistory((arr) => [...arr!, target])
+    StarNight.SystemCommands.jump(target)(context)
+    if (stopfastonchoice) output.state(GameState.Normal)
+})

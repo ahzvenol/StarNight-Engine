@@ -1,12 +1,11 @@
 import type { Reactive } from 'micro-reactive-wrapper'
 import type { AbstractGameBook } from './Book'
-import type { CommandEntities, CommandOutput, Commands } from './types/Command'
+import type { CommandOutput, Commands } from './types/Command'
 import type { GameConstructorParams, GameContext, GameLocalData } from './types/Game'
-import type { Macros } from './types/Marco'
 import { delay, isString } from 'es-toolkit'
 import { useReactiveWrapper } from 'micro-reactive-wrapper'
 import { StarNightSystemCommands } from './commands'
-import { fork } from './commands/system/schedule'
+import { fork } from './Decorator'
 import { ActEvents, ClickEvents, GameEvents } from './Events'
 import { GameState } from './types/Game'
 import { PromiseX } from './utils/PromiseX'
@@ -16,8 +15,6 @@ import { RangeSet } from './utils/RangeSet'
 export type { Reactive } from 'micro-reactive-wrapper'
 
 export class StarNight {
-    // 宏表
-    public static Marcos: Macros = []
     // 命令表
     public static Commands: Commands = StarNightSystemCommands
     // 命令预设
@@ -102,8 +99,6 @@ export class StarNightStateStatic {
 }
 
 export class StarNightInstance {
-    // 宏表
-    public static Marcos: Macros = StarNight.Marcos
     // 命令表
     public static Commands: Commands = StarNight.Commands
     // 游戏实例事件
@@ -128,7 +123,6 @@ export class StarNightInstance {
     public readonly context: GameContext
 
     constructor(params: GameConstructorParams) {
-        if (params.Marcos) StarNight.Marcos = params.Marcos
         if (params.Commands) StarNight.Commands = params.Commands
 
         this.GameEvents.active.subscribe((visible) => this.isGameVisible(visible))
@@ -218,7 +212,7 @@ async function ActLoop(this: StarNightInstance) {
         // ActStart
         this.ActEvents.start.publish(context)
         // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-        await fork.apply(context)(this.book.act(this.current.index()) as CommandEntities[])
+        await fork(this.book.act(this.current.index()))(context)
         // ActEnd
         this.ActEvents.end.publish(context)
         if (output.state() && !this.state.isInitializing()) this.state.now(output.state()!)
@@ -237,9 +231,8 @@ async function ActLoop(this: StarNightInstance) {
         const target = isString(jump) ? this.book.label(jump) : Number.isFinite(jump) ? jump : undefined
         this.current.index(target !== undefined ? target : this.current.index() + 1)
         // 游戏实例已销毁时退出,初始化时不判断以优化初始化速度
-        const isStop = !this.state.isInitializing() && (await PromiseX.isSettled(onGameStop))
-        if (isStop) return this.GameEvents.stop.publish(this.context)
-        // 通过end命令退出 || 超过最后一幕自动退出
+        // 不需要发送事件,因为这个事件已经由用户发出
+        if (!this.state.isInitializing() && (await PromiseX.isSettled(onGameStop))) return
         const isEnd = output.end() || this.current.index() >= this.book.length()
         if (isEnd) return this.GameEvents.end.publish(this.context)
         // 没有因为某种原因退出才发布跳转事件

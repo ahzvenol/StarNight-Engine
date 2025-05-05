@@ -6,11 +6,9 @@ export const cont = NonBlocking(
             cont(true)
 )
 
-export const jump = NonBlocking<{
-    target: number | string
-}>(
+export const jump = NonBlocking<number | string>(
     ({ output: { jump, cont } }) =>
-        async ({ target }) => (jump(target), cont(true))
+        async (target) => (jump(target), cont(true))
 )
 
 export const end = NonBlocking(
@@ -19,4 +17,4 @@ export const end = NonBlocking(
             end(true)
 )
 
-export const label = VirtualScope(NonBlocking<{ id: string }>(() => () => {}))
+export const label = VirtualScope<{ id: string }>()

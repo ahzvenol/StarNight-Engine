@@ -46,8 +46,8 @@ const Game: Component = () => {
             <Show when={showBox() && ui().textboxstate() && GUIGameRootState() !== 'Backlog'}>
                 <ControlPanel />
             </Show>
-            <Show when={ui().check()}>
-                <div class={styles.Game_mask} onClick={() => ui().check()} />
+            <Show when={ui().clickinput()}>
+                <div class={styles.Game_mask} onClick={() => ui().clickinput()} />
             </Show>
             <Show when={ui().choicesstate()}>
                 <Choice />

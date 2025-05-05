@@ -1,4 +1,3 @@
-import type { ExtendArgs } from '@starnight/core'
 import type { DisplayObject } from 'pixi.js'
 import { Dynamic, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import { isNil, isUndefined } from 'es-toolkit'
@@ -54,9 +53,9 @@ export type SetImageCommandArgs = {
     id: string
     src: string
     zIndex?: number
-} & ExtendArgs<PixiPlugin.Vars>
+} & PixiPlugin.Vars
 
-export const setimage = NonBlocking<SetImageCommandArgs>(
+export const set = NonBlocking<SetImageCommandArgs>(
     ({
         state,
         ui: {
@@ -112,9 +111,9 @@ export type TweenImageCommandArgs = {
     ease?: string
     duration?: number
     inherit?: boolean
-} & ExtendArgs<PixiPlugin.Vars>
+} & PixiPlugin.Vars
 
-export const tweenimage = Dynamic<TweenImageCommandArgs>(
+export const to = Dynamic<TweenImageCommandArgs>(
     ({
         state,
         ui: {
@@ -153,7 +152,7 @@ export const tweenimage = Dynamic<TweenImageCommandArgs>(
 
 export type CloseImageCommandArgs = XOR<{ target: string }, { exclude?: string }>
 
-export const closeimage = NonBlocking<CloseImageCommandArgs>(
+export const close = NonBlocking<CloseImageCommandArgs>(
     ({
         ui: {
             pixi: { stage }

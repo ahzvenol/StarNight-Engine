@@ -17,7 +17,6 @@ import Config from './Config/Config'
 import { GUIRootState } from './GUIRoot'
 import Menu from './Menu/Menu'
 import SaveLoad from './SaveAndLoad/SaveLoad'
-import '@/core/effect/preload'
 
 export type GUIGameRootPages = 'Game' | 'Config' | 'Save' | 'Load' | 'Backlog'
 
