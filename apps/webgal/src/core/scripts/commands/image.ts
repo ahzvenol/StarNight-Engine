@@ -30,7 +30,8 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
         width: 1280,
         height: 720
     })
-    globalThis.__PIXI_APP__ = ui.pixi;
+    // @ts-expect-error 类型“typeof globalThis”上不存在属性“__PIXI_APP__”。
+    globalThis['__PIXI_APP__'] = ui.pixi
 })
 
 StarNight.ActEvents.ready.subscribe(({ ui: { pixi } }) => {

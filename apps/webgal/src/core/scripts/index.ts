@@ -13,7 +13,9 @@ type MapToKebabCase<T> = {
 const Merged = merge(
     mapValues(Command, (value) => mapValues(value, (value) => value)),
     mapValues(Macro, (value) => mapValues(value, (value) => value))
-)
+) as typeof Command & typeof Macro
+
+export const { Audio, Backlog, Choice, Image, Input, Say, State, System, Var, Video } = Merged
 
 export const CommandMap = Object.entries(Merged)
     .flatMap(([group, value]) =>

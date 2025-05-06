@@ -12,6 +12,7 @@ import { ControlPanel } from './ControlPanel'
 import styles from './Game.module.scss'
 import { Stage } from './Stage'
 import { TextBox } from './TextBox'
+import { TextInput } from './TextInput'
 import { Video } from './Video'
 
 export const showBox = useSignal(true)
@@ -48,6 +49,9 @@ const Game: Component = () => {
             </Show>
             <Show when={ui().clickinput()}>
                 <div class={styles.Game_mask} onClick={() => ui().clickinput()} />
+            </Show>
+            <Show when={ui().textinput()}>
+                <TextInput />
             </Show>
             <Show when={ui().choicesstate()}>
                 <Choice />

@@ -14,21 +14,21 @@ export type CommandOutput = {
 }
 
 // 使用生成器函数定义一个耗时无阻塞命令
-export type DynamicCommand<T> = Function1<GameRuntimeContext, Function1<T, Generator<Promise<unknown>, unknown, void>>>
+export type DynamicCommand<T, R> = Function1<GameRuntimeContext, Function1<T, Generator<Promise<unknown>, R, void>>>
 
 // 使用普通函数定义一个不耗时无阻塞命令
-export type NonBlockingCommand<T> = Function1<GameRuntimeContext, Function1<T, unknown>>
+export type NonBlockingCommand<T, R> = Function1<GameRuntimeContext, Function1<T, R>>
 
 // 使用异步函数定义一个耗时阻塞命令
-export type BlockingCommand<T> = Function1<GameRuntimeContext, Function1<T, Promise<unknown>>>
+export type BlockingCommand<T, R> = Function1<GameRuntimeContext, Function1<T, Promise<R>>>
 
-export type MacroCommand<T> = Function1<
+export type MacroCommand<T, R> = Function1<
     GameRuntimeContext,
-    Function1<T, AsyncGenerator<Function1<GameRuntimeContext, Promise<unknown>>, void, GameRuntimeContext>>
+    Function1<T, AsyncGenerator<Function1<GameRuntimeContext, Promise<unknown>>, R, GameRuntimeContext>>
 >
 
 // 标准命令返回一个永不失败的Promise
-export type StandardCommand<T> = Function1<T, Function1<GameRuntimeContext, NeverFailingPromise<unknown>>>
+export type StandardCommand<T, R> = Function1<T, Function1<GameRuntimeContext, NeverFailingPromise<R>>>
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Commands = Record<string, StandardCommand<any>>
+export type Commands = Record<string, StandardCommand<any, any>>

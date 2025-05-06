@@ -24,7 +24,7 @@ export type VideoCommandArgs = string
 
 // 作为Blocking命令的原因是快进时需要阻塞
 export const use = ActScope(
-    Blocking<string>((context) => async (src) => {
+    Blocking<{ src: string }>((context) => async ({ src }) => {
         const { ui } = context
         const { video } = ui
         const promise = new PromiseX<void>()

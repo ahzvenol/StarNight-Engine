@@ -18,9 +18,9 @@ export interface GameConfig {
     autoreadspeed: number
 }
 
-export type GameAct = Function1<
+export type GameAct<R> = Function1<
     GameRuntimeContext,
-    AsyncGenerator<Function1<GameRuntimeContext, Promise<unknown>>, void, GameRuntimeContext>
+    AsyncGenerator<Function1<GameRuntimeContext, Promise<unknown>>, R, GameRuntimeContext>
 >
 
 export interface GameLocalData {

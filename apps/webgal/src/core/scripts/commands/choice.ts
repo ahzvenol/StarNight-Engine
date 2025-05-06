@@ -2,11 +2,9 @@ import type { Reactive } from '@starnight/core'
 import { Blocking, GameState, NonBlocking, StarNight, SystemCommands } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
 import { SwitchState } from '@/core/SwitchState'
+import { Input } from '.'
 
 declare module '@starnight/core' {
-    interface GameLocalData {
-        choicehistory?: Array<number | string>
-    }
     interface GameConfig {
         stopfastonchoice: boolean
         stopautoonchoice: boolean
@@ -14,9 +12,6 @@ declare module '@starnight/core' {
     interface GameUIInternalData {
         choices: Array<ChoiceItem>
         choicesstate: Reactive<SwitchState>
-    }
-    interface GameTempData {
-        choicepointer: number
     }
 }
 
@@ -28,9 +23,7 @@ type ChoiceItem = {
     promise: Promise<number | string>
 }
 
-StarNight.GameEvents.setup.subscribe(({ current, ui, temp }) => {
-    temp.choicepointer = -1
-    current.choicehistory((arr) => arr || [])
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.choicesstate = StarNight.useReactive(SwitchState.Disabled)
 })
 
@@ -47,14 +40,12 @@ export const add = NonBlocking<{ text: string; target: number | string; disable?
 )
 
 export const end = Blocking((context) => async () => {
-    const { current, local, state, config, ui, temp, output } = context
+    const { state, config, ui, output } = context
     const { choices, choicesstate } = ui
     choicesstate(SwitchState.Enabled)
-    const history = state.isInitializing() ? local.choicehistory?.[++temp.choicepointer] : undefined
-    const target = history ?? (await Promise.race(choices.map((e) => e.promise)))
+    const target = await Input.use(Promise.race(choices.map((e) => e.promise)))(context)
     const stopfastonchoice = config.stopfastonchoice() && state.isFast()
     choicesstate(SwitchState.Disabled)
-    current.choicehistory((arr) => [...arr!, target])
     SystemCommands.jump(target)(context)
     if (stopfastonchoice) output.state(GameState.Normal)
 })
