@@ -101,7 +101,7 @@ export const useGame = async (local: GameLocalData) => {
     const store = await onStoreReady
     starnight(
         StarNight.instance({
-            book: await book,
+            book: await book(),
             config: store.config,
             local: local,
             global: store.global,

@@ -4,7 +4,7 @@ import { Video } from '../commands'
 
 export const use = Macro<VideoCommandArgs>(
     () =>
-        async function* (arg0) {
-            yield Video.use({ src: `./static/${arg0}.mp4` })
+        async function* ({ src }) {
+            yield Video.use({ src: `./static/${src}.mp4` })
         }
 )

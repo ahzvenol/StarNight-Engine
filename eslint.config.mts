@@ -6,6 +6,9 @@ import tseslint from 'typescript-eslint'
 
 clsx.configs.recommended.plugins = { clsx: clsx }
 export default tseslint.config(
+    {
+        ignores: ['**/*.scenario.ts', '**/*.scenario.tsx', '**/*.scenario.js', '**/*.scenario.jsx']
+    },
     eslint.configs.recommended,
     tseslint.configs.recommended,
     prettier,

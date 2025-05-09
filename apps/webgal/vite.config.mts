@@ -4,9 +4,11 @@ import legacy from '@vitejs/plugin-legacy'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
 import solidPlugin from 'vite-plugin-solid'
+import scenarioPlugin from './plugins/vite-plugin-scenario'
 
 export default defineConfig(({ command }) => ({
     plugins: [
+        scenarioPlugin(),
         solidPlugin(),
         legacy({
             modernPolyfills: true,

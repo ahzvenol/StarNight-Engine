@@ -1,7 +1,6 @@
 import type { Reactive } from '@starnight/core'
 import { Blocking, GameState, NonBlocking, StarNight, SystemCommands } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
-import { SwitchState } from '@/core/SwitchState'
 import { Input } from '.'
 
 declare module '@starnight/core' {
@@ -11,7 +10,7 @@ declare module '@starnight/core' {
     }
     interface GameUIInternalData {
         choices: Array<ChoiceItem>
-        choicesstate: Reactive<SwitchState>
+        choicesstate: Reactive<boolean>
     }
 }
 
@@ -24,7 +23,7 @@ type ChoiceItem = {
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.choicesstate = StarNight.useReactive(SwitchState.Disabled)
+    ui.choicesstate = StarNight.useReactive(false)
 })
 
 StarNight.ActEvents.start.subscribe(({ ui }) => {
@@ -42,10 +41,10 @@ export const add = NonBlocking<{ text: string; target: number | string; disable?
 export const end = Blocking((context) => async () => {
     const { state, config, ui, output } = context
     const { choices, choicesstate } = ui
-    choicesstate(SwitchState.Enabled)
+    choicesstate(true)
     const target = await Input.use(Promise.race(choices.map((e) => e.promise)))(context)
     const stopfastonchoice = config.stopfastonchoice() && state.isFast()
-    choicesstate(SwitchState.Disabled)
+    choicesstate(false)
     SystemCommands.jump(target)(context)
     if (stopfastonchoice) output.state(GameState.Normal)
 })

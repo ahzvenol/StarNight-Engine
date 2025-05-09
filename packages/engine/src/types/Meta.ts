@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-function-type */
-
 export type Function0<R> = () => R
 export type Function1<T1, R> = (arg0: T1) => R
 export type Function2<T1, T2, R> = (arg0: T1, arg1: T2) => R

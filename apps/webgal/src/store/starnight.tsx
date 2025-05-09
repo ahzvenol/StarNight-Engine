@@ -3,8 +3,7 @@ import * as msgpack from '@msgpack/msgpack'
 import { AbstractGameBook, StarNight } from '@starnight/core'
 import { merge } from 'es-toolkit'
 import { useReactive, useSignal } from 'micro-reactive-solid'
-import { CommandMap } from '@/core/scripts'
-import Sence from '@/sence'
+import Sence from '@/scenario/index.scenario'
 import { resource } from '@/utils/request'
 
 StarNight.useReactive = useReactive
@@ -52,20 +51,15 @@ StarNight.useReactive = useReactive
 
 export const Action = Symbol()
 
+export { Action as $action }
+
 export let context = {} as GameRuntimeContext
 
-export const book = Promise.resolve(
-    new (class extends AbstractGameBook {
-        script = Sence() as AsyncGenerator<
-            Function1<GameRuntimeContext, Promise<unknown>> | typeof Action,
-            void,
-            GameRuntimeContext
-        >
+export { context as $context }
 
-        constructor() {
-            StarNight.GameEvents.setup.subscribe(() => (this.script = Sence()))
-            super()
-        }
+export const book = async () =>
+    new (class extends AbstractGameBook {
+        script = Sence()
 
         done = false
 
@@ -87,7 +81,6 @@ export const book = Promise.resolve(
 
         label: Function1<string, number> = () => 0
     })()
-)
 
 export const starnight = useSignal<StarNightInstance>(null as unknown as StarNightInstance)
 export const ui = () => starnight().context.ui

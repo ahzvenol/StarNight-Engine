@@ -20,11 +20,11 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.video = StarNight.useReactive(null)
 })
 
-export type VideoCommandArgs = string
+export type VideoCommandArgs = { src: string }
 
 // 作为Blocking命令的原因是快进时需要阻塞
 export const use = ActScope(
-    Blocking<{ src: string }>((context) => async ({ src }) => {
+    Blocking<VideoCommandArgs>((context) => async ({ src }) => {
         const { ui } = context
         const { video } = ui
         const promise = new PromiseX<void>()

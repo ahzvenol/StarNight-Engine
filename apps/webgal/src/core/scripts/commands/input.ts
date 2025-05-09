@@ -1,5 +1,5 @@
 import type { Reactive } from '@starnight/core'
-import { Blocking, StarNight } from '@starnight/core'
+import { Blocking, DynamicBlocking, StarNight } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
 
 declare module '@starnight/core' {
@@ -34,12 +34,15 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.clickinput = StarNight.useReactive(null)
 })
 
-export const click = Blocking(({ ui: { clickinput } }) => async () => {
-    const promise = new PromiseX<void>()
-    clickinput(() => promise.resolve)
-    await promise
-    clickinput(() => null)
-})
+export const click = DynamicBlocking(
+    ({ ui: { clickinput } }) =>
+        function* () {
+            const promise = new PromiseX<void>()
+            clickinput(() => promise.resolve)
+            yield promise
+            clickinput(() => null)
+        }
+)
 
 declare module '@starnight/core' {
     interface GameUIInternalData {

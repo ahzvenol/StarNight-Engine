@@ -45,9 +45,11 @@ StarNight.ActEvents.ready.subscribe(({ ui: { pixi } }) => {
 })
 
 StarNight.ActEvents.end.subscribe(({ ui: { pixi } }) => {
-    const containers = pixi.stage.children as Container[]
+    const containers = pixi.stage.children as Container<Container<Sprite>>[]
     containers.forEach((container) => {
-        container.children.slice(1).forEach((child) => child.destroy())
+        container.children.forEach((container) => {
+            container.children.slice(1).forEach((child) => child.destroy())
+        })
     })
 })
 
@@ -169,7 +171,6 @@ export const close = NonBlocking<CloseImageCommandArgs>(
 
 export type ShakePunchCommandArgs = { target?: string; x?: number; y?: number; duration: number; iteration?: number }
 
-// 因为tween命令使用translate参数,这里使用left和top避免冲突
 export const shake = EffectScope(
     Dynamic<ShakePunchCommandArgs>(
         ({
