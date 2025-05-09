@@ -3,7 +3,7 @@
         "**/*.ts",
         "**/*.tsx",
         "**/*.mts",
-        "../../packages/engine/src/utils/AssetLoader.ts",
+        "../../packages/core/src/utils/AssetLoader.ts",
         "src/scenario/main.scenario.ts"
     ],
     "compilerOptions": {
