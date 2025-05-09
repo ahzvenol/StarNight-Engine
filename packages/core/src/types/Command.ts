@@ -29,6 +29,3 @@ export type MacroCommand<T, R> = Function1<
 
 // 标准命令返回一个永不失败的Promise
 export type StandardCommand<T, R> = Function1<T, Function1<GameRuntimeContext, NeverFailingPromise<R>>>
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Commands = Record<string, StandardCommand<any, any>>

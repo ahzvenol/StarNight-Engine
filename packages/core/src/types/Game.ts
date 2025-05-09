@@ -2,7 +2,7 @@
 import type { Reactive } from 'micro-reactive-wrapper'
 import type { StarNightInstance, StarNightStateStatic } from '@/StarNight'
 import type { AbstractGameBook } from '../Book'
-import type { CommandOutput, Commands } from './Command'
+import type { CommandOutput } from './Command'
 import type { Function1 } from './Meta'
 
 export enum GameState {
@@ -43,7 +43,6 @@ export type GameConstructorParams = {
     global: Reactive<GameGlobalData>
     readonly local: GameLocalData
     ui: GameUIExternalData
-    Commands?: Commands
 }
 
 export type GameContext = {

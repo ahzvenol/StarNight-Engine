@@ -1,9 +1,9 @@
 import type { GameAct } from './types/Game'
 
-export abstract class AbstractGameBook {
-    abstract length(): number
+export interface AbstractGameBook {
+    length(): number
 
-    abstract act(index: number): GameAct<unknown>
+    act(index: number): GameAct<unknown>
 
-    abstract label(label: string): number
+    label(label: string): number
 }

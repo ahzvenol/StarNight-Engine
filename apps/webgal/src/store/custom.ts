@@ -1,6 +1,7 @@
-import { cloneDeep } from 'es-toolkit'
+import type { Store } from './default'
+import { toMerged } from 'es-toolkit'
 import { SystemDefaultStore } from './default'
 
-const store = Promise.resolve(SystemDefaultStore()).catch(() => SystemDefaultStore())
+const Custom: Partial<Store> = {}
 
-export const CustomDefaultStore = () => store.then((store) => cloneDeep(store))
+export const CustomDefaultStore = async () => toMerged(SystemDefaultStore(), Custom)
