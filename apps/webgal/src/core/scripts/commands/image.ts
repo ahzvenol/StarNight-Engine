@@ -1,4 +1,5 @@
 import type { DisplayObject } from 'pixi.js'
+import type { MergeExclusive } from 'type-fest'
 import { Dynamic, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import { isNil, isUndefined } from 'es-toolkit'
 import { gsap } from 'gsap'
@@ -154,7 +155,7 @@ export const to = Dynamic<TweenImageCommandArgs>(
         }
 )
 
-export type CloseImageCommandArgs = XOR<{ target: string }, { exclude?: string }>
+export type CloseImageCommandArgs = MergeExclusive<{ target: string }, { exclude?: string }>
 
 export const close = NonBlocking<CloseImageCommandArgs>(
     ({

@@ -1,6 +1,6 @@
 import type { Signal } from 'micro-reactive-wrapper'
 import type { GameRuntimeContext, GameState } from './Game'
-import type { Function1, NeverFailingPromise } from './Meta'
+import type { Function1 } from './Meta'
 
 // 命令参数可能的类型
 export type CommandArg = string | number | boolean
@@ -28,4 +28,10 @@ export type MacroCommand<T, R> = Function1<
 >
 
 // 标准命令返回一个永不失败的Promise
-export type StandardCommand<T, R> = Function1<T, Function1<GameRuntimeContext, NeverFailingPromise<R>>>
+export type StandardCommand<T, R> = Function1<T, Function1<GameRuntimeContext, Promise<R>>>
+
+export type StandardDynamicCommand<T, R> = StandardCommand<T, R> & { __schedule: 'async' | 'await' }
+
+export type StandardNonBlockingCommand<T, R> = StandardCommand<T, R> & { __schedule: 'async' }
+
+export type StandardBlockingCommand<T, R> = StandardCommand<T, R> & { __schedule: 'await' }

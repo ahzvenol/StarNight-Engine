@@ -1,5 +1,5 @@
 import type { AbstractGameBook, GameAct, GameRuntimeContext } from '@starnight/core'
-import { Action, Context } from './$Scenario'
+import { $$context, Action, Context } from './$Scenario'
 // @ts-expect-error 模块没有默认导出。
 import Scenario from './index.scenario'
 
@@ -16,7 +16,7 @@ export const book = () =>
 
         act: Function1<number, GameAct<void>> = () => {
             return async function* (this: ScenarioBook, ctx: GameRuntimeContext) {
-                Context = ctx
+                $$context(ctx)
                 while (true) {
                     const { value, done } = await this.scenario.next()
                     if (value === Action || done) return

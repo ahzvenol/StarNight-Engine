@@ -1,4 +1,5 @@
 import type { Reactive, Signal } from 'micro-reactive-solid'
+import type { Primitive } from 'type-fest'
 import { StarNight } from '@starnight/core'
 import { useReactive, useSignal } from 'micro-reactive-solid'
 
