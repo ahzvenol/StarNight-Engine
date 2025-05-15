@@ -4,7 +4,7 @@ import type { CommandOutput } from './types/Command'
 import type { GameConstructorParams, GameContext, GameLocalData } from './types/Game'
 import { delay, isString } from 'es-toolkit'
 import { useReactiveWrapper } from 'micro-reactive-wrapper'
-import { fork } from './Decorator'
+import { Fork } from './Decorator'
 import { ActEvents, ClickEvents, GameEvents } from './Events'
 import { GameState } from './types/Game'
 import { PromiseX } from './utils/PromiseX'
@@ -126,7 +126,7 @@ export class StarNightInstance {
         this.context = {
             ...params,
             current: this.current,
-            temp: {},
+            temp: {} as GameContext['temp'],
             instance: this
         } as GameContext
         this.GameEvents.setup.publish(this.context)
@@ -169,7 +169,6 @@ async function ActLoop(this: StarNightInstance) {
     await this.GameEvents.onStart()
     // 不能在开始前结束游戏
     const onGameStop = this.GameEvents.onStop()
-
     while (true) {
         // 如果用户离开游戏界面,等待用户回来
         if (!this.isGameVisible()) await this.GameEvents.onActiveChange()
@@ -195,38 +194,41 @@ async function ActLoop(this: StarNightInstance) {
             cont: StarNight.useReactive(false),
             jump: StarNight.useReactive(undefined),
             end: StarNight.useReactive(false),
-            state: StarNight.useReactive(undefined)
-        } as CommandOutput
+            state: StarNight.useReactive(undefined),
+            extime: StarNight.useReactive(undefined)
+        } satisfies CommandOutput
         const state = new StarNightStateStatic(this.state.now())
         const context = { ...this.context, state, output, onActRush, onGameStop }
         if (this.state.isInitializing() || this.state.isFast()) this.ActEvents.rush.publish(context)
         // ActStart
         this.ActEvents.start.publish(context)
         // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-        await fork(this.book.act(this.current.index()))(context)
+        await Fork(this.book.act(this.current.index()))(context)
         // ActEnd
         this.ActEvents.end.publish(context)
         if (output.state() && !this.state.isInitializing()) this.state.now(output.state()!)
         // 等待过程受continue命令影响
-        // eslint-disable-next-line no-empty
-        if (this.state.isInitializing() || output.cont()) {
-        } else if (this.state.isFast()) {
-            await delay(this.context.config.fastreadspeed())
-        } else if (this.state.isAuto()) {
-            await delay(this.context.config.autoreadspeed())
-        } else {
-            await Promise.race([this.ClickEvents.onStep(), this.ClickEvents.onAuto(), this.ClickEvents.onFast()])
+        if (!(this.state.isInitializing() || output.cont())) {
+            if (this.state.isFast()) {
+                await delay(this.context.config.fastreadspeed())
+            } else if (this.state.isAuto()) {
+                const onAutoNext = Promise.resolve(output.extime())
+                    .then(() => delay(this.context.config.autoreadspeed()))
+                    .then(() => (!this.state.isAuto() ? this.ClickEvents.onAuto() : Promise.resolve()))
+                await Promise.race([this.ClickEvents.onStep(), onAutoNext, this.ClickEvents.onFast()])
+            } else {
+                await Promise.race([this.ClickEvents.onStep(), this.ClickEvents.onAuto(), this.ClickEvents.onFast()])
+            }
         }
         // jump命令修改接下来一幕的index
         const jump = output.jump()
         const target = isString(jump) ? this.book.label(jump) : Number.isFinite(jump) ? jump : undefined
         this.current.index(target !== undefined ? target : this.current.index() + 1)
-        // 游戏实例已销毁时退出,初始化时不判断以优化初始化速度
-        // 不需要发送事件,因为这个事件已经由用户发出
+        // 游戏实例已销毁时退出,初始化时不判断以优化初始化速度。不需要发送事件,因为这个事件已经由用户发出
         if (!this.state.isInitializing() && (await PromiseX.isSettled(onGameStop))) return
         const isEnd = output.end() || this.current.index() >= this.book.length()
         if (isEnd) return this.GameEvents.end.publish(this.context)
-        // 没有因为某种原因退出才发布跳转事件
+        // 没有退出才发布跳转事件
         if (target !== undefined) this.ActEvents.jump.publish(this.context)
     }
 }

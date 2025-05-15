@@ -13,22 +13,23 @@ declare module '@starnight/core' {
 
 type VideoItem = {
     src: string
-    race: () => void
+    race: Function0<void> | null
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.video = StarNight.useReactive(null)
 })
 
-export type VideoCommandArgs = { src: string }
+export type VideoCommandArgs = { src: string; skip?: boolean }
 
 // 作为Blocking命令的原因是快进时需要阻塞
 export const use = ActScope(
-    Blocking<VideoCommandArgs>((context) => async ({ src }) => {
-        const { ui } = context
-        const { video } = ui
+    Blocking<VideoCommandArgs>((context) => async ({ src, skip = true }) => {
+        const {
+            ui: { video }
+        } = context
         const promise = new PromiseX<void>()
-        video({ src, race: promise.resolve })
+        video({ src, race: skip ? promise.resolve : null })
         await promise.then(() => video(null))
         SystemCommands.continue()(context)
     })

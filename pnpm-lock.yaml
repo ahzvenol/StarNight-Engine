@@ -325,6 +325,9 @@ importers:
       micro-reactive-wrapper:
         specifier: ^1.0.0
         version: 1.0.0
+      type-fest:
+        specifier: ^4.41.0
+        version: 4.41.0
     devDependencies:
       tsup:
         specifier: ^8.4.0

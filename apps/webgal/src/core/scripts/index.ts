@@ -1,3 +1,4 @@
+import type { CommandTagBlocking, CommandTagNonBlocking } from '@starnight/core'
 import type { MergeDeep, UnionToIntersection } from 'type-fest'
 import { lowerCase, mapValues, merge } from 'es-toolkit'
 import * as Command from './commands'
@@ -42,10 +43,10 @@ export const FlattenCommands = Object.entries(MergedCommands)
     )
     .reduce(merge, {}) as FlattenObject<typeof MergedCommands>
 
-type Filter<T, Tag extends { __schedule: string }> = {
-    [K in keyof T as T[K] extends { __schedule: infer S } ? (Tag['__schedule'] extends S ? K : never) : never]: T[K]
+type Filter<T, Tag> = {
+    [K in keyof T as T[K] extends Tag ? K : never]: T[K]
 }
 
-export const Await = FlattenCommands as Filter<typeof FlattenCommands, { __schedule: 'await' }>
+export const Await = FlattenCommands as Filter<typeof FlattenCommands, CommandTagBlocking>
 
-export const Async = FlattenCommands as Filter<typeof FlattenCommands, { __schedule: 'async' }>
+export const Async = FlattenCommands as Filter<typeof FlattenCommands, CommandTagNonBlocking>

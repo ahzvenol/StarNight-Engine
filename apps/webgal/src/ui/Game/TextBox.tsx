@@ -16,12 +16,12 @@ export const TextBox: Component = () => {
                     {(char, i) => (
                         <Show when={char !== '\n'} fallback={<br />}>
                             <span
-                                class={clsx({ [styles.Game_TextBox_char]: !ui().iconstate() })}
+                                class={clsx({ [styles.Game_TextBox_char]: !ui().textend() })}
                                 style={Object.assign(
                                     {
                                         'animation-delay': `${config.textspeed() * i()}ms`
                                     },
-                                    ui().iconstate() ? { opacity: 1 } : {}
+                                    ui().textend() ? { opacity: 1 } : {}
                                 )}
                                 innerText={char}
                             />

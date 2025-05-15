@@ -1,28 +1,6 @@
 import type { Reactive } from '@starnight/core'
-import { Blocking, DynamicBlocking, StarNight } from '@starnight/core'
+import { Blocking, DynamicBlocking, GameState, StarNight, SystemCommands } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
-
-declare module '@starnight/core' {
-    interface GameLocalData {
-        input?: Array<unknown>
-    }
-    interface GameTempData {
-        pointer: number
-    }
-}
-
-StarNight.GameEvents.setup.subscribe(({ current, temp }) => {
-    temp.pointer = -1
-    current.input((arr) => arr || [])
-})
-
-export const use = Blocking(({ state, current, local, temp }) => async <T>(promise: Promise<T>) => {
-    const history = local.input?.[++temp.pointer]
-    console.log(state.isInitializing(), history, temp.pointer)
-    const input = state.isInitializing() && history ? history : await promise
-    current.input((arr) => [...arr!, input])
-    return input as T
-})
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
@@ -60,7 +38,42 @@ export const text = Blocking((context) => async () => {
     } = context
     const promise = new PromiseX<string>()
     textinput(() => promise.resolve)
-    const res = await use(promise)(context)
+    const res = await SystemCommands.input(() => promise)(context)
     textinput(() => null)
     return res
+})
+
+declare module '@starnight/core' {
+    interface GameConfig {
+        stopfastonchoice: boolean
+        stopautoonchoice: boolean
+    }
+    interface GameUIInternalData {
+        choices: Reactive<Array<ChoiceItem & { choose: Function0<void> }> | null>
+    }
+}
+
+type ChoiceItem = {
+    id: number | string
+    text: string
+    disable: boolean
+}
+
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
+    ui.choices = StarNight.useReactive(null)
+})
+
+export const choose = Blocking<Array<ChoiceItem>, number | string>((context) => async (arr) => {
+    const { state, config, ui, output } = context
+    const choices = arr.map((item) => {
+        const promise = new PromiseX<number | string>()
+        const choose = () => promise.resolve(item.id)
+        return { ...item, promise, choose }
+    })
+    ui.choices(choices)
+    const chosen = await SystemCommands.input(() => Promise.race(choices.map((e) => e.promise)))(context)
+    ui.choices(null)
+    if (config.stopfastonchoice() && state.isFast()) output.state(GameState.Normal)
+    if (config.stopautoonchoice() && state.isAuto()) output.state(GameState.Normal)
+    return chosen
 })

@@ -1,5 +1,6 @@
+import type { Except } from 'type-fest'
 import type { Howl, HowlOptions } from '@/lib/howler'
-import { Dynamic, NonBlocking, StarNight } from '@starnight/core'
+import { Dynamic, Macro, NonBlocking, StarNight } from '@starnight/core'
 import { delay, isUndefined } from 'es-toolkit'
 
 declare module '@starnight/core' {
@@ -10,7 +11,11 @@ declare module '@starnight/core' {
         audios: Map<string, Howl>
     }
     interface GameUIExternalData {
-        audiotracks: Record<string, Function1<HowlOptions, Howl>>
+        audiotracks: {
+            clip: Function1<HowlOptions, Howl>
+            bgm: Function1<HowlOptions, Howl>
+            se: Function1<HowlOptions, Howl>
+        } & Record<string, Function1<HowlOptions, Howl>>
     }
 }
 
@@ -21,7 +26,7 @@ StarNight.GameEvents.setup.subscribe(({ temp }) => {
 StarNight.ActEvents.ready.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.load().play()))
 
 StarNight.ActEvents.start.subscribe(({ config, temp: { audios } }) => {
-    if (config.interruptclip()) audios.get('Clip')?.unload()
+    if (config.interruptclip()) audios.get('clip')?.unload()
 })
 
 StarNight.GameEvents.suspend.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.pause()))
@@ -34,7 +39,7 @@ StarNight.GameEvents.resume.subscribe(({ temp: { audios } }) =>
 
 StarNight.GameEvents.exit.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.unload()))
 
-export type SetAudioCommandArgs = {
+export type AudioSetCommandArgs = {
     type: string
     id?: string
     src: string
@@ -43,16 +48,14 @@ export type SetAudioCommandArgs = {
     loop?: boolean | undefined
     rate?: number | undefined
 }
-export const set = Dynamic<SetAudioCommandArgs>(
-    ({ state, ui: { audiotracks }, temp: { audios } }) =>
-        function* ({ type, id = type, ...args }) {
+export const set = NonBlocking<AudioSetCommandArgs>(
+    ({ state, output: { extime }, ui: { audiotracks }, temp: { audios } }) =>
+        ({ type, id = type, ...args }) => {
+            const isNotEffectSocpe = state.isInitializing() || state.isFast()
+            const isClip = type === 'clip'
+            const isNotLoopSE = type === 'se' && args.loop !== true
             // Clip的生命周期是幕,所以不用初始化
-            if (
-                (state.isInitializing() || state.isFast()) &&
-                (type === 'Clip' || (type === 'SE' && args.loop !== true))
-            ) {
-                return
-            }
+            if (isNotEffectSocpe && (isClip || isNotLoopSE)) return
             // 挂载新音频
             const audio = audiotracks[type]({
                 ...args,
@@ -70,16 +73,13 @@ export const set = Dynamic<SetAudioCommandArgs>(
                     }
                 })
             }
-            // tag:自动模式需要对Clip计时,目前先打一个临时的补丁
-            if (type === 'Clip' && state.isAuto()) {
-                yield new Promise((res) => audio.once('end', res))
-            }
+            extime(new Promise((res) => audio.once('end', res)))
         }
 )
 
-export type FadeAudioCommandArgs = { target: string; volume: number; duration?: number }
+export type AudioVolumeCommandArgs = { target: string; volume: number; duration?: number }
 
-export const volume = Dynamic<FadeAudioCommandArgs>(
+export const volume = Dynamic<AudioVolumeCommandArgs>(
     ({ temp: { audios } }) =>
         function* ({ target, volume, duration = 0 }) {
             const audio = audios.get(target)
@@ -98,11 +98,11 @@ export const volume = Dynamic<FadeAudioCommandArgs>(
         }
 )
 
-export type CloseAudioCommandArgs = { target?: string }
+export type AudioCloseCommandArgs = { target?: string }
 
 // 根据名称关闭音轨
 // 如果省略了target,关闭全部轨道
-export const close = NonBlocking<CloseAudioCommandArgs>(({ temp: { audios } }) => ({ target }) => {
+export const close = NonBlocking<AudioCloseCommandArgs>(({ temp: { audios } }) => ({ target }) => {
     const targets = isUndefined(target) ? audios.keys() : [target]
     for (const key of targets) {
         const audio = audios.get(key)
@@ -110,3 +110,54 @@ export const close = NonBlocking<CloseAudioCommandArgs>(({ temp: { audios } }) =
         audio?.unload()
     }
 })
+
+export const bgm = Macro<Except<AudioSetCommandArgs, 'type'> & { duration?: number }>(
+    () =>
+        async function* (_args) {
+            const args = { loop: true, ..._args, type: 'bgm' }
+            args.id = args.id || args.type
+            if (args.duration) {
+                yield volume({ target: args.id, volume: 0, duration: args.duration })
+                yield close({ target: args.id })
+                yield set({ volume: 0, ...args })
+                yield volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
+            } else {
+                yield close({ target: args.id })
+                yield set({ volume: args.volume || 1, ...args })
+            }
+        }
+)
+
+export const se = Macro<Except<AudioSetCommandArgs, 'type'> & { duration?: number }>(
+    () =>
+        async function* (_args) {
+            const args = { ..._args, type: 'se' }
+            args.id = args.id || args.type
+            if (args.duration) {
+                yield volume({ target: args.id, volume: 0, duration: args.duration })
+                yield close({ target: args.id })
+                yield set({ volume: 0, ...args })
+                yield volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
+            } else {
+                yield close({ target: args.id })
+                yield set({ volume: args.volume || 1, ...args })
+            }
+        }
+)
+
+export const clip = Macro<Except<AudioSetCommandArgs, 'type' | 'id'>>(
+    () =>
+        async function* (_args) {
+            const args = { ..._args, type: 'clip', id: 'clip' }
+            yield close({ target: args.id })
+            yield set(Object.assign({ volume: args.volume || 1 }, args))
+        }
+)
+
+export const fade_close = Macro<{ target: string; duration?: number }>(
+    (context) =>
+        async function* (args) {
+            await volume({ volume: 0, ...args })(context)
+            yield close({ target: args.target })
+        }
+)

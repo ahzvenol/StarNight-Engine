@@ -70,7 +70,7 @@ export function Blocking<T = void, R = void>(fn: BlockingCommand<T, R>): Standar
     return ((args) => async (context) => normalize(() => fn(context)(args))) as StandardBlockingCommand<T, R>
 }
 
-export function fork<R>(fn: GameAct<R>): ReturnType<StandardCommand<void, R>> {
+export function Fork<R>(fn: GameAct<R>): ReturnType<StandardCommand<void, R>> {
     return async (context) => {
         const generator = fn(context)
         const arr = Array<Promise<unknown>>()
@@ -84,5 +84,5 @@ export function fork<R>(fn: GameAct<R>): ReturnType<StandardCommand<void, R>> {
 
 // 通过基本命令组合为宏命令,宏命令的性质由它的组成决定
 export function Macro<T = void, R = void>(fn: MacroCommand<T, R>): StandardDynamicCommand<T, R> {
-    return ((args) => (context) => fork((context) => fn(context)(args))(context)) as StandardDynamicCommand<T, R>
+    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardDynamicCommand<T, R>
 }

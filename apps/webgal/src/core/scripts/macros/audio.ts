@@ -1,8 +1,8 @@
-import type { SetAudioCommandArgs } from '../commands/audio'
+import type { AudioSetCommandArgs } from '../commands/audio'
 import { Macro } from '@starnight/core'
 import { Audio, Var } from '../commands'
 
-export const set = Macro<SetAudioCommandArgs & { duration?: number }>(
+export const set = Macro<AudioSetCommandArgs & { duration?: number }>(
     () =>
         async function* (args) {
             if (args.type === 'BGM') {
@@ -20,15 +20,5 @@ export const set = Macro<SetAudioCommandArgs & { duration?: number }>(
                 yield Audio.close({ target: args.id })
                 yield Audio.set(Object.assign({ volume: args.volume || 1 }, args))
             }
-        }
-)
-
-export const close = Macro<{ target?: string; duration?: number }>(
-    () =>
-        async function* (args) {
-            if (args.target !== undefined) {
-                yield Audio.volume({ volume: 0, target: args.target, duration: args.duration })
-            }
-            yield Audio.close(args)
         }
 )

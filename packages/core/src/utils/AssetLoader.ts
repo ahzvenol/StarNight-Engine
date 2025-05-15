@@ -74,7 +74,7 @@ export class AssetLoader {
                 video.oncanplay = () => resolve(video)
                 video.onerror = () => reject('加载失败')
             } else {
-                return reject('未知文件类型,未知类型的扩展名')
+                return reject('未知文件类型,未知的扩展名')
             }
         })
         this.loaded.set(url, promise)

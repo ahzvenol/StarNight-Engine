@@ -1,32 +1,19 @@
-import type { SetImageCommandArgs, TweenImageCommandArgs } from '../commands/image'
+import type { Except } from 'type-fest'
+import type { ImageSetCommandArgs } from '../commands/image'
 import { Macro } from '@starnight/core'
-import { mapValues, omit } from 'es-toolkit'
 import { Image, Var } from '../commands'
 
-export type SetBGMacroArgs = {
-    duration?: number
-    x?: number
-    y?: number
-}
-
-// 由于设置了新图片之后就获取不到旧图片,需要先对旧图片施加变换,但是这样一来透明度就变了,所以需要重新指定透明度
-
-export const sprite = Macro<SetImageCommandArgs & SetBGMacroArgs>(
+export const sprite = Macro<ImageSetCommandArgs & Except<PixiPlugin.Vars, 'zIndex'>>(
     () =>
         async function* (args) {
             args.src = `./static/ImageAsset/${args.src}.webp`
-            args.zIndex = args.z
-            delete args.z
-            yield Image.to({ target: args.id, ease: 'power1.in', duration: 175, alpha: 0, inherit: false })
-            yield Image.set(Object.assign({ alpha: 1 }, omit(args, ['duration']), { zIndex: 1 }) as SetImageCommandArgs)
+            yield Image.sprite(args)
         }
 )
 
-export const bg = Macro<SetImageCommandArgs & SetBGMacroArgs>(
+export const bg = Macro<ImageSetCommandArgs & { duration?: number } & Except<PixiPlugin.Vars, 'zIndex'>>(
     () =>
         async function* (args) {
-            args.id = 'BG'
-            args.zIndex = 0
             const raw = args.src
             const scale =
                 raw.includes('bg_white') || raw.includes('bg_black') || raw.includes('bg_red')
@@ -35,18 +22,7 @@ export const bg = Macro<SetImageCommandArgs & SetBGMacroArgs>(
                       ? { scaleX: 1, scaleY: 1 }
                       : { scaleX: 1.021, scaleY: 1.021 }
             args.src = `./static/ImageAsset/${args.src}.webp`
-            args.zIndex = args.z
-            delete args.z
-            yield Image.to({ target: args.id, ease: 'power1.in', duration: args.duration, alpha: 0, inherit: false })
-            yield Image.set(Object.assign({ alpha: 1 }, omit(args, ['duration']), scale) as SetImageCommandArgs)
+            yield Image.bg({ ...args, ...scale })
             yield Var.unlock(raw)
-        }
-)
-
-export const to = Macro<TweenImageCommandArgs>(
-    () =>
-        async function* ({ target, ease, duration, ...args }) {
-            const offsetArgs = mapValues(args, (arg) => '+=' + arg)
-            yield Image.to({ target, ease, duration, ...offsetArgs })
         }
 )

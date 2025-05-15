@@ -1,19 +1,13 @@
 import type { DisplayObject } from 'pixi.js'
-import type { MergeExclusive } from 'type-fest'
-import { Dynamic, EffectScope, NonBlocking, StarNight } from '@starnight/core'
-import { isNil, isUndefined } from 'es-toolkit'
+import type { Except, MergeExclusive } from 'type-fest'
+import { Dynamic, EffectScope, Macro, NonBlocking, StarNight } from '@starnight/core'
+import { isNil, isUndefined, mapValues, omit } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
 import { PixiPlugin } from 'gsap/PixiPlugin'
 import * as PIXI from 'pixi.js'
 import { Application, Container, Sprite, Texture } from 'pixi.js'
 import { Y } from '@/utils/fp'
-
-// 为了实现在角色移动时进行表情变化,需要重新引入容器
-// 角色表情切换以及背景的缓动都是用透明度做的,透明度不能直接应用给容器
-// 但是移动必须直接应用给容器,来实现让几张同角色立绘一起移动
-// 同时层级关系被容器掩盖,z-index必须直接赋值给容器
-// 这些区分带来了一些混乱,但确实增强了功能,暂时不知道是好是坏
 
 PixiPlugin.registerPIXI(PIXI)
 gsap.registerPlugin(CustomEase)
@@ -22,31 +16,35 @@ gsap.defaults({ ease: 'none' })
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
+        view: HTMLCanvasElement
+    }
+    interface GameTempData {
         pixi: Application<HTMLCanvasElement>
+        stage: Container<Container<Container<Sprite>>>
     }
 }
 
-StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.pixi = new Application({
-        width: 1280,
-        height: 720
-    })
+StarNight.GameEvents.setup.subscribe(({ ui, temp }) => {
+    temp.pixi = new Application({ width: 1280, height: 720 })
+    ui.view = temp.pixi.view
+    temp.stage = temp.pixi.stage as Container<Container<Container<Sprite>>>
     // @ts-expect-error 类型“typeof globalThis”上不存在属性“__PIXI_APP__”。
-    globalThis['__PIXI_APP__'] = ui.pixi
+    globalThis['__PIXI_APP__'] = temp.pixi
 })
 
-StarNight.ActEvents.ready.subscribe(({ ui: { pixi } }) => {
+StarNight.ActEvents.ready.subscribe(({ temp: { stage } }) => {
     Y<DisplayObject, void>((rec) => (displayObject) => {
         if (displayObject instanceof Sprite) {
             displayObject.texture = Texture.from(displayObject.name!)
         } else if (displayObject instanceof Container) {
             displayObject.children.forEach(rec)
         }
-    })(pixi.stage)
+    })(stage)
 })
 
-StarNight.ActEvents.end.subscribe(({ ui: { pixi } }) => {
-    const containers = pixi.stage.children as Container<Container<Sprite>>[]
+// 在幕结束时清理,每个容器下只保留一个Sprite
+StarNight.ActEvents.end.subscribe(({ temp: { stage } }) => {
+    const containers = stage.children as Container<Container<Sprite>>[]
     containers.forEach((container) => {
         container.children.forEach((container) => {
             container.children.slice(1).forEach((child) => child.destroy())
@@ -54,50 +52,32 @@ StarNight.ActEvents.end.subscribe(({ ui: { pixi } }) => {
     })
 })
 
-export type SetImageCommandArgs = {
-    id: string
-    src: string
-    zIndex?: number
-} & PixiPlugin.Vars
+export type ImageSetCommandArgs = { id: string; src: string; z?: number }
 
-export const set = NonBlocking<SetImageCommandArgs>(
-    ({
-        state,
-        ui: {
-            pixi: { stage }
-        }
-    }) =>
-        ({ id, src, zIndex, ...args }) => {
-            let outerContainer: Container<Container<Sprite>>
-            let innerContainer: Container<Sprite>
-            const newSprite = new Sprite()
-            if (stage.getChildByName(id)) {
-                outerContainer = stage.getChildByName(id)!
-                innerContainer = outerContainer.getChildAt(0)
-                const oldSprite = innerContainer.getChildAt(0)
-                newSprite.transform.position.copyFrom(oldSprite.transform.position)
-                newSprite.transform.scale.copyFrom(oldSprite.transform.scale)
-                newSprite.transform.rotation = oldSprite.transform.rotation
-                newSprite.transform.pivot.copyFrom(oldSprite.transform.pivot)
-                newSprite.transform.skew.copyFrom(oldSprite.transform.skew)
-            } else {
-                outerContainer = new Container()
-                outerContainer.name = id
-                innerContainer = new Container()
-                outerContainer.addChild(innerContainer)
-                stage.addChild(outerContainer)
-            }
-            if (!isUndefined(zIndex)) outerContainer.zIndex = zIndex
-            if (state.isInitializing()) newSprite.name = src
-            else newSprite.texture = Texture.from(src)
-            gsap.set(newSprite, { pixi: args })
-            innerContainer.addChildAt(newSprite, 0)
-        }
-)
+export const set = NonBlocking<ImageSetCommandArgs>(({ state, temp: { stage } }) => ({ id, src, z }) => {
+    // 外层容器用于摇晃效果,内层容器用于变换效果
+    let outerContainer: Container<Container<Sprite>>
+    let innerContainer: Container<Sprite>
+    const newSprite = new Sprite()
+    if (stage.getChildByName(id)) {
+        outerContainer = stage.getChildByName(id)!
+        innerContainer = outerContainer.getChildAt(0)
+    } else {
+        outerContainer = new Container()
+        outerContainer.name = id
+        innerContainer = new Container()
+        outerContainer.addChild(innerContainer)
+        stage.addChild(outerContainer)
+    }
+    if (!isUndefined(z)) outerContainer.zIndex = z
+    if (state.isInitializing()) newSprite.name = src
+    else newSprite.texture = Texture.from(src)
+    innerContainer.addChildAt(newSprite, 0)
+})
 
 declare module '@starnight/core' {
     interface GameTempData {
-        activetimelines: Map<object, gsap.core.Timeline>
+        activetimelines: Map<gsap.TweenTarget, gsap.core.Timeline>
     }
 }
 
@@ -109,40 +89,28 @@ StarNight.ActEvents.start.subscribe(({ temp: { activetimelines } }) => {
     activetimelines.clear()
 })
 
-export type TweenCommandArgs = { target: object; ease?: string; duration: number }
-
-export type TweenImageCommandArgs = {
-    target: string
+export type ImageToCommandArgs = {
+    target?: gsap.TweenTarget
     ease?: string
     duration?: number
-    inherit?: boolean
-} & PixiPlugin.Vars
+} & gsap.TweenVars
 
-export const to = Dynamic<TweenImageCommandArgs>(
-    ({
-        state,
-        ui: {
-            pixi: { stage }
-        },
-        temp: { activetimelines }
-    }) =>
-        function* ({ target, ease = 'none', duration = 0, inherit = true, ...args }) {
-            const outerContainer = stage.getChildByName<Container>(target)
-            const innerContainer = outerContainer?.getChildAt(0) as Container<Sprite>
-            const tweenTarget = inherit ? innerContainer : innerContainer?.getChildAt(0)
-            if (isNil(tweenTarget)) return
+export const to = Dynamic<ImageToCommandArgs>(
+    ({ state, temp: { activetimelines } }) =>
+        function* ({ target, ease = 'none', duration = 0, ...args }) {
+            if (isNil(target)) return
             if (state.isInitializing()) {
-                gsap.set(tweenTarget, args)
+                gsap.set(target, args)
             } else {
                 // 保证对同一个物体的缓动被顺序应用
-                if (!activetimelines.has(tweenTarget)) {
+                if (!activetimelines.has(target)) {
                     const timeline = gsap.timeline({ paused: false })
-                    activetimelines.set(tweenTarget, timeline)
+                    activetimelines.set(target, timeline)
                 }
-                const timeline = activetimelines.get(tweenTarget)!
+                const timeline = activetimelines.get(target)!
                 const promise = new Promise<void>((res) =>
-                    timeline.to(tweenTarget, {
-                        pixi: args,
+                    timeline.to(target, {
+                        ...args,
                         ease: gsap.parseEase(ease),
                         duration: duration / 1000,
                         onComplete: res
@@ -155,32 +123,27 @@ export const to = Dynamic<TweenImageCommandArgs>(
         }
 )
 
-export type CloseImageCommandArgs = MergeExclusive<{ target: string }, { exclude?: string }>
+export type ImageCloseCommandArgs = MergeExclusive<{ target: string }, { exclude?: Array<string> }>
 
-export const close = NonBlocking<CloseImageCommandArgs>(
-    ({
-        ui: {
-            pixi: { stage }
-        }
-    }) =>
-        ({ target, exclude }) => {
-            stage.children
-                .filter((container) => (isUndefined(target) ? container.name !== exclude : container.name === target))
-                .forEach((container) => stage.removeChild(container))
-        }
-)
+export const close = NonBlocking<ImageCloseCommandArgs>(({ temp: { stage } }) => ({ target, exclude }) => {
+    stage.children
+        .filter((container) => (isUndefined(target) ? !exclude?.includes(container.name!) : container.name === target))
+        .forEach((container) => stage.removeChild(container))
+})
 
-export type ShakePunchCommandArgs = { target?: string; x?: number; y?: number; duration: number; iteration?: number }
+export type ImageShakePunchCommandArgs = {
+    target?: string
+    x?: number
+    y?: number
+    duration: number
+    iteration?: number
+}
 
 export const shake = EffectScope(
-    Dynamic<ShakePunchCommandArgs>(
-        ({
-            ui: {
-                pixi: { stage }
-            }
-        }) =>
-            function* ({ target, x = 0, y = 0, duration, iteration = 10 }) {
-                const tweenTarget = isUndefined(target) ? stage : stage.getChildByName(target)
+    Dynamic<ImageShakePunchCommandArgs>(
+        ({ temp: { stage } }) =>
+            function* ({ target: _target, x = 0, y = 0, duration, iteration = 10 }) {
+                const target = isUndefined(_target) ? stage : stage.getChildByName(_target)
                 const originX = 0
                 const originY = 0
                 const timeline = gsap.timeline()
@@ -190,23 +153,19 @@ export const shake = EffectScope(
                     const diminishing = 1 - percentage
                     const nextX = originX + Math.random() * (x * diminishing * 2) - x * diminishing
                     const nextY = originY + Math.random() * (y * diminishing * 2) - y * diminishing
-                    timeline.to(tweenTarget, { pixi: { x: nextX, y: nextY }, duration: dur / 1000 })
+                    timeline.to(target, { pixi: { x: nextX, y: nextY }, duration: dur / 1000 })
                 }
-                timeline.to(tweenTarget, { pixi: { x: originX, y: originY }, duration: dur / 1000 })
+                timeline.to(target, { pixi: { x: originX, y: originY }, duration: dur / 1000 })
                 yield new Promise((res) => timeline.eventCallback('onComplete', res))
             }
     )
 )
 
 export const punch = EffectScope(
-    Dynamic<ShakePunchCommandArgs>(
-        ({
-            ui: {
-                pixi: { stage }
-            }
-        }) =>
-            function* ({ target, x = 0, y = 0, duration, iteration = 5 }) {
-                const tweenTarget = isUndefined(target) ? stage : stage.getChildByName(target)
+    Dynamic<ImageShakePunchCommandArgs>(
+        ({ temp: { stage } }) =>
+            function* ({ target: _target, x = 0, y = 0, duration, iteration = 5 }) {
+                const target = isUndefined(_target) ? stage : stage.getChildByName(_target)
                 const originX = 0
                 const originY = 0
                 const timeline = gsap.timeline()
@@ -215,10 +174,80 @@ export const punch = EffectScope(
                     const coef = i % 2 === 0 ? 1 : -1
                     const nextX = originX + (coef * x) / (i + 1)
                     const nextY = originY + (coef * y) / (i + 1)
-                    timeline.to(tweenTarget!, { pixi: { x: nextX, y: nextY }, duration: dur / 1000 })
+                    timeline.to(target!, { pixi: { x: nextX, y: nextY }, duration: dur / 1000 })
                 }
-                timeline.to(tweenTarget!, { pixi: { x: originX, y: originY }, duration: dur / 1000 })
+                timeline.to(target!, { pixi: { x: originX, y: originY }, duration: dur / 1000 })
                 yield new Promise((res) => timeline.eventCallback('onComplete', res))
             }
     )
+)
+
+export type ImageTweenCommandArgs = {
+    target: string
+    ease?: string
+    duration?: number
+    inherit?: boolean
+} & Except<PixiPlugin.Vars, 'zIndex'>
+
+export const tween = Macro<ImageTweenCommandArgs>(
+    ({ temp: { stage } }) =>
+        async function* ({ target: _target, ease = 'none', duration = 0, inherit = true, ...args }) {
+            const outerContainer = stage.getChildByName<Container>(_target)
+            const innerContainer = outerContainer?.getChildAt(0) as Container<Sprite>
+            const target = inherit ? innerContainer : innerContainer?.getChildAt(0)
+            yield to({ target, ease, duration, pixi: args })
+        }
+)
+
+export const tween_relative = Macro<ImageTweenCommandArgs>(
+    () =>
+        async function* ({ target, ease, duration, ...args }) {
+            const offsetArgs = mapValues(args, (arg) => '+=' + arg)
+            yield tween({ target, ease, duration, ...offsetArgs })
+        }
+)
+
+export type ImageFilterAddCommandArgs = { target: string; filter: PIXI.Filter }
+
+export const filter_add = NonBlocking<ImageFilterAddCommandArgs>(
+    ({ temp: { stage } }) =>
+        ({ target: _target, filter }) => {
+            const target = isUndefined(_target) ? stage : stage.getChildByName(_target)
+            target?.filters?.push(filter)
+        }
+)
+
+export type ImageFilterTweenCommandArgs = {
+    target: string
+    index: number
+    ease?: string
+    duration?: number
+} & Except<PixiPlugin.Vars, 'zIndex'>
+
+export const filter_tween = Macro<ImageFilterTweenCommandArgs>(
+    ({ temp: { stage } }) =>
+        async function* ({ target: _target, index, ease = 'none', duration = 0, ...args }) {
+            const container = isUndefined(_target) ? stage : stage.getChildByName(_target)
+            const target = container?.filters?.[index]
+            yield to({ target, ease, duration, pixi: args })
+        }
+)
+
+export const sprite = Macro<ImageSetCommandArgs & { duration?: number } & Except<PixiPlugin.Vars, 'zIndex'>>(
+    () =>
+        async function* ({ duration = 175, ...args }) {
+            yield tween({ target: args.id, ease: 'power1.in', duration, alpha: 0, inherit: false })
+            yield set({ id: args.id, src: args.src, z: args.z })
+            yield tween({ target: args.id, inherit: true, ...args, duration: 0 })
+        }
+)
+
+export const bg = Macro<Except<ImageSetCommandArgs, 'z'> & { duration?: number } & Except<PixiPlugin.Vars, 'zIndex'>>(
+    () =>
+        async function* (args) {
+            args.id = 'bg'
+            yield tween({ target: args.id, ease: 'power1.in', duration: args.duration, alpha: 0, inherit: false })
+            yield set({ ...args, z: 1 })
+            yield tween({ target: args.id, inherit: false, ...omit(args, ['id', 'src']), duration: 0 })
+        }
 )
