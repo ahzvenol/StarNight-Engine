@@ -1,0 +1,65 @@
+import type { Except } from 'type-fest'
+import type { AudioSetCommandArgs } from '../base/audio'
+import { Macro } from '@starnight/core'
+import { Audio } from '../base'
+
+export const set = Audio.set
+
+export const volume = Audio.volume
+
+export type AudioBGMCommandArgs = Except<AudioSetCommandArgs, 'type'> & { duration?: number }
+
+export const bgm = Macro<AudioBGMCommandArgs>(
+    (context) =>
+        async function* (_args) {
+            const args = { loop: true, ..._args, type: 'bgm' }
+            args.id = args.id || args.type
+            if (args.duration) {
+                await Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
+                yield Audio.close({ target: args.id })
+                yield Audio.set({ ...args, volume: 0 })
+                yield Audio.volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
+            } else {
+                yield Audio.close({ target: args.id })
+                yield Audio.set(args)
+            }
+        }
+)
+
+export type AudioSECommandArgs = Except<AudioSetCommandArgs, 'type'> & { duration?: number }
+
+export const se = Macro<AudioSECommandArgs>(
+    (context) =>
+        async function* (_args) {
+            const args = { ..._args, type: 'se' }
+            args.id = args.id || args.type
+            if (args.duration) {
+                await Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
+                yield Audio.close({ target: args.id })
+                yield Audio.set({ ...args, volume: 0 })
+                yield Audio.volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
+            } else {
+                yield Audio.close({ target: args.id })
+                yield Audio.set(args)
+            }
+        }
+)
+
+export type AudioClipCommandArgs = Except<AudioSetCommandArgs, 'type' | 'id'>
+
+export const clip = Macro<AudioClipCommandArgs>(
+    () =>
+        async function* (_args) {
+            const args = { ..._args, type: 'clip', id: 'clip' }
+            yield Audio.close({ target: args.id })
+            yield Audio.set(args)
+        }
+)
+
+export const close = Macro<{ target: string; duration?: number }>(
+    (context) =>
+        async function* (args) {
+            await Audio.volume({ volume: 0, ...args })(context)
+            yield Audio.close({ target: args.target })
+        }
+)

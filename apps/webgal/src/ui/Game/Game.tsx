@@ -37,7 +37,7 @@ const Game: Component = () => {
     return (
         <Content>
             <Stage />
-            <Show when={showBox() && ui().textboxstate() && !ui().choicesstate() && GUIGameRootState() !== 'Backlog'}>
+            <Show when={showBox() && ui().textboxstate() && !ui().choices() && GUIGameRootState() !== 'Backlog'}>
                 <TextBox />
             </Show>
             <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => showBox(false)} />
@@ -53,7 +53,7 @@ const Game: Component = () => {
             <Show when={ui().textinput()}>
                 <TextInput />
             </Show>
-            <Show when={ui().choicesstate()}>
+            <Show when={ui().choices()}>
                 <Choice />
             </Show>
             <Show when={ui().video()}>

@@ -1,6 +1,6 @@
-import type { VideoCommandArgs } from '../commands/video'
+import type { VideoCommandArgs } from '../base/video'
 import { Macro } from '@starnight/core'
-import { Video } from '../commands'
+import { Video } from '../api'
 
 export const use = Macro<VideoCommandArgs>(
     () =>

@@ -1,13 +1,13 @@
 import type { CommandTagBlocking, CommandTagNonBlocking } from '@starnight/core'
 import type { MergeDeep, UnionToIntersection } from 'type-fest'
 import { lowerCase, mapValues, merge } from 'es-toolkit'
-import * as Command from './commands'
-import * as Macro from './macros'
+import * as API from './api'
+import * as Macro from './webgal'
 
 export const MergedCommands = merge(
-    mapValues(Command, (value) => mapValues(value, (value) => value)),
+    mapValues(API, (value) => mapValues(value, (value) => value)),
     mapValues(Macro, (value) => mapValues(value, (value) => value))
-) as MergeDeep<typeof Command, typeof Macro>
+) as MergeDeep<typeof API, typeof Macro>
 
 type IsObject<T> = T extends object ? (T extends unknown[] ? false : true) : false
 
@@ -47,6 +47,6 @@ type Filter<T, Tag> = {
     [K in keyof T as T[K] extends Tag ? K : never]: T[K]
 }
 
-export const Await = FlattenCommands as Filter<typeof FlattenCommands, CommandTagBlocking>
+export const Awaitable = FlattenCommands as Filter<typeof FlattenCommands, CommandTagBlocking>
 
-export const Async = FlattenCommands as Filter<typeof FlattenCommands, CommandTagNonBlocking>
+export const Asyncable = FlattenCommands as Filter<typeof FlattenCommands, CommandTagNonBlocking>

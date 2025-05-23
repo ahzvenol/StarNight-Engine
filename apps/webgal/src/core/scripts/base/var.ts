@@ -6,7 +6,7 @@ declare module '@starnight/core' {
     }
 }
 
-// 目前看来解锁的cg和音乐应该很少重复,可以避免书写type
+// 目前看来解锁的名称应该很少重复,可以共用同一个数组记录
 export const unlock = NonBlocking<string>(({ global }) => (target) => {
     if (!global.unlock().includes(target)) global.unlock([target, ...global.unlock()])
 })

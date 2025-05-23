@@ -1,7 +1,7 @@
 import type { Except } from 'type-fest'
-import type { ImageSetCommandArgs } from '../commands/image'
+import type { ImageSetCommandArgs } from '../base/image'
 import { Macro } from '@starnight/core'
-import { Image, Var } from '../commands'
+import { Image, Var } from '../api'
 
 export const sprite = Macro<ImageSetCommandArgs & Except<PixiPlugin.Vars, 'zIndex'>>(
     () =>

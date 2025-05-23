@@ -21,7 +21,7 @@ export class StarNight {
     // 主点击事件
     public static readonly ClickEvents = ClickEvents
     // 全局响应式函数
-    public static useReactive: <T>(value: T) => Reactive<T> = useReactiveWrapper(<T>(v: T) => v)
+    public static useReactive: <T>(value: T) => Reactive<T> = useReactiveWrapper(<T>(arg0: T) => arg0)
     // 实例工厂方法
     public static instance = (params: GameConstructorParams) => new StarNightInstance(params)
 

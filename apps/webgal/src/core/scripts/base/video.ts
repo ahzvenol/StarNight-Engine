@@ -3,18 +3,12 @@ import { ActScope, Blocking, StarNight, SystemCommands } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
 
 declare module '@starnight/core' {
-    interface GameConfig {
-        globalvolume: number
-    }
     interface GameUIInternalData {
         video: Reactive<VideoItem | null>
     }
 }
 
-type VideoItem = {
-    src: string
-    race: Function0<void> | null
-}
+type VideoItem = { src: string; race: Function0<void> | null }
 
 StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.video = StarNight.useReactive(null)

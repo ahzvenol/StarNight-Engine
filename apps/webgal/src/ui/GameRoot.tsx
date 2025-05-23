@@ -105,7 +105,14 @@ export const useGame = async (local: GameLocalData) => {
             config: store.config,
             local: local,
             global: store.global,
-            ui: { audiotracks: { BGM, SE, Clip, UISE } }
+            ui: {
+                audiotracks: {
+                    bgm: BGM,
+                    se: SE,
+                    clip: Clip,
+                    uise: UISE
+                }
+            }
         })
     )
     GUIRootState('Game')

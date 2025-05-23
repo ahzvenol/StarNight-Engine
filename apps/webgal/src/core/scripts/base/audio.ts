@@ -1,6 +1,5 @@
-import type { Except } from 'type-fest'
 import type { Howl, HowlOptions } from '@/lib/howler'
-import { Dynamic, Macro, NonBlocking, StarNight } from '@starnight/core'
+import { Dynamic, NonBlocking, StarNight } from '@starnight/core'
 import { delay, isUndefined } from 'es-toolkit'
 
 declare module '@starnight/core' {
@@ -48,6 +47,7 @@ export type AudioSetCommandArgs = {
     loop?: boolean | undefined
     rate?: number | undefined
 }
+
 export const set = NonBlocking<AudioSetCommandArgs>(
     ({ state, output: { extime }, ui: { audiotracks }, temp: { audios } }) =>
         ({ type, id = type, ...args }) => {
@@ -73,7 +73,7 @@ export const set = NonBlocking<AudioSetCommandArgs>(
                     }
                 })
             }
-            extime(new Promise((res) => audio.once('end', res)))
+            if (type === 'clip') extime(new Promise((res) => audio.once('end', res)))
         }
 )
 
@@ -110,54 +110,3 @@ export const close = NonBlocking<AudioCloseCommandArgs>(({ temp: { audios } }) =
         audio?.unload()
     }
 })
-
-export const bgm = Macro<Except<AudioSetCommandArgs, 'type'> & { duration?: number }>(
-    () =>
-        async function* (_args) {
-            const args = { loop: true, ..._args, type: 'bgm' }
-            args.id = args.id || args.type
-            if (args.duration) {
-                yield volume({ target: args.id, volume: 0, duration: args.duration })
-                yield close({ target: args.id })
-                yield set({ volume: 0, ...args })
-                yield volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
-            } else {
-                yield close({ target: args.id })
-                yield set({ volume: args.volume || 1, ...args })
-            }
-        }
-)
-
-export const se = Macro<Except<AudioSetCommandArgs, 'type'> & { duration?: number }>(
-    () =>
-        async function* (_args) {
-            const args = { ..._args, type: 'se' }
-            args.id = args.id || args.type
-            if (args.duration) {
-                yield volume({ target: args.id, volume: 0, duration: args.duration })
-                yield close({ target: args.id })
-                yield set({ volume: 0, ...args })
-                yield volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
-            } else {
-                yield close({ target: args.id })
-                yield set({ volume: args.volume || 1, ...args })
-            }
-        }
-)
-
-export const clip = Macro<Except<AudioSetCommandArgs, 'type' | 'id'>>(
-    () =>
-        async function* (_args) {
-            const args = { ..._args, type: 'clip', id: 'clip' }
-            yield close({ target: args.id })
-            yield set(Object.assign({ volume: args.volume || 1 }, args))
-        }
-)
-
-export const fade_close = Macro<{ target: string; duration?: number }>(
-    (context) =>
-        async function* (args) {
-            await volume({ volume: 0, ...args })(context)
-            yield close({ target: args.target })
-        }
-)

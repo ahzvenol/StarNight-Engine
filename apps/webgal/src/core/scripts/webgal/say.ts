@@ -1,5 +1,5 @@
 import { Macro } from '@starnight/core'
-import { Say } from '../commands'
+import { Say } from '../api'
 
 export type SayCommandArgs = { text: string; name?: string; clip?: string }
 

@@ -1,6 +1,6 @@
 import type { GameRuntimeContext } from '@starnight/core'
 import type { SimplifyDeep } from 'type-fest'
-import { Async, Await } from '@/core/scripts'
+import { Asyncable, Awaitable } from '@/core/scripts'
 
 export const Action = Symbol()
 
@@ -19,9 +19,9 @@ type FlattenFunctionObject<T> = {
     [K in keyof T]: FlattenFunction<T[K]>
 }
 
-export const $await = Await as unknown as FlattenFunctionObject<typeof Await>
+export const $await = Awaitable as unknown as FlattenFunctionObject<typeof Awaitable>
 
-export const $async = Async as unknown as FlattenFunctionObject<typeof Async>
+export const $async = Asyncable as unknown as FlattenFunctionObject<typeof Asyncable>
 
 // 提取内层函数的第一个参数类型 P1
 type ExtractCommandPayloadType<F> = F extends (arg0: infer P1) => unknown ? P1 : never
