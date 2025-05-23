@@ -16,7 +16,7 @@ const DialogContent = useSignal<IShowGlobalDialogProps | null>(null)
 
 export const useDialog = (props: IShowGlobalDialogProps) => DialogContent(props)
 
-const Dialog: Component = () => (
+export const Dialog: Component = () => (
     <Show when={DialogContent() !== null}>
         <div class={styles.GlobalDialog_main}>
             <div class={styles.GlobalDialog_container}>
@@ -47,5 +47,3 @@ const Dialog: Component = () => (
         </div>
     </Show>
 )
-
-export default Dialog

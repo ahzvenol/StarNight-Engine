@@ -3,7 +3,7 @@ import { useSignal } from 'micro-reactive-solid'
 import { GUIRootState } from '../GUIRoot'
 import styles from './LandingPage.module.scss'
 
-const LandingPage: Component = () => {
+export const LandingPage: Component = () => {
     const opacity = useSignal(1)
 
     const onClick = () => {
@@ -20,4 +20,3 @@ const LandingPage: Component = () => {
         </div>
     )
 }
-export default LandingPage

@@ -12,7 +12,7 @@ import { SaveLoadElement } from './SaveLoadElement'
 export type SaveLoadMode = 'Save' | 'Load'
 
 const currentPage = useSignal(0)
-const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
+export const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
     const t = translation.menu
 
     const local = store.local
@@ -60,5 +60,3 @@ const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
         </>
     )
 }
-
-export default SaveLoad

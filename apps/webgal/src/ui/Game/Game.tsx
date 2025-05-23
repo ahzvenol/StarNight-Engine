@@ -17,7 +17,7 @@ import { Video } from './Video'
 
 export const showBox = useSignal(true)
 
-const Game: Component = () => {
+export const Game: Component = () => {
     log.info('GameUI组件函数被调用')
 
     showBox(true)
@@ -37,14 +37,14 @@ const Game: Component = () => {
     return (
         <Content>
             <Stage />
-            <Show when={showBox() && ui().textboxstate() && !ui().choices() && GUIGameRootState() !== 'Backlog'}>
+            <Show when={showBox() && ui().boxstate() && !ui().choices() && GUIGameRootState() !== 'Backlog'}>
                 <TextBox />
             </Show>
             <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => showBox(false)} />
             <Show when={!showBox()}>
                 <div class={styles.Game_mask} onClick={() => showBox(true)} onContextMenu={() => showBox(true)} />
             </Show>
-            <Show when={showBox() && ui().textboxstate() && GUIGameRootState() !== 'Backlog'}>
+            <Show when={showBox() && ui().boxstate() && GUIGameRootState() !== 'Backlog'}>
                 <ControlPanel />
             </Show>
             <Show when={ui().clickinput()}>
@@ -73,5 +73,3 @@ const Game: Component = () => {
         </Content>
     )
 }
-
-export default Game

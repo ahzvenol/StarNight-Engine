@@ -127,4 +127,4 @@ const Slider: Component<{
     return <>{track}</>
 }
 
-export default Slider
+export { Slider }

@@ -215,4 +215,4 @@ const Scrollbar: Component<{
     )
 }
 
-export default Scrollbar
+export { Scrollbar }

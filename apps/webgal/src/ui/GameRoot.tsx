@@ -8,15 +8,15 @@ import { Content } from '@/core/ui/Elements'
 import { onStoreReady } from '@/store'
 import { book, starnight } from '@/store/starnight'
 import { Backlog } from '@/ui/Game/Backlog'
-import Game from '@/ui/Game/Game'
+import { Game } from '@/ui/Game/Game'
 import styles from '@/ui/Game/Game.module.scss'
 import { stopPropagation } from '@/utils/solid/stopPropagation'
 import { useEventListener } from '@/utils/solid/useEventListener'
-import { BGM, Clip, SE, UISE } from '../store/audio'
-import Config from './Config/Config'
+import { BGM, Clip, SE } from '../store/audio'
+import { Config } from './Config/Config'
 import { GUIRootState } from './GUIRoot'
-import Menu from './Menu/Menu'
-import SaveLoad from './SaveAndLoad/SaveLoad'
+import { Menu } from './Menu/Menu'
+import { SaveLoad } from './SaveAndLoad/SaveLoad'
 
 export type GUIGameRootPages = 'Game' | 'Config' | 'Save' | 'Load' | 'Backlog'
 
@@ -109,8 +109,7 @@ export const useGame = async (local: GameLocalData) => {
                 audiotracks: {
                     bgm: BGM,
                     se: SE,
-                    clip: Clip,
-                    uise: UISE
+                    clip: Clip
                 }
             }
         })

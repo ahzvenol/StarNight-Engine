@@ -2,7 +2,7 @@ import type { Component, ParentProps } from 'solid-js'
 import styles from './Menu.module.scss'
 import { MenuPanel } from './MenuPanel'
 
-const Menu: Component<ParentProps> = (props) => {
+export const Menu: Component<ParentProps> = (props) => {
     return (
         <>
             <div class={styles.Menu_main}>
@@ -12,5 +12,3 @@ const Menu: Component<ParentProps> = (props) => {
         </>
     )
 }
-
-export default Menu

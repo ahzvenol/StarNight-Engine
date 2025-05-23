@@ -2,7 +2,7 @@ import type { Component, ParentProps } from 'solid-js'
 import { onMount } from 'solid-js'
 import { useEventListener } from '@/utils/solid/useEventListener'
 
-const Scale: Component<ParentProps<{ width: number; height: number; mode: 'auto' | 'full' }>> = (props) => {
+export const Scale: Component<ParentProps<{ width: number; height: number; mode: 'auto' | 'full' }>> = (props) => {
     let el!: HTMLDivElement
     let slot!: HTMLDivElement
     function resize() {
@@ -34,5 +34,3 @@ const Scale: Component<ParentProps<{ width: number; height: number; mode: 'auto'
         </div>
     )
 }
-
-export default Scale

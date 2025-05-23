@@ -7,7 +7,7 @@ import { translation } from '../translations'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './Title.module.scss'
 
-const Title: Component = () => {
+export const Title: Component = () => {
     const t = translation.title
 
     const slot = store.local[0]
@@ -46,5 +46,3 @@ const Title: Component = () => {
         </>
     )
 }
-
-export default Title
