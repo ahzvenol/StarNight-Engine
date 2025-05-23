@@ -1,19 +1,11 @@
-import type { DisplayObject } from 'pixi.js'
+import type { DisplayObject, Filter } from 'pixi.js'
 import type { Except, MergeExclusive } from 'type-fest'
 import { Dynamic, EffectScope, Macro, NonBlocking, StarNight } from '@starnight/core'
 import { isUndefined } from 'es-toolkit'
 import { gsap } from 'gsap'
-import { CustomEase } from 'gsap/CustomEase'
-import { PixiPlugin } from 'gsap/PixiPlugin'
-import * as PIXI from 'pixi.js'
 import { Application, Container, Sprite, Texture } from 'pixi.js'
 import { Y } from '@/utils/fp'
 import { Tween } from '.'
-
-PixiPlugin.registerPIXI(PIXI)
-gsap.registerPlugin(CustomEase)
-gsap.registerPlugin(PixiPlugin)
-gsap.defaults({ ease: 'none' })
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
@@ -151,7 +143,7 @@ export const tween = Macro<ImageTweenCommandArgs>(
         }
 )
 
-export type ImageFilterAddCommandArgs = { target: string; filter: PIXI.Filter }
+export type ImageFilterAddCommandArgs = { target: string; filter: Filter }
 
 export const filter = NonBlocking<ImageFilterAddCommandArgs>(({ temp: { stage } }) => ({ target: _target, filter }) => {
     const target = isUndefined(_target) ? stage : stage.getChildByName(_target)

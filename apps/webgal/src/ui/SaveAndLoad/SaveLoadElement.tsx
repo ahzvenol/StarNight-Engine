@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { Rectangle } from 'pixi.js'
 import { Show } from 'solid-js'
-import { starnight, ui } from '@/store/starnight'
+import { starnight } from '@/store/starnight'
 import { useGame } from '../GameRoot'
 import { useDialog } from '../GlobalDialog/GlobalDialog'
 import { translation } from '../translations'
@@ -16,7 +16,7 @@ import styles from './SaveAndLoad.module.scss'
 type SaveLoadElementProps = { i: number; mode: SaveLoadMode; index: number; slot: Reactive<SaveLocalData> }
 
 function snapshot() {
-    const app = ui().pixi
+    const app = starnight().context.temp.pixi
     const renderer = app.renderer
     const visibleRect = new Rectangle(-app.stage.x, -app.stage.y, renderer.width, renderer.height)
     const stage = renderer.extract.canvas(app.stage, visibleRect) as HTMLCanvasElement
@@ -77,9 +77,9 @@ export const SaveLoadElement: Component<SaveLoadElementProps> = ({ i, mode, inde
                         class={clsx(styles.Save_Load_content_name, {
                             [styles.Load_content_name]: mode === 'Load'
                         })}>
-                        {slot.namepreview()}
+                        {slot.name()}
                     </div>
-                    <div class={styles.Save_Load_content_text_padding}>{slot.textpreview()}</div>
+                    <div class={styles.Save_Load_content_text_padding}>{slot.text()}</div>
                 </div>
             </Show>
         </div>

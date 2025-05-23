@@ -2,30 +2,6 @@ import type { Reactive } from '@starnight/core'
 import { ActScope, Dynamic, NonBlocking, StarNight, SystemCommands } from '@starnight/core'
 
 declare module '@starnight/core' {
-    interface GameLocalData {
-        textpreview?: string
-    }
-}
-
-export const textpreview = ActScope(
-    NonBlocking<string>(({ current }) => (arg0) => {
-        current.textpreview(arg0)
-    })
-)
-
-declare module '@starnight/core' {
-    interface GameLocalData {
-        namepreview?: string
-    }
-}
-
-export const namepreview = ActScope(
-    NonBlocking<string>(({ current }) => (arg0) => {
-        current.namepreview(arg0)
-    })
-)
-
-declare module '@starnight/core' {
     interface GameUIInternalData {
         textend: Reactive<boolean>
     }
@@ -49,22 +25,30 @@ declare module '@starnight/core' {
     interface GameConfig {
         textspeed: number
     }
+    interface GameLocalData {
+        text: string
+    }
     interface GameUIInternalData {
         text: HTMLElement
     }
 }
 
-StarNight.GameEvents.setup.subscribe(({ ui }) => {
+StarNight.GameEvents.setup.subscribe(({ current, ui }) => {
+    current.text('')
     ui.text = document.createElement('div')
 })
 
-StarNight.ActEvents.start.subscribe(({ ui }) => (ui.text = document.createElement('div')))
+StarNight.ActEvents.start.subscribe(({ current, ui }) => {
+    current.text('')
+    ui.text = document.createElement('div')
+})
 
 export const text = ActScope(
     Dynamic<string | HTMLElement>(
         (context) =>
             function* (arg0) {
                 const nodes = arg0 instanceof HTMLElement ? [...arg0.childNodes] : [arg0]
+                context.current.text(arg0 instanceof HTMLElement ? arg0.outerHTML : arg0)
                 context.ui.text.append(nodes[0])
                 while (nodes.length >= 1) {
                     yield SystemCommands.wait(context.config.textspeed())(context)
@@ -75,19 +59,21 @@ export const text = ActScope(
 )
 
 declare module '@starnight/core' {
+    interface GameLocalData {
+        name: string
+    }
     interface GameUIInternalData {
         name: Reactive<string>
     }
 }
 
-StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.name = StarNight.useReactive('')
+StarNight.GameEvents.setup.subscribe(({ current, ui }) => {
+    current.name('')
+    ui.name = current.name
 })
-
-StarNight.ActEvents.start.subscribe(({ ui }) => ui.name(''))
 
 export const name = ActScope(
     NonBlocking<string>((context) => (arg0) => {
-        context.ui.name(arg0)
+        context.current.name(arg0)
     })
 )

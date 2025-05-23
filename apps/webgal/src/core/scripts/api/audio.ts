@@ -3,8 +3,6 @@ import type { AudioSetCommandArgs } from '../base/audio'
 import { Macro } from '@starnight/core'
 import { Audio } from '../base'
 
-export const set = Audio.set
-
 export const volume = Audio.volume
 
 export type AudioBGMCommandArgs = Except<AudioSetCommandArgs, 'type'> & { duration?: number }

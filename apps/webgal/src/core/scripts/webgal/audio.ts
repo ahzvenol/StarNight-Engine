@@ -6,7 +6,7 @@ export const bgm = Macro<AudioBGMCommandArgs>(
     () =>
         async function* (args) {
             yield Var.unlock(args.src)
-            if (args.src !== undefined) args.src = `./static/AudioClip/${args.src}.flac`
+            args.src = `./static/AudioClip/${args.src}`
             yield Audio.bgm(args)
         }
 )
@@ -14,7 +14,7 @@ export const bgm = Macro<AudioBGMCommandArgs>(
 export const se = Macro<AudioSECommandArgs>(
     () =>
         async function* (args) {
-            if (args.src !== undefined) args.src = `./static/AudioClip/${args.src}.flac`
+            args.src = `./static/AudioClip/${args.src}`
             yield Audio.se(args)
         }
 )
@@ -22,7 +22,7 @@ export const se = Macro<AudioSECommandArgs>(
 export const clip = Macro<AudioClipCommandArgs>(
     () =>
         async function* (args) {
-            if (args.src !== undefined) args.src = `./static/AudioClip/${args.src}.flac`
+            args.src = `./static/AudioClip/${args.src}`
             yield Audio.clip(args)
         }
 )
