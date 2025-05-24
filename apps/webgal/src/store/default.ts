@@ -9,6 +9,7 @@ export interface ExtraConfig {
     textboxfontsize: '155%' | '205%' | '230%'
     textboxopacity: number
     language: string
+    globalvolume: number
     bgmvolume: number
     sevolume: number
     clipvolume: number
