@@ -1,9 +1,8 @@
-import type { Except } from 'type-fest'
-import type { ImageSetCommandArgs } from '../base/image'
+import type { ImageBGCommandArgs, ImageSpriteCommandArgs } from '../api/image'
 import { Macro } from '@starnight/core'
 import { Image, Var } from '../api'
 
-export const sprite = Macro<ImageSetCommandArgs & Except<PixiPlugin.Vars, 'zIndex'>>(
+export const sprite = Macro<ImageSpriteCommandArgs>(
     () =>
         async function* (args) {
             args.src = `./static/ImageAsset/${args.src}`
@@ -11,7 +10,7 @@ export const sprite = Macro<ImageSetCommandArgs & Except<PixiPlugin.Vars, 'zInde
         }
 )
 
-export const bg = Macro<ImageSetCommandArgs & { duration?: number } & Except<PixiPlugin.Vars, 'zIndex'>>(
+export const bg = Macro<ImageBGCommandArgs>(
     () =>
         async function* (args) {
             yield Var.unlock(args.src)

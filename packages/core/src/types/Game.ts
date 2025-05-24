@@ -41,7 +41,7 @@ export type GameConstructorParams = {
     book: AbstractGameBook
     config: Reactive<GameConfig>
     global: Reactive<GameGlobalData>
-    readonly local: GameLocalData
+    readonly local: { index: number } & Partial<GameLocalData>
     ui: GameUIExternalData
 }
 

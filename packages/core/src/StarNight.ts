@@ -111,7 +111,7 @@ export class StarNightInstance {
     // 游戏运行状态,从初始化状态进入普通/自动/快进三态转换
     public readonly state = new StarNightState()
     // 游戏本地状态,用于存档/读档功能
-    public readonly current = StarNight.useReactive<GameLocalData>({ index: 0 })
+    public readonly current = StarNight.useReactive({ index: 0 }) as Reactive<GameLocalData>
     // 游戏实例上下文,是除单幕上下文外的基本上下文数据
     public readonly context: GameContext
 

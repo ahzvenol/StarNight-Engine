@@ -24,7 +24,9 @@ export const filter = Image.filter
 
 export const filter_tween = Image.filter_tween
 
-export const sprite = Macro<ImageSetCommandArgs & { duration?: number } & Except<PixiPlugin.Vars, 'zIndex'>>(
+export type ImageSpriteCommandArgs = ImageSetCommandArgs & { duration?: number } & Except<PixiPlugin.Vars, 'zIndex'>
+
+export const sprite = Macro<ImageSpriteCommandArgs>(
     () =>
         async function* ({ duration = 175, ...args }) {
             yield Image.tween({ target: args.id, ease: 'power1.in', duration, alpha: 0, inherit: false })
@@ -33,12 +35,14 @@ export const sprite = Macro<ImageSetCommandArgs & { duration?: number } & Except
         }
 )
 
-export const bg = Macro<Except<ImageSetCommandArgs, 'z'> & { duration?: number } & Except<PixiPlugin.Vars, 'zIndex'>>(
+export type ImageBGCommandArgs = Except<ImageSetCommandArgs, 'z' | 'id'> &
+    Except<PixiPlugin.Vars, 'zIndex'> & { duration?: number }
+
+export const bg = Macro<ImageBGCommandArgs>(
     () =>
         async function* (args) {
-            args.id = 'bg'
-            yield Image.tween({ target: args.id, ease: 'power1.in', duration: args.duration, alpha: 0, inherit: false })
-            yield Image.set({ ...args, z: 1 })
-            yield Image.tween({ target: args.id, inherit: false, ...omit(args, ['id', 'src']), duration: 0 })
+            yield Image.tween({ target: 'bg', ease: 'power1.in', duration: args.duration, alpha: 0, inherit: false })
+            yield Image.set({ ...args, z: 1, id: 'bg' })
+            yield Image.tween({ target: 'bg', inherit: false, ...omit(args, ['src']), duration: 0 })
         }
 )

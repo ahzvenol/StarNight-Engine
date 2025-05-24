@@ -1,4 +1,4 @@
-import type { GameLocalData } from '@starnight/core'
+import type { GameConstructorParams } from '@starnight/core'
 import type { Component } from 'solid-js'
 import { StarNight } from '@starnight/core'
 import { useSignal } from 'micro-reactive-solid'
@@ -96,7 +96,7 @@ export const GameRoot: Component = () => {
     )
 }
 
-export const useGame = async (local: GameLocalData) => {
+export const useGame = async (local: GameConstructorParams['local']) => {
     starnight()?.stop()
     const store = await onStoreReady
     starnight(

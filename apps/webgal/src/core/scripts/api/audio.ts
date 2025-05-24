@@ -10,8 +10,7 @@ export type AudioBGMCommandArgs = Except<AudioSetCommandArgs, 'type'> & { durati
 export const bgm = Macro<AudioBGMCommandArgs>(
     (context) =>
         async function* (_args) {
-            const args = { loop: true, ..._args, type: 'bgm' }
-            args.id = args.id || args.type
+            const args = { loop: true, ..._args, type: 'bgm', id: _args.id || 'bgm' } as const
             if (args.duration) {
                 await Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
                 yield Audio.close({ target: args.id })
@@ -29,8 +28,7 @@ export type AudioSECommandArgs = Except<AudioSetCommandArgs, 'type'> & { duratio
 export const se = Macro<AudioSECommandArgs>(
     (context) =>
         async function* (_args) {
-            const args = { ..._args, type: 'se' }
-            args.id = args.id || args.type
+            const args = { ..._args, type: 'se', id: _args.id || 'se' } as const
             if (args.duration) {
                 await Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
                 yield Audio.close({ target: args.id })
@@ -48,7 +46,7 @@ export type AudioClipCommandArgs = Except<AudioSetCommandArgs, 'type' | 'id'>
 export const clip = Macro<AudioClipCommandArgs>(
     () =>
         async function* (_args) {
-            const args = { ..._args, type: 'clip', id: 'clip' }
+            const args = { ..._args, type: 'clip', id: 'clip' } as const
             yield Audio.close({ target: args.id })
             yield Audio.set(args)
         }

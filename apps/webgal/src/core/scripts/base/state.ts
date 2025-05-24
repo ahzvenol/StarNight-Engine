@@ -17,16 +17,16 @@ export const click = NonBlocking<boolean>(({ ui: { clickstate } }) => (enable) =
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
-        textboxstate: Reactive<boolean>
+        boxstate: Reactive<boolean>
     }
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.textboxstate = StarNight.useReactive(true)
+    ui.boxstate = StarNight.useReactive(true)
 })
 
-export const textbox = ActScope(
-    NonBlocking<boolean>(({ ui: { textboxstate } }) => (enable) => {
-        textboxstate(enable)
+export const box = ActScope(
+    NonBlocking<boolean>(({ ui: { boxstate } }) => (enable) => {
+        boxstate(enable)
     })
 )

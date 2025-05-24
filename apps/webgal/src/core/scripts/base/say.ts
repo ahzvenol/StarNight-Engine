@@ -68,7 +68,7 @@ declare module '@starnight/core' {
 }
 
 StarNight.GameEvents.setup.subscribe(({ current, ui }) => {
-    current.name('')
+    current().name = ''
     ui.name = current.name
 })
 

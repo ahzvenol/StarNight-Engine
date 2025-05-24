@@ -1,6 +1,8 @@
 import { Dynamic, StarNight } from '@starnight/core'
 import { isNil } from 'es-toolkit'
 import { gsap } from 'gsap'
+import { CustomEase } from 'gsap/CustomEase'
+import { PixiPlugin } from 'gsap/PixiPlugin'
 import * as PIXI from 'pixi.js'
 
 PixiPlugin.registerPIXI(PIXI)

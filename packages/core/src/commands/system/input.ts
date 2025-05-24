@@ -5,7 +5,7 @@ import { StarNight } from '@/index'
 
 declare module '@/index' {
     interface GameLocalData {
-        input?: Array<unknown>
+        input: Array<unknown>
     }
     interface GameTempData {
         input: { pointer: number }
@@ -13,8 +13,8 @@ declare module '@/index' {
 }
 
 StarNight.GameEvents.setup.subscribe(({ current, temp }) => {
+    current.input([])
     temp.input = { pointer: -1 }
-    current.input((arr) => arr || [])
 })
 
 export const input = Blocking(({ state, current, local, temp }) => async (promise) => {

@@ -2,6 +2,12 @@ import type { Howl, HowlOptions } from '@/lib/howler'
 import { Dynamic, NonBlocking, StarNight } from '@starnight/core'
 import { delay, isUndefined } from 'es-toolkit'
 
+export interface AudioTracks {
+    clip: Function1<HowlOptions, Howl>
+    bgm: Function1<HowlOptions, Howl>
+    se: Function1<HowlOptions, Howl>
+}
+
 declare module '@starnight/core' {
     interface GameConfig {
         interruptclip: boolean
@@ -10,11 +16,7 @@ declare module '@starnight/core' {
         audios: Map<string, Howl>
     }
     interface GameUIExternalData {
-        audiotracks: {
-            clip: Function1<HowlOptions, Howl>
-            bgm: Function1<HowlOptions, Howl>
-            se: Function1<HowlOptions, Howl>
-        } & Record<string, Function1<HowlOptions, Howl>>
+        audiotracks: AudioTracks
     }
 }
 
@@ -39,7 +41,7 @@ StarNight.GameEvents.resume.subscribe(({ temp: { audios } }) =>
 StarNight.GameEvents.exit.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.unload()))
 
 export type AudioSetCommandArgs = {
-    type: string
+    type: keyof AudioTracks
     id?: string
     src: string
     volume?: number
