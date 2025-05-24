@@ -26,7 +26,6 @@ export default {
         'color-hex-length': 'long', // 指定 16 进制颜色的简写或扩写 "short(16进制简写)"|"long(16进制扩写)"
         'comment-empty-line-before': 'never', // 要求或禁止在在注释之前使用空行
         'scss/double-slash-comment-empty-line-before': 'never', // 要求或禁止在在注释之前使用空行
-        'scss/at-import-partial-extension': null, // 解决不能使用 @import 引入 scss 文件
         'property-no-unknown': null, // 禁止未知的属性
         // 'no-empty-source': null, // 禁止空源码
         'selector-id-pattern': null, // 强制选择器类名的格式
