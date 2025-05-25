@@ -1,8 +1,8 @@
 import type { VideoCommandArgs } from '../base/video'
-import { Macro } from '@starnight/core'
+import { BlockingMacro } from '@starnight/core'
 import { Video } from '../api'
 
-export const use = Macro<VideoCommandArgs>(
+export const use = BlockingMacro<VideoCommandArgs>(
     () =>
         async function* ({ src }) {
             yield Video.use({ src: `./static/${src}` })

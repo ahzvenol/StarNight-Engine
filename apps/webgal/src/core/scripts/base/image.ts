@@ -1,6 +1,6 @@
 import type { DisplayObject, Filter } from 'pixi.js'
 import type { Except, MergeExclusive } from 'type-fest'
-import { Dynamic, EffectScope, Macro, NonBlocking, StarNight } from '@starnight/core'
+import { Dynamic, DynamicMacro, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import { isUndefined } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { Application, Container, Sprite, Texture } from 'pixi.js'
@@ -134,7 +134,7 @@ export type ImageTweenCommandArgs = {
     inherit?: boolean
 } & Except<PixiPlugin.Vars, 'zIndex'>
 
-export const tween = Macro<ImageTweenCommandArgs>(
+export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>
         async function* ({ target: _target, ease = 'none', duration = 0, inherit = true, ...args }) {
             const innerContainer = stage.children.find((e) => e.name === _target)?.getChildAt(0)
@@ -157,7 +157,7 @@ export type ImageFilterTweenCommandArgs = {
     duration?: number
 } & Record<string, unknown>
 
-export const filter_tween = Macro<ImageFilterTweenCommandArgs>(
+export const filter_tween = DynamicMacro<ImageFilterTweenCommandArgs>(
     ({ temp: { stage } }) =>
         async function* ({ target: _target, index, ease = 'none', duration = 0, ...args }) {
             const container = isUndefined(_target) ? stage : stage.getChildByName(_target)

@@ -1,8 +1,8 @@
 import type { AudioBGMCommandArgs, AudioClipCommandArgs, AudioSECommandArgs } from '../api/audio'
-import { Macro } from '@starnight/core'
+import { NonBlockingMacro } from '@starnight/core'
 import { Audio, Var } from '../api'
 
-export const bgm = Macro<AudioBGMCommandArgs>(
+export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
     () =>
         async function* (args) {
             yield Var.unlock(args.src)
@@ -11,7 +11,7 @@ export const bgm = Macro<AudioBGMCommandArgs>(
         }
 )
 
-export const se = Macro<AudioSECommandArgs>(
+export const se = NonBlockingMacro<AudioSECommandArgs>(
     () =>
         async function* (args) {
             args.src = `./static/AudioClip/${args.src}`
@@ -19,7 +19,7 @@ export const se = Macro<AudioSECommandArgs>(
         }
 )
 
-export const clip = Macro<AudioClipCommandArgs>(
+export const clip = NonBlockingMacro<AudioClipCommandArgs>(
     () =>
         async function* (args) {
             args.src = `./static/AudioClip/${args.src}`

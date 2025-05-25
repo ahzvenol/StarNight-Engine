@@ -1,13 +1,13 @@
 import type { Except } from 'type-fest'
 import type { AudioSetCommandArgs } from '../base/audio'
-import { Macro } from '@starnight/core'
+import { DynamicMacro, NonBlockingMacro } from '@starnight/core'
 import { Audio } from '../base'
 
 export const volume = Audio.volume
 
 export type AudioBGMCommandArgs = Except<AudioSetCommandArgs, 'type'> & { duration?: number }
 
-export const bgm = Macro<AudioBGMCommandArgs>(
+export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
     (context) =>
         async function* (_args) {
             const args = { loop: true, ..._args, type: 'bgm', id: _args.id || 'bgm' } as const
@@ -25,7 +25,7 @@ export const bgm = Macro<AudioBGMCommandArgs>(
 
 export type AudioSECommandArgs = Except<AudioSetCommandArgs, 'type'> & { duration?: number }
 
-export const se = Macro<AudioSECommandArgs>(
+export const se = NonBlockingMacro<AudioSECommandArgs>(
     (context) =>
         async function* (_args) {
             const args = { ..._args, type: 'se', id: _args.id || 'se' } as const
@@ -43,7 +43,7 @@ export const se = Macro<AudioSECommandArgs>(
 
 export type AudioClipCommandArgs = Except<AudioSetCommandArgs, 'type' | 'id'>
 
-export const clip = Macro<AudioClipCommandArgs>(
+export const clip = NonBlockingMacro<AudioClipCommandArgs>(
     () =>
         async function* (_args) {
             const args = { ..._args, type: 'clip', id: 'clip' } as const
@@ -52,7 +52,7 @@ export const clip = Macro<AudioClipCommandArgs>(
         }
 )
 
-export const close = Macro<{ target: string; duration?: number }>(
+export const close = DynamicMacro<{ target: string; duration?: number }>(
     (context) =>
         async function* (args) {
             await Audio.volume({ volume: 0, ...args })(context)

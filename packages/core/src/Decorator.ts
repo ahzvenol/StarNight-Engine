@@ -8,7 +8,7 @@ import type {
     StandardDynamicCommand,
     StandardNonBlockingCommand
 } from './types/Command'
-import type { GameAct } from './types/Game'
+import type { GameFragment } from './types/Game'
 import type { Function0 } from './types/Meta'
 import { run } from './utils/runGenerator'
 
@@ -51,7 +51,7 @@ export function Dynamic<T = void, R = void>(fn: DynamicCommand<T, R>): StandardD
     }) as StandardDynamicCommand<T, R>
 }
 
-// 默认阻塞的动态命令
+// 默认阻塞的动态命令,相当于借由引擎调度解除阻塞的Blocking命令
 export function DynamicBlocking<T = void, R = void>(fn: DynamicCommand<T, R>): StandardBlockingCommand<T, R> {
     return ((args) => async (context) => {
         const { onActRush: rush, onGameStop: stop } = context
@@ -70,7 +70,7 @@ export function Blocking<T = void, R = void>(fn: BlockingCommand<T, R>): Standar
     return ((args) => async (context) => normalize(() => fn(context)(args))) as StandardBlockingCommand<T, R>
 }
 
-export function Fork<R>(fn: GameAct<R>): ReturnType<StandardCommand<void, R>> {
+export function Fork<R>(fn: GameFragment<R>): ReturnType<StandardCommand<void, R>> {
     return async (context) => {
         const generator = fn(context)
         const arr = Array<Promise<unknown>>()
@@ -83,6 +83,17 @@ export function Fork<R>(fn: GameAct<R>): ReturnType<StandardCommand<void, R>> {
 }
 
 // 通过基本命令组合为宏命令,宏命令的性质由它的组成决定
-export function Macro<T = void, R = void>(fn: MacroCommand<T, R>): StandardDynamicCommand<T, R> {
+// 由NonBlocking和Dynamic参与组成的宏可以作为Dynamic的
+export function DynamicMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardDynamicCommand<T, R> {
     return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardDynamicCommand<T, R>
+}
+
+// 由NonBlocking和Dynamic参与组成的宏可以作为NonBlocking的
+export function NonBlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardNonBlockingCommand<T, R> {
+    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardNonBlockingCommand<T, R>
+}
+
+// 由Blocking命令参与组成的宏应该也是Blocking的
+export function BlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardBlockingCommand<T, R> {
+    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardBlockingCommand<T, R>
 }
