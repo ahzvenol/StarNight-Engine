@@ -1,6 +1,5 @@
 import type { Component } from 'solid-js'
-import clsx from 'clsx'
-import { For, Show } from 'solid-js'
+import { Show } from 'solid-js'
 import { store } from '@/store'
 import { ui } from '@/store/starnight'
 import styles from './TextBox.module.scss'
@@ -12,22 +11,7 @@ export const TextBox: Component = () => {
             {/* 因为透明度继承,背景须作为单独元素 */}
             <div class={styles.Game_TextBox_text_background} style={{ opacity: config.textboxopacity() }} />
             <div class={styles.Game_TextBox_text} style={{ 'font-size': config.textboxfontsize() }}>
-                <For each={ui().text().split('')}>
-                    {(char, i) => (
-                        <Show when={char !== '\n'} fallback={<br />}>
-                            <span
-                                class={clsx({ [styles.Game_TextBox_char]: !ui().textend() })}
-                                style={Object.assign(
-                                    {
-                                        'animation-delay': `${config.textspeed() * i()}ms`
-                                    },
-                                    ui().textend() ? { opacity: 1 } : {}
-                                )}
-                                innerText={char}
-                            />
-                        </Show>
-                    )}
-                </For>
+                {ui().text}
             </div>
             <Show when={ui().name() !== ''}>
                 <div class={styles.Game_TextBox_name_container}>

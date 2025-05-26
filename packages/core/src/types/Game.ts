@@ -18,10 +18,11 @@ export interface GameConfig {
     autoreadspeed: number
 }
 
-export type GameAct<R> = Function1<
-    GameRuntimeContext,
-    AsyncGenerator<Function1<GameRuntimeContext, Promise<unknown>>, R, GameRuntimeContext>
->
+export type GameGenerator<R> = AsyncGenerator<Function1<GameRuntimeContext, Promise<unknown>>, R, unknown>
+
+export type GameFragment<R> = Function1<GameRuntimeContext, GameGenerator<R>>
+
+export type GameScenario<R> = Function1<Reactive<GameRuntimeContext>, GameGenerator<R>>
 
 export interface GameLocalData {
     index: number

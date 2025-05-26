@@ -1,6 +1,6 @@
 import type { Signal } from 'micro-reactive-wrapper'
 import type { Tagged } from 'type-fest'
-import type { GameRuntimeContext, GameState } from './Game'
+import type { GameGenerator, GameRuntimeContext, GameState } from './Game'
 import type { Function1 } from './Meta'
 
 // 命令参数可能的类型
@@ -24,10 +24,7 @@ export type NonBlockingCommand<T, R> = Function1<GameRuntimeContext, Function1<T
 // 使用异步函数定义一个耗时阻塞命令
 export type BlockingCommand<T, R> = Function1<GameRuntimeContext, Function1<T, Promise<R>>>
 
-export type MacroCommand<T, R> = Function1<
-    GameRuntimeContext,
-    Function1<T, AsyncGenerator<Function1<GameRuntimeContext, Promise<unknown>>, R, GameRuntimeContext>>
->
+export type MacroCommand<T, R> = Function1<GameRuntimeContext, Function1<T, GameGenerator<R>>>
 
 enum Schedule {
     Await,

@@ -1,4 +1,4 @@
-import type { AbstractGameBook, GameAct } from '@starnight/core'
+import type { AbstractGameBook, GameFragment } from '@starnight/core'
 import * as msgpack from '@msgpack/msgpack'
 import { merge } from 'es-toolkit'
 import { FlattenCommands } from '@/core/scripts'
@@ -25,7 +25,7 @@ export const book = () =>
 
                 length: Function0<number> = () => _result.length
 
-                act: Function1<number, GameAct<void>> = (index) => {
+                act: Function1<number, GameFragment<void>> = (index) => {
                     return async function* (context) {
                         for (const row of _result[index]) {
                             if (FlattenCommands[row.key as keyof typeof FlattenCommands]) {

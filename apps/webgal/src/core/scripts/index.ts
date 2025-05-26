@@ -1,5 +1,5 @@
 import type { CommandTagBlocking, CommandTagNonBlocking } from '@starnight/core'
-import type { MergeDeep, UnionToIntersection } from 'type-fest'
+import type { Except, MergeDeep, UnionToIntersection } from 'type-fest'
 import { lowerCase, mapValues, merge } from 'es-toolkit'
 import * as API from './api'
 import * as Macro from './webgal'
@@ -41,7 +41,7 @@ export const FlattenCommands = Object.entries(MergedCommands)
     .flatMap(([group, value]) =>
         Object.entries(value).map(([key, value]) => ({ [`${lowerCase(group)}_${key}`]: value }))
     )
-    .reduce(merge, {}) as FlattenObject<typeof MergedCommands>
+    .reduce(merge, {}) as FlattenObject<Except<typeof MergedCommands, 'Say'>>
 
 type Filter<T, Tag> = {
     [K in keyof T as T[K] extends Tag ? K : never]: T[K]

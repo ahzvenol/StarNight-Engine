@@ -1,9 +1,9 @@
-import type { GameAct } from './types/Game'
+import type { GameFragment } from './types/Game'
 
 export interface AbstractGameBook {
     length(): number
 
-    act(index: number): GameAct<unknown>
+    act(index: number): GameFragment<unknown>
 
     label(label: string): number
 }
