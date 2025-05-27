@@ -25,7 +25,7 @@ StarNight.GameEvents.setup.subscribe(({ ui, temp }) => {
     globalThis['__PIXI_APP__'] = temp.pixi
 })
 
-StarNight.ActEvents.ready.subscribe(({ temp: { stage } }) => {
+StarNight.GameEvents.ready.subscribe(({ temp: { stage } }) => {
     Y<DisplayObject, void>((rec) => (displayObject) => {
         if (displayObject instanceof Sprite) {
             displayObject.texture = Texture.from(displayObject.name!)

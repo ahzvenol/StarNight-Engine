@@ -31,7 +31,7 @@ export class StarNight {
         // 事件日志绑定
         // 游戏初始化计时器
         StarNight.GameEvents.start.subscribe(({ instance: { uuid } }) => console.time(uuid))
-        StarNight.ActEvents.ready.once(({ instance: { uuid } }) => console.timeEnd(uuid))
+        StarNight.GameEvents.ready.once(({ instance: { uuid } }) => console.timeEnd(uuid))
 
         StarNight.GameEvents.start.subscribe(() => console.info('Game:游戏开始'))
         StarNight.GameEvents.end.subscribe(() => console.info('Game:游戏结束'))
@@ -41,7 +41,7 @@ export class StarNight {
         StarNight.GameEvents.resume.subscribe(() => console.info('Game:游戏从挂起中恢复'))
         StarNight.GameEvents.active.subscribe((active) => console.info(`Game:游戏活动状态:${active}`))
 
-        StarNight.ActEvents.ready.subscribe(() => console.info(`Act:初始化完成`))
+        StarNight.GameEvents.ready.subscribe(() => console.info(`Act:初始化完成`))
         StarNight.ActEvents.start.subscribe(({ state, current: { index } }) => {
             if (state.isInitializing()) {
                 console.info(`Act:开始初始化第${index()}幕...`)
@@ -175,7 +175,7 @@ async function ActLoop(this: StarNightInstance) {
         // 幕循环进行到存档幕,游戏本地状态已恢复,发布ready事件,转换到普通运行状态
         if (this.current.index() === this.context.local.index) {
             this.state.toNormal()
-            this.ActEvents.ready.publish(this.context)
+            this.GameEvents.ready.publish(this.context)
             // 这时才应该允许状态转换,否则影响初始化
             this.ClickEvents.auto.subscribe(() => (this.state.isAuto() ? this.state.toNormal() : this.state.toAuto()))
             this.ClickEvents.fast.subscribe(() => (this.state.isFast() ? this.state.toNormal() : this.state.toFast()))

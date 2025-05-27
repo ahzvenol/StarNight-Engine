@@ -3,9 +3,12 @@ import { EventDispatcher } from './utils/EventDispatcher'
 
 // 游戏实例事件
 export class GameEvents {
+    // 初始化实例数据
     public static readonly setup = new EventDispatcher<GameContext>()
     // 启动幕循环
     public static readonly start = new EventDispatcher<GameContext>()
+    // 初始化游戏完毕
+    public static readonly ready = new EventDispatcher<GameContext>()
     // 自动结束
     public static readonly end = new EventDispatcher<GameContext>()
     // 主动退出
@@ -20,6 +23,7 @@ export class GameEvents {
     public static readonly active = new EventDispatcher<boolean>()
 
     public static readonly onSetup = EventDispatcher.on(this.setup)
+    public static readonly onReady = EventDispatcher.on(this.ready)
     public static readonly onStart = EventDispatcher.on(this.start)
     public static readonly onEnd = EventDispatcher.on(this.end)
     public static readonly onStop = EventDispatcher.on(this.stop)
@@ -30,6 +34,7 @@ export class GameEvents {
 
     constructor() {
         this.setup.subscribe((...args) => GameEvents.setup.publish(...args))
+        this.ready.subscribe((...args) => GameEvents.ready.publish(...args))
         this.start.subscribe((...args) => GameEvents.start.publish(...args))
         this.end.subscribe((...args) => GameEvents.end.publish(...args))
         this.stop.subscribe((...args) => GameEvents.stop.publish(...args))
@@ -40,6 +45,7 @@ export class GameEvents {
     }
 
     public readonly setup = new EventDispatcher<GameContext>()
+    public readonly ready = new EventDispatcher<GameContext>()
     public readonly start = new EventDispatcher<GameContext>()
     public readonly end = new EventDispatcher<GameContext>()
     public readonly stop = new EventDispatcher<GameContext>()
@@ -49,6 +55,7 @@ export class GameEvents {
     public readonly active = new EventDispatcher<boolean>()
 
     public readonly onSetup = EventDispatcher.on(this.setup)
+    public readonly onReady = EventDispatcher.on(this.ready)
     public readonly onStart = EventDispatcher.on(this.start)
     public readonly onEnd = EventDispatcher.on(this.end)
     public readonly onStop = EventDispatcher.on(this.stop)
@@ -60,8 +67,6 @@ export class GameEvents {
 
 // 幕循环事件
 export class ActEvents {
-    // 初始化完毕
-    public static readonly ready = new EventDispatcher<GameContext>()
     // 启动幕循环
     public static readonly start = new EventDispatcher<GameRuntimeContext>()
     // 自动结束
@@ -71,27 +76,23 @@ export class ActEvents {
     // 跳转
     public static readonly jump = new EventDispatcher<GameContext>()
 
-    public static readonly onReady = EventDispatcher.on(this.ready)
     public static readonly onStart = EventDispatcher.on(this.start)
     public static readonly onEnd = EventDispatcher.on(this.end)
     public static readonly onRush = EventDispatcher.on(this.rush)
     public static readonly onJump = EventDispatcher.on(this.jump)
 
     constructor() {
-        this.ready.subscribe((...args) => ActEvents.ready.publish(...args))
         this.start.subscribe((...args) => ActEvents.start.publish(...args))
         this.end.subscribe((...args) => ActEvents.end.publish(...args))
         this.rush.subscribe((...args) => ActEvents.rush.publish(...args))
         this.jump.subscribe((...args) => ActEvents.jump.publish(...args))
     }
 
-    public readonly ready = new EventDispatcher<GameContext>()
     public readonly start = new EventDispatcher<GameRuntimeContext>()
     public readonly end = new EventDispatcher<GameRuntimeContext>()
     public readonly rush = new EventDispatcher<GameRuntimeContext>()
     public readonly jump = new EventDispatcher<GameContext>()
 
-    public readonly onReady = EventDispatcher.on(this.ready)
     public readonly onStart = EventDispatcher.on(this.start)
     public readonly onEnd = EventDispatcher.on(this.end)
     public readonly onRush = EventDispatcher.on(this.rush)

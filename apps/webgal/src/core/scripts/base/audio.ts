@@ -24,7 +24,7 @@ StarNight.GameEvents.setup.subscribe(({ temp }) => {
     temp.audios = new Map()
 })
 
-StarNight.ActEvents.ready.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.load().play()))
+StarNight.GameEvents.ready.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.load().play()))
 
 StarNight.ActEvents.start.subscribe(({ config, temp: { audios } }) => {
     if (config.interruptclip()) audios.get('clip')?.unload()

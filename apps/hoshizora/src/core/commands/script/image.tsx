@@ -1,7 +1,7 @@
 import type { ExtendArgs } from '@starnight/core'
+import { Dynamic, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import anime from 'animejs'
 import { isNil, isUndefined } from 'es-toolkit'
-import { Dynamic, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import { Y } from '@/utils/fp'
 
 // anime.suspendWhenDocumentHidden = true;
@@ -32,7 +32,7 @@ StarNight.ActEvents.start.subscribe(({ temp: { activetimelines: activetimelines 
     activetimelines.clear()
 })
 
-StarNight.ActEvents.ready.subscribe(({ ui: { stage } }) => {
+StarNight.GameEvents.ready.subscribe(({ ui: { stage } }) => {
     Y<Element, void>((rec) => (displayObject) => {
         Array.from(displayObject.children).forEach(rec)
         if (displayObject instanceof HTMLImageElement) {

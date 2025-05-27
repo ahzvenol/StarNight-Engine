@@ -1,7 +1,7 @@
 import type { ExtendArgs } from '@starnight/core'
 import type { Howl, HowlOptions } from '@/lib/howler'
-import { delay, isUndefined } from 'es-toolkit'
 import { Dynamic, NonBlocking, StarNight } from '@starnight/core'
+import { delay, isUndefined } from 'es-toolkit'
 
 declare module '@starnight/core' {
     interface GameConfig {
@@ -19,7 +19,7 @@ StarNight.GameEvents.setup.subscribe(({ temp }) => {
     temp.audios = new Map()
 })
 
-StarNight.ActEvents.ready.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.load().play()))
+StarNight.GameEvents.ready.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.load().play()))
 
 StarNight.ActEvents.start.subscribe(({ config, temp: { audios } }) => {
     if (config.interruptclip()) audios.get('Clip')?.unload()
