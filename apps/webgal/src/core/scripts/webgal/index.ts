@@ -1,5 +1,4 @@
 export * as Audio from './audio'
 export * as Image from './image'
 export * as Video from './video'
-export * as System from './system'
 export * as Say from './say'

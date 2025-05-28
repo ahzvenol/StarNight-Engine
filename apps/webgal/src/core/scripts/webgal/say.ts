@@ -5,7 +5,7 @@ export type SayCommandArgs = { text: string; name?: string; clip?: string }
 
 export const apply = DynamicMacro<SayCommandArgs>(
     () =>
-        async function* ({ text, name, clip }) {
+        function* ({ text, name, clip }) {
             yield Say.apply({ text, name, clip: `./static/AudioClip/${clip}` })
         }
 )

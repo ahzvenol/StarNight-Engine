@@ -12,14 +12,13 @@ export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
         function* (_args) {
             const args = { loop: true, ..._args, type: 'bgm', id: _args.id || 'bgm' } as const
             if (args.duration) {
-                const time = Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
-                Audio.close({ target: args.id })(context)
-                Audio.set({ ...args, volume: 0 })(context)
-                await time
+                yield Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
+                yield Audio.close({ target: args.id })
+                yield Audio.set({ ...args, volume: 0 })
                 yield Audio.volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
             } else {
-                Audio.close({ target: args.id })(context)
-                Audio.set(args)(context)
+                yield Audio.close({ target: args.id })
+                yield Audio.set(args)
             }
         }
 )
@@ -31,14 +30,13 @@ export const se = NonBlockingMacro<AudioSECommandArgs>(
         function* (_args) {
             const args = { ..._args, type: 'se', id: _args.id || 'se' } as const
             if (args.duration) {
-                const time = Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
-                Audio.close({ target: args.id })(context)
-                Audio.set({ ...args, volume: 0 })(context)
-                await time
+                yield Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
+                yield Audio.close({ target: args.id })
+                yield Audio.set({ ...args, volume: 0 })
                 yield Audio.volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
             } else {
-                Audio.close({ target: args.id })(context)
-                Audio.set(args)(context)
+                yield Audio.close({ target: args.id })
+                yield Audio.set(args)
             }
         }
 )
@@ -49,16 +47,15 @@ export const clip = NonBlockingMacro<AudioClipCommandArgs>(
     () =>
         function* (_args) {
             const args = { ..._args, type: 'clip', id: 'clip' } as const
-            Audio.close({ target: args.id })
-            Audio.set(args)
+            yield Audio.close({ target: args.id })
+            yield Audio.set(args)
         }
 )
 
 export const close = DynamicMacro<{ target: string; duration?: number }>(
     (context) =>
         function* (args) {
-            const time = Audio.volume({ volume: 0, ...args })(context)
-            Audio.close({ target: args.target })(context)
-            await time
+            yield Audio.volume({ volume: 0, ...args })(context)
+            yield Audio.close({ target: args.target })
         }
 )

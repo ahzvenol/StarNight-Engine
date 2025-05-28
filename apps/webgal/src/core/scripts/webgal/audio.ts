@@ -4,8 +4,8 @@ import { Audio, Var } from '../api'
 
 export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
     () =>
-        async function* (args) {
-            Var.unlock(args.src)
+        function* (args) {
+            yield Var.unlock(args.src)
             args.src = `./static/AudioClip/${args.src}`
             yield Audio.bgm(args)
         }
@@ -13,7 +13,7 @@ export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
 
 export const se = NonBlockingMacro<AudioSECommandArgs>(
     () =>
-        async function* (args) {
+        function* (args) {
             args.src = `./static/AudioClip/${args.src}`
             yield Audio.se(args)
         }
@@ -21,7 +21,7 @@ export const se = NonBlockingMacro<AudioSECommandArgs>(
 
 export const clip = NonBlockingMacro<AudioClipCommandArgs>(
     () =>
-        async function* (args) {
+        function* (args) {
             args.src = `./static/AudioClip/${args.src}`
             yield Audio.clip(args)
         }

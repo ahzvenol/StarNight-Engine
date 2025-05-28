@@ -6,11 +6,11 @@ export type SayCommandArgs = { text: string; name?: string; clip?: string }
 
 export const apply = DynamicMacro<SayCommandArgs>(
     (context) =>
-        async function* ({ text, name, clip }) {
+        function* ({ text, name, clip }) {
             if (clip !== undefined) yield Audio.clip({ src: clip })
             if (name !== undefined) yield Say.name(name)
             yield Backlog.add({ text, name, clip })
-            await Say.text(text)(context)
+            yield Say.text(text)(context)
             yield Say.end()
         }
 )

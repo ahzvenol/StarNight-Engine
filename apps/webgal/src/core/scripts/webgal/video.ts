@@ -4,7 +4,7 @@ import { Video } from '../api'
 
 export const use = BlockingMacro<VideoCommandArgs>(
     (context) =>
-        async function* ({ src }) {
-            await Video.use({ src: `./static/${src}` })(context)
+        function* ({ src }) {
+            yield Video.use({ src: `./static/${src}` })(context)
         }
 )

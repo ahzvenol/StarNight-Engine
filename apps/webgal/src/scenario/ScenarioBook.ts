@@ -20,7 +20,7 @@ export function* Scenario(DSL: GameScenarioDSL): GameScenario<number> {
                 if (typeof current.value === 'number') {
                     return current.value
                 } else if (current.done) {
-                    return -1
+                    return NaN
                 } else {
                     value = (yield current.value) as Function0<unknown>
                 }

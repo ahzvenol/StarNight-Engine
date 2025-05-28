@@ -4,7 +4,7 @@ import { Image, Var } from '../api'
 
 export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
     () =>
-        async function* (args) {
+        function* (args) {
             args.src = `./static/ImageAsset/${args.src}`
             yield Image.sprite(args)
         }
@@ -12,8 +12,8 @@ export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
 
 export const bg = NonBlockingMacro<ImageBGCommandArgs>(
     () =>
-        async function* (args) {
-            Var.unlock(args.src)
+        function* (args) {
+            yield Var.unlock(args.src)
             args.src = `./static/ImageAsset/${args.src}`
             yield Image.bg(args)
         }
