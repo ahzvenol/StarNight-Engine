@@ -1,5 +1,6 @@
 import type { Reactive } from '@starnight/core'
-import { ActScope, Dynamic, NonBlocking, StarNight, SystemCommands } from '@starnight/core'
+import { ActScope, Dynamic, NonBlocking, StarNight } from '@starnight/core'
+import { System } from '.'
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
@@ -51,7 +52,7 @@ export const text = ActScope(
                 context.current.text(arg0 instanceof HTMLElement ? arg0.outerHTML : arg0)
                 context.ui.text.append(nodes[0])
                 while (nodes.length >= 1) {
-                    yield SystemCommands.wait(context.config.textspeed())(context)
+                    yield System.wait(context.config.textspeed())(context)
                     context.ui.text.append(nodes.shift()!)
                 }
             }

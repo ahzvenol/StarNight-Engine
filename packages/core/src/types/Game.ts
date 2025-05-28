@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { Reactive } from 'micro-reactive-wrapper'
 import type { StarNightInstance, StarNightStateStatic } from '@/StarNight'
-import type { AbstractGameBook } from '../Book'
-import type { CommandOutput } from './Command'
-import type { Function1 } from './Meta'
+import type { CommandOutput, StandardResolvedCommand } from './Command'
 
 export enum GameState {
     Initializing = 0,
@@ -18,11 +16,15 @@ export interface GameConfig {
     autoreadspeed: number
 }
 
-export type GameGenerator<R> = AsyncGenerator<Function1<GameRuntimeContext, Promise<unknown>>, R, unknown>
+export type GameMacroGenerator<R> = Generator<StandardResolvedCommand<unknown> | Promise<unknown>, R, unknown>
 
-export type GameFragment<R> = Function1<GameRuntimeContext, GameGenerator<R>>
+export type GameFragmentGenerator<R> = AsyncGenerator<StandardResolvedCommand<unknown>, R, unknown>
 
-export type GameScenario<R> = Function1<Reactive<GameRuntimeContext>, GameGenerator<R>>
+export type GameFragment<R> = Function1<GameRuntimeContext, GameFragmentGenerator<R>>
+
+export type GameMacro<R> = Function1<GameRuntimeContext, GameMacroGenerator<R>>
+
+export type GameScenario<R> = Generator<GameFragment<R>, unknown, unknown>
 
 export interface GameLocalData {
     index: number
@@ -39,7 +41,7 @@ export interface GameUIExternalData {}
 export interface GameUIInternalData {}
 
 export type GameConstructorParams = {
-    book: AbstractGameBook
+    scenario: GameScenario<unknown>
     config: Reactive<GameConfig>
     global: Reactive<GameGlobalData>
     readonly local: { index: number } & Partial<GameLocalData>

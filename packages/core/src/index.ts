@@ -1,6 +1,5 @@
 export * from './StarNight'
-export * from './commands'
-export * from './Book'
+export * from './scripts'
 export * from './Events'
 export * from './Decorator'
 export * from './types/Command'

@@ -1,8 +1,7 @@
 import type { Reactive } from 'micro-reactive-wrapper'
-import type { AbstractGameBook } from './Book'
 import type { CommandOutput } from './types/Command'
-import type { GameConstructorParams, GameContext, GameLocalData } from './types/Game'
-import { delay, isString } from 'es-toolkit'
+import type { GameConstructorParams, GameContext, GameLocalData, GameScenario } from './types/Game'
+import { delay } from 'es-toolkit'
 import { useReactiveWrapper } from 'micro-reactive-wrapper'
 import { Fork } from './Decorator'
 import { ActEvents, ClickEvents, GameEvents } from './Events'
@@ -55,7 +54,9 @@ export class StarNight {
         StarNight.ActEvents.rush.subscribe(({ state }) => {
             if (!state.isInitializing()) console.info('Act:执行单幕快进')
         })
-        StarNight.ActEvents.jump.subscribe(({ current: { index } }) => console.info(`Act:跳转到第${index()}幕`))
+        StarNight.ActEvents.next.subscribe(({ current: { index }, instance: { state } }) => {
+            if (!state.isInitializing()) console.info(`Act:准备执行第${index()}幕`)
+        })
 
         StarNight.ClickEvents.step.subscribe(() => console.info('ClickEvent:触发点击事件'))
         StarNight.ClickEvents.fast.subscribe(() => console.info('ClickEvent:触发快进/解除快进事件'))
@@ -101,7 +102,7 @@ export class StarNightInstance {
     // 主点击事件
     public readonly ClickEvents = new ClickEvents()
     // 游戏实例所持有的剧本
-    public readonly book: AbstractGameBook
+    public readonly scenario: GameScenario<unknown>
     // 唯一id,用于区分不同实例
     public readonly uuid = randomUUID()
     // 已读/未读标记
@@ -122,7 +123,7 @@ export class StarNightInstance {
         this.GameEvents.stop.subscribe(() => this.GameEvents.exit.publish(this.context))
         this.GameEvents.end.subscribe(() => this.GameEvents.exit.publish(this.context))
 
-        this.book = params.book
+        this.scenario = params.scenario
         this.context = {
             ...params,
             current: this.current,
@@ -151,6 +152,17 @@ export class StarNightInstance {
     }
 }
 
+// 维护已读幕
+StarNight.ActEvents.next.subscribe(async ({ instance }) => {
+    const range = RangeSet.fromRanges(instance.context.global.readsegment())
+    instance.isRead(range.includes(instance.current.index()))
+    if (!instance.isRead()) {
+        instance.context.global.readsegment(range.push(instance.current.index()).getRanges())
+        // 处理在未读文本处解除快进的设置项
+        if (instance.state.isFast() && !instance.context.config.fastforwardunread()) instance.state.toNormal()
+    }
+})
+
 // 在一幕的效果没有全部执行完毕的情况下,第二次点击会加速本幕
 // 如果本幕的命令都已经执行完成了,就可以解除对于第二次点击的监听
 StarNight.ActEvents.start.subscribe(async (context) => {
@@ -170,6 +182,8 @@ async function ActLoop(this: StarNightInstance) {
     // 不能在开始前结束游戏
     const onGameStop = this.GameEvents.onStop()
     while (true) {
+        const { value, done } = this.scenario.next()
+        if (done) return this.GameEvents.end.publish(this.context)
         // 如果用户离开游戏界面,等待用户回来
         if (!this.isGameVisible()) await this.GameEvents.onActiveChange()
         // 幕循环进行到存档幕,游戏本地状态已恢复,发布ready事件,转换到普通运行状态
@@ -180,19 +194,11 @@ async function ActLoop(this: StarNightInstance) {
             this.ClickEvents.auto.subscribe(() => (this.state.isAuto() ? this.state.toNormal() : this.state.toAuto()))
             this.ClickEvents.fast.subscribe(() => (this.state.isFast() ? this.state.toNormal() : this.state.toFast()))
         }
-        // 由幕循环维护已读幕,这一操作需要在ActStart之前完成,所以不能借助事件
-        const range = RangeSet.fromRanges(this.context.global.readsegment())
-        this.isRead(range.includes(this.current.index()))
-        if (!this.isRead()) {
-            this.context.global.readsegment(range.push(this.current.index()).getRanges())
-            // 处理在未读文本处解除快进的设置项
-            if (this.state.isFast() && !this.context.config.fastforwardunread()) this.state.toNormal()
-        }
         // ActStart前的初始化工作
+        this.ActEvents.next.publish(this.context)
         const onActRush = this.ActEvents.onRush()
         const output = {
             cont: StarNight.useReactive(false),
-            jump: StarNight.useReactive(undefined),
             end: StarNight.useReactive(false),
             state: StarNight.useReactive(undefined),
             extime: StarNight.useReactive(undefined)
@@ -203,7 +209,7 @@ async function ActLoop(this: StarNightInstance) {
         // ActStart
         this.ActEvents.start.publish(context)
         // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-        await Fork(this.book.act(this.current.index()))(context)
+        await Fork(value)(context)
         // ActEnd
         this.ActEvents.end.publish(context)
         if (output.state() && !this.state.isInitializing()) this.state.now(output.state()!)
@@ -220,15 +226,9 @@ async function ActLoop(this: StarNightInstance) {
                 await Promise.race([this.ClickEvents.onStep(), this.ClickEvents.onAuto(), this.ClickEvents.onFast()])
             }
         }
-        // jump命令修改接下来一幕的index
-        const jump = output.jump()
-        const target = isString(jump) ? this.book.label(jump) : Number.isFinite(jump) ? jump : undefined
-        this.current.index(target !== undefined ? target : this.current.index() + 1)
+        this.current.index(this.current.index() + 1)
         // 游戏实例已销毁时退出,初始化时不判断以优化初始化速度。不需要发送事件,因为这个事件已经由用户发出
         if (!this.state.isInitializing() && (await PromiseX.isSettled(onGameStop))) return
-        const isEnd = output.end() || this.current.index() >= this.book.length()
-        if (isEnd) return this.GameEvents.end.publish(this.context)
-        // 没有退出才发布跳转事件
-        if (target !== undefined) this.ActEvents.jump.publish(this.context)
+        if (output.end()) return this.GameEvents.end.publish(this.context)
     }
 }

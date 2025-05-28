@@ -1,5 +1,4 @@
 import type { CommandTagBlocking, GameRuntimeContext } from '@/index'
-import type { Function0, Function1 } from '@/types/Meta'
 import { Blocking } from '@/Decorator'
 import { StarNight } from '@/index'
 

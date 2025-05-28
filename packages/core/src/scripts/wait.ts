@@ -1,6 +1,6 @@
-import { ActScope, DynamicBlocking } from '../../Decorator'
-import { PromiseX } from '../../utils/PromiseX'
-import { TimeoutController } from '../../utils/TimeoutController'
+import { ActScope, DynamicBlocking } from '../Decorator'
+import { PromiseX } from '../utils/PromiseX'
+import { TimeoutController } from '../utils/TimeoutController'
 
 export const wait = ActScope(
     DynamicBlocking<number>(

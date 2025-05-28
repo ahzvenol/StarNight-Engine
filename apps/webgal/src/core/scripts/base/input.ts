@@ -1,6 +1,7 @@
 import type { Reactive } from '@starnight/core'
-import { Blocking, DynamicBlocking, GameState, StarNight, SystemCommands } from '@starnight/core'
+import { Blocking, DynamicBlocking, GameState, StarNight } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
+import { System } from '.'
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
@@ -38,7 +39,7 @@ export const text = Blocking((context) => async () => {
     } = context
     const promise = new PromiseX<string>()
     textinput(() => promise.resolve)
-    const res = await SystemCommands.input(() => promise)(context)
+    const res = await System.input(() => promise)(context)
     textinput(() => null)
     return res
 })
@@ -71,7 +72,7 @@ export const choose = Blocking<Array<ChoiceItem>, number | string>((context) => 
         return { ...item, promise, choose }
     })
     ui.choices(choices)
-    const chosen = await SystemCommands.input(() => Promise.race(choices.map((e) => e.promise)))(context)
+    const chosen = await System.input(() => Promise.race(choices.map((e) => e.promise)))(context)
     ui.choices(null)
     if (config.stopfastonchoice() && state.isFast()) output.state(GameState.Normal)
     if (config.stopautoonchoice() && state.isAuto()) output.state(GameState.Normal)

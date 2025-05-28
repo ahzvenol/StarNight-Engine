@@ -5,7 +5,7 @@ import { Audio, Var } from '../api'
 export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
     () =>
         async function* (args) {
-            yield Var.unlock(args.src)
+            Var.unlock(args.src)
             args.src = `./static/AudioClip/${args.src}`
             yield Audio.bgm(args)
         }

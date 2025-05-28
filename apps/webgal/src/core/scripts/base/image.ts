@@ -29,6 +29,9 @@ StarNight.GameEvents.ready.subscribe(({ temp: { stage } }) => {
     Y<DisplayObject, void>((rec) => (displayObject) => {
         if (displayObject instanceof Sprite) {
             displayObject.texture = Texture.from(displayObject.name!)
+            // @ts-expect-error 类型“Resource”上不存在属性“source”
+            const source = displayObject.texture.baseTexture.resource.source
+            if (source instanceof HTMLVideoElement) source.muted = true
         } else if (displayObject instanceof Container) {
             displayObject.children.forEach(rec)
         }
@@ -65,6 +68,9 @@ export const set = NonBlocking<ImageSetCommandArgs>(({ state, temp: { stage } })
     if (!isUndefined(z)) outerContainer.zIndex = z
     if (state.isInitializing()) newSprite.name = src
     else newSprite.texture = Texture.from(src)
+    // @ts-expect-error 类型“Resource”上不存在属性“source”
+    const source = newSprite.texture.baseTexture.resource.source
+    if (source instanceof HTMLVideoElement) source.muted = true
     innerContainer.addChildAt(newSprite, 0)
 })
 
@@ -147,7 +153,10 @@ export type ImageFilterAddCommandArgs = { target: string; filter: Filter }
 
 export const filter = NonBlocking<ImageFilterAddCommandArgs>(({ temp: { stage } }) => ({ target: _target, filter }) => {
     const target = isUndefined(_target) ? stage : stage.getChildByName(_target)
-    target?.filters?.push(filter)
+    if (target) {
+        if (target.filters) target.filters.push(filter)
+        else target.filters = [filter]
+    }
 })
 
 export type ImageFilterTweenCommandArgs = {

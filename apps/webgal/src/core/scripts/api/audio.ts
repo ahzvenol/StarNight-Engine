@@ -9,16 +9,17 @@ export type AudioBGMCommandArgs = Except<AudioSetCommandArgs, 'type'> & { durati
 
 export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
     (context) =>
-        async function* (_args) {
+        function* (_args) {
             const args = { loop: true, ..._args, type: 'bgm', id: _args.id || 'bgm' } as const
             if (args.duration) {
-                await Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
-                yield Audio.close({ target: args.id })
-                yield Audio.set({ ...args, volume: 0 })
+                const time = Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
+                Audio.close({ target: args.id })(context)
+                Audio.set({ ...args, volume: 0 })(context)
+                await time
                 yield Audio.volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
             } else {
-                yield Audio.close({ target: args.id })
-                yield Audio.set(args)
+                Audio.close({ target: args.id })(context)
+                Audio.set(args)(context)
             }
         }
 )
@@ -27,16 +28,17 @@ export type AudioSECommandArgs = Except<AudioSetCommandArgs, 'type'> & { duratio
 
 export const se = NonBlockingMacro<AudioSECommandArgs>(
     (context) =>
-        async function* (_args) {
+        function* (_args) {
             const args = { ..._args, type: 'se', id: _args.id || 'se' } as const
             if (args.duration) {
-                await Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
-                yield Audio.close({ target: args.id })
-                yield Audio.set({ ...args, volume: 0 })
+                const time = Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
+                Audio.close({ target: args.id })(context)
+                Audio.set({ ...args, volume: 0 })(context)
+                await time
                 yield Audio.volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
             } else {
-                yield Audio.close({ target: args.id })
-                yield Audio.set(args)
+                Audio.close({ target: args.id })(context)
+                Audio.set(args)(context)
             }
         }
 )
@@ -45,17 +47,18 @@ export type AudioClipCommandArgs = Except<AudioSetCommandArgs, 'type' | 'id'>
 
 export const clip = NonBlockingMacro<AudioClipCommandArgs>(
     () =>
-        async function* (_args) {
+        function* (_args) {
             const args = { ..._args, type: 'clip', id: 'clip' } as const
-            yield Audio.close({ target: args.id })
-            yield Audio.set(args)
+            Audio.close({ target: args.id })
+            Audio.set(args)
         }
 )
 
 export const close = DynamicMacro<{ target: string; duration?: number }>(
     (context) =>
-        async function* (args) {
-            await Audio.volume({ volume: 0, ...args })(context)
-            yield Audio.close({ target: args.target })
+        function* (args) {
+            const time = Audio.volume({ volume: 0, ...args })(context)
+            Audio.close({ target: args.target })(context)
+            await time
         }
 )

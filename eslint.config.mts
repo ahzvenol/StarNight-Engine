@@ -17,6 +17,7 @@ export default tseslint.config(
     {
         files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
         rules: {
+            'require-yield': 'off', // 允许不包含yield的生成器
             'solid/no-innerhtml': 'off', // 允许innerhtml(由于不存在非法输入)
             'solid/no-destructure': 'off', // 允许solid组件参数解构(由于项目风格是传输signal)
             'solid/event-handlers': 'error', // 禁用小写的事件侦听器,如onclick

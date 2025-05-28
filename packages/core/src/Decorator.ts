@@ -6,10 +6,10 @@ import type {
     StandardBlockingCommand,
     StandardCommand,
     StandardDynamicCommand,
-    StandardNonBlockingCommand
+    StandardNonBlockingCommand,
+    StandardResolvedCommand
 } from './types/Command'
-import type { GameFragment } from './types/Game'
-import type { Function0 } from './types/Meta'
+import type { GameFragment, GameMacro } from './types/Game'
 import { run } from './utils/runGenerator'
 
 // 只在本幕内产生效果的命令,由此不需要初始化
@@ -70,13 +70,26 @@ export function Blocking<T = void, R = void>(fn: BlockingCommand<T, R>): Standar
     return ((args) => async (context) => normalize(() => fn(context)(args))) as StandardBlockingCommand<T, R>
 }
 
-export function Fork<R>(fn: GameFragment<R>): ReturnType<StandardCommand<void, R>> {
+export function Fork<R>(fn: GameFragment<R>): StandardResolvedCommand<R> {
     return async (context) => {
         const generator = fn(context)
         const arr = Array<Promise<unknown>>()
         while (true) {
-            const { value, done } = await generator.next(context)
+            const { value, done } = await generator.next(arr.slice(-1)[0])
             if (done) return Promise.all(arr).then(() => value)
+            else arr.push(value(context))
+        }
+    }
+}
+
+export function Macro<R>(fn: GameMacro<R>): StandardResolvedCommand<R> {
+    return async (context) => {
+        const generator = fn(context)
+        const arr = Array<unknown>()
+        while (true) {
+            const { value, done } = generator.next(arr.slice(-1)[0])
+            if (value instanceof Promise) arr.push(await value)
+            else if (done) return Promise.all(arr).then(() => value)
             else arr.push(value(context))
         }
     }
@@ -85,15 +98,15 @@ export function Fork<R>(fn: GameFragment<R>): ReturnType<StandardCommand<void, R
 // 通过基本命令组合为宏命令,宏命令的性质由它的组成决定
 // 由NonBlocking和Dynamic参与组成的宏可以作为Dynamic的
 export function DynamicMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardDynamicCommand<T, R> {
-    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardDynamicCommand<T, R>
+    return ((args) => (context) => Macro((context) => fn(context)(args))(context)) as StandardDynamicCommand<T, R>
 }
 
 // 由NonBlocking和Dynamic参与组成的宏可以作为NonBlocking的
 export function NonBlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardNonBlockingCommand<T, R> {
-    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardNonBlockingCommand<T, R>
+    return ((args) => (context) => Macro((context) => fn(context)(args))(context)) as StandardNonBlockingCommand<T, R>
 }
 
 // 由Blocking命令参与组成的宏应该也是Blocking的
 export function BlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardBlockingCommand<T, R> {
-    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardBlockingCommand<T, R>
+    return ((args) => (context) => Macro((context) => fn(context)(args))(context)) as StandardBlockingCommand<T, R>
 }

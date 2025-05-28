@@ -1,30 +1,31 @@
-import type { AbstractGameBook, GameFragment, GameRuntimeContext } from '@starnight/core'
-import { $context, Action } from './$Scenario'
-import Scenario from './index.scenario'
+import type { GameRuntimeContext, GameScenario, StandardResolvedCommand } from '@starnight/core'
+import type { Signal } from 'micro-reactive-solid'
+import { useSignal } from 'micro-reactive-solid'
 
-export type GameScenario<R> = Function1<
-    GameRuntimeContext,
-    AsyncGenerator<Function1<GameRuntimeContext, Promise<unknown>> | typeof Action, R, GameRuntimeContext>
->
+export type GameScenarioDSL = (
+    arg0?: Signal<GameRuntimeContext>
+) => AsyncGenerator<StandardResolvedCommand<unknown> | number, unknown, unknown>
 
-export const book = () =>
-    new (class ScenarioBook implements AbstractGameBook {
-        scenario = Scenario($context) as ReturnType<GameScenario<unknown>>
-
-        length: Function0<number> = () => Infinity
-
-        act: Function1<number, GameFragment<void>> = () => {
-            // eslint-disable-next-line @typescript-eslint/no-this-alias
-            const self = this
-            return async function* (ctx: GameRuntimeContext) {
-                $context(ctx)
-                while (true) {
-                    const { value, done } = await self.scenario.next()
-                    if (value === Action || done) return
-                    else yield value
+export function* Scenario(DSL: GameScenarioDSL): GameScenario<number> {
+    let value: Function0<unknown>
+    let done: boolean | undefined
+    const ctx = useSignal(null) as unknown as Signal<GameRuntimeContext>
+    const scenario = DSL(ctx)
+    while (!done) {
+        yield async function* (context: GameRuntimeContext) {
+            ctx(context)
+            while (true) {
+                const current = await scenario.next(value)
+                done = current.done
+                if (typeof current.value === 'number') {
+                    return current.value
+                } else if (current.done) {
+                    return -1
+                } else {
+                    value = (yield current.value) as Function0<unknown>
                 }
             }
         }
-
-        label: Function1<string, number> = () => 0
-    })()
+    }
+    return undefined
+}

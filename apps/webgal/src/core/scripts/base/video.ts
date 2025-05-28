@@ -1,6 +1,7 @@
 import type { Reactive } from '@starnight/core'
-import { ActScope, Blocking, StarNight, SystemCommands } from '@starnight/core'
+import { ActScope, Blocking, StarNight } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
+import { System } from '.'
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
@@ -25,6 +26,6 @@ export const use = ActScope(
         const promise = new PromiseX<void>()
         video({ src, race: skip ? promise.resolve : null })
         await promise.then(() => video(null))
-        SystemCommands.continue()(context)
+        System.cont()(context)
     })
 )

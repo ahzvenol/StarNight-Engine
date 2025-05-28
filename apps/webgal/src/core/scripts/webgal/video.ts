@@ -3,8 +3,8 @@ import { BlockingMacro } from '@starnight/core'
 import { Video } from '../api'
 
 export const use = BlockingMacro<VideoCommandArgs>(
-    () =>
+    (context) =>
         async function* ({ src }) {
-            yield Video.use({ src: `./static/${src}` })
+            await Video.use({ src: `./static/${src}` })(context)
         }
 )

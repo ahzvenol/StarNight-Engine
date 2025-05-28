@@ -1,5 +1,3 @@
-import type { Function1 } from '../types/Meta'
-
 type EventListener<T> = Function1<T, void>
 
 export type Publisher<T> = { publish: (e: T) => void }

@@ -13,7 +13,7 @@ export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
 export const bg = NonBlockingMacro<ImageBGCommandArgs>(
     () =>
         async function* (args) {
-            yield Var.unlock(args.src)
+            Var.unlock(args.src)
             args.src = `./static/ImageAsset/${args.src}`
             yield Image.bg(args)
         }

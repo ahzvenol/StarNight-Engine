@@ -71,32 +71,32 @@ export class ActEvents {
     public static readonly start = new EventDispatcher<GameRuntimeContext>()
     // 自动结束
     public static readonly end = new EventDispatcher<GameRuntimeContext>()
+    // 进入下一幕
+    public static readonly next = new EventDispatcher<GameContext>()
     // 单幕快进
     public static readonly rush = new EventDispatcher<GameRuntimeContext>()
-    // 跳转
-    public static readonly jump = new EventDispatcher<GameContext>()
 
     public static readonly onStart = EventDispatcher.on(this.start)
     public static readonly onEnd = EventDispatcher.on(this.end)
     public static readonly onRush = EventDispatcher.on(this.rush)
-    public static readonly onJump = EventDispatcher.on(this.jump)
+    public static readonly onNext = EventDispatcher.on(this.next)
 
     constructor() {
         this.start.subscribe((...args) => ActEvents.start.publish(...args))
         this.end.subscribe((...args) => ActEvents.end.publish(...args))
         this.rush.subscribe((...args) => ActEvents.rush.publish(...args))
-        this.jump.subscribe((...args) => ActEvents.jump.publish(...args))
+        this.next.subscribe((...args) => ActEvents.next.publish(...args))
     }
 
     public readonly start = new EventDispatcher<GameRuntimeContext>()
     public readonly end = new EventDispatcher<GameRuntimeContext>()
     public readonly rush = new EventDispatcher<GameRuntimeContext>()
-    public readonly jump = new EventDispatcher<GameContext>()
+    public readonly next = new EventDispatcher<GameContext>()
 
     public readonly onStart = EventDispatcher.on(this.start)
     public readonly onEnd = EventDispatcher.on(this.end)
     public readonly onRush = EventDispatcher.on(this.rush)
-    public readonly onJump = EventDispatcher.on(this.jump)
+    public readonly onNext = EventDispatcher.on(this.next)
 }
 
 // 游戏点击事件

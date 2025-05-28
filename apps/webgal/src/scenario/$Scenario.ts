@@ -1,13 +1,5 @@
-import type { GameRuntimeContext, Reactive } from '@starnight/core'
 import type { SimplifyDeep } from 'type-fest'
-import { useSignal } from 'micro-reactive-solid'
 import { Asyncable, Awaitable } from '@/core/scripts'
-
-export const Action = Symbol()
-
-export { Action as $action }
-
-export const $context = useSignal(null) as unknown as Reactive<GameRuntimeContext>
 
 // 提取双层函数的参数和最终返回类型，并构造新函数类型
 type FlattenFunction<F> = F extends (arg0: infer P0) => (arg1: infer P1) => infer R ? (arg0: P0) => Awaited<R> : never
