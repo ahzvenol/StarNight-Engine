@@ -1,4 +1,5 @@
 import type { CommandTagBlocking, CommandTagNonBlocking } from '@starnight/core'
+import { BlockingMacro } from '@starnight/core'
 import { FlattenCommands } from '.'
 import { Alias } from '../Alias'
 
@@ -76,6 +77,21 @@ const 摇晃命令参数别名 = {
     iteration: '迭代次数'
 } as const
 
+const 用户输入 = BlockingMacro<{ 描述文本: string } | void>(
+    () =>
+        function* (args) {
+            yield FlattenCommands.input_text(args ? { text: args.描述文本 } : undefined)
+        }
+)
+const 用户选择 = BlockingMacro<{ 标识符: number | string; 描述文本: string; 禁用?: true }[]>(
+    () =>
+        function* (arr) {
+            yield FlattenCommands.input_choose(
+                arr.map(({ 标识符, 描述文本, 禁用 }) => ({ id: 标识符, text: 描述文本, disable: 禁用 }))
+            )
+        }
+)
+
 const 扁平化命令 = {
     设置背景: Alias(FlattenCommands.image_bg, Object.assign(通用命令参数别名, 图像命令参数别名)),
     添加立绘: Alias(FlattenCommands.image_sprite, Object.assign(通用命令参数别名, 图像命令参数别名)),
@@ -90,10 +106,10 @@ const 扁平化命令 = {
     设置语音: Alias(FlattenCommands.audio_clip, Object.assign(通用命令参数别名, 音频命令参数别名)),
     设置音量: Alias(FlattenCommands.audio_volume, Object.assign(通用命令参数别名, 音频命令参数别名)),
     关闭音频: Alias(FlattenCommands.audio_close, Object.assign(通用命令参数别名, 音频命令参数别名)),
-    播放视频: Alias(FlattenCommands.video_use, Object.assign(通用命令参数别名, { skip: '跳过' } as const)),
+    播放视频: Alias(FlattenCommands.video_use, Object.assign(通用命令参数别名, { skip: '允许跳过' } as const)),
+    用户输入: 用户输入,
+    用户选择: 用户选择,
     用户点击: FlattenCommands.input_click,
-    用户输入: FlattenCommands.input_text,
-    用户选择: FlattenCommands.input_choose,
     显示文本框: FlattenCommands.state_box,
     允许点击: FlattenCommands.state_click,
     解锁鉴赏: FlattenCommands.var_unlock,
