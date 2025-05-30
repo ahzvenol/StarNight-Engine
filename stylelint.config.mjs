@@ -2,8 +2,7 @@ export default {
     extends: [
         'stylelint-config-standard',
         'stylelint-config-standard-scss',
-        'stylelint-config-rational-order',
-        'stylelint-prettier/recommended'
+        'stylelint-config-rational-order'
     ],
     overrides: [
         {
@@ -34,7 +33,7 @@ export default {
         'no-descending-specificity': null, // 不允许较低特异性的选择器出现在覆盖较高特异性的选择器
         'selector-pseudo-class-no-unknown': null, // stylelint无法正确识别:global()选择器
         'property-no-vendor-prefix': null, // 允许-webkit-等前缀
-        'keyframes-name-pattern': null //自定义keyframe命名规则
+        'keyframes-name-pattern': null // 自定义keyframe命名规则
     },
     ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts']
 }

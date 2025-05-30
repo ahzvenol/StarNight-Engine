@@ -1,39 +1,37 @@
 {
-  "name": "monorepo",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "hoshizora:dev": "bun --filter hoshizora dev",
-    "webgal:dev": "bun --filter webgal dev",
-    "core:build": "bun --filter @starnight/core build",
-    "parser:build": "bun --filter @starnight/parser build",
-    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
-    "lint:prettier": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\"",
-    "lint:style": "stylelint src\"/**/*.+(css|scss|less|stylus|sass|postcss)\" --fix",
-    "lint:all": "concurrently \"bun run lint:prettier\" \"bun run lint:style\" \"bun run lint:fix\""
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.27.0",
-    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
-    "jiti": "^2.4.2",
-    "eslint": "^9.27.0",
-    "eslint-plugin-clsx": "^0.0.10",
-    "eslint-plugin-prettier": "^5.4.0",
-    "eslint-plugin-solid": "^0.14.5",
-    "prettier": "^3.5.3",
-    "prettier-eslint": "^16.4.2",
-    "stylelint": "^15.11.0",
-    "stylelint-config-rational-order": "^0.1.2",
-    "stylelint-config-standard": "^34.0.0",
-    "stylelint-config-standard-scss": "^11.1.0",
-    "stylelint-order": "^6.0.4",
-    "stylelint-prettier": "^4.1.0",
-    "stylelint-scss": "^5.3.2",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.32.1"
-  },
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ]
+    "name": "monorepo",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "hoshizora:dev": "bun --filter hoshizora dev",
+        "webgal:dev": "bun --filter webgal dev",
+        "core:build": "bun --filter @starnight/core build",
+        "parser:build": "bun --filter @starnight/parser build",
+        "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
+        "lint:style": "stylelint src\"/**/*.+(css|scss|less|stylus|sass|postcss)\" --fix",
+        "lint:all": "concurrently \"bun run lint:style\" \"bun run lint:fix\""
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.27.0",
+        "@stylistic/eslint-plugin": "^4.4.0",
+        "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+        "jiti": "^2.4.2",
+        "eslint": "^9.27.0",
+        "eslint-plugin-clsx": "^0.0.10",
+        "eslint-plugin-prettier": "^5.4.0",
+        "eslint-plugin-solid": "^0.14.5",
+        "eslint-plugin-import": "^2.31.0",
+        "stylelint": "^15.11.0",
+        "stylelint-config-rational-order": "^0.1.2",
+        "stylelint-config-standard": "^34.0.0",
+        "stylelint-config-standard-scss": "^11.1.0",
+        "stylelint-order": "^6.0.4",
+        "stylelint-scss": "^5.3.2",
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.32.1"
+    },
+    "workspaces": [
+        "packages/*",
+        "apps/*"
+    ]
 }

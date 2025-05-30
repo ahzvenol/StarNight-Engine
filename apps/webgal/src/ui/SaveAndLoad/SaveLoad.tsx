@@ -36,7 +36,8 @@ export const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
                                         [styles.Save_Load_top_button_active]: currentPage() === i,
                                         [styles.Load_top_button]: mode === 'Load',
                                         [styles.Load_top_button_active]: mode === 'Load' && currentPage() === i
-                                    })}>
+                                    })}
+                                >
                                     <div class={styles.Save_Load_top_button_text}>{i + 1}</div>
                                 </div>
                             )}

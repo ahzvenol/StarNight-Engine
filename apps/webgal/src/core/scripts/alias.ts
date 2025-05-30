@@ -1,7 +1,7 @@
 import type { CommandTagBlocking, CommandTagNonBlocking } from '@starnight/core'
-import { BlockingMacro } from '@starnight/core'
-import { FlattenCommands } from '.'
+import { Blocking } from '@starnight/core'
 import { Alias } from '../Alias'
+import { FlattenCommands } from '.'
 
 const 通用命令参数别名 = {
     id: '标识符',
@@ -77,18 +77,18 @@ const 摇晃命令参数别名 = {
     iteration: '迭代次数'
 } as const
 
-const 用户输入 = BlockingMacro<{ 描述文本: string } | void>(
-    () =>
-        function* (args) {
-            yield FlattenCommands.input_text(args ? { text: args.描述文本 } : undefined)
+const 用户输入 = Blocking<{ 描述文本: string } | void, string>(
+    (context) =>
+        async (args) => {
+            return FlattenCommands.input_text(args ? { text: args.描述文本 } : undefined)(context)
         }
 )
-const 用户选择 = BlockingMacro<{ 标识符: number | string; 描述文本: string; 禁用?: true }[]>(
-    () =>
-        function* (arr) {
-            yield FlattenCommands.input_choose(
-                arr.map(({ 标识符, 描述文本, 禁用 }) => ({ id: 标识符, text: 描述文本, disable: 禁用 }))
-            )
+const 用户选择 = Blocking<{ 标识符: number | string, 描述文本: string, 禁用?: true }[], number | string>(
+    (context) =>
+        async (args) => {
+            return FlattenCommands.input_choose(
+                args.map(({ 标识符, 描述文本, 禁用 }) => ({ id: 标识符, text: 描述文本, disable: 禁用 }))
+            )(context)
         }
 )
 

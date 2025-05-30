@@ -4,27 +4,28 @@
         "/": "${workspaceFolder}/apps/webgal/public/static",
     },
     "[html]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
     "[typescriptreact]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
     "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
     "[css]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "stylelint.vscode-stylelint"
     },
     "[less]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "stylelint.vscode-stylelint"
     },
     "[scss]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "stylelint.vscode-stylelint"
     },
     "editor.codeActionsOnSave": {
         "source.fixAll": "explicit",
         "source.fixAll.stylelint": "explicit"
     },
+    "eslint.format.enable": true,
     "eslint.validate": [
         "javascript",
         "javascriptreact",
