@@ -19,8 +19,7 @@
     "scripts": {
         "build": "tsup",
         "test": "vitest run",
-        "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
-        "lint:prettier": "prettier --write \"src/**/*.+(js|ts|jsx|tsx|css|scss)\""
+        "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src"
     },
     "devDependencies": {
         "tsup": "^8.4.0"
@@ -31,4 +30,3 @@
         "type-fest": "^4.41.0"
     }
 }
-
