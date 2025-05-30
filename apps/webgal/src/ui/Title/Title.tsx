@@ -19,7 +19,8 @@ export const Title: Component = () => {
                 style={{
                     'background-size': 'cover',
                     'background-image': 'url(./static/Texture2D/title_bg.webp)'
-                }}>
+                }}
+            >
                 <div class={styles.Title_button_list}>
                     <Clone count={5}>
                         {(i) => (
@@ -34,7 +35,8 @@ export const Title: Component = () => {
                                         () => GUIHomeRootState('Load'),
                                         () => GUIHomeRootState('Gallery')
                                     ][i]
-                                }>
+                                }
+                            >
                                 <div class={styles.Title_button_text}>
                                     {t[(['start', 'continue', 'options', 'load', 'extra'] as const)[i]].title()}
                                 </div>

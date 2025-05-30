@@ -153,10 +153,10 @@ export interface HowlOptions extends HowlListeners {
      */
     xhr?:
         | {
-              method?: string | undefined
-              headers?: Record<string, string> | undefined
-              withCredentials?: boolean | undefined
-          }
+            method?: string | undefined
+            headers?: Record<string, string> | undefined
+            withCredentials?: boolean | undefined
+        }
         | undefined
 }
 
@@ -277,6 +277,6 @@ export interface HowlerGlobal {
     orientation(x: number, y?: number, z?: number, xUp?: number, yUp?: number, zUp?: number): this
 }
 
-declare function HowlerInstance(): { Howler: HowlerGlobal; Howl: HowlConstructor }
+declare function HowlerInstance(): { Howler: HowlerGlobal, Howl: HowlConstructor }
 
 export { HowlerInstance }

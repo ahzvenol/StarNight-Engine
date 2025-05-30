@@ -25,9 +25,9 @@ const Slider: Component<{
     const resolvedThumb = children(() => props.thumb).toArray()
     const resolvedTrack = children(() => props.track).toArray()
     if (
-        (resolvedFill.length !== 1 || typeof resolvedFill[0] !== 'object') &&
-        (resolvedThumb.length !== 1 || typeof resolvedThumb[0] !== 'object') &&
-        (resolvedTrack.length !== 1 || typeof resolvedTrack[0] !== 'object')
+        (resolvedFill.length !== 1 || typeof resolvedFill[0] !== 'object')
+        && (resolvedThumb.length !== 1 || typeof resolvedThumb[0] !== 'object')
+        && (resolvedTrack.length !== 1 || typeof resolvedTrack[0] !== 'object')
     ) {
         console.error('每个参数需要且仅需要一个HTMLElement')
         return <></>
@@ -104,8 +104,8 @@ const Slider: Component<{
         const fillLength = fill.getBoundingClientRect()[vertical ? 'height' : 'width']
 
         const start =
-            thumb.getBoundingClientRect()[vertical ? 'top' : 'left'] +
-            thumb.getBoundingClientRect()[vertical ? 'height' : 'width'] / 2
+            thumb.getBoundingClientRect()[vertical ? 'top' : 'left']
+            + thumb.getBoundingClientRect()[vertical ? 'height' : 'width'] / 2
 
         const current = event[vertical ? 'clientY' : 'clientX']
 

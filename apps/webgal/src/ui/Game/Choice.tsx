@@ -13,7 +13,8 @@ export const Choice: Component = () => {
                     <div
                         ref={useSoundEffect('Click', 'Enter')}
                         class={choice.disable ? styles.Game_Choice_item_disabled : styles.Game_Choice_item}
-                        onClick={choice.choose}>
+                        onClick={choice.choose}
+                    >
                         {choice.text}
                     </div>
                 )}

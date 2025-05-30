@@ -16,21 +16,21 @@ type Effect = 'Enter' | 'Click' | 'Switch' | 'PageChange' | 'DialogOpen'
 
 export const useSoundEffect =
     (...args: Array<Effect>) =>
-    (ref: HTMLElement) => {
-        const set = new Set(args)
-        if (set.has('Enter')) {
-            useEventListener('mouseenter', () => SEEnter.play(), { target: ref })
+        (ref: HTMLElement) => {
+            const set = new Set(args)
+            if (set.has('Enter')) {
+                useEventListener('mouseenter', () => SEEnter.play(), { target: ref })
+            }
+            if (set.has('Click')) {
+                useEventListener('click', () => SEClick.play(), { target: ref })
+            }
+            if (set.has('Switch')) {
+                useEventListener('click', () => SESwitch.play(), { target: ref })
+            }
+            if (set.has('PageChange')) {
+                useEventListener('click', () => SEPageChange.play(), { target: ref })
+            }
+            if (set.has('DialogOpen')) {
+                useEventListener('click', () => SEDialogOpen.play(), { target: ref })
+            }
         }
-        if (set.has('Click')) {
-            useEventListener('click', () => SEClick.play(), { target: ref })
-        }
-        if (set.has('Switch')) {
-            useEventListener('click', () => SESwitch.play(), { target: ref })
-        }
-        if (set.has('PageChange')) {
-            useEventListener('click', () => SEPageChange.play(), { target: ref })
-        }
-        if (set.has('DialogOpen')) {
-            useEventListener('click', () => SEDialogOpen.play(), { target: ref })
-        }
-    }

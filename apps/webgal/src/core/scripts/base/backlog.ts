@@ -2,7 +2,7 @@ import type { GameLocalData, Reactive } from '@starnight/core'
 import { NonBlocking, StarNight } from '@starnight/core'
 import { cloneDeep } from 'es-toolkit'
 
-export type BacklogCommandArgs = { text: string; name?: string; clip?: string }
+export type BacklogCommandArgs = { text: string, name?: string, clip?: string }
 
 export type BacklogActData = { local: GameLocalData } & BacklogCommandArgs
 

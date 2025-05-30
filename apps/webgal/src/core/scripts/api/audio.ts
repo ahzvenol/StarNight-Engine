@@ -52,7 +52,7 @@ export const clip = NonBlockingMacro<AudioClipCommandArgs>(
         }
 )
 
-export const close = DynamicMacro<{ target: string; duration?: number }>(
+export const close = DynamicMacro<{ target: string, duration?: number }>(
     (context) =>
         function* (args) {
             yield Audio.volume({ volume: 0, ...args })(context)

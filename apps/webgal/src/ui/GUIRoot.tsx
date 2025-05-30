@@ -19,7 +19,7 @@ export const GUIRoot: Component = () => {
     if (isDevelopment()) GUIRootState('Home')
     return (
         <div style={{ width: '100vw', height: '100vh', 'background-color': '#000' }}>
-            <Scale width={2560} height={1440} mode={'auto'}>
+            <Scale width={2560} height={1440} mode="auto">
                 <Show when={GUIRootState() === 'Landing'}>
                     <LandingPage />
                 </Show>

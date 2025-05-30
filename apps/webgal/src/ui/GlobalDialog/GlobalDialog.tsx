@@ -29,7 +29,8 @@ export const Dialog: Component = () => (
                             onClick={() => {
                                 DialogContent()!.leftFunc?.()
                                 DialogContent(null)
-                            }}>
+                            }}
+                        >
                             {DialogContent()?.leftText}
                         </div>
                         <div
@@ -38,7 +39,8 @@ export const Dialog: Component = () => (
                             onClick={() => {
                                 DialogContent()!.rightFunc?.()
                                 DialogContent(null)
-                            }}>
+                            }}
+                        >
                             {DialogContent()?.rightText}
                         </div>
                     </div>

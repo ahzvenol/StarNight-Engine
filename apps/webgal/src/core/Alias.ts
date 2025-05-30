@@ -15,8 +15,8 @@ type ValidMappedKeys<T, M> = {
         ? IsAnyOrUnknown<T[K]> extends true
             ? never
             : M[K] extends PropertyKey
-              ? { newKey: M[K]; oldKey: K }
-              : never
+                ? { newKey: M[K], oldKey: K }
+                : never
         : never
 }[keyof M]
 
@@ -36,10 +36,10 @@ function renameKeys<T extends Record<PropertyKey, unknown>, M extends Partial<Re
 function flipObject<T extends Record<string | number | symbol, string | number | symbol>>(
     obj: T
 ): {
-    [K in T[keyof T]]: {
-        [P in keyof T]: T[P] extends K ? P : never
-    }[keyof T]
-} {
+        [K in T[keyof T]]: {
+            [P in keyof T]: T[P] extends K ? P : never
+        }[keyof T]
+    } {
     const result: any = {}
     for (const key in obj) {
         const value = obj[key]
@@ -98,8 +98,8 @@ export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Parti
     } & {
         [K in Exclude<keyof T, keyof M>]: T[K]
     },
-    R
-> {
+        R
+    > {
     // @ts-expect-error 类型...的参数不能赋给类型“T”的参数。
     return (args) => async (context) => fn(renameKeys(args, flipObject(map)))(context)
 }

@@ -79,7 +79,7 @@ export const set = NonBlocking<AudioSetCommandArgs>(
         }
 )
 
-export type AudioVolumeCommandArgs = { target: string; volume: number; duration?: number }
+export type AudioVolumeCommandArgs = { target: string, volume: number, duration?: number }
 
 export const volume = Dynamic<AudioVolumeCommandArgs>(
     ({ temp: { audios } }) =>

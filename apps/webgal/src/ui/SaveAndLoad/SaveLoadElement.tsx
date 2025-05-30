@@ -13,7 +13,7 @@ import { translation } from '../translations'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './SaveAndLoad.module.scss'
 
-type SaveLoadElementProps = { i: number; mode: SaveLoadMode; index: number; slot: Reactive<SaveLocalData> }
+type SaveLoadElementProps = { i: number, mode: SaveLoadMode, index: number, slot: Reactive<SaveLocalData> }
 
 function snapshot() {
     const app = starnight().context.temp.pixi
@@ -55,19 +55,22 @@ export const SaveLoadElement: Component<SaveLoadElementProps> = ({ i, mode, inde
             ref={useSoundEffect('Enter', clickEffect)}
             class={styles.Save_Load_content_element}
             style={{ 'animation-delay': `${(i + 1) * 30}ms` }}
-            onClick={mode === 'Save' ? onSave : onLoad}>
+            onClick={mode === 'Save' ? onSave : onLoad}
+        >
             <Show when={slot()}>
                 <div class={styles.Save_Load_content_element_top}>
                     <div
                         class={clsx(styles.Save_Load_content_element_top_index, {
                             [styles.Load_content_element_top_index]: mode === 'Load'
-                        })}>
+                        })}
+                    >
                         {index}
                     </div>
                     <div
                         class={clsx(styles.Save_Load_content_element_top_date, {
                             [styles.Load_content_element_top_date]: mode === 'Load'
-                        })}>
+                        })}
+                    >
                         {dayjs(slot.date()).format('MM-DD HH:mm:ss')}
                     </div>
                 </div>
@@ -76,7 +79,8 @@ export const SaveLoadElement: Component<SaveLoadElementProps> = ({ i, mode, inde
                     <div
                         class={clsx(styles.Save_Load_content_name, {
                             [styles.Load_content_name]: mode === 'Load'
-                        })}>
+                        })}
+                    >
                         {slot.name()}
                     </div>
                     <div class={styles.Save_Load_content_text_padding}>{slot.text()}</div>

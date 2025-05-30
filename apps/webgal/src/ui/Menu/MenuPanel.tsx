@@ -26,7 +26,8 @@ export const MenuPanel = () => {
                 }}
                 style={{
                     color: GUIState() === 'Save' ? `rgba(74, 34, 93, 0.9)` : `rgba(123,144,169,1)`
-                }}>
+                }}
+            >
                 <Save
                     class={styles.MenuPanel_button_icon}
                     theme="outline"
@@ -42,7 +43,8 @@ export const MenuPanel = () => {
                 onClick={() => GUIState('Load')}
                 style={{
                     color: GUIState() === 'Load' ? `rgba(11, 52, 110, 0.9)` : `rgba(123,144,169,1)`
-                }}>
+                }}
+            >
                 <FolderOpen
                     class={styles.MenuPanel_button_icon}
                     theme="outline"
@@ -64,9 +66,9 @@ export const MenuPanel = () => {
                             GUIRootState('Home')
                             GUIHomeRootState('Title')
                         }
-                    })
-                }
-                style={{ color: 'rgba(123,144,169,1)' }}>
+                    })}
+                style={{ color: 'rgba(123,144,169,1)' }}
+            >
                 <Home
                     class={styles.MenuPanel_button_icon}
                     theme="outline"
@@ -85,7 +87,8 @@ export const MenuPanel = () => {
                 style={{
                     'margin-left': 'auto',
                     color: GUIState() === 'Config' ? `rgba(81, 110, 65, 0.9)` : `rgba(123,144,169,1)`
-                }}>
+                }}
+            >
                 <SettingTwo
                     class={styles.MenuPanel_button_icon}
                     theme="outline"
@@ -105,7 +108,8 @@ export const MenuPanel = () => {
                         GUIState('Game')
                     }
                 }}
-                style={{ color: 'rgba(123,144,169,1)' }}>
+                style={{ color: 'rgba(123,144,169,1)' }}
+            >
                 <Logout
                     class={styles.MenuPanel_button_icon}
                     theme="outline"

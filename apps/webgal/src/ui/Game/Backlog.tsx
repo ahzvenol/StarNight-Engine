@@ -17,7 +17,8 @@ export const Backlog: Component = () => {
         <div
             ref={stopPropagation('contextmenu')}
             class={styles.Game_Backlog_container}
-            onContextMenu={() => GUIGameRootState('Game')}>
+            onContextMenu={() => GUIGameRootState('Game')}
+        >
             <div ref={useSoundEffect('Click', 'Enter')} class={styles.Game_Backlog_top}>
                 <CloseSmall
                     class={styles.Game_Backlog_top_icon}
@@ -31,7 +32,7 @@ export const Backlog: Component = () => {
             </div>
             <Scrollbar
                 container={<div class={styles.Game_Backlog_content} />}
-                content={
+                content={(
                     <For each={ui().backlog()}>
                         {(act, i) => (
                             <div class={styles.Game_Backlog_item} style={{ 'animation-delay': `${(i() % 20) * 20}ms` }}>
@@ -39,7 +40,8 @@ export const Backlog: Component = () => {
                                     <div
                                         ref={useSoundEffect('Click', 'Enter')}
                                         class={styles.Game_Backlog_item_back}
-                                        onClick={() => useGame(act.local)}>
+                                        onClick={() => useGame(act.local)}
+                                    >
                                         <Return theme="outline" size="0.8em" fill="#ffffff" strokeWidth={3} />
                                     </div>
                                     <Show when={act.clip}>
@@ -48,7 +50,8 @@ export const Backlog: Component = () => {
                                                 <div
                                                     ref={useSoundEffect('Click', 'Enter')}
                                                     class={styles.Game_Backlog_item_clip}
-                                                    onClick={() => clip.stop().play()}>
+                                                    onClick={() => clip.stop().play()}
+                                                >
                                                     <VolumeNotice
                                                         theme="outline"
                                                         size="0.8em"
@@ -67,7 +70,7 @@ export const Backlog: Component = () => {
                             </div>
                         )}
                     </For>
-                }
+                )}
                 track={<div class={styles.Game_Backlog_Scrollbar_track} />}
                 thumb={<div class={styles.Game_Backlog_Scrollbar_thumb} />}
                 default={1}

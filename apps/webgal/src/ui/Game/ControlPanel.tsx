@@ -43,7 +43,8 @@ export const ControlPanel: Component = () => {
                     class={styles.Game_ControlPanel_button}
                     style={{ 'font-size': fsize() }}
                     ref={useSoundEffect('Click', 'Enter')}
-                    onClick={() => showBox(false)}>
+                    onClick={() => showBox(false)}
+                >
                     <PreviewCloseOne class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.hide()}</span>
                 </span>
@@ -51,7 +52,8 @@ export const ControlPanel: Component = () => {
                     class={styles.Game_ControlPanel_button}
                     style={{ 'font-size': fsize() }}
                     ref={useSoundEffect('Click', 'Enter')}
-                    onClick={() => GUIGameRootState('Backlog')}>
+                    onClick={() => GUIGameRootState('Backlog')}
+                >
                     <AlignTextLeftOne class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.backlog()}</span>
                 </span>
@@ -70,7 +72,8 @@ export const ControlPanel: Component = () => {
                     }
                     style={{ 'font-size': fsize() }}
                     ref={useSoundEffect('Click', 'Enter')}
-                    onClick={() => starnight().ClickEvents.auto.publish()}>
+                    onClick={() => starnight().ClickEvents.auto.publish()}
+                >
                     <PlayOne class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.auto()}</span>
                 </span>
@@ -82,7 +85,8 @@ export const ControlPanel: Component = () => {
                     }
                     style={{ 'font-size': fsize() }}
                     ref={useSoundEffect('Click', 'Enter')}
-                    onClick={() => starnight().ClickEvents.fast.publish()}>
+                    onClick={() => starnight().ClickEvents.fast.publish()}
+                >
                     <DoubleRight class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.forward()}</span>
                 </span>
@@ -90,7 +94,8 @@ export const ControlPanel: Component = () => {
                     class={clsx(styles.Game_ControlPanel_button)}
                     style={{ 'font-size': fsize() }}
                     ref={useSoundEffect('Click', 'Enter')}
-                    onClick={() => slot(starnight().current())}>
+                    onClick={() => slot(starnight().current())}
+                >
                     <DoubleDown class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.quicklySave()}</span>
                     {/* <div class={styles.fastSlPreview + ' ' + styles.fastSPreview}>{fastSlPreview}</div> */}
@@ -101,7 +106,8 @@ export const ControlPanel: Component = () => {
                     ref={useSoundEffect('Click', 'Enter')}
                     onClick={() => {
                         if (slot() !== undefined) useGame(slot()!)
-                    }}>
+                    }}
+                >
                     <DoubleUp class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.quicklyLoad()}</span>
                     {/* <div class={styles.fastSlPreview + ' ' + styles.fastLPreview}>{fastSlPreview}</div> */}
@@ -110,7 +116,8 @@ export const ControlPanel: Component = () => {
                     class={styles.Game_ControlPanel_button}
                     style={{ 'font-size': fsize() }}
                     ref={useSoundEffect('Click', 'Enter')}
-                    onClick={() => GUIGameRootState('Save')}>
+                    onClick={() => GUIGameRootState('Save')}
+                >
                     <Save class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.save()}</span>
                 </span>
@@ -118,7 +125,8 @@ export const ControlPanel: Component = () => {
                     class={styles.Game_ControlPanel_button}
                     style={{ 'font-size': fsize() }}
                     ref={useSoundEffect('Click', 'Enter')}
-                    onClick={() => GUIGameRootState('Load')}>
+                    onClick={() => GUIGameRootState('Load')}
+                >
                     <FolderOpen class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.load()}</span>
                 </span>
@@ -126,7 +134,8 @@ export const ControlPanel: Component = () => {
                     class={styles.Game_ControlPanel_button}
                     style={{ 'font-size': fsize() }}
                     ref={useSoundEffect('Click', 'Enter')}
-                    onClick={() => GUIGameRootState('Config')}>
+                    onClick={() => GUIGameRootState('Config')}
+                >
                     <SettingTwo class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.options()}</span>
                 </span>
@@ -141,7 +150,8 @@ export const ControlPanel: Component = () => {
                             rightText: translation.common.no(),
                             leftFunc: () => GUIRootState('Home')
                         })
-                    }}>
+                    }}
+                >
                     <Home class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.title()}</span>
                 </span>

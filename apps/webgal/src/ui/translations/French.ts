@@ -46,7 +46,7 @@ export const French = {
                                 import: {
                                     title: 'Êtes-vous sûr de vouloir importer la sauvegarde du jeu et les options',
                                     tip: 'Importer la sauvegarde du jeu',
-                                    error: "Impossible d'analyser la sauvegarde du jeu"
+                                    error: 'Impossible d\'analyser la sauvegarde du jeu'
                                 }
                             }
                         },
@@ -64,7 +64,7 @@ export const French = {
                     title: 'Affichage',
                     options: {
                         textSpeed: {
-                            title: "Vitesse d'affichage du texte",
+                            title: 'Vitesse d\'affichage du texte',
                             options: {
                                 slow: 'Lente',
                                 medium: 'Moyenne',
@@ -91,7 +91,7 @@ export const French = {
                             title: 'Textbox Opacity'
                         },
                         textPreview: {
-                            title: "Aperçu de l'affichage du texte",
+                            title: 'Aperçu de l\'affichage du texte',
                             text: 'Vous prévisualisez la police, la taille et la vitesse de lecture du texte, maintenant. Vous pouvez ajuster les options ci-dessus selon votre perception.'
                         }
                     }
@@ -166,7 +166,7 @@ export const French = {
             load: 'Charger',
             options: 'Options',
             title: 'Titre',
-            titleTips: "Confirmer le retour à l'écran titre"
+            titleTips: 'Confirmer le retour à l\'écran titre'
         }
     },
 

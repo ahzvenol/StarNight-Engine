@@ -7,7 +7,8 @@ import sortimport from 'eslint-plugin-import'
 
 clsx.configs.recommended.plugins = { clsx: clsx }
 export default tseslint.config(
-    eslint.configs.recommended, tseslint.configs.recommended,
+    eslint.configs.recommended,
+    tseslint.configs.recommended,
     solid.configs['flat/recommended'],
     clsx.configs.recommended,
     stylistic.configs.customize({
@@ -20,36 +21,18 @@ export default tseslint.config(
         arrowParens: true
     }),
     {
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname
+            }
+        }
+    },
+    {
         files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
         extends: [sortimport.flatConfigs.recommended, sortimport.flatConfigs.typescript],
         rules: {
-            '@stylistic/member-delimiter-style': [
-                'error',
-                {
-                    multiline: {
-                        delimiter: 'semi',
-                        requireLast: true
-                    },
-                    singleline: {
-                        delimiter: 'semi',
-                        requireLast: false
-                    },
-                    multilineDetection: 'brackets'
-                }
-            ],
-            'import/order': [
-                'error',
-                {
-                    groups: ['type', 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object'],
-                    pathGroups: [
-                        {
-                            pattern: '@/**', // 匹配所有以 @ 开头的别名
-                            group: 'internal', // 将 @ 别名视为 internal 模块
-                            position: 'after' // 放在 external 之后
-                        }
-                    ]
-                }
-            ],
+            '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after' } }],
             'import/no-unresolved': 'off',
             'require-yield': 'off', // 允许不包含yield的生成器
             'solid/no-innerhtml': 'off', // 允许innerhtml(由于不存在非法输入)

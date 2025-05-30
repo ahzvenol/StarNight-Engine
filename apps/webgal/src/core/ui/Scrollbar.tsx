@@ -21,10 +21,10 @@ const Slider: Component<{
     const resolvedTrack1 = children(() => props.track1).toArray()
     const resolvedTrack2 = children(() => props.track2).toArray()
     if (
-        (resolvedFill.length !== 1 || typeof resolvedFill[0] !== 'object') &&
-        (resolvedThumb.length !== 1 || typeof resolvedThumb[0] !== 'object') &&
-        (resolvedTrack1.length !== 1 || typeof resolvedTrack1[0] !== 'object') &&
-        (resolvedTrack2.length !== 1 || typeof resolvedTrack2[0] !== 'object')
+        (resolvedFill.length !== 1 || typeof resolvedFill[0] !== 'object')
+        && (resolvedThumb.length !== 1 || typeof resolvedThumb[0] !== 'object')
+        && (resolvedTrack1.length !== 1 || typeof resolvedTrack1[0] !== 'object')
+        && (resolvedTrack2.length !== 1 || typeof resolvedTrack2[0] !== 'object')
     ) {
         console.error('每个参数需要且仅需要一个HTMLElement')
         return <></>
@@ -96,8 +96,8 @@ const Slider: Component<{
         const fillLength = fill.getBoundingClientRect()[vertical ? 'height' : 'width']
 
         const start =
-            thumb.getBoundingClientRect()[vertical ? 'top' : 'left'] +
-            thumb.getBoundingClientRect()[vertical ? 'height' : 'width'] / 2
+            thumb.getBoundingClientRect()[vertical ? 'top' : 'left']
+            + thumb.getBoundingClientRect()[vertical ? 'height' : 'width'] / 2
 
         const current = event[vertical ? 'clientY' : 'clientX']
 
@@ -128,9 +128,9 @@ const Scrollbar: Component<{
     const resolvedTrack = children(() => props.track).toArray()
     const resolvedThumb = children(() => props.thumb).toArray()
     if (
-        (resolvedContainer.length !== 1 || typeof resolvedContainer[0] !== 'object') &&
-        (resolvedTrack.length !== 1 || typeof resolvedTrack[0] !== 'object') &&
-        (resolvedThumb.length !== 1 || typeof resolvedThumb[0] !== 'object')
+        (resolvedContainer.length !== 1 || typeof resolvedContainer[0] !== 'object')
+        && (resolvedTrack.length !== 1 || typeof resolvedTrack[0] !== 'object')
+        && (resolvedThumb.length !== 1 || typeof resolvedThumb[0] !== 'object')
     ) {
         console.error('每个参数需要且仅需要一个HTMLElement')
         return <></>
@@ -195,7 +195,7 @@ const Scrollbar: Component<{
             )
         )
 
-        const update = (position: { x: number; y: number }) => percent(position.y / bs.maxScrollY)
+        const update = (position: { x: number, y: number }) => percent(position.y / bs.maxScrollY)
 
         bs.on('scroll', update)
         bs.on('mousewheelMove', update)

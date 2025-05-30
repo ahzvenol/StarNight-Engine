@@ -48,7 +48,7 @@ StarNight.ActEvents.end.subscribe(({ temp: { stage } }) => {
     })
 })
 
-export type ImageSetCommandArgs = { id: string; src: string; z?: number }
+export type ImageSetCommandArgs = { id: string, src: string, z?: number }
 
 export const set = NonBlocking<ImageSetCommandArgs>(({ state, temp: { stage } }) => ({ id, src, z }) => {
     // 外层容器用于摇晃效果,内层容器用于变换效果
@@ -160,7 +160,7 @@ export const tween = DynamicMacro<ImageTweenCommandArgs>(
         }
 )
 
-export type ImageFilterAddCommandArgs = { target: string; filter: Filter }
+export type ImageFilterAddCommandArgs = { target: string, filter: Filter }
 
 export const filter = NonBlocking<ImageFilterAddCommandArgs>(({ temp: { stage } }) => ({ target: _target, filter }) => {
     const target = isUndefined(_target) ? stage : stage.getChildByName(_target)

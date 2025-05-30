@@ -2,7 +2,7 @@ import { DynamicMacro } from '@starnight/core'
 import { Audio } from '.'
 import { Backlog, Say } from '../base'
 
-export type SayCommandArgs = { text: string; name?: string; clip?: string }
+export type SayCommandArgs = { text: string, name?: string, clip?: string }
 
 export const apply = DynamicMacro<SayCommandArgs>(
     (context) =>

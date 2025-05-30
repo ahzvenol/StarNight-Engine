@@ -36,9 +36,7 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
 })
 
 export const text = Blocking<TextInput, string>((context) => async (args) => {
-    const {
-        ui: { textinput }
-    } = context
+    const { ui: { textinput } } = context
     const promise = new PromiseX<string>()
     textinput(
         Object.assign({ resolve: promise.resolve }, args || {}) as TextInput & { resolve: Function1<string, void> }
