@@ -50,3 +50,15 @@ type Filter<T, Tag> = {
 export const Awaitable = FlattenCommands as Filter<typeof FlattenCommands, CommandTagBlocking>
 
 export const Asyncable = FlattenCommands as Filter<typeof FlattenCommands, CommandTagNonBlocking>
+
+// 提取双层函数的参数和最终返回类型，并构造新函数类型
+type FlattenFunction<F> = F extends (arg0: infer P0) => (arg1: infer P1) => infer R ? (arg0: P0) => Awaited<R> : never
+
+// 处理对象，转换每个函数属性
+type FlattenFunctionObject<T> = {
+    [K in keyof T]: FlattenFunction<T[K]>
+}
+
+export const $await = Awaitable as unknown as FlattenFunctionObject<typeof Awaitable>
+
+export const $async = Asyncable as unknown as FlattenFunctionObject<typeof Asyncable>

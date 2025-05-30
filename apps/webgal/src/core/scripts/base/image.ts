@@ -1,7 +1,7 @@
 import type { DisplayObject, Filter } from 'pixi.js'
 import type { Except, MergeExclusive } from 'type-fest'
 import { Dynamic, DynamicMacro, EffectScope, NonBlocking, StarNight } from '@starnight/core'
-import { isUndefined } from 'es-toolkit'
+import { isString, isUndefined } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { Application, Container, Sprite, Texture } from 'pixi.js'
 import { Y } from '@/utils/fp'
@@ -74,12 +74,23 @@ export const set = NonBlocking<ImageSetCommandArgs>(({ state, temp: { stage } })
     innerContainer.addChildAt(newSprite, 0)
 })
 
-export type ImageCloseCommandArgs = MergeExclusive<{ target: string }, { exclude?: Array<string> }>
+export type ImageCloseCommandArgs = MergeExclusive<
+    { target: string | Array<string> },
+    { exclude?: string | Array<string> }
+>
 
 export const close = NonBlocking<ImageCloseCommandArgs>(({ temp: { stage } }) => ({ target, exclude }) => {
-    stage.children
-        .filter((container) => (isUndefined(target) ? !exclude?.includes(container.name!) : container.name === target))
-        .forEach((container) => stage.removeChild(container))
+    target = isString(target) ? [target] : target
+    exclude = isString(exclude) ? [exclude] : isUndefined(exclude) ? [] : exclude
+    if (target) {
+        stage.children
+            .filter((container) => target.includes(container.name!))
+            .forEach((container) => stage.removeChild(container))
+    } else {
+        stage.children
+            .filter((container) => !exclude.includes(container.name!))
+            .forEach((container) => stage.removeChild(container))
+    }
 })
 
 export type ImageShakePunchCommandArgs = {

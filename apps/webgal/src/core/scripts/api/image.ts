@@ -1,12 +1,11 @@
+import type { StandardNonBlockingCommand } from '@starnight/core'
 import type { Except } from 'type-fest'
 import type { ImageSetCommandArgs, ImageTweenCommandArgs } from '../base/image'
 import { DynamicMacro, NonBlockingMacro } from '@starnight/core'
 import { mapValues, omit } from 'es-toolkit'
 import { Image } from '../base'
 
-export const set = Image.set
-
-export const close = Image.close
+export const close = Image.close as StandardNonBlockingCommand<{ target: string | Array<string> }, void>
 
 export const shake = Image.shake
 

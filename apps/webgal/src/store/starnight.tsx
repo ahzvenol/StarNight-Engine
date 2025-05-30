@@ -1,8 +1,8 @@
 import type { StarNightInstance } from '@starnight/core'
 import { StarNight } from '@starnight/core'
 import { useReactive, useSignal } from 'micro-reactive-solid'
-import index from '@/../scenario/index.scenario'
-import { Scenario } from '@/scenario/ScenarioBook'
+import index from 'scenario/index.scenario'
+import { Scenario } from '@/core/ScenarioBook'
 
 StarNight.useReactive = useReactive
 

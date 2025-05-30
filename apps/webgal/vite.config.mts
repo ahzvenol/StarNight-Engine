@@ -21,7 +21,8 @@ export default defineConfig(({ command }) => ({
     ],
     resolve: {
         alias: {
-            '@': resolve(__dirname, './src') // 设置为@ 则使用时为 "@/components/index.module.css"
+            '@': resolve(__dirname, './src'), // 设置为@ 则使用时为 "@/components/index.module.css"
+            scenario: resolve(__dirname, './scenario')
         }
     },
     server: {

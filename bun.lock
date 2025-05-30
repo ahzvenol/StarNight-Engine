@@ -78,7 +78,6 @@
         "@capacitor/device": "7.0.1",
         "@msgpack/msgpack": "3.0.0-beta2",
         "@starnight/core": "workspace:*",
-        "@starnight/parser": "workspace:*",
         "@types/babel__generator": "^7.27.0",
         "@types/babel__traverse": "^7.20.7",
         "axios": "^1.9.0",
@@ -128,13 +127,6 @@
       },
       "devDependencies": {
         "tsup": "^8.4.0",
-      },
-    },
-    "packages/parser": {
-      "name": "@starnight/parser",
-      "version": "1.0.0",
-      "peerDependencies": {
-        "@starnight/core": "workspace:*",
       },
     },
   },
@@ -630,8 +622,6 @@
     "@solid-primitives/utils": ["@solid-primitives/utils@6.3.1", "", { "peerDependencies": { "solid-js": "^1.6.12" } }, "sha512-4/Z59nnwu4MPR//zWZmZm2yftx24jMqQ8CSd/JobL26TPfbn4Ph8GKNVJfGJWShg1QB98qObJSskqizbTvcLLA=="],
 
     "@starnight/core": ["@starnight/core@workspace:packages/core"],
-
-    "@starnight/parser": ["@starnight/parser@workspace:packages/parser"],
 
     "@ts-morph/common": ["@ts-morph/common@0.26.1", "", { "dependencies": { "fast-glob": "^3.3.2", "minimatch": "^9.0.4", "path-browserify": "^1.0.1" } }, "sha512-Sn28TGl/4cFpcM+jwsH1wLncYq3FtN/BIpem+HOygfBWPT5pAeS5dB4VFVzV8FbnOKHpDLZmvAl4AjPEev5idA=="],
 

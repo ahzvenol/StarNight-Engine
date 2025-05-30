@@ -1,4 +1,8 @@
 {
+    "webPreview.url": "http://localhost:8888/",
+    "path-intellisense.mappings": {
+        "/": "${workspaceFolder}/apps/webgal/public/static",
+    },
     "[html]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
@@ -37,5 +41,5 @@
         "scss",
         "sass"
     ],
-    "typescript.tsdk": "node_modules\\typescript\\lib"
+    "typescript.tsdk": "node_modules\\typescript\\lib",
 }

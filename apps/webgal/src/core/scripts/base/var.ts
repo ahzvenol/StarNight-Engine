@@ -17,7 +17,7 @@ declare module '@starnight/core' {
     }
 }
 
-export const achievement = NonBlocking<number>(({ global }) => (index) => {
+export const achieve = NonBlocking<number>(({ global }) => (index) => {
     if (!global.achievement[index]()) {
         global.achievement[index](true)
     }
