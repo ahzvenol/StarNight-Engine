@@ -25,20 +25,24 @@ export const click = DynamicBlocking(
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
-        textinput: Reactive<null | Function1<string, void>>
+        textinput: Reactive<null | (TextInput & { resolve: Function1<string, void> })>
     }
 }
+
+type TextInput = { text: string } | void
 
 StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.textinput = StarNight.useReactive(null)
 })
 
-export const text = Blocking((context) => async () => {
+export const text = Blocking<TextInput, string>((context) => async (args) => {
     const {
         ui: { textinput }
     } = context
     const promise = new PromiseX<string>()
-    textinput(() => promise.resolve)
+    textinput(
+        Object.assign({ resolve: promise.resolve }, args || {}) as TextInput & { resolve: Function1<string, void> }
+    )
     const res = await System.input(() => promise)(context)
     textinput(() => null)
     return res
@@ -57,7 +61,7 @@ declare module '@starnight/core' {
 type ChoiceItem = {
     id: number | string
     text: string
-    disable: boolean
+    disable?: true
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui }) => {
