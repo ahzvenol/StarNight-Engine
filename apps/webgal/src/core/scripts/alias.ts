@@ -7,15 +7,15 @@ const 通用命令参数别名 = {
     id: '标识符',
     src: '资源路径',
     target: '作用目标',
-    duration: '渐入渐出时间'
+    duration: '持续时间'
 } as const
 
 const 图像命令参数别名 = {
     z: '图层高度',
     alpha: '透明度',
     anchor: '锚点',
-    anchorX: '锚点X',
-    anchorY: '锚点Y',
+    anchorX: 'X轴锚点',
+    anchorY: 'Y轴锚点',
     angle: '角度',
     autoAlpha: '自动透明度',
     blur: '模糊',
@@ -34,28 +34,28 @@ const 图像命令参数别名 = {
     lineColor: '线条颜色',
     matrix: '变换矩阵',
     pivot: '中心点',
-    pivotX: '中心点X',
-    pivotY: '中心点Y',
+    pivotX: 'X轴中心点',
+    pivotY: 'Y轴中心点',
     position: '位置',
-    positionX: '位置X',
-    positionY: '位置Y',
+    positionX: 'X轴位置',
+    positionY: 'Y轴位置',
     resolution: '分辨率',
     rotation: '旋转角度',
     saturation: '饱和度',
     scale: '缩放',
-    scaleX: '缩放X',
-    scaleY: '缩放Y',
+    scaleX: 'X轴缩放',
+    scaleY: 'Y轴缩放',
     skew: '斜切',
-    skewX: '斜切X',
-    skewY: '斜切Y',
+    skewX: 'X轴斜切',
+    skewY: 'Y轴斜切',
     tilePosition: '平铺位置',
-    tilePositionX: '平铺位置X',
-    tilePositionY: '平铺位置Y',
+    tilePositionX: '平铺X轴位置',
+    tilePositionY: '平铺Y轴位置',
     tileScale: '平铺缩放',
-    tileScaleX: '平铺缩放X',
-    tileScaleY: '平铺缩放Y',
-    tileX: '平铺X',
-    tileY: '平铺Y',
+    tileScaleX: '平铺X轴缩放',
+    tileScaleY: '平铺Y轴缩放',
+    tileX: '平铺X轴坐标',
+    tileY: '平铺Y轴坐标',
     tint: '染色',
     width: '宽度',
     x: 'X坐标',
@@ -72,8 +72,8 @@ const 音频命令参数别名 = {
 } as const
 
 const 摇晃命令参数别名 = {
-    x: 'X方向最大距离',
-    y: 'Y方向最大距离',
+    x: 'X轴震幅',
+    y: 'Y轴震幅',
     iteration: '迭代次数'
 } as const
 
