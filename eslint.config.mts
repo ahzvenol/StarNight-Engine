@@ -33,6 +33,7 @@ export default tseslint.config(
         extends: [sortimport.flatConfigs.recommended, sortimport.flatConfigs.typescript],
         rules: {
             '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after' } }],
+            '@stylistic/lines-between-class-members': 'off',
             'import/no-unresolved': 'off',
             'require-yield': 'off', // 允许不包含yield的生成器
             'solid/no-innerhtml': 'off', // 允许innerhtml(由于不存在非法输入)

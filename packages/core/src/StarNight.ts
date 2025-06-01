@@ -102,7 +102,7 @@ export class StarNightInstance {
     // 主点击事件
     public readonly ClickEvents = new ClickEvents()
     // 游戏实例所持有的剧本
-    public readonly scenario: GameScenario<unknown>
+    public readonly scenario: GameScenario
     // 唯一id,用于区分不同实例
     public readonly uuid = randomUUID()
     // 已读/未读标记

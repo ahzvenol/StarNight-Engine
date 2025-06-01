@@ -2,7 +2,7 @@ import { noop } from 'es-toolkit'
 
 export async function run<TRetrun>(
     generator: Generator<Promise<unknown>, TRetrun, void>,
-    { rush, stop }: { rush: Promise<unknown>; stop: Promise<unknown> }
+    { rush, stop }: { rush: Promise<unknown>, stop: Promise<unknown> }
 ): Promise<TRetrun | undefined> {
     let flag: 'Normal' | 'Rush' | 'Stop' = 'Normal'
 

@@ -24,7 +24,7 @@ export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
         function* ({ duration = 175, ...args }) {
             yield Image.tween({ target: args.id, ease: 'power1.in', duration, alpha: 0, inherit: false })
             yield Image.set({ id: args.id, src: args.src, z: args.z })
-            yield Image.tween({ target: args.id, inherit: true, ...args, duration: 0 })
+            yield Image.tween({ target: args.id, inherit: true, ...omit(args, ['src']), duration: 0 })
         }
 )
 
@@ -33,9 +33,8 @@ export type ImageBGCommandArgs = Except<ImageSetCommandArgs, 'z' | 'id'> &
 
 export const bg = NonBlockingMacro<ImageBGCommandArgs>(
     () =>
-        function* (args) {
-            console.log(args)
-            yield Image.tween({ target: 'bg', ease: 'power1.in', duration: args.duration, alpha: 0, inherit: false })
+        function* ({ duration, ...args }) {
+            yield Image.tween({ target: 'bg', ease: 'power1.in', duration: duration, alpha: 0, inherit: false })
             yield Image.set({ ...args, z: -Infinity, id: 'bg' })
             yield Image.tween({ target: 'bg', inherit: false, ...omit(args, ['src']), duration: 0 })
         }

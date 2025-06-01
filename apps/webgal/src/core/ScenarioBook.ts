@@ -2,11 +2,13 @@ import type { GameRuntimeContext, GameScenario, StandardResolvedCommand } from '
 import type { Signal } from 'micro-reactive-solid'
 import { useSignal } from 'micro-reactive-solid'
 
+export const $action = Symbol()
+
 export type GameScenarioDSL = (
     arg0?: Signal<GameRuntimeContext>
-) => AsyncGenerator<StandardResolvedCommand<unknown> | number, unknown, unknown>
+) => AsyncGenerator<StandardResolvedCommand<unknown> | typeof $action, unknown, unknown>
 
-export function* Scenario(DSL: GameScenarioDSL): GameScenario<number> {
+export function* Scenario(DSL: GameScenarioDSL): GameScenario {
     let value: Function0<unknown>
     let done: boolean | undefined
     const ctx = useSignal(null) as unknown as Signal<GameRuntimeContext>
@@ -17,13 +19,9 @@ export function* Scenario(DSL: GameScenarioDSL): GameScenario<number> {
             while (true) {
                 const current = await scenario.next(value)
                 done = current.done
-                if (typeof current.value === 'number') {
-                    return current.value
-                } else if (current.done) {
-                    return NaN
-                } else {
-                    value = (yield current.value) as Function0<unknown>
-                }
+                if (current.value === $action) return
+                else if (current.done) return
+                else value = (yield current.value) as Function0<unknown>
             }
         }
     }

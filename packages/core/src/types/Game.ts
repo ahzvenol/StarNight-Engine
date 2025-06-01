@@ -18,13 +18,13 @@ export interface GameConfig {
 
 export type GameMacroGenerator<R> = Generator<StandardResolvedCommand<unknown> | Promise<unknown>, R, unknown>
 
-export type GameFragmentGenerator<R> = AsyncGenerator<StandardResolvedCommand<unknown>, R, unknown>
+export type GameFragmentGenerator = AsyncGenerator<StandardResolvedCommand<unknown>, unknown, unknown>
 
-export type GameFragment<R> = Function1<GameRuntimeContext, GameFragmentGenerator<R>>
+export type GameFragment = Function1<GameRuntimeContext, GameFragmentGenerator>
 
 export type GameMacro<R> = Function1<GameRuntimeContext, GameMacroGenerator<R>>
 
-export type GameScenario<R> = Generator<GameFragment<R>, unknown, unknown>
+export type GameScenario = Generator<GameFragment, unknown, unknown>
 
 export interface GameLocalData {
     index: number
@@ -41,7 +41,7 @@ export interface GameUIExternalData {}
 export interface GameUIInternalData {}
 
 export type GameConstructorParams = {
-    scenario: GameScenario<unknown>
+    scenario: GameScenario
     config: Reactive<GameConfig>
     global: Reactive<GameGlobalData>
     readonly local: { index: number } & Partial<GameLocalData>

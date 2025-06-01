@@ -22,7 +22,7 @@ export default defineConfig(({ command }) => ({
     resolve: {
         alias: {
             '@': resolve(__dirname, './src'), // 设置为@ 则使用时为 "@/components/index.module.css"
-            scenario: resolve(__dirname, './scenario')
+            scenario: resolve(__dirname, './scenario') // 为剧本文件提供单独的文件夹目录
         }
     },
     server: {
@@ -32,7 +32,12 @@ export default defineConfig(({ command }) => ({
     build: {
         target: 'es2015',
         sourcemap: false,
-        minify: 'terser'
+        minify: 'terser',
+        rollupOptions: {
+            output: {
+                inlineDynamicImports: true // $call编译为import()动态导入,需要禁用默认的懒加载
+            }
+        }
     },
     esbuild: {
         drop: command === 'build' ? ['console', 'debugger'] : []

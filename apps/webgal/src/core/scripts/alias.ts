@@ -7,7 +7,7 @@ const 通用命令参数别名 = {
     id: '标识符',
     src: '资源路径',
     target: '作用目标',
-    duration: '持续时间'
+    duration: '缓动时间'
 } as const
 
 const 图像命令参数别名 = {
@@ -117,7 +117,8 @@ const 扁平化命令 = {
     自动继续: FlattenCommands.system_cont,
     系统计时: FlattenCommands.system_wait,
     结束游戏: FlattenCommands.system_end,
-    外部输入: FlattenCommands.system_input
+    外部输入: FlattenCommands.system_input,
+    通用变换: FlattenCommands.tween_apply
 }
 
 type Filter<T, Tag> = {

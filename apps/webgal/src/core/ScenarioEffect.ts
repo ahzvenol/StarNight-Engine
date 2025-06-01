@@ -1,8 +1,9 @@
 import { $async, $await } from '@/core/scripts'
 import { $执行, $等待 } from '@/core/scripts/alias'
 import { onStoreReady } from '@/store'
-import { mapKeys } from 'es-toolkit'
+import { $action } from './ScenarioBook'
 
+// 挂载命令到window,简化添加import的编译器流程
 window.$await = $await
 
 window.$async = $async
@@ -11,12 +12,10 @@ window.$执行 = $执行
 
 window.$等待 = $等待
 
-window.$call = () => {}
-
+// 挂载store到window,简化添加import的编译器流程
 onStoreReady.then((store) => window.$store = store())
 
-window.allScenarioModules = mapKeys(
-    import.meta.glob('scenario/**/*.scenario.{js,ts,jsx,tsx}', { eager: true }),
-    (_, key) => key.replace('/scenario/', './')
-)
-console.log(window.allScenarioModules)
+// 挂载空函数到window,避免is not a function异常
+window.$call = () => {}
+
+window.$action = $action

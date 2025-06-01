@@ -24,13 +24,13 @@ StarNight.ActEvents.start.subscribe(({ temp: { activetimelines } }) => {
     activetimelines.clear()
 })
 
-export type ImageToCommandArgs = {
+export type TweenCommandArgs = {
     target?: gsap.TweenTarget
     ease?: string
     duration?: number
 } & gsap.TweenVars
 
-export const apply = Dynamic<ImageToCommandArgs>(
+export const apply = Dynamic<TweenCommandArgs>(
     ({ state, temp: { activetimelines } }) =>
         function* ({ target, ease = 'none', duration = 0, ...args }) {
             if (isNil(target)) return
