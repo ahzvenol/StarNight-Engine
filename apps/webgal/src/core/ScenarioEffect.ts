@@ -22,12 +22,9 @@ window.$call = () => {}
 
 const scenarios = import.meta.glob('scenario/**/*.scenario.{js,ts,jsx,tsx}', { eager: true })
 
-console.log(scenarios)
-
 StarNight.ActEvents.start.subscribe(({ state, current: { index, sence } }) => {
     if (state.isInitializing()) return
     const scenario = scenarios[`/${sence()}`] as { default: GameScenario<number> & { assetmap: string[][] } }
-    console.log(scenario.default.assetmap)
     scenario.default.assetmap
         .slice(index(), index() + 5).flat()
         .forEach((url) => {

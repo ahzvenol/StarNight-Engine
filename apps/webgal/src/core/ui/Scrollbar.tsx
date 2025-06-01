@@ -172,8 +172,6 @@ const Scrollbar: Component<{
         const thumbDimension = (container.clientHeight / contentDimension) * trackDimension
         thumb.style.height = `${thumbDimension}px`
 
-        console.log(contentDimension)
-
         // 继承传入的轨道元素不变方向的长度
         el.style.width = `${parseInt(getComputedStyle(track).getPropertyValue('width'))}px`
         // 为了使滑块不超出轨道,新的轨道长度是原轨道长度减去滑块的长度
