@@ -74,7 +74,7 @@ export function Blocking<T = void, R = void>(fn: BlockingCommand<T, R>): Standar
 // 如果await Promise,等待Promise解析
 // 如果yield ResolvedCommand,注入Context并执行
 // 无论如何,yield原样返回它右边的值
-export function Fork(fn: GameFragment): StandardResolvedCommand<unknown> {
+export function Fork<R>(fn: GameFragment<R>): StandardResolvedCommand<R> {
     return async (context) => {
         const generator = fn(context)
         const arr = Array<Promise<unknown>>()

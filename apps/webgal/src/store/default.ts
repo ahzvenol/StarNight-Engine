@@ -61,7 +61,7 @@ const config = {
     backlogmaxlength: 50
 } satisfies Config
 
-const global = { unlocked: [], readsegment: [], achievement: {} } as SaveGlobalData
+const global = { unlocked: [], readsegment: {}, achievement: {} } as SaveGlobalData
 
 const local = {} as Record<number, SaveLocalData> & { [0]?: GameLocalData } & { [-1]?: GameLocalData }
 

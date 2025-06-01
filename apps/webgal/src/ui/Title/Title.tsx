@@ -29,8 +29,8 @@ export const Title: Component = () => {
                                 class={styles.Title_button}
                                 onClick={
                                     [
-                                        () => useGame({ index: 1 }),
-                                        () => (slot() ? useGame(slot()!) : useGame({ index: 1 })),
+                                        () => useGame({ count: 1 }),
+                                        () => (slot() ? useGame(slot()!) : useGame({ count: 1 })),
                                         () => GUIHomeRootState('Config'),
                                         () => GUIHomeRootState('Load'),
                                         () => GUIHomeRootState('Gallery')

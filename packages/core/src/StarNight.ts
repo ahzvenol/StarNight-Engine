@@ -41,20 +41,20 @@ export class StarNight {
         StarNight.GameEvents.active.subscribe((active) => console.info(`Game:游戏活动状态:${active}`))
 
         StarNight.GameEvents.ready.subscribe(() => console.info(`Act:初始化完成`))
-        StarNight.ActEvents.start.subscribe(({ state, current: { index } }) => {
+        StarNight.ActEvents.start.subscribe(({ state, current: { count: index } }) => {
             if (state.isInitializing()) {
                 console.info(`Act:开始初始化第${index()}幕...`)
             } else {
                 console.info(`Act:开始执行第${index()}幕...`)
             }
         })
-        StarNight.ActEvents.end.subscribe(({ state, current: { index } }) => {
+        StarNight.ActEvents.end.subscribe(({ state, current: { count: index } }) => {
             if (!state.isInitializing()) console.info(`Act:第${index()}幕执行结束`)
         })
         StarNight.ActEvents.rush.subscribe(({ state }) => {
             if (!state.isInitializing()) console.info('Act:执行单幕快进')
         })
-        StarNight.ActEvents.next.subscribe(({ current: { index }, instance: { state } }) => {
+        StarNight.ActEvents.next.subscribe(({ current: { count: index }, instance: { state } }) => {
             if (!state.isInitializing()) console.info(`Act:准备执行第${index()}幕`)
         })
 
@@ -102,7 +102,7 @@ export class StarNightInstance {
     // 主点击事件
     public readonly ClickEvents = new ClickEvents()
     // 游戏实例所持有的剧本
-    public readonly scenario: GameScenario
+    public readonly scenario: GameScenario<number>
     // 唯一id,用于区分不同实例
     public readonly uuid = randomUUID()
     // 已读/未读标记
@@ -112,7 +112,7 @@ export class StarNightInstance {
     // 游戏运行状态,从初始化状态进入普通/自动/快进三态转换
     public readonly state = new StarNightState()
     // 游戏本地状态,用于存档/读档功能
-    public readonly current = StarNight.useReactive({ index: 0 }) as Reactive<GameLocalData>
+    public readonly current = StarNight.useReactive({ count: -1, index: NaN, sence: 'unknown' }) as Reactive<GameLocalData>
     // 游戏实例上下文,是除单幕上下文外的基本上下文数据
     public readonly context: GameContext
 
@@ -154,10 +154,13 @@ export class StarNightInstance {
 
 // 维护已读幕
 StarNight.ActEvents.next.subscribe(async ({ instance }) => {
-    const range = RangeSet.fromRanges(instance.context.global.readsegment())
+    if (!Number.isInteger(instance.current.index())) return
+    const currentsegment = instance.context.global.readsegment[instance.current.sence()]
+    currentsegment((arr) => arr || [])
+    const range = RangeSet.fromRanges(currentsegment())
     instance.isRead(range.includes(instance.current.index()))
     if (!instance.isRead()) {
-        instance.context.global.readsegment(range.push(instance.current.index()).getRanges())
+        currentsegment(range.push(instance.current.index()).getRanges())
         // 处理在未读文本处解除快进的设置项
         if (instance.state.isFast() && !instance.context.config.fastforwardunread()) instance.state.toNormal()
     }
@@ -184,10 +187,11 @@ async function ActLoop(this: StarNightInstance) {
     while (true) {
         const { value, done } = this.scenario.next()
         if (done) return this.GameEvents.end.publish(this.context)
+        this.current.count(this.current.count() + 1)
         // 如果用户离开游戏界面,等待用户回来
         if (!this.isGameVisible()) await this.GameEvents.onActiveChange()
         // 幕循环进行到存档幕,游戏本地状态已恢复,发布ready事件,转换到普通运行状态
-        if (this.current.index() === this.context.local.index) {
+        if (this.current.count() === this.context.local.count) {
             this.state.toNormal()
             this.GameEvents.ready.publish(this.context)
             // 这时才应该允许状态转换,否则影响初始化
@@ -209,7 +213,7 @@ async function ActLoop(this: StarNightInstance) {
         // ActStart
         this.ActEvents.start.publish(context)
         // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
-        await Fork(value)(context)
+        const next = await Fork(value)(context)
         // ActEnd
         this.ActEvents.end.publish(context)
         if (output.state() && !this.state.isInitializing()) this.state.now(output.state()!)
@@ -226,7 +230,7 @@ async function ActLoop(this: StarNightInstance) {
                 await Promise.race([this.ClickEvents.onStep(), this.ClickEvents.onAuto(), this.ClickEvents.onFast()])
             }
         }
-        this.current.index(this.current.index() + 1)
+        if (Number.isInteger(next)) this.current.index(next)
         // 游戏实例已销毁时退出,初始化时不判断以优化初始化速度。不需要发送事件,因为这个事件已经由用户发出
         if (!this.state.isInitializing() && (await PromiseX.isSettled(onGameStop))) return
         if (output.end()) return this.GameEvents.end.publish(this.context)

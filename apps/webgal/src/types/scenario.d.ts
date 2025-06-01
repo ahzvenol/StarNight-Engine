@@ -18,6 +18,5 @@ declare global {
         $等待: typeof $$等待
         $store: Store
         $call: (arg0: string) => void
-        $action: NaN
     }
 }

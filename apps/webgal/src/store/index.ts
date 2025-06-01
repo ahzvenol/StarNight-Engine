@@ -32,6 +32,8 @@ async function initializeStore() {
         )
     })
 
+    console.log(store())
+
     return store
 }
 
