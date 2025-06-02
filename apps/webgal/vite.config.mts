@@ -32,12 +32,7 @@ export default defineConfig(({ command }) => ({
     build: {
         target: 'es2015',
         sourcemap: false,
-        minify: 'terser',
-        rollupOptions: {
-            output: {
-                inlineDynamicImports: true // $call编译为import()动态导入,需要禁用默认的懒加载
-            }
-        }
+        minify: 'terser'
     },
     esbuild: {
         drop: command === 'build' ? ['console', 'debugger'] : []

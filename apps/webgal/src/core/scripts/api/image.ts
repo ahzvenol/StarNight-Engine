@@ -1,11 +1,13 @@
 import type { StandardNonBlockingCommand } from '@starnight/core'
 import type { Except } from 'type-fest'
-import type { ImageSetCommandArgs } from '../base/image'
-import { NonBlockingMacro } from '@starnight/core'
+import type { ImageSetCommandArgs, ImageTweenCommandArgs } from '../base/image'
+import { NonBlocking, NonBlockingMacro } from '@starnight/core'
 import { omit } from 'es-toolkit'
 import { Image } from '../base'
 
 export const close = Image.close as StandardNonBlockingCommand<{ target: string | Array<string> }, void>
+
+export const clean = NonBlocking((context) => () => Image.close({ exclude: 'bg' })(context))
 
 export const shake = Image.shake
 
@@ -17,7 +19,7 @@ export const filter = Image.filter
 
 export const filter_tween = Image.filter_tween
 
-export type ImageSpriteCommandArgs = ImageSetCommandArgs & { duration?: number } & Except<PixiPlugin.Vars, 'zIndex'>
+export type ImageSpriteCommandArgs = ImageSetCommandArgs & Except<ImageTweenCommandArgs, 'target' | 'ease' | 'inherit'>
 
 export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
     () =>
@@ -28,8 +30,7 @@ export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
         }
 )
 
-export type ImageBGCommandArgs = Except<ImageSetCommandArgs, 'z' | 'id'> &
-    Except<PixiPlugin.Vars, 'zIndex'> & { duration?: number }
+export type ImageBGCommandArgs = Except<ImageSetCommandArgs, 'z' | 'id'> & Except<ImageTweenCommandArgs, 'target' | 'ease' | 'inherit'>
 
 export const bg = NonBlockingMacro<ImageBGCommandArgs>(
     () =>

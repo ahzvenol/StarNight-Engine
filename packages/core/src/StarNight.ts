@@ -30,7 +30,7 @@ export class StarNight {
         // 事件日志绑定
         // 游戏初始化计时器
         StarNight.GameEvents.start.subscribe(({ instance: { uuid } }) => console.time(uuid))
-        StarNight.GameEvents.ready.once(({ instance: { uuid } }) => console.timeEnd(uuid))
+        StarNight.GameEvents.ready.subscribe(({ instance: { uuid } }) => console.timeEnd(uuid))
 
         StarNight.GameEvents.start.subscribe(() => console.info('Game:游戏开始'))
         StarNight.GameEvents.end.subscribe(() => console.info('Game:游戏结束'))
@@ -39,8 +39,8 @@ export class StarNight {
         StarNight.GameEvents.suspend.subscribe(() => console.info('Game:游戏挂起'))
         StarNight.GameEvents.resume.subscribe(() => console.info('Game:游戏从挂起中恢复'))
         StarNight.GameEvents.active.subscribe((active) => console.info(`Game:游戏活动状态:${active}`))
+        StarNight.GameEvents.ready.subscribe(() => console.info(`Game:初始化完成`))
 
-        StarNight.GameEvents.ready.subscribe(() => console.info(`Act:初始化完成`))
         StarNight.ActEvents.start.subscribe(({ state, current: { count: index } }) => {
             if (state.isInitializing()) {
                 console.info(`Act:开始初始化第${index()}幕...`)

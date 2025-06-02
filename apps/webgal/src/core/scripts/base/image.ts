@@ -21,7 +21,7 @@ StarNight.GameEvents.setup.subscribe(({ ui, temp }) => {
     temp.pixi = new Application({ width: 1280, height: 720 })
     ui.view = temp.pixi.view
     temp.stage = temp.pixi.stage as Container<Container<Container<Sprite>>>
-    // @ts-expect-error 类型“typeof globalThis”上不存在属性“__PIXI_APP__”。
+    // @ts-expect-error 类型...上不存在属性...
     globalThis['__PIXI_APP__'] = temp.pixi
 })
 
@@ -66,11 +66,14 @@ export const set = NonBlocking<ImageSetCommandArgs>(({ state, temp: { stage } })
         stage.addChild(outerContainer)
     }
     if (!isUndefined(z)) outerContainer.zIndex = z
-    if (state.isInitializing()) newSprite.name = src
-    else newSprite.texture = Texture.from(src)
-    // @ts-expect-error 类型“Resource”上不存在属性“source”
-    const source = newSprite.texture.baseTexture.resource.source
-    if (source instanceof HTMLVideoElement) source.muted = true
+    if (state.isInitializing()) {
+        newSprite.name = src
+    } else {
+        newSprite.texture = Texture.from(src)
+        // @ts-expect-error 类型“Resource”上不存在属性“source”
+        const source = newSprite.texture.baseTexture.resource.source
+        if (source instanceof HTMLVideoElement) source.muted = true
+    }
     innerContainer.addChildAt(newSprite, 0)
 })
 
@@ -149,7 +152,23 @@ export type ImageTweenCommandArgs = {
     ease?: string
     duration?: number
     inherit?: boolean
-} & Except<PixiPlugin.Vars, 'zIndex'>
+} & Except<
+    PixiPlugin.Vars,
+    | 'zIndex'
+    | 'positionX'
+    | 'positionY'
+    | 'resolution'
+    | 'tilePosition'
+    | 'tilePositionX'
+    | 'tilePositionY'
+    | 'tileScale'
+    | 'tileScaleX'
+    | 'tileScaleY'
+    | 'tileX'
+    | 'tileY'
+    | 'fillColor'
+    | 'lineColor'
+>
 
 export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>

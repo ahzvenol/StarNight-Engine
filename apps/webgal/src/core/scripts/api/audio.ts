@@ -5,7 +5,7 @@ import { Audio } from '../base'
 
 export const volume = Audio.volume
 
-export type AudioBGMCommandArgs = Except<AudioSetCommandArgs, 'type'> & { duration?: number }
+export type AudioBGMCommandArgs = Except<AudioSetCommandArgs, 'type'> & { duration?: number, loop?: false }
 
 export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
     (context) =>
@@ -23,7 +23,7 @@ export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
         }
 )
 
-export type AudioSECommandArgs = Except<AudioSetCommandArgs, 'type'> & { duration?: number }
+export type AudioSECommandArgs = Except<AudioSetCommandArgs, 'type'> & { duration?: number, loop?: true }
 
 export const se = NonBlockingMacro<AudioSECommandArgs>(
     (context) =>
@@ -41,7 +41,7 @@ export const se = NonBlockingMacro<AudioSECommandArgs>(
         }
 )
 
-export type AudioClipCommandArgs = Except<AudioSetCommandArgs, 'type' | 'id'>
+export type AudioClipCommandArgs = Except<AudioSetCommandArgs, 'type' | 'id' | 'loop'>
 
 export const clip = NonBlockingMacro<AudioClipCommandArgs>(
     () =>

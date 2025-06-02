@@ -100,6 +100,8 @@ export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Parti
     },
         R
     > {
+    // @ts-expect-error 不能将类型...分配给类型...
+    const flipmap = flipObject(map)
     // @ts-expect-error 类型...的参数不能赋给类型“T”的参数。
-    return (args) => async (context) => fn(renameKeys(args, flipObject(map)))(context)
+    return (args) => async (context) => fn(renameKeys(args, flipmap))(context)
 }
