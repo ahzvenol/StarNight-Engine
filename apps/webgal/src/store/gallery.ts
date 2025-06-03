@@ -37,8 +37,7 @@ export const CG: Array<GalleryGroup> = [
         cover: `./static/ImageAsset/${arr[0]}.webp`,
         uncover: `./static/Texture2D/gallery_thumb.webp`,
         items: arr.map((item) => ({
-            condition: item,
-            // condition: `/ImageAsset/${item}.webp`,
+            condition: `/ImageAsset/${item}.webp`,
             url: `./static/ImageAsset/${item}.webp`
         }))
     }))
