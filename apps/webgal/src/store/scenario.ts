@@ -1,27 +1,25 @@
+import type { GameScenario } from '@starnight/core'
+import { AssetLoader, StarNight } from '@starnight/core'
 import { $async, $await } from '@/core/scripts'
 import { $执行, $等待 } from '@/core/scripts/alias'
 import { onStoreReady } from '@/store'
 import { log } from '@/utils/Logger'
-import type { GameScenario } from '@starnight/core'
-import { AssetLoader, StarNight } from '@starnight/core'
 
-// 挂载命令到window,简化添加import的编译器流程
-window.$await = $await
+// 剧本入口,默认为index.scenario
+// @ts-expect-error 文件不是模块。
+export { default } from 'scenario/index.scenario'
 
-window.$async = $async
+// 挂载命令到window,让剧本文件可以直接使用而无需import
+// 挂载空函数到window,避免错误使用时is not a function异常
+Object.assign(window, { $await, $async, $执行, $等待, $call: () => {} })
 
-window.$执行 = $执行
-
-window.$等待 = $等待
-
-// 挂载store到window,简化添加import的编译器流程
+// 挂载store到window,让剧本文件可以直接使用而无需import
 onStoreReady.then((store) => window.$store = store())
 
-// 挂载空函数到window,避免is not a function异常
-window.$call = () => {}
-
+// glob剧本文件,让它们打包到一起
 const scenarios = import.meta.glob('scenario/**/*.scenario.{js,ts,jsx,tsx}', { eager: true })
 
+// 订阅游戏事件,进行资源预加载
 StarNight.ActEvents.start.subscribe(({ state, current: { index, sence } }) => {
     if (state.isInitializing()) return
     const scenario = scenarios[`/${sence()}`] as { default: GameScenario<number> & { assetmap: string[][] } }

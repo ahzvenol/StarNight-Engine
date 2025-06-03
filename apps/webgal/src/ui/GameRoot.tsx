@@ -6,7 +6,7 @@ import { createEffect, on, onCleanup, Show } from 'solid-js'
 import { Transition } from 'solid-transition-group'
 import { Content } from '@/core/ui/Elements'
 import { onStoreReady } from '@/store'
-import { scenario, starnight } from '@/store/starnight'
+import { script, starnight } from '@/store/starnight'
 import { Backlog } from '@/ui/Game/Backlog'
 import { Game } from '@/ui/Game/Game'
 import styles from '@/ui/Game/Game.module.scss'
@@ -101,7 +101,7 @@ export const useGame = async (local: GameConstructorParams['local']) => {
     const store = await onStoreReady
     starnight(
         StarNight.instance({
-            scenario: scenario(),
+            scenario: await script(),
             config: store.config,
             local: local,
             global: store.global,
