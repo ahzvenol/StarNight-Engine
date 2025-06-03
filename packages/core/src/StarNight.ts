@@ -1,6 +1,6 @@
 import type { Reactive } from 'micro-reactive-wrapper'
 import type { CommandOutput } from './types/Command'
-import type { GameConstructorParams, GameContext, GameLocalData, GameScenario } from './types/Game'
+import type { GameConstructorParams, GameContext, GameLocalData, GameScript } from './types/Game'
 import { delay } from 'es-toolkit'
 import { useReactiveWrapper } from 'micro-reactive-wrapper'
 import { Fork } from './Decorator'
@@ -102,7 +102,7 @@ export class StarNightInstance {
     // 主点击事件
     public readonly ClickEvents = new ClickEvents()
     // 游戏实例所持有的剧本
-    public readonly scenario: GameScenario<number>
+    public readonly script: GameScript
     // 唯一id,用于区分不同实例
     public readonly uuid = randomUUID()
     // 已读/未读标记
@@ -123,7 +123,7 @@ export class StarNightInstance {
         this.GameEvents.stop.subscribe(() => this.GameEvents.exit.publish(this.context))
         this.GameEvents.end.subscribe(() => this.GameEvents.exit.publish(this.context))
 
-        this.scenario = params.scenario
+        this.script = params.script
         this.context = {
             ...params,
             current: this.current,
@@ -185,7 +185,7 @@ async function ActLoop(this: StarNightInstance) {
     // 不能在开始前结束游戏
     const onGameStop = this.GameEvents.onStop()
     while (true) {
-        const { value, done } = this.scenario.next()
+        const { value, done } = this.script.next()
         if (done) return this.GameEvents.end.publish(this.context)
         this.current.count(this.current.count() + 1)
         // 如果用户离开游戏界面,等待用户回来

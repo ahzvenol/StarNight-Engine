@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { Reactive } from 'micro-reactive-wrapper'
-import type { StarNightInstance, StarNightStateStatic } from '@/StarNight'
 import type { CommandOutput, StandardResolvedCommand } from './Command'
+import type { StarNightInstance, StarNightStateStatic } from '@/StarNight'
 
 export enum GameState {
     Initializing = 0,
@@ -26,6 +26,8 @@ export type GameMacro<R> = Function1<GameRuntimeContext, GameMacroGenerator<R>>
 
 export type GameScenario<R> = Generator<GameFragment<R>, unknown, unknown>
 
+export type GameScript = GameScenario<number>
+
 export interface GameLocalData {
     count: number
     index: number
@@ -43,7 +45,7 @@ export interface GameUIExternalData {}
 export interface GameUIInternalData {}
 
 export type GameConstructorParams = {
-    scenario: GameScenario<number>
+    script: GameScript
     config: Reactive<GameConfig>
     global: Reactive<GameGlobalData>
     readonly local: { count: number } & Partial<GameLocalData>

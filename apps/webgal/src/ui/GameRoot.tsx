@@ -6,13 +6,12 @@ import { createEffect, on, onCleanup, Show } from 'solid-js'
 import { Transition } from 'solid-transition-group'
 import { Content } from '@/core/ui/Elements'
 import { onStoreReady } from '@/store'
-import { script, starnight } from '@/store/starnight'
+import { instance, starnight } from '@/store/starnight'
 import { Backlog } from '@/ui/Game/Backlog'
 import { Game } from '@/ui/Game/Game'
 import styles from '@/ui/Game/Game.module.scss'
 import { stopPropagation } from '@/utils/solid/stopPropagation'
 import { useEventListener } from '@/utils/solid/useEventListener'
-import { BGM, Clip, SE } from '../store/audio'
 import { Config } from './Config/Config'
 import { GUIRootState } from './GUIRoot'
 import { Menu } from './Menu/Menu'
@@ -32,6 +31,14 @@ StarNight.ActEvents.start.subscribe(async ({ state, current }) => {
         store.local[0](current())
     }
 })
+
+export const useGame = async (local: GameConstructorParams['local']) => {
+    starnight()?.stop()
+    starnight(await instance(local))
+    GUIRootState('Game')
+    GUIGameRootState('Game')
+    starnight().start()
+}
 
 export const GameRoot: Component = () => {
     GUIGameRootState('Game')
@@ -94,27 +101,4 @@ export const GameRoot: Component = () => {
             </Content>
         </>
     )
-}
-
-export const useGame = async (local: GameConstructorParams['local']) => {
-    starnight()?.stop()
-    const store = await onStoreReady
-    starnight(
-        StarNight.instance({
-            scenario: await script(),
-            config: store.config,
-            local: local,
-            global: store.global,
-            ui: {
-                audiotracks: {
-                    bgm: BGM,
-                    se: SE,
-                    clip: Clip
-                }
-            }
-        })
-    )
-    GUIRootState('Game')
-    GUIGameRootState('Game')
-    starnight().start()
 }

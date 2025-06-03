@@ -1,4 +1,4 @@
-import type { GameRuntimeContext, GameScenario, StandardResolvedCommand } from '@starnight/core'
+import type { GameRuntimeContext, StandardResolvedCommand, GameScript } from '@starnight/core'
 import type { Signal } from 'micro-reactive-solid'
 import { useSignal } from 'micro-reactive-solid'
 
@@ -6,7 +6,7 @@ export type GameScenarioDSL = (
     arg0?: Signal<GameRuntimeContext>
 ) => AsyncGenerator<StandardResolvedCommand<unknown> | number, unknown, unknown>
 
-export function* Scenario(DSL: GameScenarioDSL): GameScenario<number> {
+export function* ScenarioDSL(DSL: GameScenarioDSL): GameScript {
     let value: Function0<unknown>
     let done: boolean | undefined
     const ctx = useSignal(null) as unknown as Signal<GameRuntimeContext>
