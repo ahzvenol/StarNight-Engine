@@ -3,9 +3,13 @@ import type { Except, MergeExclusive } from 'type-fest'
 import { Dynamic, DynamicMacro, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import { isString, isUndefined } from 'es-toolkit'
 import { gsap } from 'gsap'
-import { Application, Container, Sprite, Texture } from 'pixi.js'
+import { PixiPlugin } from 'gsap/PixiPlugin'
+import { Application, Container, Sprite, Texture, BlurFilter, ColorMatrixFilter } from 'pixi.js'
 import { Y } from '@/utils/fp'
 import { Tween } from '.'
+
+gsap.registerPlugin(PixiPlugin)
+PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
