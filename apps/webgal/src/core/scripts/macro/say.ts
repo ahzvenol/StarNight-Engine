@@ -6,6 +6,6 @@ export type SayCommandArgs = { text: string, name?: string, clip?: string }
 export const apply = DynamicMacro<SayCommandArgs>(
     () =>
         function* ({ text, name, clip }) {
-            yield Say.apply({ text, name: name?.replace(/^\$/, ''), clip: `./static${clip}` })
+            yield Say.apply(Object.assign({ text, name: name?.replace(/^\$/, '') }, clip ? { clip: `./static${clip}` } : {}))
         }
 )

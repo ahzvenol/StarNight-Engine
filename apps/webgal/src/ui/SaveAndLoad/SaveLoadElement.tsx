@@ -80,10 +80,9 @@ export const SaveLoadElement: Component<SaveLoadElementProps> = ({ i, mode, inde
                         class={clsx(styles.Save_Load_content_name, {
                             [styles.Load_content_name]: mode === 'Load'
                         })}
-                    >
-                        {slot.name()}
-                    </div>
-                    <div class={styles.Save_Load_content_text_padding}>{slot.text()}</div>
+                        innerText={slot.name()}
+                    />
+                    <div class={styles.Save_Load_content_text_padding} innerHTML={slot.text()} />
                 </div>
             </Show>
         </div>

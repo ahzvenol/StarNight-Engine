@@ -2,28 +2,9 @@ import type { Reactive } from '@starnight/core'
 import { ActScope, Dynamic, NonBlocking, StarNight } from '@starnight/core'
 import { gsap } from 'gsap'
 import { SplitText } from 'gsap/SplitText'
+import { Tween } from '.'
 
 gsap.registerPlugin(SplitText)
-
-declare module '@starnight/core' {
-    interface GameUIInternalData {
-        textend: Reactive<boolean>
-    }
-}
-
-StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.textend = StarNight.useReactive(false)
-})
-
-StarNight.ActEvents.start.subscribe(({ ui }) => {
-    ui.textend(false)
-})
-
-export const end = ActScope(
-    NonBlocking(({ ui: { textend } }) => () => {
-        textend(true)
-    })
-)
 
 declare module '@starnight/core' {
     interface GameConfig {
@@ -47,22 +28,29 @@ StarNight.ActEvents.start.subscribe(({ current, ui }) => {
     ui.text.innerHTML = ''
 })
 
-const compareElementOrder = (a: Node, b: Node) => (a.compareDocumentPosition(b) & 2 ? 1 : a.compareDocumentPosition(b) & 4 ? -1 : 0)
+const compareElementOrder = (a: Node, b: Node) =>
+    a.compareDocumentPosition(b) & 2 ? 1 : a.compareDocumentPosition(b) & 4 ? -1 : 0
 
 export const text = ActScope(
-    Dynamic<string | HTMLElement>(
-        ({ current, config, ui }) =>
+    Dynamic<HTMLElement>(
+        (context) =>
             function* (arg0) {
-                const container = document.createElement('div')
-                container.append(arg0)
-                ui.text.append(container)
-                current.text(ui.text.innerHTML)
-                const rubys = container.querySelectorAll('ruby')
-                const split = SplitText.create(ui.text, { type: 'chars', aria: 'hidden', smartWrap: true })
+                const { current, config, ui } = context
+                ui.text.append(arg0)
+                current.text((prev) => prev + arg0.outerHTML)
+                const rubys = arg0.querySelectorAll('ruby')
+                const split = SplitText.create(ui.text, { type: 'chars', ignore: rubys, smartWrap: true, aria: 'hidden' })
                 const nodes = split.chars.concat(Array.from(rubys)).sort(compareElementOrder)
-                const speed = config.textspeed() / 1000
-                const timeline = gsap.from(nodes, { opacity: 0, duration: nodes.length * speed, ease: 'sine.out', stagger: speed })
-                yield new Promise((res) => timeline.eventCallback('onComplete', res))
+                const speed = config.textspeed()
+                yield Tween.apply({
+                    target: nodes,
+                    id: ui.text,
+                    mode: 'from',
+                    opacity: 0,
+                    duration: nodes.length * speed,
+                    ease: 'sine.out',
+                    stagger: speed / 1000
+                })(context)
             }
     )
 )

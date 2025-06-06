@@ -1,7 +1,8 @@
+import type { Except } from 'type-fest'
 import { Dynamic, StarNight } from '@starnight/core'
-import { isNil } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
+import { isUndefined } from 'es-toolkit'
 
 gsap.registerPlugin(CustomEase)
 gsap.defaults({ ease: 'none' })
@@ -21,31 +22,34 @@ StarNight.ActEvents.start.subscribe(({ temp: { activetimelines } }) => {
 })
 
 export type TweenCommandArgs = {
-    target?: gsap.TweenTarget
+    target: gsap.TweenTarget
+    id?: gsap.TweenTarget
+    mode?: 'from' | 'to'
     ease?: string
     duration?: number
-} & gsap.TweenVars
+    position?: gsap.Position
+} & Except<gsap.TweenVars, 'id'>
 
 export const apply = Dynamic<TweenCommandArgs>(
     ({ state, temp: { activetimelines } }) =>
-        function* ({ target, ease = 'none', duration = 0, ...args }) {
-            if (isNil(target)) return
+        function* ({ target, id = target, mode = 'to', ease = 'none', position, ...args }) {
             if (state.isInitializing()) {
                 gsap.set(target, args)
             } else {
-                // 保证对同一个物体的缓动被顺序应用
-                if (!activetimelines.has(target)) {
+                console.log(args)
+                // 保证对同一个id的缓动被顺序应用
+                if (!activetimelines.has(id)) {
                     const timeline = gsap.timeline({ paused: false })
-                    activetimelines.set(target, timeline)
+                    activetimelines.set(id, timeline)
                 }
-                const timeline = activetimelines.get(target)!
+                const timeline = activetimelines.get(id)!
+                if (!isUndefined(args.duration)) args.duration = args.duration / 1000
                 const promise = new Promise<void>((res) =>
-                    timeline.to(target, {
+                    timeline[mode](target, {
                         ...args,
                         ease: gsap.parseEase(ease),
-                        duration: duration / 1000,
                         onComplete: res
-                    })
+                    }, position)
                 )
                 const current = timeline.duration()
                 yield promise

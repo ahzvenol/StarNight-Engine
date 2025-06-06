@@ -1,4 +1,5 @@
-import type { CommandTagBlocking, GameRuntimeContext } from '@/index'
+import type { CommandTagBlocking } from '../types/Command'
+import type { GameRuntimeContext } from '../types/Game'
 import { Blocking } from '@/Decorator'
 import { StarNight } from '@/index'
 
@@ -17,8 +18,14 @@ StarNight.GameEvents.setup.subscribe(({ current, temp }) => {
 })
 
 export const input = Blocking(({ state, current, local, temp }) => async (promise) => {
-    const history = local.input?.[++temp.input.pointer]
-    const input = state.isInitializing() && history ? history : await promise()
+    let history: unknown
+    if (state.isInitializing() && local.input) {
+        temp.input.pointer += 1
+        if (temp.input.pointer in local.input) {
+            history = local.input[temp.input.pointer]
+        }
+    }
+    const input = state.isInitializing() ? history : await promise()
     current.input((arr) => [...arr!, input])
     return input
-}) as <T>(arg0: Function0<Promise<T>>) => Function1<GameRuntimeContext, Promise<T>> & CommandTagBlocking
+}) as CommandTagBlocking & (<T>(arg0: Function0<Promise<T>>) => Function1<GameRuntimeContext, Promise<T>>)

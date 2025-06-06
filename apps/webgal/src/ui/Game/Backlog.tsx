@@ -1,15 +1,15 @@
 import type { Component } from 'solid-js'
 import { CloseSmall, Return, VolumeNotice } from 'icon-park-solid'
 import { For, Show } from 'solid-js'
+import { Clip } from '../../store/audio'
+import { translation } from '../translations'
+import { useSoundEffect } from '../useSoundEffect'
+import styles from './Backlog.module.scss'
 import { Variable } from '@/core/ui/Elements'
 import { Scrollbar } from '@/core/ui/Scrollbar'
 import { ui } from '@/store/starnight'
 import { GUIGameRootState, useGame } from '@/ui/GameRoot'
 import { stopPropagation } from '@/utils/solid/stopPropagation'
-import { Clip } from '../../store/audio'
-import { translation } from '../translations'
-import { useSoundEffect } from '../useSoundEffect'
-import styles from './Backlog.module.scss'
 
 export const Backlog: Component = () => {
     const t = translation.gaming
@@ -65,7 +65,7 @@ export const Backlog: Component = () => {
                                     <div class={styles.Game_Backlog_item_name}>{act.name}</div>
                                 </div>
                                 <div class={styles.Game_Backlog_item_layout_2}>
-                                    <div class={styles.Game_Backlog_item_text}>{act.text}</div>
+                                    <div class={styles.Game_Backlog_item_text} innerHTML={act.text} />
                                 </div>
                             </div>
                         )}

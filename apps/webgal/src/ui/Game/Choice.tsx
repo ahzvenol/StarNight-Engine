@@ -1,9 +1,9 @@
 import type { Component } from 'solid-js'
 import { For } from 'solid-js'
-import { ui } from '@/store/starnight'
-import { stopPropagation } from '@/utils/solid/stopPropagation'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './Choice.module.scss'
+import { ui } from '@/store/starnight'
+import { stopPropagation } from '@/utils/solid/stopPropagation'
 
 export const Choice: Component = () => {
     return (

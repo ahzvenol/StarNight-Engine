@@ -25,19 +25,15 @@ export type BlockingCommand<T, R> = Function1<GameRuntimeContext, Function1<T, P
 // 使用生成器函数定义一个宏命令
 export type MacroCommand<T, R> = Function1<GameRuntimeContext, Function1<T, GameMacroGenerator<R>>>
 
-enum Schedule {
-    Await,
-    Async
-}
+export type CommandTagNonBlocking = Tagged<object, 'Async'>
 
-export type CommandTagNonBlocking = Tagged<object, Schedule.Async>
-
-export type CommandTagBlocking = Tagged<object, Schedule.Await>
+export type CommandTagBlocking = Tagged<object, 'Await'>
 
 export type CommandTagDynamic = CommandTagNonBlocking & CommandTagBlocking
 
 // Resolved命令已经传入所需参数,等待注入Context
 export type StandardResolvedCommand<R> = Function1<GameRuntimeContext, Promise<R>>
+
 // Standard命令返回一个永不失败的Promise
 export type StandardCommand<T, R> = Function1<T, StandardResolvedCommand<R>>
 

@@ -176,10 +176,11 @@ export type ImageTweenCommandArgs = {
 
 export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>
-        function* ({ target: _target, ease = 'none', duration = 0, inherit = true, ...args }) {
+        function* ({ target: _target, inherit = true, duration, ...args }) {
             const innerContainer = stage.children.find((e) => e.name === _target)?.getChildAt(0)
             const target = inherit ? innerContainer : innerContainer?.getChildAt(0)
-            yield Tween.apply({ target, ease, duration, pixi: args })
+            if (isUndefined(target)) return
+            yield Tween.apply({ target, duration, pixi: args })
         }
 )
 
@@ -202,9 +203,10 @@ export type ImageFilterTweenCommandArgs = {
 
 export const filter_tween = DynamicMacro<ImageFilterTweenCommandArgs>(
     ({ temp: { stage } }) =>
-        function* ({ target: _target, index, ease = 'none', duration = 0, ...args }) {
+        function* ({ target: _target, index, ...args }) {
             const container = isUndefined(_target) ? stage : stage.getChildByName(_target)
             const target = container?.filters?.[index]
-            yield Tween.apply({ target, ease, duration, ...args })
+            if (isUndefined(target)) return
+            yield Tween.apply({ target, ...args })
         }
 )

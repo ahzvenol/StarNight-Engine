@@ -7,6 +7,7 @@
     width: 100%;
     height: 100%;
     background: rgb(0 0 0 / 5%);
+    pointer-events: none;
 }
 
 .Game_Choice_item,
@@ -25,6 +26,7 @@
         border 0.5s,
         font-weight 0.5s,
         box-shadow 0.5s;
+    pointer-events: auto;
 }
 
 .Game_Choice_item {
