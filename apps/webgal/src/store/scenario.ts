@@ -1,19 +1,32 @@
-import type { GameScenario } from '@starnight/core'
+import type { GameRuntimeContext } from '@starnight/core'
+import type { GameScenarioDSL } from '@/core/ScenarioDSL'
+import type { Store } from './default'
 import { AssetLoader, StarNight } from '@starnight/core'
-import { $async, $await } from '@/core/scripts'
-import { $执行, $等待 } from '@/core/scripts/alias'
+import { createEffect } from 'solid-js'
 import { onStoreReady } from '@/store'
 import { log } from '@/utils/Logger'
+import { MergedCommands } from '@/core/scripts'
 
+// 使用中文命令
+import '@/core/scripts/alias/ChineseSimplified'
 // 剧本入口,默认为index.scenario
 // @ts-expect-error 文件不是模块。
 export { default } from 'scenario/index.scenario'
 
-// 挂载store到window,让剧本文件可以直接使用而无需import
+declare global {
+    const $store: Store
+    const $context: GameRuntimeContext
+    const $call: (arg0: string) => void
+    const $debug: unknown
+}
+
+// 挂载store到window,拆箱store以省略Singal概念
 // 挂载命令到window,让剧本文件可以直接使用而无需import
-// 挂载空函数到window,避免错误使用时is not a function异常
-onStoreReady.then((store) => window.$store = store())
-Object.assign(window, { $await, $async, $执行, $等待, $call: () => {} })
+// 挂载空函数到window,避免错误使用时导致is not a function异常
+onStoreReady.then((store) =>
+    createEffect(() => Object.assign(window, { $store: store() }))
+)
+Object.assign(window, { $say: MergedCommands.Say.apply, $call: () => {} })
 
 // 匹配剧本文件,让它们打包到一起
 const scenarios = import.meta.glob('scenario/**/*.scenario.{js,ts,jsx,tsx}', { eager: true })
@@ -21,7 +34,7 @@ const scenarios = import.meta.glob('scenario/**/*.scenario.{js,ts,jsx,tsx}', { e
 // 订阅游戏事件,进行资源预加载
 StarNight.ActEvents.start.subscribe(({ state, current: { index, sence } }) => {
     if (state.isInitializing()) return
-    const scenario = scenarios[`/${sence()}`] as { default: GameScenario<number> & { assetmap: string[][] } }
+    const scenario = scenarios[`/${sence()}`] as { default: GameScenarioDSL & { assetmap: string[][] } }
     scenario.default.assetmap
         .slice(index(), index() + 5).flat()
         .forEach((url) => {

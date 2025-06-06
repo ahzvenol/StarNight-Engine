@@ -1,4 +1,4 @@
-import type { Reactive } from '@starnight/core'
+import type { CommandTagBlocking, GameRuntimeContext, Reactive } from '@starnight/core'
 import { Blocking, DynamicBlocking, GameState, StarNight } from '@starnight/core'
 import { PromiseX } from '@/core/PromiseX'
 import { System } from '.'
@@ -52,12 +52,12 @@ declare module '@starnight/core' {
         stopautoonchoice: boolean
     }
     interface GameUIInternalData {
-        choices: Reactive<Array<ChoiceItem & { choose: Function0<void> }> | null>
+        choices: Reactive<Array<ChoiceItem<number | string> & { choose: Function0<void> }> | null>
     }
 }
 
-type ChoiceItem = {
-    id: number | string
+type ChoiceItem<T extends number | string> = {
+    id: T
     text: string
     disable?: true
 }
@@ -66,9 +66,9 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.choices = StarNight.useReactive(null)
 })
 
-export const choose = Blocking<Array<ChoiceItem>, number | string>((context) => async (arr) => {
+export const choose = Blocking((context) => async (arg0) => {
     const { state, config, ui, output } = context
-    const choices = arr.map((item) => {
+    const choices = arg0.map((item) => {
         const promise = new PromiseX<number | string>()
         const choose = () => promise.resolve(item.id)
         return { ...item, promise, choose }
@@ -79,4 +79,4 @@ export const choose = Blocking<Array<ChoiceItem>, number | string>((context) => 
     if (config.stopfastonchoice() && state.isFast()) output.state(GameState.Normal)
     if (config.stopautoonchoice() && state.isAuto()) output.state(GameState.Normal)
     return chosen
-})
+}) as (<T extends number | string>(arg0: Array<ChoiceItem<T>>) => Function1<GameRuntimeContext, Promise<T>>) & CommandTagBlocking
