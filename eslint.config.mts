@@ -31,11 +31,21 @@ export default tseslint.config(
     {
         files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
         extends: [sortimport.flatConfigs.recommended, sortimport.flatConfigs.typescript],
+        settings: {
+            'import/internal-regex': '^@/'
+        },
         rules: {
+            'import/order': [
+                'error',
+                {
+                    // sortTypesGroup: true, // 这条规则还没发布
+                    groups: ['type', 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object']
+                }
+            ],
+            'import/consistent-type-specifier-style': 'error',
             '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after' } }],
             '@stylistic/lines-between-class-members': 'off',
             'import/no-unresolved': 'off',
-            'require-yield': 'off', // 允许不包含yield的生成器
             'solid/no-innerhtml': 'off', // 允许innerhtml(由于不存在非法输入)
             'solid/no-destructure': 'off', // 允许solid组件参数解构(由于项目风格是传输signal)
             'solid/event-handlers': 'error', // 禁用小写的事件侦听器,如onclick
@@ -47,8 +57,9 @@ export default tseslint.config(
     {
         files: ['**/*.scenario.ts', '**/*.scenario.tsx', '**/*.scenario.js', '**/*.scenario.jsx'],
         rules: {
-            'no-unused-labels': 'off',
-            '@typescript-eslint/no-unused-expressions': 'off'
+            'no-unused-labels': 'off', // 剧本中的正常情况
+            '@typescript-eslint/no-unused-expressions': 'off', // 剧本中的正常情况
+            '@stylistic/semi': 'off' // <div />;\n<div /> 会导致格式化错误
         }
     }
 )

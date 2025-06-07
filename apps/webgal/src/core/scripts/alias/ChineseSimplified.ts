@@ -46,8 +46,6 @@ const 图像命令参数别名 = {
     skewY: 'Y轴斜切',
     tint: '染色',
     width: '宽度',
-    x: 'X坐标',
-    y: 'Y坐标',
     inherit: '切换图像时继承',
     ease: '缓动函数'
 } as const
