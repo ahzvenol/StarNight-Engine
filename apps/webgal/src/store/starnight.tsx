@@ -1,5 +1,4 @@
 import type { GameConstructorParams, StarNightInstance } from '@starnight/core'
-import type { GameScenarioDSL } from '@/core/ScenarioDSL'
 import { StarNight } from '@starnight/core'
 import { useReactive, useSignal } from 'micro-reactive-solid'
 import { ScenarioDSL } from '@/core/ScenarioDSL'
@@ -12,9 +11,11 @@ export const starnight = useSignal<StarNightInstance>(null as unknown as StarNig
 
 export const ui = () => starnight().context.ui
 
-export const scenario = import('./scenario').then((mod) => mod.default)
+export const entry = import('./scenario').then((mod) => mod.entry)
 
-export const script = async () => ScenarioDSL(await scenario as GameScenarioDSL)
+export const debug = import('./scenario').then((mod) => mod.debug)
+
+export const script = async () => ScenarioDSL(await entry, await debug)
 
 export const instance = async (local: GameConstructorParams['local']) => {
     const store = await onStoreReady

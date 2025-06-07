@@ -3,21 +3,35 @@ import type { GameScenarioDSL } from '@/core/ScenarioDSL'
 import type { Store } from './default'
 import { AssetLoader, StarNight } from '@starnight/core'
 import { createEffect } from 'solid-js'
+import { noop } from 'es-toolkit'
+import { $debugger } from '@/core/ScenarioDSL'
 import { onStoreReady } from '@/store'
 import { log } from '@/utils/Logger'
 import { MergedCommands } from '@/core/scripts'
 
 // 使用中文命令
 import '@/core/scripts/alias/ChineseSimplified'
-// 剧本入口,默认为index.scenario
-// @ts-expect-error 文件不是模块。
-export { default } from 'scenario/index.scenario'
 
+type GameCompiledScenarioDSL = GameScenarioDSL & { assetmap: string[][] } & { debug?: true }
+
+// 匹配剧本文件,让它们打包到一起
+const scenarios = import.meta.glob(
+    'scenario/**/*.scenario.{mjs,js,mts,ts,jsx,tsx}', { eager: true }
+) as Partial<Record<string, { default: GameCompiledScenarioDSL }>>
+
+// 剧本入口,默认为index.scenario
+export const entry = ['mjs', 'js', 'mts', 'ts', 'jsx', 'tsx'].reduce<GameCompiledScenarioDSL>(
+    (acc, ext) => acc || scenarios[`/scenario/index.scenario.${ext}`]?.default, null as unknown as GameCompiledScenarioDSL
+)
+
+export const debug = Object.values(scenarios).map((scenario) => scenario?.default.debug).some(Boolean)
+
+// 定义ts全局类型
 declare global {
     const $store: Store
     const $context: GameRuntimeContext
     const $call: (arg0: string) => void
-    const $debug: unknown
+    const $debugger: unknown
 }
 
 // 挂载store到window,拆箱store以省略Singal概念
@@ -26,16 +40,13 @@ declare global {
 onStoreReady.then((store) =>
     createEffect(() => Object.assign(window, { $store: store() }))
 )
-Object.assign(window, { $say: MergedCommands.Say.apply, $call: () => {} })
-
-// 匹配剧本文件,让它们打包到一起
-const scenarios = import.meta.glob('scenario/**/*.scenario.{js,ts,jsx,tsx}', { eager: true })
+Object.assign(window, { $say: MergedCommands.Say.apply, $debugger, $call: noop })
 
 // 订阅游戏事件,进行资源预加载
 StarNight.ActEvents.start.subscribe(({ state, current: { index, sence } }) => {
     if (state.isInitializing()) return
-    const scenario = scenarios[`/${sence()}`] as { default: GameScenarioDSL & { assetmap: string[][] } }
-    scenario.default.assetmap
+    const scenario = scenarios[`/${sence()}`]
+    scenario!.default.assetmap
         .slice(index(), index() + 5).flat()
         .forEach((url) => {
             url = './static' + url
