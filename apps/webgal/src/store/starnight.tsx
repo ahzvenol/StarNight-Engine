@@ -18,18 +18,12 @@ export const debug = import('./scenario').then((mod) => mod.debug)
 export const script = async () => ScenarioDSL(await entry, await debug)
 
 export const instance = async (local: GameConstructorParams['local']) => {
-    const store = await onStoreReady
+    const { config, global } = await onStoreReady
     return StarNight.instance({
-        script: await script(),
-        config: store.config,
-        local: local,
-        global: store.global,
+        script: await script(), config, local, global,
         ui: {
-            audiotracks: {
-                bgm: BGM,
-                se: SE,
-                clip: Clip
-            }
+            view: <canvas width={1280} height={720} /> as HTMLCanvasElement,
+            audio: { bgm: BGM, se: SE, clip: Clip }
         }
     })
 }

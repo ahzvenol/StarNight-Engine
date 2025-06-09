@@ -16,7 +16,7 @@ declare module '@starnight/core' {
         audios: Map<string, Howl>
     }
     interface GameUIExternalData {
-        audiotracks: AudioTracks
+        audio: AudioTracks
     }
 }
 
@@ -51,7 +51,7 @@ export type AudioSetCommandArgs = {
 }
 
 export const set = NonBlocking<AudioSetCommandArgs>(
-    ({ state, output: { extime }, ui: { audiotracks }, temp: { audios } }) =>
+    ({ state, output: { extime }, ui: { audio: audiotracks }, temp: { audios } }) =>
         ({ type, id = type, ...args }) => {
             const isNotEffectSocpe = state.isInitializing() || state.isFast()
             const isClip = type === 'clip'

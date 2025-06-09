@@ -5,7 +5,7 @@ import { CustomEase } from 'gsap/CustomEase'
 import { isUndefined } from 'es-toolkit'
 
 gsap.registerPlugin(CustomEase)
-gsap.defaults({ ease: 'none' })
+gsap.defaults({ ease: 'none', duration: 0 })
 
 declare module '@starnight/core' {
     interface GameTempData {
@@ -36,8 +36,7 @@ export const apply = Dynamic<TweenCommandArgs>(
             if (state.isInitializing()) {
                 gsap.set(target, args)
             } else {
-                console.log(args)
-                // 保证对同一个id的缓动被顺序应用
+                // 保证对同一个id的动画被顺序应用
                 if (!activetimelines.has(id)) {
                     const timeline = gsap.timeline({ paused: false })
                     activetimelines.set(id, timeline)

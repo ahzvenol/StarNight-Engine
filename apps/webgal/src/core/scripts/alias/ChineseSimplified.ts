@@ -47,6 +47,8 @@ const 图像命令参数别名 = {
     tint: '染色',
     width: '宽度',
     inherit: '切换图像时继承',
+    x: 'X坐标',
+    y: 'Y坐标',
     ease: '缓动函数'
 } as const
 
@@ -88,7 +90,6 @@ export const 中文命令集合 = {
     应用抖动: Alias(MergedCommands.Image.shake, Object.assign(通用命令参数别名, 摇晃命令参数别名)),
     应用摇晃: Alias(MergedCommands.Image.punch, Object.assign(通用命令参数别名, 摇晃命令参数别名)),
     应用滤镜: Alias(MergedCommands.Image.filter, Object.assign(通用命令参数别名, { filter: '滤镜实例' } as const)),
-    滤镜变换: Alias(MergedCommands.Image.filter_tween, Object.assign(通用命令参数别名, {} as const)),
     关闭图像: Alias(MergedCommands.Image.close, Object.assign(通用命令参数别名, {} as const)),
     清空立绘: MergedCommands.Image.clean,
     设置背景音乐: Alias(MergedCommands.Audio.bgm, Object.assign(通用命令参数别名, 音频命令参数别名)),
