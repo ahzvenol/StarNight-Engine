@@ -25,7 +25,7 @@ export type TweenCommandArgs = {
     target: gsap.TweenTarget
     id?: gsap.TweenTarget
     mode?: 'from' | 'to'
-    ease?: string
+    ease?: gsap.EaseString | gsap.EaseFunction
     duration?: number
     position?: gsap.Position
 } & Except<gsap.TweenVars, 'id'>

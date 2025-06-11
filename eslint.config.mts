@@ -59,7 +59,8 @@ export default tseslint.config(
         rules: {
             'no-unused-labels': 'off', // 剧本中的正常情况
             '@typescript-eslint/no-unused-expressions': 'off', // 剧本中的正常情况
-            '@stylistic/semi': 'off' // <div />;\n<div /> 会导致格式化错误
+            '@stylistic/semi': 'off' ,// <div />;\n<div /> 会导致格式化错误
+            '@stylistic/no-fallthrough': 'off' // 剧本可以使用while-switch模拟goto
         }
     }
 )

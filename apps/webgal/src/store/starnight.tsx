@@ -2,6 +2,7 @@ import type { GameConstructorParams, StarNightInstance } from '@starnight/core'
 import { StarNight } from '@starnight/core'
 import { useReactive, useSignal } from 'micro-reactive-solid'
 import { ScenarioDSL } from '@/core/ScenarioDSL'
+import { useGame } from '@/ui/GameRoot'
 import { BGM, SE, Clip } from './audio'
 import { onStoreReady } from '.'
 
@@ -27,3 +28,10 @@ export const instance = async (local: GameConstructorParams['local']) => {
         }
     })
 }
+
+// 如果处在调试模式,直接进入游戏页
+debug.then((isDebug) => {
+    if (isDebug) {
+        useGame({ count: 1 })
+    }
+})

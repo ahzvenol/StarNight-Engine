@@ -19,7 +19,6 @@ export function* ScenarioDSL(DSL: GameScenarioDSL, debug: boolean = false): Game
             ctx(context)
             while (true) {
                 const current = await scenario.next(value)
-                console.log(debug, current.value)
                 done = current.done
                 if (current.done) return NaN
                 else if (current.value instanceof Function) {

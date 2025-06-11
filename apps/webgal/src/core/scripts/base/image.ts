@@ -1,5 +1,6 @@
 import type { DisplayObject, Filter } from 'pixi.js'
 import type { Except, MergeExclusive } from 'type-fest'
+import type { TweenCommandArgs } from './tween'
 import { Dynamic, DynamicMacro, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import { isString, isUndefined } from 'es-toolkit'
 import { gsap } from 'gsap'
@@ -66,6 +67,7 @@ export const set = NonBlocking<ImageSetCommandArgs>(({ state, temp: { stage } })
     let outerContainer: ImageStage['children'][number]
     let innerContainer: ImageStage['children'][number]['children'][number]
     const sprite = new Sprite()
+    sprite.anchor.set(0.5)
     if (stage.getChildByName(id)) {
         outerContainer = stage.getChildByName(id)!
         innerContainer = outerContainer.getChildAt(0)
@@ -81,6 +83,9 @@ export const set = NonBlocking<ImageSetCommandArgs>(({ state, temp: { stage } })
         sprite.name = src
     } else {
         sprite.texture = Texture.from(src)
+        sprite.texture.baseTexture.once('loaded', () => {
+            sprite.position = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
+        })
         // @ts-expect-error 类型“Resource”上不存在属性“source”
         const source = sprite.texture.baseTexture.resource.source
         if (source instanceof HTMLVideoElement) source.muted = true
@@ -136,26 +141,19 @@ export const shake = EffectScope(
 export const punch = EffectScope(
     Dynamic<ImageShakePunchCommandArgs>(
         ({ temp: { stage } }) =>
-            function* ({ target: _target, x = 0, y = 0, duration, iteration = 5 }) {
+            function* ({ target: _target, x = 0, y = 0, duration }) {
                 const target = _target === 0 ? stage : stage.getChildByName(_target)
-                const originX = 0
-                const originY = 0
+                const punch = (p: number) => (p === 0 || p === 1) ? 0 : Math.pow(2, -10 * p) * Math.sin((20 * Math.PI * p) / 3)
                 const timeline = gsap.timeline()
-                const dur = duration / 2 / iteration
-                for (let i = 0; i < iteration; i++) {
-                    const coef = i % 2 === 0 ? 1 : -1
-                    const nextX = originX + (coef * x) / (i + 1)
-                    const nextY = originY + (coef * y) / (i + 1)
-                    timeline.to(target!, { pixi: { x: nextX, y: nextY }, duration: dur / 1000 })
-                }
-                timeline.to(target!, { pixi: { x: originX, y: originY }, duration: dur / 1000 })
+                timeline.to(target!, { ease: punch, pixi: { x, y }, duration: duration / 1000 })
+                // timeline.to(target!, { pixi: { x: originX, y: originY }})
                 yield new Promise((res) => timeline.eventCallback('onComplete', res))
             }
     )
 )
 
 export type ImageTweenCommandArgs =
-    { target: ImageTarget, ease?: string, duration?: number, inherit?: boolean }
+    { target: ImageTarget, ease?: TweenCommandArgs['ease'], duration?: number, inherit?: boolean }
     & Except<
         PixiPlugin.Vars,
         'zIndex' | 'positionX' | 'positionY' | 'resolution' | 'fillColor' | 'lineColor'

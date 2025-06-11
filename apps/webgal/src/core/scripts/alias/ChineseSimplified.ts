@@ -101,6 +101,7 @@ export const 中文命令集合 = {
     用户输入: 用户输入,
     用户选择: 用户选择 as unknown,
     用户点击: MergedCommands.Input.click,
+    Iframe: Alias(MergedCommands.Input.iframe, 通用命令参数别名),
     显示文本框: MergedCommands.State.box,
     允许点击: MergedCommands.State.click,
     解锁鉴赏: MergedCommands.Var.unlock,
