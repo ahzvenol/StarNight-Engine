@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { throttle } from 'es-toolkit'
 import { useSignal } from 'micro-reactive-solid'
-import { Show } from 'solid-js'
+import { createEffect, Show } from 'solid-js'
 import { Content } from '@/core/ui/Elements'
 import { starnight, ui } from '@/store/starnight'
 import { GUIGameRootState } from '@/ui/GameRoot'
@@ -14,6 +14,7 @@ import { Stage } from './Stage'
 import { TextBox } from './TextBox'
 import { TextInput } from './TextInput'
 import { Video } from './Video'
+import { Iframe } from './Iframe'
 
 export const showBox = useSignal(true)
 
@@ -34,6 +35,13 @@ export const Game: Component = () => {
         100,
         { edges: ['leading'] }
     )
+
+    createEffect(() => {
+        if (ui().clickstate()) {
+            useKeyPress('Space', click)
+            useKeyPress('Enter', click)
+        }
+    })
     return (
         <Content>
             <Stage />
@@ -59,16 +67,11 @@ export const Game: Component = () => {
             <Show when={ui().video()}>
                 <Video />
             </Show>
-            <Show when={ui().clickstate()}>
-                <Content
-                    ref={() => {
-                        useKeyPress('Space', click)
-                        useKeyPress('Enter', click)
-                    }}
-                />
-            </Show>
             <Show when={!ui().clickstate()}>
                 <div class={styles.Game_mask} />
+            </Show>
+            <Show when={ui().iframeinput()}>
+                <Iframe />
             </Show>
         </Content>
     )

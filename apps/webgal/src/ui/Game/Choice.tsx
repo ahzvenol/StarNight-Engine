@@ -1,9 +1,9 @@
 import type { Component } from 'solid-js'
 import { For } from 'solid-js'
-import { useSoundEffect } from '../useSoundEffect'
-import styles from './Choice.module.scss'
 import { ui } from '@/store/starnight'
 import { stopPropagation } from '@/utils/solid/stopPropagation'
+import { useSoundEffect } from '../useSoundEffect'
+import styles from './Choice.module.scss'
 
 export const Choice: Component = () => {
     return (
@@ -13,7 +13,7 @@ export const Choice: Component = () => {
                     <div
                         ref={useSoundEffect('Click', 'Enter')}
                         class={choice.disable ? styles.Game_Choice_item_disabled : styles.Game_Choice_item}
-                        onClick={choice.choose}
+                        onClick={() => choice.resolve}
                     >
                         {choice.text}
                     </div>
