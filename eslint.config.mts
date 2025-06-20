@@ -57,10 +57,10 @@ export default tseslint.config(
     {
         files: ['**/*.scenario.ts', '**/*.scenario.tsx', '**/*.scenario.js', '**/*.scenario.jsx'],
         rules: {
-            'no-unused-labels': 'off', // 剧本中的正常情况
+            'no-fallthrough': 'off', // 剧本可以使用while-switch模拟goto
+            'no-unused-labels': 'off', // 剧本使用标签标记对话说话人
             '@typescript-eslint/no-unused-expressions': 'off', // 剧本中的正常情况
-            '@stylistic/semi': 'off' ,// <div />;\n<div /> 会导致格式化错误
-            '@stylistic/no-fallthrough': 'off' // 剧本可以使用while-switch模拟goto
+            '@stylistic/semi': 'off' // <div />;\n<div /> 会导致格式化错误
         }
     }
 )

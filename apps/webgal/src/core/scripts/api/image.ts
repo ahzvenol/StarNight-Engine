@@ -8,9 +8,7 @@ export const close = Image.close
 
 export const clean = NonBlocking((context) => () => Image.close({ exclude: 'bg' })(context))
 
-export const shake = Image.shake
-
-export const punch = Image.punch
+export const animation_effect = Image.animation_effect
 
 export const tween = Image.tween
 

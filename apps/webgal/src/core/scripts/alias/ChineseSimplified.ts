@@ -1,6 +1,6 @@
 import type { CommandTagBlocking, GameRuntimeContext } from '@starnight/core'
 import type { FilterBlockingCommands, FilterNonBlockingCommands, FlattenCommands } from '..'
-import { Blocking } from '@starnight/core'
+import { Blocking, DynamicMacro } from '@starnight/core'
 import { Alias } from '../Alias'
 import { MergedCommands } from '..'
 
@@ -62,8 +62,29 @@ const 音频命令参数别名 = {
 const 摇晃命令参数别名 = {
     x: 'X轴震幅',
     y: 'Y轴震幅',
-    iteration: '迭代次数'
+    name: '效果名称'
 } as const
+
+export type ImageAnimationEffectCommandArgs =
+    { target: ImageTarget, name: keyof typeof EffectPerset, duration: number }
+    & ({ x: number, y?: number } | { x?: number, y: number })
+
+const 应用动画效果 = DynamicMacro<{ target: ImageTarget, name: keyof typeof EffectPerset, duration: number }
+    & ({ x: number, y?: number } | { x?: number, y: number })>(
+        () =>
+            function* ({ target: _target, name, x = 0, y = 0, duration }) {
+                const target = _target === 0 ? stage : stage.children.find((e) => e.name === _target)
+                if (isUndefined(target)) return
+                yield new Promise((res) =>
+                    gsap.to(target, {
+                        x1: x, y1: y,
+                        ease: EffectPerset[name],
+                        duration: duration / 1000,
+                        onComplete: res
+                    })
+                )
+            }
+    )
 
 const 用户输入 = Blocking<{ 描述文本: string } | void, string>(
     (context) =>
@@ -86,13 +107,12 @@ export const 中文命令集合 = {
     对话: Alias(MergedCommands.Say.apply, { text: '文本', name: '名称', clip: '语音' } as const),
     设置背景: Alias(MergedCommands.Image.bg, Object.assign(通用命令参数别名, 图像命令参数别名)),
     设置立绘: Alias(MergedCommands.Image.sprite, Object.assign(通用命令参数别名, 图像命令参数别名)),
-    应用变换: Alias(MergedCommands.Image.tween, Object.assign(通用命令参数别名, 图像命令参数别名)),
-    应用抖动: Alias(MergedCommands.Image.shake, Object.assign(通用命令参数别名, 摇晃命令参数别名)),
-    应用摇晃: Alias(MergedCommands.Image.punch, Object.assign(通用命令参数别名, 摇晃命令参数别名)),
-    应用滤镜: Alias(MergedCommands.Image.filter, Object.assign(通用命令参数别名, { filter: '滤镜实例' } as const)),
+    添加动画: Alias(MergedCommands.Image.tween, Object.assign(通用命令参数别名, 图像命令参数别名)),
+    添加滤镜: Alias(MergedCommands.Image.filter, Object.assign(通用命令参数别名, { filter: '滤镜实例' } as const)),
+    预设动画: Alias(MergedCommands.Image.animation_effect, Object.assign(通用命令参数别名, 摇晃命令参数别名)),
     关闭图像: Alias(MergedCommands.Image.close, Object.assign(通用命令参数别名, {} as const)),
     清空立绘: MergedCommands.Image.clean,
-    设置背景音乐: Alias(MergedCommands.Audio.bgm, Object.assign(通用命令参数别名, 音频命令参数别名)),
+    设置配乐: Alias(MergedCommands.Audio.bgm, Object.assign(通用命令参数别名, 音频命令参数别名)),
     设置音效: Alias(MergedCommands.Audio.se, Object.assign(通用命令参数别名, 音频命令参数别名)),
     设置语音: Alias(MergedCommands.Audio.clip, Object.assign(通用命令参数别名, 音频命令参数别名)),
     设置音量: Alias(MergedCommands.Audio.volume, Object.assign(通用命令参数别名, 音频命令参数别名)),
@@ -101,16 +121,16 @@ export const 中文命令集合 = {
     用户输入: 用户输入,
     用户选择: 用户选择 as unknown,
     用户点击: MergedCommands.Input.click,
-    Iframe: Alias(MergedCommands.Input.iframe, 通用命令参数别名),
-    显示文本框: MergedCommands.State.box,
+    显示界面: MergedCommands.State.box,
     允许点击: MergedCommands.State.click,
     解锁鉴赏: MergedCommands.Var.unlock,
     解锁成就: MergedCommands.Var.achieve,
     自动继续: MergedCommands.System.cont,
     系统计时: MergedCommands.System.wait,
-    结束游戏: MergedCommands.System.end,
-    外部输入: MergedCommands.System.input as unknown,
-    通用变换: MergedCommands.Tween.apply
+    结束剧情: MergedCommands.System.end,
+    嵌入页面: Alias(MergedCommands.Input.iframe, 通用命令参数别名),
+    基本输入: MergedCommands.System.input as unknown,
+    基本动画: MergedCommands.Tween.apply
 }
 
 export type 阻塞命令 = FilterBlockingCommands<typeof 中文命令集合>
