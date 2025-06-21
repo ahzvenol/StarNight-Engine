@@ -104,7 +104,6 @@
         "@capacitor/cli": "7.0.1",
         "@typescript-eslint/eslint-plugin": "^8.32.1",
         "@vitejs/plugin-legacy": "^6.1.1",
-        "eslint-config-prettier": "^9.1.0",
         "postcss-scss": "^4.0.9",
         "rollup": "2.25.0",
         "rollup-plugin-visualizer": "^5.14.0",

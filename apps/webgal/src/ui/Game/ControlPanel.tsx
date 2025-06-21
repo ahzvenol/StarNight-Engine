@@ -13,15 +13,15 @@ import {
     Save,
     SettingTwo
 } from 'icon-park-solid'
-import { translation } from '../translations'
-import { useSoundEffect } from '../useSoundEffect'
-import styles from './ControlPanel.module.scss'
-import { showBox } from './Game'
 import { store } from '@/store'
 import { starnight } from '@/store/starnight'
 import { GUIGameRootState, useGame } from '@/ui/GameRoot'
 import { useDialog } from '@/ui/GlobalDialog/GlobalDialog'
 import { GUIRootState } from '@/ui/GUIRoot'
+import { useSoundEffect } from '../useSoundEffect'
+import { translation } from '../translations'
+import { showBox } from './Game'
+import styles from './ControlPanel.module.scss'
 
 export const ControlPanel: Component = () => {
     const t = translation.gaming.buttons

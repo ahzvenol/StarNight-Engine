@@ -19,7 +19,7 @@
     "scripts": {
         "build": "tsup",
         "test": "vitest run",
-        "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src"
+        "lint:fix": "eslint src --fix --ext .js,.cjs,.mjs,.jsx,.ts,.cts,.mts,.tsx"
     },
     "devDependencies": {
         "tsup": "^8.4.0"
