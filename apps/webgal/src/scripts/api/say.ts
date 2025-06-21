@@ -1,6 +1,6 @@
 import { DynamicMacro } from '@starnight/core'
 import { Backlog, Say } from '../base'
-import { Audio } from '.'
+import { Audio } from './index'
 
 export type SayCommandArgs = { text: string | HTMLElement | HTMLElement[], name?: string, clip?: string }
 

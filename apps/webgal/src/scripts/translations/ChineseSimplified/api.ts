@@ -1,7 +1,7 @@
 import type { 关闭图像命令参数别名, 用户输入命令参数别名, 用户选择命令参数别名, 预设动画命令参数别名 } from './translation'
 import type { CommandTagBlocking, CommandTagNonBlocking } from '@starnight/core'
 import { Blocking, DynamicMacro } from '@starnight/core'
-import { MergedCommands } from '../..'
+import { MergedCommands } from '../../index'
 import { Alias, Api, flipObject } from '../../Translate'
 import { 通用命令参数别名, 图像命令参数别名, 音频命令参数别名, 预设动画别名 } from './translation'
 

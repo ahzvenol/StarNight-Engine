@@ -2,7 +2,7 @@ import type { Reactive } from '@starnight/core'
 import { ActScope, Dynamic, NonBlocking, StarNight } from '@starnight/core'
 import { gsap } from 'gsap'
 import { SplitText } from 'gsap/SplitText'
-import { Tween } from '.'
+import { Tween } from './index'
 
 gsap.registerPlugin(SplitText)
 

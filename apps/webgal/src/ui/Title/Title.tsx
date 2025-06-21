@@ -1,5 +1,5 @@
 import type { Component } from 'solid-js'
-import { Clone } from '@/core/ui/Elements'
+import { Clone } from '@/utils/ui/Elements'
 import { store } from '@/store'
 import { useGame } from '../GameRoot'
 import { GUIHomeRootState } from '../HomeRoot'

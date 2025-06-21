@@ -1,5 +1,5 @@
 import type { Component } from 'solid-js'
-import { Content } from '@/core/ui/Elements'
+import { Content } from '@/utils/ui/Elements'
 import { store } from '@/store'
 import { ui } from '@/store/starnight'
 import { useEventListener } from '@/utils/solid/useEventListener'

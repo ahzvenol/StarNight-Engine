@@ -4,7 +4,7 @@ import { StarNight } from '@starnight/core'
 import { useSignal } from 'micro-reactive-solid'
 import { createEffect, on, onCleanup, Show } from 'solid-js'
 import { Transition } from 'solid-transition-group'
-import { Content } from '@/core/ui/Elements'
+import { Content } from '@/utils/ui/Elements'
 import { onStoreReady } from '@/store'
 import { instance, starnight } from '@/store/starnight'
 import { Backlog } from '@/ui/Game/Backlog'
@@ -21,7 +21,7 @@ export type GUIGameRootPages = 'Game' | 'Config' | 'Save' | 'Load' | 'Backlog'
 
 export const GUIGameRootState = useSignal<GUIGameRootPages>('Game')
 
-// 结束游戏回到标题页
+// 剧情结束时回到标题页
 StarNight.GameEvents.end.subscribe(() => GUIRootState('Home'))
 
 // 自动存档
@@ -62,7 +62,7 @@ export const GameRoot: Component = () => {
                     } else if (starnight().state.isFast()) {
                         starnight().ClickEvents.fast.publish()
                         onCleanup(() => {
-                            starnight().ClickEvents.auto.publish()
+                            starnight().ClickEvents.fast.publish()
                         })
                     }
                 }

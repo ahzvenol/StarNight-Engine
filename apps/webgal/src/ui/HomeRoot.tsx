@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { useSignal } from 'micro-reactive-solid'
 import { onCleanup, onMount, Show } from 'solid-js'
-import { Content } from '@/core/ui/Elements'
+import { Content } from '@/utils/ui/Elements'
 import { Gallery } from '@/ui/Gallery/Gallery'
 import { stopPropagation } from '@/utils/solid/stopPropagation'
 import { BGM } from '../store/audio'

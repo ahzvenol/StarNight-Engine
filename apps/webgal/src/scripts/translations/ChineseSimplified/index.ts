@@ -1,4 +1,4 @@
-import type { FilterBlockingCommands, FilterNonBlockingCommands } from '../..'
+import type { FilterBlockingCommands, FilterNonBlockingCommands } from '../../index'
 import * as 中文命令集合 from './api'
 
 declare global {

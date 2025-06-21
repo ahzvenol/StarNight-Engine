@@ -6,7 +6,7 @@ import { isString, isUndefined, random } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { PixiPlugin } from 'gsap/PixiPlugin'
 import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform } from 'pixi.js'
-import { Tween } from '..'
+import { Tween } from '../index'
 import { MultiOffsetContainer } from './MultiOffsetContainer'
 import { SideEffectLazySprite } from './SideEffectLazySprite'
 

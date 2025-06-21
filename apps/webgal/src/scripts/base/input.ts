@@ -1,7 +1,6 @@
 import type { CommandTagBlocking, GameRuntimeContext, Reactive } from '@starnight/core'
 import { Blocking, DynamicBlocking, GameState, StarNight } from '@starnight/core'
-import { PromiseX } from '@/core/PromiseX'
-import { System } from '.'
+import { System } from './index'
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
@@ -16,8 +15,8 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
 export const click = DynamicBlocking(
     ({ ui: { clickinput } }) =>
         function* () {
-            const promise = new PromiseX<void>()
-            clickinput(() => promise.resolve)
+            const { promise, resolve } = Promise.withResolvers<void>()
+            clickinput(() => resolve)
             yield promise
             clickinput(() => null)
         }
@@ -41,8 +40,8 @@ export const iframe = Blocking<IframeInput, unknown>(
     (context) =>
         async ({ src }) => {
             const { ui: { iframeinput } } = context
-            const promise = new PromiseX<unknown>()
-            iframeinput(() => ({ src, resolve: promise.resolve }))
+            const { promise, resolve } = Promise.withResolvers<unknown>()
+            iframeinput(() => ({ src, resolve }))
             const res = await System.input(() => promise)(context)
             iframeinput(() => null)
             return res
@@ -65,9 +64,9 @@ export const text = Blocking<TextInput, string>(
     (context) =>
         async (args) => {
             const { ui: { textinput } } = context
-            const promise = new PromiseX<string>()
+            const { promise, resolve } = Promise.withResolvers<string>()
             textinput(
-                Object.assign({ resolve: promise.resolve }, args || {}) as TextInput & { resolve: Function1<string, void> }
+                Object.assign({ resolve }, args || {}) as TextInput & { resolve: Function1<string, void> }
             )
             const res = await System.input(() => promise)(context)
             textinput(() => null)
@@ -100,9 +99,8 @@ export const choose = Blocking(
         async (arg0) => {
             const { state, config, ui, output } = context
             const choices = arg0.map((item) => {
-                const promise = new PromiseX<number | string>()
-                const resolve = () => promise.resolve(item.id)
-                return { ...item, promise, resolve }
+                const { promise, resolve } = Promise.withResolvers<number | string>()
+                return { ...item, promise, resolve: () => resolve(item.id) }
             })
             ui.choices(choices)
             const chosen = await System.input(() => Promise.race(choices.map((e) => e.promise)))(context)

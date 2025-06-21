@@ -1,16 +1,16 @@
 import type { GameRuntimeContext } from '@starnight/core'
-import type { GameScenarioDSL } from '@/core/ScenarioDSL'
+import type { GameScenarioDSL } from '@/scripts/ScenarioDSL'
 import type { Store } from './default'
 import { AssetLoader, StarNight } from '@starnight/core'
 import { createEffect } from 'solid-js'
 import { noop } from 'es-toolkit'
-import { $debugger } from '@/core/ScenarioDSL'
+import { $debugger } from '@/scripts/ScenarioDSL'
 import { onStoreReady } from '@/store'
 import { log } from '@/utils/Logger'
-import { MergedCommands } from '@/core/scripts'
+import { MergedCommands } from 'src/scripts'
 
 // 使用中文命令
-import '@/core/scripts/translations/ChineseSimplified'
+import '@/scripts/translations/ChineseSimplified'
 
 type GameCompiledScenarioDSL = GameScenarioDSL & { assetmap: string[][] } & { debug?: true }
 
