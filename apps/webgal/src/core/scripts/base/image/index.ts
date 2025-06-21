@@ -169,25 +169,27 @@ export const filter = NonBlocking<ImageFilterCommandArgs>(({ temp: { stage } }) 
 })
 
 export type ImageAnimationEffectCommandArgs =
-    { target: ImageTarget, name: keyof typeof EffectPerset, duration: number }
+    { target: ImageTarget, preset: AnimationPresetEffectKeys, duration: number }
     & ({ x: number, y?: number } | { x?: number, y: number })
 
 const shake = (p: number) => (p === 0 || p === 1) ? 0 : random(p - 1, 1 - p)
 
 const punch = (p: number) => (p === 0 || p === 1) ? 0 : Math.pow(2, -10 * p) * Math.sin((20 * Math.PI * p) / 3)
 
-const EffectPerset = { shake, punch } as const
+const AnimationEffectPersets = { shake, punch } as const
+
+export type AnimationPresetEffectKeys = keyof typeof AnimationEffectPersets
 
 export const animation_effect = EffectScope(
     Dynamic<ImageAnimationEffectCommandArgs>(
         ({ temp: { stage } }) =>
-            function* ({ target: _target, name, x = 0, y = 0, duration }) {
+            function* ({ target: _target, preset, x = 0, y = 0, duration }) {
                 const target = _target === 0 ? stage : stage.children.find((e) => e.name === _target)
                 if (isUndefined(target)) return
                 yield new Promise((res) =>
                     gsap.to(target, {
                         x1: x, y1: y,
-                        ease: EffectPerset[name],
+                        ease: AnimationEffectPersets[preset],
                         duration: duration / 1000,
                         onComplete: res
                     })

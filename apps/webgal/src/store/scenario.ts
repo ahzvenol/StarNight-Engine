@@ -10,7 +10,7 @@ import { log } from '@/utils/Logger'
 import { MergedCommands } from '@/core/scripts'
 
 // 使用中文命令
-import '@/core/scripts/alias/ChineseSimplified'
+import '@/core/scripts/translations/ChineseSimplified'
 
 type GameCompiledScenarioDSL = GameScenarioDSL & { assetmap: string[][] } & { debug?: true }
 
@@ -31,7 +31,7 @@ declare global {
     const $store: Store
     const $context: GameRuntimeContext
     const $call: (arg0: string) => void
-    const $debugger: unknown
+    const $debugger: symbol
 }
 
 // 挂载store到window,拆箱store以省略Singal概念

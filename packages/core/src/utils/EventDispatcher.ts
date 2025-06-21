@@ -5,8 +5,8 @@ export type Publisher<T> = { publish: (e: T) => void }
 export class EventDispatcher<T> {
     public static on =
         <T>(event: EventDispatcher<T>) =>
-        () =>
-            new Promise<T>(event.once)
+            () =>
+                new Promise<T>(event.once)
 
     private callbacks: Map<symbol, EventListener<T>> = new Map()
 

@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
+    CommandTagBlocking,
+    CommandTagDynamic,
+    CommandTagNonBlocking,
     StandardBlockingCommand,
     StandardCommand,
     StandardDynamicCommand,
@@ -33,7 +36,7 @@ function renameKeys<T extends Record<PropertyKey, unknown>, M extends Partial<Re
     return mapKeys<T, keyof T | Extract<M[keyof M], PropertyKey>>(object, (_, key) => keyMap[key] || key) as any
 }
 
-function flipObject<T extends Record<string | number | symbol, string | number | symbol>>(
+export function flipObject<T extends Record<string | number | symbol, string | number | symbol>>(
     obj: T
 ): {
         [K in T[keyof T]]: {
@@ -104,4 +107,11 @@ export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Parti
     const flipmap = flipObject(map)
     // @ts-expect-error 类型...的参数不能赋给类型“T”的参数。
     return (args) => async (context) => fn(renameKeys(args, flipmap))(context)
+}
+
+export function Api<T, R>(fn: StandardNonBlockingCommand<T, R>): Function1<T, R> & CommandTagNonBlocking
+export function Api<T, R>(fn: StandardBlockingCommand<T, R>): Function1<T, R> & CommandTagBlocking
+export function Api<T, R>(fn: StandardDynamicCommand<T, R>): Function1<T, R> & CommandTagDynamic
+export function Api<T, R>(fn: StandardCommand<T, R>): Function1<T, R> {
+    return fn as any
 }

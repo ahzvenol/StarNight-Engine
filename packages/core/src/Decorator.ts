@@ -70,10 +70,9 @@ export function Blocking<T = void, R = void>(fn: BlockingCommand<T, R>): Standar
     return ((args) => async (context) => normalize(() => fn(context)(args))) as StandardBlockingCommand<T, R>
 }
 
-// 解析生成器到Resolved命令,在第一个yield之后都是异步的
+// 解析生成器到Resolved命令,在第一个yield或await前是同步的
 // 如果await Promise,等待Promise解析
 // 如果yield ResolvedCommand,注入Context并执行
-// 无论如何,yield原样返回它右边的值
 export function Fork<R>(fn: GameFragment<R>): StandardResolvedCommand<R> {
     return async (context) => {
         const generator = fn(context)

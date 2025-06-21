@@ -16,7 +16,3 @@ export type FilterBlockingCommands<T> = {
 export type FilterNonBlockingCommands<T> = {
     [K in keyof T as T[K] extends CommandTagNonBlocking ? K : never]: T[K]
 }
-
-export type FlattenCommands<T> = {
-    [K in keyof T]: T[K] extends (arg0: infer P0) => (arg1: infer P1) => infer R ? (arg0: P0) => Awaited<R> : never
-}
