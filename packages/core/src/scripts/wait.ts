@@ -9,7 +9,7 @@ export const wait = ActScope(
                 if (duration === 0) return
                 const promise = new PromiseX<void>()
                 const controller = new TimeoutController(promise.resolve, duration)
-                onActRush.then(() => controller.immediateExecution())
+                onActRush.then(() => controller.rush())
                 const id = GameEvents.active.subscribe((visible) => (visible ? controller.start() : controller.pause()))
                 if (isGameVisible()) controller.start()
                 yield promise

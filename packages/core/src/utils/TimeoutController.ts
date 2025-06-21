@@ -30,7 +30,7 @@ export class TimeoutController {
         window.clearTimeout(this.timerId)
         this.remainingTime = this.remainingTime - (Date.now() - this.startTime)
     }
-    public immediateExecution = () => {
+    public rush = () => {
         if (this._isExecuted) return
         window.clearTimeout(this.timerId)
         this.executeOnceCallback()
