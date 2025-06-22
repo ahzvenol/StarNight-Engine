@@ -1,5 +1,5 @@
 {
-    "include": ["**/*.ts", "**/*.mts", "**/*.tsx", "../../packages/core/src/utils/useScopeSignal.ts"],
+    "include": ["**/*.ts", "**/*.mts", "**/*.tsx", "src/scripts/useScopeSignal.ts"],
     "compilerOptions": {
         "skipLibCheck": true,
         "strict": true,
