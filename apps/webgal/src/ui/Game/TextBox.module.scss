@@ -42,6 +42,8 @@ $height: 330px;
     // background-clip: text;
     // -webkit-background-clip: text;
     inset: 1em 50px 70px 225px;
+    white-space: pre-wrap;
+    word-break: break-all;
 
     @include text-stroke(3, white);
 

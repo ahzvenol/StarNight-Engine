@@ -126,6 +126,8 @@
 
 .Game_Backlog_item_text {
     box-sizing: border-box;
+    white-space: pre-wrap;
+    word-break: break-all;
 }
 
 .Game_Backlog_Scrollbar_track {

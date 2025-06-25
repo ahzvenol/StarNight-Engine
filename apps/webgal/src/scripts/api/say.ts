@@ -7,12 +7,11 @@ export type SayCommandArgs = { text: string | HTMLElement | HTMLElement[], name?
 export const apply = DynamicMacro<SayCommandArgs>(
     (context) =>
         function* ({ text, name, clip }) {
-            const container = document.createElement('div')
-            if (text instanceof Array) container.append(...text)
-            else container.append(text)
+            const element = document.createElement('div')
+            element.append(...(Array.isArray(text) ? text : [text]))
             if (clip !== undefined) yield Audio.clip({ src: clip })
             if (name !== undefined) yield Say.name(name)
-            yield Backlog.add({ text: container.innerHTML, name, clip })
-            yield Say.text(container)(context)
+            yield Backlog.add({ text: element.innerHTML, name, clip })
+            yield Say.text(text)(context)
         }
 )

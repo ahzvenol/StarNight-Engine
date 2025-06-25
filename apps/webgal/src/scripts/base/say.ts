@@ -2,6 +2,7 @@ import type { Reactive } from '@starnight/core'
 import { ActScope, Dynamic, NonBlocking, StarNight } from '@starnight/core'
 import { gsap } from 'gsap'
 import { SplitText } from 'gsap/SplitText'
+import { isString } from 'es-toolkit'
 import { Tween } from './index'
 
 gsap.registerPlugin(SplitText)
@@ -32,24 +33,30 @@ const compareElementOrder = (a: Node, b: Node) =>
     a.compareDocumentPosition(b) & 2 ? 1 : a.compareDocumentPosition(b) & 4 ? -1 : 0
 
 export const text = ActScope(
-    Dynamic<HTMLElement>(
+    Dynamic<string | HTMLElement | HTMLElement[]>(
         (context) =>
             function* (arg0) {
                 const { current, config, ui } = context
-                ui.text.append(arg0)
-                current.text((prev) => prev + arg0.outerHTML)
-                const rubys = arg0.querySelectorAll('ruby')
-                const split = SplitText.create(ui.text, { type: 'chars', ignore: rubys, smartWrap: true, aria: 'hidden' })
+                const element = document.createElement('div')
+                element.append(...(Array.isArray(arg0)
+                    ? arg0
+                    : isString(arg0)
+                        ? arg0.split('\n').flatMap((line, index, arr) =>
+                                index === arr.length - 1 ? [line] : [line, document.createElement('br')]
+                            )
+                        : [arg0])
+                )
+                ui.text.append(element)
+                current.text((prev) => prev + element.outerHTML)
+                const rubys = element.querySelectorAll('ruby')
+                const split = SplitText.create(ui.text,
+                    { type: 'chars', reduceWhiteSpace: false, ignore: rubys, smartWrap: true, aria: 'hidden' }
+                )
                 const nodes = split.chars.concat(Array.from(rubys)).sort(compareElementOrder)
                 const speed = config.textspeed()
                 yield Tween.apply({
-                    target: nodes,
-                    id: ui.text,
-                    mode: 'from',
-                    opacity: 0,
-                    duration: nodes.length * speed,
-                    ease: 'sine.out',
-                    stagger: speed / 1000
+                    target: nodes, id: ui.text, mode: 'from', opacity: 0,
+                    duration: nodes.length * speed, ease: 'sine.out', stagger: speed / 1000
                 })(context)
             }
     )
