@@ -7,7 +7,7 @@ import { noop } from 'es-toolkit'
 import { $debugger } from '@/scripts/ScenarioDSL'
 import { onStoreReady } from '@/store'
 import { log } from '@/utils/Logger'
-import { MergedCommands } from 'src/scripts'
+import { MergedCommands } from '@/scripts'
 
 // 使用中文命令
 import '@/scripts/translations/ChineseSimplified'
@@ -42,19 +42,20 @@ onStoreReady.then((store) =>
 )
 Object.assign(window, { $say: MergedCommands.Say.apply, $debugger, $call: noop })
 
+function load(url: string) {
+    url = './static' + url
+    if (AssetLoader.loaded.has(url)) log.info(`资源'${url}'已预加载过`)
+    else {
+        AssetLoader.load(url)
+            .then(() => log.info(`预加载资源'${url}'成功`))
+            .catch((err) => log.info(`预加载资源'${url}'失败:${err}`))
+    }
+}
+
 // 订阅游戏事件,进行资源预加载
+entry.assetmap.slice(0, 1).flat().forEach(load)
 StarNight.ActEvents.start.subscribe(({ state, current: { index, sence } }) => {
     if (state.isInitializing()) return
     const scenario = scenarios[`/${sence()}`]
-    scenario!.default.assetmap
-        .slice(index(), index() + 5).flat()
-        .forEach((url) => {
-            url = './static' + url
-            if (AssetLoader.loaded.has(url)) log.info(`资源'${url}'已预加载过`)
-            else {
-                AssetLoader.load(url)
-                    .then(() => log.info(`预加载资源'${url}'成功`))
-                    .catch((err) => log.info(`预加载资源'${url}'失败:${err}`))
-            }
-        })
+    scenario!.default.assetmap.slice(index(), index() + 5).flat().forEach(load)
 })
