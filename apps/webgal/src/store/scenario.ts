@@ -52,7 +52,7 @@ function load(url: string) {
     }
 }
 
-// 订阅游戏事件,进行资源预加载
+// 资源预加载
 entry.assetmap.slice(0, 1).flat().forEach(load)
 StarNight.ActEvents.start.subscribe(({ state, current: { index, sence } }) => {
     if (state.isInitializing()) return

@@ -147,8 +147,8 @@ export const set = NonBlocking<ImageSetCommandArgs>(
             let outerContainer: ImageItem
             let innerContainer: ImageItem['children'][number]
             const sprite = new SrcSprite(src)
-            // 启用此句即可实现立绘切换的交叉溶解效果
-            // if (id !== 1) sprite.blendMode = BLEND_MODES.ADD
+            // 实现立绘切换的交叉溶解效果
+            if (id !== 1) sprite.blendMode = BLEND_MODES.ADD
             if (find(id, stage)) {
                 outerContainer = find(id, stage)!
                 innerContainer = outerContainer.children[0]
