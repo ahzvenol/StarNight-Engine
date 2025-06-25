@@ -11,9 +11,12 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.clickstate = StarNight.useReactive(true)
 })
 
-export const click = NonBlocking<boolean>(({ ui: { clickstate } }) => (enable) => {
-    clickstate(enable)
-})
+export const click = NonBlocking<boolean>(
+    ({ ui: { clickstate } }) =>
+        (enable) => {
+            clickstate(enable)
+        }
+)
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
@@ -26,7 +29,10 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
 })
 
 export const box = ActScope(
-    NonBlocking<boolean>(({ ui: { boxstate } }) => (enable) => {
-        boxstate(enable)
-    })
+    NonBlocking<boolean>(
+        ({ ui: { boxstate } }) =>
+            (enable) => {
+                boxstate(enable)
+            }
+    )
 )

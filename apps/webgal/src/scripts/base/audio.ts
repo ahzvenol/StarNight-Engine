@@ -104,11 +104,14 @@ export type AudioCloseCommandArgs = { target?: string }
 
 // 根据名称关闭音轨
 // 如果省略了target,关闭全部轨道
-export const close = NonBlocking<AudioCloseCommandArgs>(({ temp: { audios } }) => ({ target }) => {
-    const targets = isUndefined(target) ? audios.keys() : [target]
-    for (const key of targets) {
-        const audio = audios.get(key)
-        audios.delete(key)
-        audio?.unload()
-    }
-})
+export const close = NonBlocking<AudioCloseCommandArgs>(
+    ({ temp: { audios } }) =>
+        ({ target }) => {
+            const targets = isUndefined(target) ? audios.keys() : [target]
+            for (const key of targets) {
+                const audio = audios.get(key)
+                audios.delete(key)
+                audio?.unload()
+            }
+        }
+)
