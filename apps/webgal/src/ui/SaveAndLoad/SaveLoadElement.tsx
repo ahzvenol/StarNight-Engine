@@ -4,7 +4,6 @@ import type { SaveLocalData } from '@/store/default'
 import type { SaveLoadMode } from './SaveLoad'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { Rectangle } from 'pixi.js'
 import { Show } from 'solid-js'
 import { starnight } from '@/store/starnight'
 import { useGame } from '../GameRoot'
@@ -17,11 +16,9 @@ type SaveLoadElementProps = { i: number, mode: SaveLoadMode, index: number, slot
 
 function snapshot() {
     const app = starnight().context.temp.pixi
-    const renderer = app.renderer
-    const visibleRect = new Rectangle(-app.stage.x, -app.stage.y, renderer.width, renderer.height)
-    const stage = renderer.extract.canvas(app.stage, visibleRect) as HTMLCanvasElement
+    const stage = app.renderer.extract.canvas(app.stage, app.screen) as HTMLCanvasElement
     const canvas = (<canvas width={480} height={270} />) as HTMLCanvasElement
-    canvas.getContext('2d')!.drawImage(stage, 0, 0, renderer.width, renderer.height, 0, 0, 480, 270)
+    canvas.getContext('2d')!.drawImage(stage, 0, 0, app.screen.width, app.screen.height, 0, 0, 480, 270)
     return canvas.toDataURL('image/webp', 0.5)
 }
 
