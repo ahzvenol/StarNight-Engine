@@ -8,7 +8,7 @@ export interface ExtraConfig {
     textboxfont: '思源宋体' | 'LXGW' | 'WebgalUI'
     textboxfontsize: '155%' | '205%' | '230%'
     textboxopacity: number
-    language: string
+    language: string | null
     globalvolume: number
     bgmvolume: number
     sevolume: number
