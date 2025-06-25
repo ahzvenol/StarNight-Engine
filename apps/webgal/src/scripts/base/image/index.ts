@@ -1,14 +1,15 @@
-import type { Filter } from 'pixi.js'
+import type { Filter, ImageResource } from 'pixi.js'
 import type { Except, MergeExclusive } from 'type-fest'
 import type { TweenCommandArgs } from '../tween'
 import { Dynamic, DynamicMacro, EffectScope, NonBlocking, StarNight } from '@starnight/core'
-import { isString, isUndefined, random } from 'es-toolkit'
+import { isUndefined, random } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { PixiPlugin } from 'gsap/PixiPlugin'
-import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform } from 'pixi.js'
+import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform, Texture, BLEND_MODES } from 'pixi.js'
 import { Tween } from '../index'
-import { MultiOffsetContainer } from './MultiOffsetContainer'
-import { SideEffectLazySprite } from './SideEffectLazySprite'
+import { RenderLayerSprite } from './RenderLayerSprite'
+import { SrcSprite } from './SrcSprite'
+import { LabelContainer } from './LabelContainer'
 
 gsap.registerPlugin(PixiPlugin)
 PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
@@ -67,13 +68,19 @@ Transform.prototype.updateTransform = function (parentTransform: Transform): voi
     }
 }
 
-type ImageStage = MultiOffsetContainer<MultiOffsetContainer<SideEffectLazySprite>>
+type ImageItem = LabelContainer<Container<SrcSprite>>
+
+type ImageLayer = RenderLayerSprite<ImageItem>
+
+type ImageStage = Container<Container<ImageLayer>>
 
 export type ImageTargetStage = 0
 
+export type ImageTargetBackground = 1
+
 export type ImageTargetSprite = string
 
-export type ImageTarget = ImageTargetSprite | ImageTargetStage
+export type ImageTarget = ImageTargetSprite | ImageTargetBackground | ImageTargetStage
 
 declare module '@starnight/core' {
     interface GameUIExternalData {
@@ -85,58 +92,103 @@ declare module '@starnight/core' {
     }
 }
 
+function load(sprite: SrcSprite) {
+    sprite.texture = Texture.from(sprite.src)
+    const handleLoaded = () => {
+        sprite.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
+        if (sprite.parent) {
+            sprite.parent.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
+        }
+    }
+    if (sprite.texture.baseTexture.valid) handleLoaded()
+    else sprite.texture.baseTexture.once('loaded', handleLoaded)
+    const resource = sprite.texture.baseTexture.resource as ImageResource
+    if (resource.source instanceof HTMLVideoElement) resource.source.muted = true
+}
+
+function find<T extends ImageTarget>(
+    target: T, stage: ImageStage
+): T extends ImageTargetStage ? ImageStage : ImageItem | undefined {
+    return (
+        target === 0 ? stage : stage.children[0].children.find((e) => e.internal.label === target)?.internal
+    ) satisfies ImageStage | ImageItem | undefined as T extends ImageTargetStage ? ImageStage : ImageItem
+}
+
 StarNight.GameEvents.setup.subscribe(({ ui: { view }, temp }) => {
     const { width, height } = view
-    const container = new MultiOffsetContainer() as ImageStage
+    const container = new Container()
     container.pivot = { x: width / 2, y: height / 2 }
     temp.pixi = new Application({ view, width, height })
-    temp.stage = temp.pixi.stage.addChild(container)
+    temp.pixi.stage.addChild(container)
+    temp.stage = temp.pixi.stage as ImageStage
     // @ts-expect-error 类型...上不存在属性...
     globalThis['__PIXI_APP__'] = temp.pixi
 })
 
 StarNight.GameEvents.ready.subscribe(({ temp: { stage } }) => {
-    stage.children.forEach((container) => {
-        container.children.forEach((sprite) => sprite.load())
+    stage.children[0].children.forEach((container) => {
+        container.internal.children[0].children.forEach((sprite) => load(sprite))
     })
 })
 
 // 在幕结束时清理,每个容器下只保留一个Sprite
 StarNight.ActEvents.end.subscribe(({ temp: { stage } }) => {
-    stage.children.forEach((container) => {
-        container.children.slice(1).forEach((sprite) => sprite.destroy())
+    stage.children[0].children.forEach((container) => {
+        container.internal.children[0].children.slice(0, -1).forEach((sprite) => sprite.destroy())
     })
 })
 
-export type ImageSetCommandArgs = { id: string, src: string, z?: number }
+export type ImageSetCommandArgs = { id: ImageTargetSprite | ImageTargetBackground, src: string, z?: number }
 
-export const set = NonBlocking<ImageSetCommandArgs>(({ state, temp: { stage } }) => ({ id, src, z }) => {
-    const container = stage.children.find((e) => e.name === id)
-        || stage.addChild(new MultiOffsetContainer<SideEffectLazySprite>({ name: id }))
-    const sprite = new SideEffectLazySprite(src)
-    if (!isUndefined(z)) container.zIndex = z
-    if (!state.isInitializing()) sprite.load()
-    container.addChildAt(sprite, 0)
-})
+export const set = NonBlocking<ImageSetCommandArgs>(
+    ({ state, ui: { view }, temp: { stage } }) =>
+        ({ id, src, z }) => {
+            // 外层容器用于动画预设,内层容器用于普通动画
+            let outerContainer: ImageItem
+            let innerContainer: ImageItem['children'][number]
+            const sprite = new SrcSprite(src)
+            // 启用此句即可实现立绘切换的交叉溶解效果
+            // if (id !== 1) sprite.blendMode = BLEND_MODES.ADD
+            if (find(id, stage)) {
+                outerContainer = find(id, stage)!
+                innerContainer = outerContainer.children[0]
+            } else {
+                outerContainer = new LabelContainer(id)
+                innerContainer = new Container()
+                outerContainer.addChild(innerContainer)
+                const { width, height } = view
+                const layer = new RenderLayerSprite(
+                    outerContainer, { width, height }
+                )
+                stage.children[0].addChild(layer)
+            }
+            if (!state.isInitializing()) load(sprite)
+            if (!isUndefined(z)) outerContainer.zIndex = z
+            innerContainer.addChild(sprite)
+        }
+)
 
 export type ImageCloseCommandArgs = MergeExclusive<
-    { target: ImageTargetSprite | Array<ImageTargetSprite> },
-    { exclude?: ImageTargetSprite | Array<ImageTargetSprite> }
+    { target: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> },
+    { exclude?: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> }
 >
 
-export const close = NonBlocking<ImageCloseCommandArgs>(({ temp: { stage } }) => ({ target, exclude }) => {
-    target = isString(target) ? [target] : target
-    exclude = isString(exclude) ? [exclude] : isUndefined(exclude) ? [] : exclude
-    if (target) {
-        stage.children
-            .filter((container) => target.includes(container.name!))
-            .forEach((container) => stage.removeChild(container))
-    } else {
-        stage.children
-            .filter((container) => !exclude.includes(container.name!))
-            .forEach((container) => stage.removeChild(container))
-    }
-})
+export const close = NonBlocking<ImageCloseCommandArgs>(
+    ({ temp: { stage } }) =>
+        ({ target: _target, exclude: _exclude }) => {
+            const target: Array<unknown> = Array.isArray(_target) ? _target : isUndefined(_target) ? [] : [_target]
+            const exclude: Array<unknown> = Array.isArray(_exclude) ? _exclude : isUndefined(_exclude) ? [] : [_exclude]
+            if (target.length > 0) {
+                stage.children[0].children
+                    .filter((layer) => target.includes(layer.internal.label))
+                    .forEach((layer) => stage.children[0].removeChild(layer))
+            } else {
+                stage.children[0].children
+                    .filter((layer) => !exclude.includes(layer.internal.label))
+                    .forEach((layer) => stage.children[0].removeChild(layer))
+            }
+        }
+)
 
 export type ImageTweenCommandArgs =
     Except<
@@ -144,15 +196,14 @@ export type ImageTweenCommandArgs =
         'zIndex' | 'positionX' | 'positionY' | 'resolution' | 'fillColor' | 'lineColor'
         | 'tilePosition' | 'tilePositionX' | 'tilePositionY' | 'tileScale' | 'tileScaleX' | 'tileScaleY' | 'tileX' | 'tileY'
     >
-    & ({ target: ImageTargetStage, ease?: TweenCommandArgs['ease'], duration?: number }
-        | { target: ImageTargetSprite, ease?: TweenCommandArgs['ease'], duration?: number, inherit?: boolean }
-    )
+    & { ease?: TweenCommandArgs['ease'], duration?: number }
+    & ({ target: ImageTargetStage } | { target: ImageTargetSprite | ImageTargetBackground, inherit?: boolean })
 
 export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>
         function* ({ target: _target, inherit = true, duration, ...args }) {
-            const container = _target === 0 ? undefined : stage.children.find((e) => e.name === _target)
-            const target = _target === 0 ? stage : inherit ? container : container?.getChildAt(0)
+            const container = find(_target, stage)?.children[0]
+            const target = inherit ? container : container?.children.slice(-1)[0]
             if (isUndefined(target)) return
             yield Tween.apply({ target, duration, pixi: args })
         }
@@ -161,7 +212,7 @@ export const tween = DynamicMacro<ImageTweenCommandArgs>(
 export type ImageFilterCommandArgs = { target: ImageTarget, filter: Filter }
 
 export const filter = NonBlocking<ImageFilterCommandArgs>(({ temp: { stage } }) => ({ target: _target, filter }) => {
-    const target = _target === 0 ? stage : stage.getChildByName(_target)
+    const target = find(_target, stage)
     if (target) {
         if (target.filters) target.filters.push(filter)
         else target.filters = [filter]
@@ -184,11 +235,11 @@ export const animation_effect = EffectScope(
     Dynamic<ImageAnimationEffectCommandArgs>(
         ({ temp: { stage } }) =>
             function* ({ target: _target, preset, x = 0, y = 0, duration }) {
-                const target = _target === 0 ? stage : stage.children.find((e) => e.name === _target)
+                const target = find(_target, stage)
                 if (isUndefined(target)) return
                 yield new Promise((res) =>
                     gsap.to(target, {
-                        x1: x, y1: y,
+                        pixi: { x, y },
                         ease: AnimationEffectPersets[preset],
                         duration: duration / 1000,
                         onComplete: res

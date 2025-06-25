@@ -1,5 +1,5 @@
-import type { 关闭图像命令参数别名, 用户输入命令参数别名, 用户选择命令参数别名, 预设动画命令参数别名 } from './translation'
-import type { CommandTagBlocking, CommandTagNonBlocking } from '@starnight/core'
+import type { 用户输入命令参数别名, 用户选择命令参数别名, 预设动画命令参数别名 } from './translation'
+import type { CommandTagBlocking } from '@starnight/core'
 import { Blocking, DynamicMacro } from '@starnight/core'
 import { MergedCommands } from '../../index'
 import { Alias, Api, flipObject } from '../../Translate'
@@ -42,7 +42,7 @@ export const 预设动画 = Api(
 
 export const 关闭图像 = Api(
     Alias(MergedCommands.Image.close, Object.assign(通用命令参数别名, {} as const))
-) as ((arg0: 关闭图像命令参数别名) => void) & CommandTagNonBlocking
+)
 
 export const 清空立绘 = Api(MergedCommands.Image.clean)
 

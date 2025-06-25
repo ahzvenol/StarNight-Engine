@@ -1,5 +1,4 @@
-import type { ImageTarget, AnimationPresetEffectKeys, ImageTargetSprite } from '../../base/image'
-import type { MergeExclusive } from 'type-fest'
+import type { ImageTarget, AnimationPresetEffectKeys } from '../../base/image'
 
 export const 通用命令参数别名 = {
     id: '标识符',
@@ -57,12 +56,6 @@ export const 音频命令参数别名 = {
 } as const
 
 export const 预设动画别名 = { shake: '震动', punch: '摇晃' } as const satisfies Record<AnimationPresetEffectKeys, string>
-
-export type 关闭图像命令参数别名 =
-MergeExclusive<
-    { 作用目标: ImageTargetSprite | Array<ImageTargetSprite> },
-    { 排除目标?: ImageTargetSprite | Array<ImageTargetSprite> }
->
 
 export type 预设动画命令参数别名 =
     { 作用目标: ImageTarget, 预设名称: (typeof 预设动画别名)[AnimationPresetEffectKeys], 缓动时间: number }
