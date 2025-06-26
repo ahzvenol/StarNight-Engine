@@ -3,36 +3,38 @@ import { ActScope, NonBlocking, StarNight } from '@starnight/core'
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
-        clickstate: Reactive<boolean>
+        state: Reactive<GameUIStateData>
     }
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.clickstate = StarNight.useReactive(true)
+    ui.state = StarNight.useReactive({}) as Reactive<GameUIStateData>
 })
 
+interface GameUIStateData {
+    click: boolean
+}
+
+StarNight.GameEvents.setup.subscribe(({ ui: { state } }) => state.click(true))
+
 export const click = NonBlocking<boolean>(
-    ({ ui: { clickstate } }) =>
+    ({ ui: { state: { click } } }) =>
         (enable) => {
-            clickstate(enable)
+            click(enable)
         }
 )
 
-declare module '@starnight/core' {
-    interface GameUIInternalData {
-        boxstate: Reactive<boolean>
-    }
+interface GameUIStateData {
+    box: boolean
 }
 
-StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.boxstate = StarNight.useReactive(true)
-})
+StarNight.GameEvents.setup.subscribe(({ ui: { state } }) => state.box(true))
 
 export const box = ActScope(
     NonBlocking<boolean>(
-        ({ ui: { boxstate } }) =>
+        ({ ui: { state: { box } } }) =>
             (enable) => {
-                boxstate(enable)
+                box(enable)
             }
     )
 )

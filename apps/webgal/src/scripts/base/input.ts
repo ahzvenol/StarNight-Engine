@@ -2,109 +2,102 @@ import type { CommandTagBlocking, GameRuntimeContext, Reactive } from '@starnigh
 import { Blocking, DynamicBlocking, GameState, StarNight } from '@starnight/core'
 import { System } from './index'
 
-declare module '@starnight/core' {
-    interface GameUIInternalData {
-        clickinput: Reactive<null | InputResolve<void>['resolve']>
-    }
-}
-
-StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.clickinput = StarNight.useReactive(null)
-})
-
-export const click = DynamicBlocking(
-    ({ ui: { clickinput } }) =>
-        function* () {
-            const { promise, resolve } = Promise.withResolvers<void>()
-            clickinput(() => resolve)
-            yield promise
-            clickinput(() => null)
-        }
-)
-
 type InputResolve<T> = { resolve: Function1<T, void> }
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
-        iframeinput: Reactive<null | (IframeInput & InputResolve<unknown>)>
+        input: Reactive<GameUIInputData>
     }
 }
 
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
+    ui.input = StarNight.useReactive({}) as Reactive<GameUIInputData>
+})
+
+interface GameUIInputData {
+    click: null | InputResolve<void>['resolve']
+}
+
+StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.click(null))
+
+export const click = DynamicBlocking(
+    ({ ui: { input: { click } } }) =>
+        function* () {
+            const { promise, resolve } = Promise.withResolvers<void>()
+            click(() => resolve)
+            yield promise
+            click(() => null)
+        }
+)
+
 type IframeInput = { src: string }
 
-StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.iframeinput = StarNight.useReactive(null)
-})
+interface GameUIInputData {
+    iframe: null | (IframeInput & InputResolve<unknown>)
+}
+
+StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.iframe(null))
 
 export const iframe = Blocking<IframeInput, unknown>(
     (context) =>
         async ({ src }) => {
-            const { ui: { iframeinput } } = context
+            const { ui: { input: { iframe } } } = context
             const { promise, resolve } = Promise.withResolvers<unknown>()
-            iframeinput(() => ({ src, resolve }))
+            iframe(() => ({ src, resolve }))
             const res = await System.input(() => promise)(context)
-            iframeinput(() => null)
+            iframe(() => null)
             return res
         }
 )
 
-declare module '@starnight/core' {
-    interface GameUIInternalData {
-        textinput: Reactive<null | (TextInput & InputResolve<string>)>
-    }
-}
-
 type TextInput = { text: string } | void
 
-StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.textinput = StarNight.useReactive(null)
-})
+interface GameUIInputData {
+    text: null | (TextInput & InputResolve<string>)
+}
+
+StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.text(null))
 
 export const text = Blocking<TextInput, string>(
     (context) =>
         async (args) => {
-            const { ui: { textinput } } = context
+            const { ui: { input: { text } } } = context
             const { promise, resolve } = Promise.withResolvers<string>()
-            textinput(
-                Object.assign({ resolve }, args || {}) as TextInput & { resolve: Function1<string, void> }
+            text(
+                Object.assign({ resolve }, args || {}) as TextInput & { resolve: (value: string) => void }
             )
             const res = await System.input(() => promise)(context)
-            textinput(() => null)
+            text(() => null)
             return res
         }
 )
+
+type ChoiceItem<T extends number | string> = { id: T, text: string, disable?: true }
 
 declare module '@starnight/core' {
     interface GameConfig {
         stopfastonchoice: boolean
         stopautoonchoice: boolean
     }
-    interface GameUIInternalData {
-        choices: Reactive<Array<ChoiceItem<number | string> & InputResolve<void>> | null>
-    }
 }
 
-type ChoiceItem<T extends number | string> = {
-    id: T
-    text: string
-    disable?: true
+interface GameUIInputData {
+    choices: Array<ChoiceItem<number | string> & InputResolve<void>> | null
 }
 
-StarNight.GameEvents.setup.subscribe(({ ui }) => {
-    ui.choices = StarNight.useReactive(null)
-})
+StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.choices(null))
 
 export const choose = Blocking(
     (context) =>
         async (arg0) => {
-            const { state, config, ui, output } = context
+            const { state, config, ui: { input }, output } = context
             const choices = arg0.map((item) => {
                 const { promise, resolve } = Promise.withResolvers<number | string>()
                 return { ...item, promise, resolve: () => resolve(item.id) }
             })
-            ui.choices(choices)
+            input.choices(choices)
             const chosen = await System.input(() => Promise.race(choices.map((e) => e.promise)))(context)
-            ui.choices(null)
+            input.choices(null)
             if (config.stopfastonchoice() && state.isFast()) output.state(GameState.Normal)
             if (config.stopautoonchoice() && state.isAuto()) output.state(GameState.Normal)
             return chosen

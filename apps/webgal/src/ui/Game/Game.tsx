@@ -37,7 +37,7 @@ export const Game: Component = () => {
     )
 
     createEffect(() => {
-        if (ui().clickstate()) {
+        if (ui().state.click()) {
             useKeyPress('Space', click)
             useKeyPress('Enter', click)
         }
@@ -45,32 +45,32 @@ export const Game: Component = () => {
     return (
         <Content>
             <Stage />
-            <Show when={showBox() && ui().boxstate() && !ui().choices() && GUIGameRootState() !== 'Backlog'}>
+            <Show when={showBox() && ui().state.box() && !ui().input.choices() && GUIGameRootState() !== 'Backlog'}>
                 <TextBox />
             </Show>
             <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => showBox(false)} />
             <Show when={!showBox()}>
                 <div class={styles.Game_mask} onClick={() => showBox(true)} onContextMenu={() => showBox(true)} />
             </Show>
-            <Show when={showBox() && ui().boxstate() && GUIGameRootState() !== 'Backlog'}>
+            <Show when={showBox() && ui().state.box() && GUIGameRootState() !== 'Backlog'}>
                 <ControlPanel />
             </Show>
-            <Show when={ui().clickinput()}>
-                <div class={styles.Game_mask} onClick={() => ui().clickinput()} />
+            <Show when={ui().input.click()}>
+                <div class={styles.Game_mask} onClick={() => ui().input.click()} />
             </Show>
-            <Show when={ui().textinput()}>
+            <Show when={ui().input.text()}>
                 <TextInput />
             </Show>
-            <Show when={ui().choices()}>
+            <Show when={ui().input.choices()}>
                 <Choice />
             </Show>
             <Show when={ui().video()}>
                 <Video />
             </Show>
-            <Show when={!ui().clickstate()}>
+            <Show when={!ui().state.click()}>
                 <div class={styles.Game_mask} />
             </Show>
-            <Show when={ui().iframeinput()}>
+            <Show when={ui().input.iframe()}>
                 <Iframe />
             </Show>
         </Content>

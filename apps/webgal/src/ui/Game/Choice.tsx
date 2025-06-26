@@ -8,12 +8,12 @@ import styles from './Choice.module.scss'
 export const Choice: Component = () => {
     return (
         <div ref={stopPropagation('click')} class={styles.Game_Choice_container}>
-            <For each={ui().choices()}>
+            <For each={ui().input.choices()}>
                 {(choice) => (
                     <div
                         ref={useSoundEffect('Click', 'Enter')}
                         class={choice.disable ? styles.Game_Choice_item_disabled : styles.Game_Choice_item}
-                        onClick={() => choice.resolve}
+                        onClick={() => choice.resolve()}
                     >
                         {choice.text}
                     </div>
