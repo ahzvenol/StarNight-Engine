@@ -190,14 +190,23 @@ export const close = NonBlocking<ImageCloseCommandArgs>(
         }
 )
 
-export type ImageTweenCommandArgs =
-    Except<
-        PixiPlugin.Vars,
-        'zIndex' | 'positionX' | 'positionY' | 'resolution' | 'fillColor' | 'lineColor'
-        | 'tilePosition' | 'tilePositionX' | 'tilePositionY' | 'tileScale' | 'tileScaleX' | 'tileScaleY' | 'tileX' | 'tileY'
-    >
+type OmitIndexSignature<T> = {
+    [K in keyof T as
+    string extends K ? never :
+        number extends K ? never :
+            K
+    ]: T[K];
+}
+
+export type ImageTweenArgs = OmitIndexSignature<Except<
+    PixiPlugin.Vars,
+    'zIndex' | 'positionX' | 'positionY' | 'resolution' | 'fillColor' | 'lineColor' | 'rotation' | 'autoAlpha' | 'tint'
+    | 'tilePosition' | 'tilePositionX' | 'tilePositionY' | 'tileScale' | 'tileScaleX' | 'tileScaleY' | 'tileX' | 'tileY'
+>>
+
+export type ImageTweenCommandArgs = ImageTweenArgs
     & { ease?: TweenCommandArgs['ease'], duration?: number }
-    & ({ target: ImageTargetStage } | { target: ImageTargetSprite | ImageTargetBackground, inherit?: boolean })
+    & ({ target: ImageTargetStage, inherit?: never } | { target: ImageTargetSprite | ImageTargetBackground, inherit?: false })
 
 export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>

@@ -1,20 +1,21 @@
-import type { ImageTarget, AnimationPresetEffectKeys } from '../../base/image'
+import type { ImageTarget, AnimationPresetEffectKeys, ImageTargetBackground, ImageTargetSprite, ImageTargetStage, ImageTweenArgs } from '../../base/image'
+import type { TweenCommandArgs } from '@/scripts/base/tween'
 
 export const 通用命令参数别名 = {
     id: '标识符',
     src: '资源路径',
     target: '作用目标',
-    duration: '缓动时间'
+    duration: '持续时间'
 } as const
 
 export const 图像命令参数别名 = {
+    inherit: '继承',
     z: '图层高度',
     alpha: '透明度',
     anchor: '锚点',
     anchorX: 'X轴锚点',
     anchorY: 'Y轴锚点',
-    angle: '角度',
-    autoAlpha: '自动透明度',
+    angle: '旋转角度',
     blur: '模糊',
     blurX: '横向模糊',
     blurY: '纵向模糊',
@@ -32,7 +33,6 @@ export const 图像命令参数别名 = {
     pivotX: 'X轴中心点',
     pivotY: 'Y轴中心点',
     position: '坐标',
-    rotation: '旋转角度',
     saturation: '饱和度',
     scale: '缩放',
     scaleX: 'X轴缩放',
@@ -40,9 +40,7 @@ export const 图像命令参数别名 = {
     skew: '斜切',
     skewX: 'X轴斜切',
     skewY: 'Y轴斜切',
-    tint: '染色',
     width: '宽度',
-    inherit: '切换图像时继承',
     x: 'X坐标',
     y: 'Y坐标',
     ease: '缓动函数'
@@ -52,10 +50,15 @@ export const 音频命令参数别名 = {
     volume: '音量',
     html5: '使用HTML5',
     loop: '循环播放',
-    rate: '播放速率'
+    rate: '播放速度'
 } as const
 
 export const 预设动画别名 = { shake: '震动', punch: '摇晃' } as const satisfies Record<AnimationPresetEffectKeys, string>
+
+export type 添加动画命令参数别名 =
+    { [K in keyof ImageTweenArgs as typeof 图像命令参数别名[K]]: ImageTweenArgs[K] }
+    & { 缓动函数?: TweenCommandArgs['ease'], 缓动时间?: number }
+    & ({ 作用目标: ImageTargetStage } | { 作用目标: ImageTargetSprite | ImageTargetBackground, 继承?: false })
 
 export type 预设动画命令参数别名 =
     { 作用目标: ImageTarget, 预设名称: (typeof 预设动画别名)[AnimationPresetEffectKeys], 缓动时间: number }
