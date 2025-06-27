@@ -60,19 +60,19 @@ export class AssetLoader {
         const promise = new Promise<MediaElement>((resolve, reject) => {
             if (IMAGE_EXTENSIONS.includes(extension)) {
                 const img = new Image()
-                img.src = url
-                img.onloadeddata = () => resolve(img)
+                img.onload = () => resolve(img)
                 img.onerror = () => reject('加载失败')
+                img.src = url
             } else if (AUDIO_EXTENSIONS.includes(extension)) {
                 const audio = new Audio()
-                audio.src = url
                 audio.oncanplay = () => resolve(audio)
                 audio.onerror = () => reject('加载失败')
+                audio.src = url
             } else if (VIDEO_EXTENSIONS.includes(extension)) {
                 const video = document.createElement('video')
-                video.src = url
                 video.oncanplay = () => resolve(video)
                 video.onerror = () => reject('加载失败')
+                video.src = url
             } else {
                 return reject('未知文件类型,未知的扩展名')
             }
