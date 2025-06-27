@@ -1,4 +1,4 @@
-import { NonBlocking } from '@starnight/core'
+import { ActScope, NonBlocking } from '@starnight/core'
 
 declare module '@starnight/core' {
     interface GameGlobalData {
@@ -6,10 +6,16 @@ declare module '@starnight/core' {
     }
 }
 
-// 目前看来解锁的名称应该很少重复,可以共用同一个数组记录
-export const unlock = NonBlocking<string>(({ global }) => (target) => {
-    if (!global.unlocked().includes(target)) global.unlocked([target, ...global.unlocked()])
-})
+export const unlock = ActScope(
+    NonBlocking<string>(
+        ({ global }) =>
+            (target) => {
+                if (!global.unlocked().includes(target)) {
+                    global.unlocked([target, ...global.unlocked()])
+                }
+            }
+    )
+)
 
 declare module '@starnight/core' {
     interface GameGlobalData {

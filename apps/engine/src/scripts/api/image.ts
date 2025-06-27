@@ -8,13 +8,16 @@ export const close =
 NonBlockingMacro<{ target: NonNullable<ImageCloseCommandArgs['target']> } & { duration?: ImageTweenCommandArgs['duration'] }>(
     () =>
         function* ({ duration = 225, target: _target }) {
-            const targets = Array.isArray(_target) ? _target : [_target]
-            for (const target of targets) {
-                yield Fork(
-                    async function* () {
-                        yield Image.tween({ target: target, inherit: false, alpha: 0, duration })
-                    }
-                )
+            if (!duration) yield Image.close({ target: _target })
+            else {
+                const targets = Array.isArray(_target) ? _target : [_target]
+                for (const target of targets) {
+                    yield Fork(
+                        async function* () {
+                            yield Image.tween({ target, inherit: false, alpha: 0, duration })
+                        }
+                    )
+                }
             }
         }
 )

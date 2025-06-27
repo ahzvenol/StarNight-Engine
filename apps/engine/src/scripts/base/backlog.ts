@@ -20,8 +20,9 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
 })
 
 export const add = NonBlocking<BacklogCommandArgs>(
-    ({ current, config, ui: { backlog } }) =>
+    ({ local, current, config, ui: { backlog } }) =>
         ({ text, name, clip }) => {
+            if (current.count() < local.count - config.backlogmaxlength()) return
             backlog().unshift({ local: cloneDeep(current()), text, name, clip })
             if (backlog().length > config.backlogmaxlength()) backlog().pop()
         }

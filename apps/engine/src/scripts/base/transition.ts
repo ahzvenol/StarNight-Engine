@@ -18,8 +18,8 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.transition = StarNight.useReactive(null)
 })
 
-export const apply = ActScope<TransitionTypes, void>(
-    Dynamic(
+export const apply = ActScope(
+    Dynamic<TransitionTypes, void>(
         (context) =>
             function* (arg0) {
                 const transition = TransitionPersets[arg0]
