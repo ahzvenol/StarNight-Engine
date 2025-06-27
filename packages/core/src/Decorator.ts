@@ -10,7 +10,7 @@ import type {
     StandardResolvedCommand
 } from './types/Command'
 import type { GameFragment, GameMacro } from './types/Game'
-import { run } from './utils/runGenerator'
+import { noop } from 'es-toolkit'
 
 // 只在本幕内产生效果的命令,由此不需要初始化
 export function ActScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardNonBlockingCommand<T, R | void>
@@ -42,12 +42,35 @@ function normalize<R>(output: Function0<R>): Promise<R> {
     return new Promise((res) => res(output())).catch((error) => console.error('命令运行出错:', error)) as Promise<R>
 }
 
+// Dynamic核心函数,实现了同步/异步转换
+async function runGenerator<TRetrun>(
+    generator: Generator<Promise<unknown>, TRetrun, void>,
+    { rush, stop }: { rush: Promise<unknown>, stop: Promise<unknown> }
+): Promise<TRetrun | undefined> {
+    let flag: 'Normal' | 'Rush' | 'Stop' = 'Normal'
+
+    while (true) {
+        // 释放阻塞可能导致接下来的命令执行
+        if (flag === 'Stop') return new Promise(noop)
+        const { value, done } = generator.next()
+        if (!done) {
+            if (flag !== 'Rush') {
+                flag = await Promise.race([
+                    value.then(() => 'Normal' as const),
+                    rush.then(() => 'Rush' as const),
+                    stop.then(() => 'Stop' as const)
+                ])
+            }
+        } else return value
+    }
+}
+
 // 具有一定的执行时间,但也可以立即完成命令行为,由引擎调度是否阻塞的动态命令
 export function Dynamic<T = void, R = void>(fn: DynamicCommand<T, R>): StandardDynamicCommand<T, R> {
     return ((args) => async (context) => {
         const { onActRush: rush, onGameStop: stop } = context
         const generator = fn(context)(args)
-        return normalize(() => run(generator, { rush, stop })) as Promise<R>
+        return normalize(() => runGenerator(generator, { rush, stop })) as Promise<R>
     }) as StandardDynamicCommand<T, R>
 }
 
@@ -56,7 +79,7 @@ export function DynamicBlocking<T = void, R = void>(fn: DynamicCommand<T, R>): S
     return ((args) => async (context) => {
         const { onActRush: rush, onGameStop: stop } = context
         const generator = fn(context)(args)
-        return normalize(() => run(generator, { rush, stop })) as Promise<R>
+        return normalize(() => runGenerator(generator, { rush, stop })) as Promise<R>
     }) as StandardBlockingCommand<T, R>
 }
 
