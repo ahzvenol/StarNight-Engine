@@ -15,13 +15,14 @@ import { TextBox } from './TextBox'
 import { TextInput } from './TextInput'
 import { Video } from './Video'
 import { Iframe } from './Iframe'
+import { Transition } from './Transition'
 
-export const showBox = useSignal(true)
+export const showUI = useSignal(true)
 
 export const Game: Component = () => {
     log.info('GameUI组件函数被调用')
 
-    showBox(true)
+    showUI(true)
 
     // 为点击设置0.1秒节流
     const click = throttle(
@@ -37,40 +38,45 @@ export const Game: Component = () => {
     )
 
     createEffect(() => {
-        if (ui().state.click()) {
+        if (ui().state.click() === 0) {
             useKeyPress('Space', click)
             useKeyPress('Enter', click)
         }
     })
+
+    const showControlPanel = () => showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'
     return (
         <Content>
             <Stage />
-            <Show when={showBox() && ui().state.box() && !ui().input.choices() && GUIGameRootState() !== 'Backlog'}>
+            <Show when={showControlPanel() && ui().input.choices() === null}>
                 <TextBox />
             </Show>
-            <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => showBox(false)} />
-            <Show when={!showBox()}>
-                <div class={styles.Game_mask} onClick={() => showBox(true)} onContextMenu={() => showBox(true)} />
+            <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => showUI(false)} />
+            <Show when={!showUI()}>
+                <div class={styles.Game_mask} onClick={() => showUI(true)} onContextMenu={() => showUI(true)} />
             </Show>
-            <Show when={showBox() && ui().state.box() && GUIGameRootState() !== 'Backlog'}>
+            <Show when={showControlPanel()}>
                 <ControlPanel />
             </Show>
-            <Show when={ui().input.click()}>
-                <div class={styles.Game_mask} onClick={() => ui().input.click()} />
+            <Show when={ui().input.click() !== null}>
+                <div class={styles.Game_mask} onClick={ui().input.click()!} />
             </Show>
-            <Show when={ui().input.text()}>
+            <Show when={ui().transition() !== null}>
+                <Transition />
+            </Show>
+            <Show when={ui().input.text() !== null}>
                 <TextInput />
             </Show>
-            <Show when={ui().input.choices()}>
+            <Show when={ui().input.choices() !== null}>
                 <Choice />
             </Show>
-            <Show when={ui().video()}>
+            <Show when={ui().video() !== null}>
                 <Video />
             </Show>
-            <Show when={!ui().state.click()}>
+            <Show when={ui().state.click() !== 0}>
                 <div class={styles.Game_mask} />
             </Show>
-            <Show when={ui().input.iframe()}>
+            <Show when={ui().input.iframe() !== null}>
                 <Iframe />
             </Show>
         </Content>

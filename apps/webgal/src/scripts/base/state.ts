@@ -12,29 +12,29 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
 })
 
 interface GameUIStateData {
-    click: boolean
+    click: number
 }
 
-StarNight.GameEvents.setup.subscribe(({ ui: { state } }) => state.click(true))
+StarNight.GameEvents.setup.subscribe(({ ui: { state } }) => state.click(0))
 
 export const click = NonBlocking<boolean>(
     ({ ui: { state: { click } } }) =>
         (enable) => {
-            click(enable)
+            click((num) => enable ? (num > 0 ? num - 1 : 0) : num + 1)
         }
 )
 
 interface GameUIStateData {
-    box: boolean
+    ui: number
 }
 
-StarNight.GameEvents.setup.subscribe(({ ui: { state } }) => state.box(true))
+StarNight.GameEvents.setup.subscribe(({ ui: { state } }) => state.ui(0))
 
-export const box = ActScope(
+export const ui = ActScope(
     NonBlocking<boolean>(
-        ({ ui: { state: { box } } }) =>
+        ({ ui: { state: { ui } } }) =>
             (enable) => {
-                box(enable)
+                ui((num) => enable ? (num > 0 ? num - 1 : 0) : num + 1)
             }
     )
 )

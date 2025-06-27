@@ -20,7 +20,7 @@ import { useDialog } from '@/ui/GlobalDialog/GlobalDialog'
 import { GUIRootState } from '@/ui/GUIRoot'
 import { useSoundEffect } from '../useSoundEffect'
 import { translation } from '../translations'
-import { showBox } from './Game'
+import { showUI } from './Game'
 import styles from './ControlPanel.module.scss'
 
 export const ControlPanel: Component = () => {
@@ -43,7 +43,7 @@ export const ControlPanel: Component = () => {
                     class={styles.Game_ControlPanel_button}
                     style={{ 'font-size': fsize() }}
                     ref={useSoundEffect('Click', 'Enter')}
-                    onClick={() => showBox(false)}
+                    onClick={() => showUI(false)}
                 >
                     <PreviewCloseOne class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.hide()}</span>
