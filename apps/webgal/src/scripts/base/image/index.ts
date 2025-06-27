@@ -228,28 +228,28 @@ export const filter = NonBlocking<ImageFilterCommandArgs>(({ temp: { stage } }) 
     }
 })
 
-export type ImageAnimationEffectCommandArgs =
-    { target: ImageTarget, preset: AnimationPresetEffectKeys, duration: number }
+export type ImageAnimationCommandArgs =
+    { target: ImageTarget, type: AnimationTypes, duration: number }
     & ({ x: number, y?: number } | { x?: number, y: number })
 
 const shake = (p: number) => (p === 0 || p === 1) ? 0 : random(p - 1, 1 - p)
 
 const punch = (p: number) => (p === 0 || p === 1) ? 0 : Math.pow(2, -10 * p) * Math.sin((20 * Math.PI * p) / 3)
 
-const AnimationEffectPersets = { shake, punch } as const
+const AnimationPersets = { shake, punch } as const
 
-export type AnimationPresetEffectKeys = keyof typeof AnimationEffectPersets
+export type AnimationTypes = keyof typeof AnimationPersets
 
-export const animation_effect = EffectScope(
-    Dynamic<ImageAnimationEffectCommandArgs>(
+export const animation = EffectScope(
+    Dynamic<ImageAnimationCommandArgs>(
         ({ temp: { stage } }) =>
-            function* ({ target: _target, preset, x = 0, y = 0, duration }) {
+            function* ({ target: _target, type, x = 0, y = 0, duration }) {
                 const target = find(_target, stage)
                 if (isUndefined(target)) return
                 yield new Promise((res) =>
                     gsap.to(target, {
                         pixi: { x, y },
-                        ease: AnimationEffectPersets[preset],
+                        ease: AnimationPersets[type],
                         duration: duration / 1000,
                         onComplete: res
                     })

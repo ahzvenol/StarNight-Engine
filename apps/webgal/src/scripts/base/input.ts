@@ -15,7 +15,7 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
 })
 
 interface GameUIInputData {
-    click: null | InputResolve<void>['resolve']
+    click: null | InputResolve<unknown>['resolve']
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.click(null))
@@ -23,7 +23,7 @@ StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.click(null))
 export const click = DynamicBlocking(
     ({ ui: { input: { click } } }) =>
         function* () {
-            const { promise, resolve } = Promise.withResolvers<void>()
+            const { promise, resolve } = Promise.withResolvers()
             click(() => resolve)
             yield promise
             click(() => null)

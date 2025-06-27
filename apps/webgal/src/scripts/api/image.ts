@@ -22,7 +22,7 @@ NonBlockingMacro<{ target: NonNullable<ImageCloseCommandArgs['target']> } & { du
 
 export const clean = NonBlocking((context) => () => Image.close({ exclude: 1 })(context))
 
-export const animation_effect = Image.animation_effect
+export const animation = Image.animation
 
 export const tween = Image.tween
 
@@ -37,7 +37,7 @@ export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
             yield Image.set({ id: args.id, src: args.src, z: args.z })
             yield Image.tween({ target: args.id, inherit: false, alpha: 0, duration: 0 })
             yield Image.tween({ target: args.id, ease: 'power1.in', inherit: false, alpha: 1, duration })
-            yield Image.tween({ target: args.id, inherit: true, ...omit(args, ['src']), duration: 0 })
+            yield Image.tween({ target: args.id, ...omit(args, ['src']), duration: 0 })
         }
 )
 

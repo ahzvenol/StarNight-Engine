@@ -171,12 +171,12 @@ export const 添加滤镜 = Api(
 )
 
 /**
- * 为指定目标应用预设动画效果。
+ * 为指定目标应用动画效果。
  * @remarks
- * - 预设动画会作为独立效果与主动画序列同时运行，但同一时间只应运行一个预设动画
+ * - 动画效果会独立于主动画序列同时运行，但同一时间只应运行一个动画效果。
  * @param 参数对象
  * @param .作用目标 - 动画应用的目标标识符，舞台的标识符为0，背景的标识符为1（必需）
- * @param .预设名称 - 预设动画名称，如 "震动" 或 "摇晃"（必需）
+ * @param .预设名称 - 动画效果名称，如 "震动" 或 "摇晃"（必需）
  * @param .持续时间 - 动画持续时间，单位毫秒（必需）
  * @param .X轴幅度 - 横向动画幅度（可选，需至少提供 X轴幅度 或 Y轴幅度 两个参数中的一个）
  * @param .Y轴幅度 - 纵向动画幅度（可选，需至少提供 X轴幅度 或 Y轴幅度 两个参数中的一个）
@@ -187,9 +187,9 @@ export const 预设动画 = Api(
     DynamicMacro<预设动画命令参数别名>(
         () =>
             function* ({ 作用目标, 预设名称, 持续时间, X轴幅度, Y轴幅度 }) {
-                yield MergedCommands.Image.animation_effect({
+                yield MergedCommands.Image.animation({
                     target: 作用目标,
-                    preset: flipObject(预设动画别名)[预设名称],
+                    type: flipObject(预设动画别名)[预设名称],
                     duration: 持续时间,
                     x: X轴幅度 as unknown as number,
                     y: Y轴幅度 as unknown as number
@@ -313,6 +313,16 @@ export const 关闭音频 = Api(
 )
 
 /**
+ * 播放一段转场动画。
+ * @remarks
+ * - 转场动画用于场景切换，但不会自动处理背景或立绘的转场。
+ * @param 预设名称 - 转场动画名称（如 "BlindH8"）
+ * @example
+ * 转场效果("BlindH8")
+ */
+export const 转场效果 = Api(MergedCommands.Transition.apply)
+
+/**
  * 播放视频。
  * @param 参数对象
  * @param .资源路径 - 视频的文件路径（必需）
@@ -373,16 +383,19 @@ export const 用户选择 = Api(
 export const 用户点击 = Api(MergedCommands.Input.click)
 
 /**
- * 显示或隐藏游戏界面。
- * @param 显示 - true 为显示，false 为隐藏
+ * 显示或隐藏游戏的 UI 界面（如文本框、选项栏等）。
+ * @remarks
+ * - 设置 `false` N 次，需相应设置 `true` N 次以复位。
+ * @param 状态 - true 为显示，false 为隐藏
  * @example
  * 显示界面(true)
  */
-export const 显示界面 = Api(MergedCommands.State.box)
+export const 显示界面 = Api(MergedCommands.State.ui)
 
 /**
  * 允许或禁止用户点击以继续剧情。
- * @param 允许 - true 为允许，false 为禁止
+ * - 设置 `false` N 次，需相应设置 `true` N 次以复位。
+ * @param 状态 - true 为允许，false 为禁止
  * @example
  * 允许点击(true)
  */
