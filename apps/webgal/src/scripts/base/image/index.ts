@@ -9,7 +9,7 @@ import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transfor
 import { Tween } from '../index'
 import { RenderLayerSprite } from './RenderLayerSprite'
 import { SrcSprite } from './SrcSprite'
-import { LabelContainer } from './LabelContainer'
+import { NestedContainer } from './NestedContainer'
 
 gsap.registerPlugin(PixiPlugin)
 PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
@@ -68,11 +68,12 @@ Transform.prototype.updateTransform = function (parentTransform: Transform): voi
     }
 }
 
-type ImageItem = LabelContainer<Container<SrcSprite>>
+// 第一层容器用于舞台特殊动画,第二层容器用于舞台动画,第三层容器用于元素特殊动画,第四层容器用于元素动画
+type ImageItem = NestedContainer<NestedContainer<NestedContainer<Container<SrcSprite>>>>
 
 type ImageLayer = RenderLayerSprite<ImageItem>
 
-type ImageStage = Container<Container<ImageLayer>>
+type ImageStage = Container<ImageLayer>
 
 export type ImageTargetStage = 0
 
@@ -106,12 +107,8 @@ function load(sprite: SrcSprite) {
     if (resource.source instanceof HTMLVideoElement) resource.source.muted = true
 }
 
-function find<T extends ImageTarget>(
-    target: T, stage: ImageStage
-): T extends ImageTargetStage ? ImageStage : ImageItem | undefined {
-    return (
-        target === 0 ? stage : stage.children[0].children.find((e) => e.internal.label === target)?.internal
-    ) satisfies ImageStage | ImageItem | undefined as T extends ImageTargetStage ? ImageStage : ImageItem
+function find(target: ImageTargetSprite | ImageTargetBackground, stage: ImageStage): ImageLayer | undefined {
+    return stage.children.find((layer) => layer.label === target)
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui: { view }, temp }) => {
@@ -126,15 +123,15 @@ StarNight.GameEvents.setup.subscribe(({ ui: { view }, temp }) => {
 })
 
 StarNight.GameEvents.ready.subscribe(({ temp: { stage } }) => {
-    stage.children[0].children.forEach((container) => {
-        container.internal.children[0].children.forEach((sprite) => load(sprite))
+    stage.children.forEach((layer) => {
+        layer.internal.internal.internal.internal.children.forEach((sprite) => load(sprite))
     })
 })
 
 // 在幕结束时清理,每个容器下只保留一个Sprite
 StarNight.ActEvents.end.subscribe(({ temp: { stage } }) => {
-    stage.children[0].children.forEach((container) => {
-        container.internal.children[0].children.slice(0, -1).forEach((sprite) => sprite.destroy())
+    stage.children.forEach((layer) => {
+        layer.internal.internal.internal.internal.children.slice(0, -1).forEach((sprite) => sprite.destroy())
     })
 })
 
@@ -143,28 +140,20 @@ export type ImageSetCommandArgs = { id: ImageTargetSprite | ImageTargetBackgroun
 export const set = NonBlocking<ImageSetCommandArgs>(
     ({ state, ui: { view }, temp: { stage } }) =>
         ({ id, src, z }) => {
-            // 外层容器用于动画预设,内层容器用于普通动画
-            let outerContainer: ImageItem
-            let innerContainer: ImageItem['children'][number]
+            let container: ImageItem | undefined
             const sprite = new SrcSprite(src)
             // 实现立绘切换的交叉溶解效果
             if (id !== 1) sprite.blendMode = BLEND_MODES.ADD
-            if (find(id, stage)) {
-                outerContainer = find(id, stage)!
-                innerContainer = outerContainer.children[0]
-            } else {
-                outerContainer = new LabelContainer(id)
-                innerContainer = new Container()
-                outerContainer.addChild(innerContainer)
+            container = find(id, stage)?.internal
+            if (!container) {
                 const { width, height } = view
-                const layer = new RenderLayerSprite(
-                    outerContainer, { width, height }
-                )
-                stage.children[0].addChild(layer)
+                container = new NestedContainer(new NestedContainer(new NestedContainer(new Container<SrcSprite>())))
+                const layer = new RenderLayerSprite(container, { width, height, label: id })
+                stage.addChild(layer)
             }
             if (!state.isInitializing()) load(sprite)
-            if (!isUndefined(z)) outerContainer.zIndex = z
-            innerContainer.addChild(sprite)
+            if (!isUndefined(z)) container.zIndex = z
+            container.internal.internal.internal.addChild(sprite)
         }
 )
 
@@ -179,13 +168,13 @@ export const close = NonBlocking<ImageCloseCommandArgs>(
             const target: Array<unknown> = Array.isArray(_target) ? _target : isUndefined(_target) ? [] : [_target]
             const exclude: Array<unknown> = Array.isArray(_exclude) ? _exclude : isUndefined(_exclude) ? [] : [_exclude]
             if (target.length > 0) {
-                stage.children[0].children
-                    .filter((layer) => target.includes(layer.internal.label))
-                    .forEach((layer) => stage.children[0].removeChild(layer))
+                stage.children
+                    .filter((layer) => target.includes(layer.label))
+                    .forEach((layer) => stage.removeChild(layer))
             } else {
-                stage.children[0].children
-                    .filter((layer) => !exclude.includes(layer.internal.label))
-                    .forEach((layer) => stage.children[0].removeChild(layer))
+                stage.children
+                    .filter((layer) => !exclude.includes(layer.label))
+                    .forEach((layer) => stage.removeChild(layer))
             }
         }
 )
@@ -210,9 +199,13 @@ export type ImageTweenCommandArgs = ImageTweenArgs
 
 export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>
-        function* ({ target: _target, inherit = true, duration, ...args }) {
-            const container = find(_target, stage)?.children[0]
-            const target = inherit ? container : container?.children.slice(-1)[0]
+        function* ({ target: _target, inherit = true, duration, alpha, ...args }) {
+            if (alpha !== undefined)(args as Record<string, unknown>).autoAlpha = alpha
+            const target = _target === 0
+                ? stage.children.map((e) => e.internal.internal)
+                : inherit
+                    ? find(_target, stage)?.internal.internal.internal.internal
+                    : find(_target, stage)?.internal.internal.internal.internal.children.slice(-1)[0]
             if (isUndefined(target)) return
             yield Tween.apply({ target, duration, pixi: args })
         }
@@ -220,13 +213,16 @@ export const tween = DynamicMacro<ImageTweenCommandArgs>(
 
 export type ImageFilterCommandArgs = { target: ImageTarget, filter: Filter }
 
-export const filter = NonBlocking<ImageFilterCommandArgs>(({ temp: { stage } }) => ({ target: _target, filter }) => {
-    const target = find(_target, stage)
-    if (target) {
-        if (target.filters) target.filters.push(filter)
-        else target.filters = [filter]
-    }
-})
+export const filter = NonBlocking<ImageFilterCommandArgs>(
+    ({ temp: { stage } }) =>
+        ({ target: _target, filter }) => {
+            const target = _target === 0 ? stage : find(_target, stage)?.internal.internal.internal.internal
+            if (target) {
+                if (target.filters) target.filters.push(filter)
+                else target.filters = [filter]
+            }
+        }
+)
 
 export type ImageAnimationCommandArgs =
     { target: ImageTarget, type: AnimationTypes, duration: number }
@@ -244,7 +240,10 @@ export const animation = EffectScope(
     Dynamic<ImageAnimationCommandArgs>(
         ({ temp: { stage } }) =>
             function* ({ target: _target, type, x = 0, y = 0, duration }) {
-                const target = find(_target, stage)
+                // 由于RenderLayer只渲染指定大小的范围,对舞台实现动画效果的方式是为所有元素都应用一个相同的动画
+                const target = _target === 0
+                    ? stage.children.map((e) => e.internal)
+                    : find(_target, stage)?.internal.internal.internal
                 if (isUndefined(target)) return
                 yield new Promise((res) =>
                     gsap.to(target, {

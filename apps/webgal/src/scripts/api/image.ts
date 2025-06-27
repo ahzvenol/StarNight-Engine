@@ -12,8 +12,7 @@ NonBlockingMacro<{ target: NonNullable<ImageCloseCommandArgs['target']> } & { du
             for (const target of targets) {
                 yield Fork(
                     async function* () {
-                        await (yield Image.tween({ target: target, inherit: false, alpha: 0, duration }))
-                        yield Image.close({ target: target })
+                        yield Image.tween({ target: target, inherit: false, alpha: 0, duration })
                     }
                 )
             }
