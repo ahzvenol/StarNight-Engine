@@ -1,4 +1,4 @@
-import type { ImageTarget, AnimationPresetEffectKeys, ImageTargetBackground, ImageTargetSprite, ImageTargetStage, ImageTweenArgs } from '../../base/image'
+import type { ImageTarget, AnimationTypes, ImageTargetBackground, ImageTargetSprite, ImageTargetStage, ImageTweenArgs } from '../../base/image'
 import type { TweenCommandArgs } from '@/scripts/base/tween'
 
 export const 通用命令参数别名 = {
@@ -53,7 +53,7 @@ export const 音频命令参数别名 = {
     rate: '播放速度'
 } as const
 
-export const 预设动画别名 = { shake: '震动', punch: '摇晃' } as const satisfies Record<AnimationPresetEffectKeys, string>
+export const 预设动画别名 = { shake: '震动', punch: '摇晃' } as const satisfies Record<AnimationTypes, string>
 
 export type 添加动画命令参数别名 =
     { [K in keyof ImageTweenArgs as typeof 图像命令参数别名[K]]: ImageTweenArgs[K] }
@@ -61,7 +61,7 @@ export type 添加动画命令参数别名 =
     & ({ 作用目标: ImageTargetStage } | { 作用目标: ImageTargetSprite | ImageTargetBackground, 继承?: false })
 
 export type 预设动画命令参数别名 =
-    { 作用目标: ImageTarget, 预设名称: (typeof 预设动画别名)[AnimationPresetEffectKeys], 持续时间: number }
+    { 作用目标: ImageTarget, 预设名称: (typeof 预设动画别名)[AnimationTypes], 持续时间: number }
     & ({ X轴幅度: number, Y轴幅度?: number } | { X轴幅度?: number, Y轴幅度: number })
 
 export type 用户输入命令参数别名 = { 描述文本: string } | void
