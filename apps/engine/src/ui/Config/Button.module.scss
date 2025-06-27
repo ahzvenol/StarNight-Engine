@@ -1,0 +1,25 @@
+.Config_Button {
+    box-sizing: border-box;
+    margin: 0 0.4em 0 0;
+    padding: 0.2em 1em;
+    color: rgb(160 170 160 / 100%);
+    font-size: 150%;
+    background-color: rgb(50 50 50 / 5%);
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+
+    @media (hover: hover) {
+        &:hover {
+            color: rgb(81 110 65 / 90%);
+            font-weight: bold;
+            border-bottom: 2px solid rgb(81 110 65 / 90%);
+        }
+    }
+}
+
+.Config_Button_checked {
+    color: rgb(81 110 65 / 90%);
+    font-weight: bold;
+    background-color: rgb(81 110 65 / 15%);
+    border-bottom: 2px solid rgb(81 110 65 / 90%);
+}

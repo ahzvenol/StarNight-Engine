@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">星夜</string>
+    <string name="title_activity_main">星夜</string>
+    <string name="package_name">hakuuyosei.at.outlook.com</string>
+    <string name="custom_url_scheme">hakuuyosei.at.outlook.com</string>
+</resources>

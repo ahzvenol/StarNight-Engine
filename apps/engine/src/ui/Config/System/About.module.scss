@@ -1,0 +1,50 @@
+.About_Button_back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: rgb(0 0 0 / 10%);
+    border-radius: 4px;
+    cursor: pointer;
+
+    @media (hover: hover) {
+        &:hover {
+            background: rgb(0 0 0 / 20%);
+        }
+    }
+}
+
+.About_container {
+    padding: 10px 0 0;
+}
+
+.About_icon {
+    display: inline-flex;
+}
+
+.About_title {
+    margin-top: 20px;
+    // border-bottom: 2px solid rgba(81, 110, 65, 0.9);
+    padding: 0.15em 0.5em 0.15em 0.1em;
+    color: transparent;
+    font-weight: bold;
+    font-size: 200%;
+    background: linear-gradient(to left, #227d51, rgb(81 110 65 / 100%));
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.About_text {
+    padding: 0 0 0 10px;
+    color: rgb(81 110 65 / 100%);
+    font-size: 135%;
+
+    a {
+        color: rgb(81 110 65 / 100%);
+    }
+}
+
+.About_contributor {
+    padding: 0 10px 0 0;
+}

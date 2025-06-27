@@ -1,0 +1,118 @@
+.Config_main {
+    position: absolute;
+    width: 100%;
+    height: 90%;
+    cursor: default;
+}
+
+.Config_top {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    height: 15%;
+}
+
+.Config_title {
+    box-sizing: border-box;
+    margin: 0.5em 0;
+    padding: 0.2em 2em 0.2em 1.1em;
+    font-size: 225%;
+    font-family: '思源宋体', serif;
+    letter-spacing: 0.1em;
+}
+
+.Config_title_text {
+    color: transparent;
+    font-weight: bold;
+    font-size: 165%;
+    background: linear-gradient(to left, #227d51, rgb(81 110 65 / 100%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: Config_element_in ease-out 0.7s forwards;
+}
+
+.Config_main_content {
+    display: flex;
+    flex: 1;
+    padding: 0 0 0 3em;
+    overflow: auto;
+}
+
+.Config_main_content_half {
+    display: flex;
+    flex-flow: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    width: 95%;
+    padding: 0 1em;
+}
+
+.Config_about_title {
+    width: 100%;
+    margin: 0.2em 1em;
+    padding: 0.2em;
+    cursor: pointer;
+    animation: Config_element_in ease-out 0.7s forwards;
+}
+
+.Config_about_title_text {
+    color: transparent;
+    font-weight: bold;
+    font-size: 135%;
+    text-decoration: underline;
+    background: linear-gradient(to left, rgb(34 125 81 / 65%), rgb(81 110 65 / 65%));
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+@keyframes Config_element_in {
+    0% {
+        transform: scale(1.03, 1.03) translate(-25px, -20px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1, 1) translate(0, 0);
+        opacity: 1;
+    }
+}
+
+.Config_page_container {
+    display: flex;
+    height: 85%;
+    padding: 1em 3.75em;
+}
+
+.Config_button_list {
+    animation: Config_element_in ease-out 0.7s forwards;
+}
+
+.Config_page_button {
+    color: transparent;
+    font-weight: bold;
+    font-size: 300%;
+    font-family: '思源宋体', serif;
+    background: linear-gradient(to left, #227d51, rgb(81 110 65 / 100%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    cursor: pointer;
+    opacity: 0.35;
+    transition:
+        color 0.33s,
+        background-image 0.33s,
+        opacity 0.33s;
+
+    @media (hover: hover) {
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+.Config_page_button_active {
+    background-image: linear-gradient(to left, #227d51, rgb(81 110 65 / 100%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    opacity: 1;
+}

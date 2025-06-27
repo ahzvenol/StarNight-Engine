@@ -1,0 +1,132 @@
+.Gallery_CG_container {
+    width: 100%;
+    height: 88%;
+}
+
+.Gallery_CG_top {
+    display: flex;
+    flex-flow: row;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+    height: 8%;
+}
+
+.Gallery_CG_top_button_list {
+    display: flex;
+    flex-flow: row;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 12px 15px;
+    border-radius: 7px;
+}
+
+.Gallery_CG_top_button {
+    margin: 0 0.25em;
+    padding: 0.12em 1em;
+    color: #666666;
+    font-size: 170%;
+    text-align: center;
+    background-color: rgb(255 255 255 / 50%);
+    border-radius: 7px;
+    cursor: pointer;
+    transition:
+        background-color 0.5s,
+        color 0.5s,
+        font-weight 0.5s;
+
+    @media (hover: hover) {
+        &:hover {
+            color: #005caf;
+            background-color: rgb(255 255 255 / 60%);
+        }
+    }
+}
+
+.Gallery_CG_top_button_active {
+    color: #005caf;
+    background-color: rgb(255 255 255 / 70%);
+}
+
+.Gallery_CG_content {
+    display: flex;
+    flex-wrap: wrap;
+    place-content: flex-start flex-start;
+    align-items: flex-start;
+    box-sizing: border-box;
+    width: 100%;
+    height: 90%;
+    padding: 4em 0 0 2em;
+}
+
+.Gallery_CG_content_element {
+    box-sizing: border-box;
+    width: 22.5%;
+    height: 37.5%;
+    margin: 1em;
+    padding: 0.75em;
+    background-color: rgb(255 255 255 / 75%);
+    box-shadow: 0 0 15px 5px rgb(0 0 0 / 35%);
+    cursor: pointer;
+    opacity: 0;
+    animation: CG_soft_in 1.5s ease-out forwards;
+}
+
+.Gallery_CG_content_element_image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+}
+
+.Gallery_CG_view_container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: rgb(0 0 0 / 10%);
+}
+
+.Gallery_CG_view {
+    box-sizing: border-box;
+    width: 80%;
+    height: 80%;
+    padding: 2em;
+    background: rgb(255 255 255 / 95%);
+    background-size: cover;
+    cursor: pointer;
+    opacity: 0;
+    animation: CG_view_in 0.5s ease-out forwards;
+}
+
+.Gallery_CG_view_image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+}
+
+@keyframes CG_soft_in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes CG_view_in {
+    0% {
+        transform: scale(1.05, 1.05) translate(-25px, -50px) rotateX(-10deg) rotateY(10deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1, 1) translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}

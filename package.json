@@ -1,10 +1,9 @@
 {
-    "name": "monorepo",
-    "version": "0.0.0",
+    "name": "@starnight/monorepo",
     "private": true,
     "scripts": {
-        "hoshizora:dev": "bun --filter hoshizora dev",
-        "webgal:dev": "bun --filter webgal dev",
+        "hoshizora:dev": "bun --filter @starnight/hoshizora dev",
+        "webgal:dev": "bun --filter @starnight/engine dev",
         "core:build": "bun --filter @starnight/core build",
         "parser:build": "bun --filter @starnight/parser build",
         "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",

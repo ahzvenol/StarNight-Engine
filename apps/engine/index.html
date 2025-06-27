@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
+        <link rel="manifest" href="manifest.json" />
+        <title>Loading...</title>
+        <style>
+            #edge-fill {
+                height: 100vh;
+                width: 100vw;
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-image: url('/static/Texture2D/title_bg.webp');
+                filter: blur(50px);
+                background-position: center;
+                background-size: cover;
+            }
+        </style>
+    </head>
+
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+
+        <div id="edge-fill"></div>
+
+        <div id="root"></div>
+
+        <script src="/src/index.tsx" type="module"></script>
+    </body>
+</html>
