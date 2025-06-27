@@ -26,8 +26,8 @@ StarNight.GameEvents.end.subscribe(() => GUIRootState('Home'))
 
 // 自动存档
 StarNight.ActEvents.start.subscribe(async ({ state, current }) => {
-    const store = await onStoreReady
-    if (!state.isAuto() && !state.isFast()) {
+    if (!state.isInitializing() && !state.isFast()) {
+        const store = await onStoreReady
         store.local[0](current())
     }
 })

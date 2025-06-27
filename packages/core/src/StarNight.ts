@@ -216,9 +216,9 @@ async function ActLoop(this: StarNightInstance) {
         const next = await Fork(value)(context)
         // ActEnd
         this.ActEvents.end.publish(context)
-        if (output.state() && !this.state.isInitializing()) this.state.now(output.state()!)
+        if (!this.state.isInitializing() && output.state()) this.state.now(output.state()!)
         // 等待过程受continue命令影响
-        if (!(this.state.isInitializing() || output.cont())) {
+        if (!this.state.isInitializing() && !output.cont()) {
             if (this.state.isFast()) {
                 await delay(this.context.config.fastreadspeed())
             } else if (this.state.isAuto()) {

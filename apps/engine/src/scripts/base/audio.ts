@@ -26,19 +26,17 @@ StarNight.GameEvents.setup.subscribe(({ temp }) => {
 
 StarNight.GameEvents.ready.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.load().play()))
 
-StarNight.ActEvents.start.subscribe(({ config, temp: { audios } }) => {
-    if (config.interruptclip()) audios.get('clip')?.unload()
-})
-
 StarNight.GameEvents.suspend.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.pause()))
 
-StarNight.GameEvents.resume.subscribe(({ temp: { audios } }) =>
-    audios.forEach((audio) => {
-        if (!audio.playing()) audio.play()
-    })
-)
+StarNight.GameEvents.resume.subscribe(({ temp: { audios } }) => audios.forEach((audio) => !audio.playing() && audio.play()))
 
 StarNight.GameEvents.exit.subscribe(({ temp: { audios } }) => audios.forEach((audio) => audio.unload()))
+
+StarNight.ActEvents.start.subscribe(({ state, config, temp: { audios } }) => {
+    if (!state.isInitializing() && config.interruptclip()) {
+        audios.get('clip')?.unload()
+    }
+})
 
 export type AudioSetCommandArgs = {
     type: keyof AudioTracks

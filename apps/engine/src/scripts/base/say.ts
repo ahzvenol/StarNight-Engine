@@ -24,9 +24,11 @@ StarNight.GameEvents.setup.subscribe(({ current, ui }) => {
     ui.text = document.createElement('div')
 })
 
-StarNight.ActEvents.start.subscribe(({ current, ui }) => {
-    current.text('')
-    ui.text.innerHTML = ''
+StarNight.ActEvents.start.subscribe(({ state, current, ui }) => {
+    if (!state.isInitializing()) {
+        current.text('')
+        ui.text.innerHTML = ''
+    }
 })
 
 const compareElementOrder = (a: Node, b: Node) =>

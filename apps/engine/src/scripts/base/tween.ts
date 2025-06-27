@@ -17,8 +17,10 @@ StarNight.GameEvents.setup.subscribe(({ temp }) => {
     temp.activetimelines = new Map()
 })
 
-StarNight.ActEvents.start.subscribe(({ temp: { activetimelines } }) => {
-    activetimelines.clear()
+StarNight.ActEvents.start.subscribe(({ state, temp: { activetimelines } }) => {
+    if (!state.isInitializing()) {
+        activetimelines.clear()
+    }
 })
 
 export type TweenCommandArgs = {
