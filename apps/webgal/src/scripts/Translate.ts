@@ -109,9 +109,9 @@ export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Parti
     return (args) => async (context) => fn(renameKeys(args, flipmap))(context)
 }
 
+export function Api<T, R>(fn: StandardDynamicCommand<T, R>): Function1<T, R> & CommandTagDynamic
 export function Api<T, R>(fn: StandardNonBlockingCommand<T, R>): Function1<T, R> & CommandTagNonBlocking
 export function Api<T, R>(fn: StandardBlockingCommand<T, R>): Function1<T, R> & CommandTagBlocking
-export function Api<T, R>(fn: StandardDynamicCommand<T, R>): Function1<T, R> & CommandTagDynamic
 export function Api<T, R>(fn: StandardCommand<T, R>): Function1<T, R> {
     return fn as any
 }
