@@ -6,6 +6,8 @@ import { defineConfig } from 'vite'
 import solidPlugin from 'vite-plugin-solid'
 import scenarioPlugin from './plugins/vite-plugin-scenario'
 
+const host = process.env.TAURI_DEV_HOST
+
 export default defineConfig(({ command }) => ({
     plugins: [
         scenarioPlugin(),
@@ -25,9 +27,22 @@ export default defineConfig(({ command }) => ({
             scenario: resolve(__dirname, './scenario') // 为剧本文件提供单独的文件夹目录
         }
     },
+    clearScreen: false, // 1. prevent vite from obscuring rust errors
+    // 2. tauri expects a fixed port, fail if that port is not available
     server: {
-        port: 8888,
-        strictPort: true // 设为 true 时若端口已被占用则会直接退出，而不是尝试下一个可用端口
+        port: 1420,
+        strictPort: true,
+        host: host || false,
+        hmr: host
+            ? {
+                    protocol: 'ws',
+                    host,
+                    port: 1421
+                }
+            : undefined
+    },
+    watch: {
+        ignored: ['**/src-tauri/**'] // 3. tell vite to ignore watching `src-tauri`
     },
     build: {
         target: 'es2015',

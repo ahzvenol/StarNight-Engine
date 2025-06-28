@@ -2,14 +2,14 @@ import type { Component } from 'solid-js'
 import { createEffect, createResource, Match, Switch } from 'solid-js'
 import { onStoreReady } from './store'
 import { GUIRoot } from './ui/GUIRoot'
-import { isMobile, isMobileLike } from './utils/checkEnv'
+import { isMobile, isTouchDevice } from './utils/checkEnv'
 import { log } from './utils/Logger'
 
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false
 
-// 为移动端添加css类,通过:global(.mobile)控制样式
-if (isMobile() || isMobileLike()) document.documentElement.classList.add('mobile')
+// 为触摸设备添加css类,通过:global(.mobile)控制样式
+if (isMobile() || isTouchDevice()) document.documentElement.classList.add('mobile')
 
 // 将游戏名称设置为网页标题
 onStoreReady.then((store) => (document.title = store.system.name()))
