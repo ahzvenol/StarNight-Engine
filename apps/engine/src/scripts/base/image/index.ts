@@ -96,6 +96,7 @@ declare module '@starnight/core' {
 function load(sprite: SrcSprite) {
     sprite.texture = Texture.from(sprite.src)
     const handleLoaded = () => {
+        if (sprite.destroyed) return
         sprite.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
         if (sprite.parent) {
             sprite.parent.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
@@ -116,13 +117,13 @@ StarNight.GameEvents.setup.subscribe(({ ui: { view }, temp }) => {
     const container = new Container()
     container.pivot = { x: width / 2, y: height / 2 }
     temp.pixi = new Application({ view, width, height })
-    temp.pixi.stage.addChild(container)
     temp.stage = temp.pixi.stage as ImageStage
     // @ts-expect-error 类型...上不存在属性...
     globalThis['__PIXI_APP__'] = temp.pixi
 })
 
 StarNight.GameEvents.ready.subscribe(({ temp: { stage } }) => {
+    console.log(stage.children)
     stage.children.forEach((layer) => {
         layer.internal.internal.internal.internal.children.forEach((sprite) => load(sprite))
     })
@@ -199,15 +200,15 @@ export type ImageTweenCommandArgs = ImageTweenArgs
 
 export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>
-        function* ({ target: _target, inherit = true, duration, alpha, ...args }) {
-            if (alpha !== undefined)(args as Record<string, unknown>).autoAlpha = alpha
+        function* ({ target: _target, inherit = true, ease, duration, alpha, ...args }) {
+            if (alpha !== undefined) (args as Record<string, unknown>).autoAlpha = alpha
             const target = _target === 0
                 ? stage.children.map((e) => e.internal.internal)
                 : inherit
                     ? find(_target, stage)?.internal.internal.internal.internal
                     : find(_target, stage)?.internal.internal.internal.internal.children.slice(-1)[0]
             if (isUndefined(target)) return
-            yield Tween.apply({ target, duration, pixi: args })
+            yield Tween.apply({ target, ease, duration, pixi: args })
         }
 )
 

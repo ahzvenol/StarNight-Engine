@@ -36,7 +36,7 @@ export const apply = Dynamic<TweenCommandArgs>(
     ({ state, temp: { activetimelines } }) =>
         function* ({ target, id = target, mode = 'to', ease = 'none', position, ...args }) {
             if (state.isInitializing()) {
-                gsap.set(target, args)
+                if (mode === 'to') gsap.set(target, args)
             } else {
                 // 保证对同一个id的动画被顺序应用
                 if (!activetimelines.has(id)) {
