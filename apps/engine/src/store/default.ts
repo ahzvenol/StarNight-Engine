@@ -33,7 +33,7 @@ export type SaveLocalData = ExtraLocalSaveData & GameLocalData
 const version = 1
 
 const system = {
-    name: 'StarNight',
+    name: 'StarNight Engine',
     key: 'StarNight',
     versioncode: version,
     versionname: 'next',
