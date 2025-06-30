@@ -1,6 +1,7 @@
-import type { Plugin } from 'vite'
 import type { NodePath } from '@babel/traverse'
+import type { Plugin } from 'vite'
 import pathUtil from 'path'
+import { mergeConfig } from 'vite'
 import _generate from '@babel/generator'
 import { parse } from '@babel/parser'
 import _traverse from '@babel/traverse'
@@ -11,6 +12,9 @@ const traverse = _traverse.default as typeof _traverse
 // @ts-expect-error 不存在属性“default
 const generate = _generate.default as typeof _generate
 
+type Options = { src: string | string[], async: string | string[], await: string | string[] }
+type InternalOptions = { src: string[], async: string[], await: string[] }
+
 function isStringOrTemplateLiteral(node: t.Node | null | undefined) {
     return t.isStringLiteral(node) || t.isTemplateLiteral(node)
 }
@@ -19,8 +23,16 @@ function isJSXElementOrJSXFragment(node: t.Node | null | undefined) {
     return t.isJSXElement(node) || t.isJSXFragment(node)
 }
 
-export default function scenarioPlugin(): Plugin {
+// 关键字: $action,$context,$await,$await,$say
+
+export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
     let currentMode = 'development'
+
+    if (options.src && !Array.isArray(options.src)) options.src = [options.src]
+    if (options.async && !Array.isArray(options.async)) options.async = [options.async]
+    if (options.await && !Array.isArray(options.await)) options.await = [options.await]
+
+    const opt = mergeConfig({ src: ['src'], async: ['$async'], await: ['$await'] }, options) as InternalOptions
 
     return {
         name: 'vite-plugin-scenario-transform',
@@ -113,14 +125,12 @@ export default function scenarioPlugin(): Plugin {
                     const callee = path.node.callee
                     if (t.isMemberExpression(callee)) {
                         if (
-                            t.isIdentifier(callee.object, { name: '$async' })
-                            || t.isIdentifier(callee.object, { name: '$执行' })
+                            opt.async.some((name) => t.isIdentifier(callee.object, { name }))
                         ) {
                             path.replaceWith(t.yieldExpression(path.node))
                             path.skip()
                         } else if (
-                            t.isIdentifier(callee.object, { name: '$await' })
-                            || t.isIdentifier(callee.object, { name: '$等待' })
+                            opt.await.some((name) => t.isIdentifier(callee.object, { name }))
                         ) {
                             path.replaceWith(t.awaitExpression(t.parenthesizedExpression(t.yieldExpression(path.node))))
                             path.skip()
@@ -217,13 +227,11 @@ export default function scenarioPlugin(): Plugin {
                 ObjectExpression(objectPath) {
                     objectPath.node.properties.forEach((prop) => {
                         if (
-                            t.isObjectProperty(prop)
-                            && (
-                                ((t.isIdentifier(prop.key) && prop.key.name === 'src')
-                                    || (t.isStringLiteral(prop.key) && prop.key.value === 'src'))
-                                || ((t.isIdentifier(prop.key) && prop.key.name === '资源路径')
-                                    || (t.isStringLiteral(prop.key) && prop.key.value === '资源路径')))
-                                && t.isStringLiteral(prop.value)
+                            t.isObjectProperty(prop) && t.isStringLiteral(prop.value)
+                            && opt.src.some((name) =>
+                                (t.isIdentifier(prop.key) && prop.key.name === name)
+                                || (t.isStringLiteral(prop.key) && prop.key.value === name)
+                            )
                         ) {
                             assets[action].push(prop.value.value)
                         }

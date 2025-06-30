@@ -10,7 +10,11 @@ const host = process.env.TAURI_DEV_HOST
 
 export default defineConfig(({ command }) => ({
     plugins: [
-        scenarioPlugin(),
+        scenarioPlugin({
+            src: '资源路径',
+            async: '$执行',
+            await: '$等待'
+        }),
         solidPlugin(),
         legacy({
             modernPolyfills: true,
