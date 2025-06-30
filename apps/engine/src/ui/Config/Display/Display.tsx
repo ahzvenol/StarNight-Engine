@@ -9,7 +9,7 @@ import { Button } from '../Button'
 import { Cell } from '../Cell'
 import styles from '../Config.module.scss'
 import { Slider } from '../Slider'
-import { TextPreview } from '../TextPreview'
+import { TextPreview } from './TextPreview'
 
 export const Display: Component = () => {
     const t = translation.menu.options.pages.display.options
