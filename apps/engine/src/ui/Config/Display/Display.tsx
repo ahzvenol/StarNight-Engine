@@ -1,6 +1,8 @@
 import type { Component } from 'solid-js'
 import type { Signal } from 'micro-reactive-solid'
-import { Clone } from '@/utils/ui/Elements'
+import { useSignal } from 'micro-reactive-solid'
+import { Show } from 'solid-js'
+import { Clone, Content } from '@/utils/ui/Elements'
 import { store } from '@/store'
 import { translation } from '../../translations'
 import { Button } from '../Button'
@@ -13,6 +15,8 @@ export const Display: Component = () => {
     const t = translation.menu.options.pages.display.options
 
     const config = store.config
+
+    const refresh = useSignal(Symbol())
     return (
         <div class={styles.Config_main_content_half}>
             <Cell title={t.fullScreen.title}>
@@ -59,7 +63,13 @@ export const Display: Component = () => {
                 <Slider signal={config.textboxopacity} />
             </Cell>
             <Cell title={t.textPreview.title}>
-                <TextPreview />
+                <Show keyed when={config.textspeed()}>
+                    <Show keyed when={refresh()}>
+                        <Content onClick={() => refresh(Symbol())}>
+                            <TextPreview />
+                        </Content>
+                    </Show>
+                </Show>
             </Cell>
         </div>
     )
