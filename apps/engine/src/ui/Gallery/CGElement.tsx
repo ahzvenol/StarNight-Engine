@@ -3,7 +3,8 @@ import type { GalleryGroup } from '@/store/gallery'
 import { useSignal } from 'micro-reactive-solid'
 import { Show } from 'solid-js'
 import { store } from '@/store'
-import { stopPropagation } from '@/utils/solid/stopPropagation'
+import { suppress } from '@/utils/solid/suppress'
+import { Content } from '@/utils/ui/Elements'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './GalleryCG.module.scss'
 
@@ -37,24 +38,27 @@ export const CGElement: Component<{ i: number, cgs: GalleryGroup }> = ({ i, cgs 
                 />
             </div>
             <Show when={pointer() >= 0}>
-                <div
-                    ref={useSoundEffect('Click', 'Enter')}
-                    class={styles.Gallery_CG_view_container}
-                    onClick={() => pointer(-1)}
-                >
+                <Content ref={suppress('contextmenu')}>
                     <div
-                        ref={stopPropagation('contextmenu', 'click')}
-                        class={styles.Gallery_CG_view}
+                        ref={useSoundEffect('Click', 'Enter')}
+                        class={styles.Gallery_CG_view_container}
                         onContextMenu={() => pointer(-1)}
-                        onClick={() => pointer((i) => (isMax() ? -1 : i + 1))}
+                        onClick={(e) => {
+                            if (e.target === e.currentTarget) pointer(-1)
+                        }}
                     >
                         <div
-                            class={styles.Gallery_CG_view_image}
-                            // 预加载下一张cg,避免闪烁的情况
-                            style={{ 'background-image': now() + next() }}
-                        />
+                            class={styles.Gallery_CG_view}
+                            onClick={() => pointer((i) => isMax() ? -1 : i + 1)}
+                        >
+                            <div
+                                class={styles.Gallery_CG_view_image}
+                                // 预加载下一张cg,避免闪烁的情况
+                                style={{ 'background-image': now() + next() }}
+                            />
+                        </div>
                     </div>
-                </div>
+                </Content>
             </Show>
         </Show>
     )

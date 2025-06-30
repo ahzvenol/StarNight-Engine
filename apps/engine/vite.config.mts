@@ -3,19 +3,23 @@ import type { PluginOption } from 'vite'
 import legacy from '@vitejs/plugin-legacy'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
-import solidPlugin from 'vite-plugin-solid'
-import scenarioPlugin from './plugins/vite-plugin-scenario'
+import solid from 'vite-plugin-solid'
+import scenario from './plugins/vite-plugin-scenario'
 
 const host = process.env.TAURI_DEV_HOST
 
 export default defineConfig(({ command }) => ({
     plugins: [
-        scenarioPlugin({
+        scenario({
             src: '资源路径',
             async: '$执行',
             await: '$等待'
         }),
-        solidPlugin(),
+        solid({
+            solid: {
+                delegateEvents: false // 禁用solid事件委托
+            }
+        }),
         legacy({
             modernPolyfills: true,
             renderLegacyChunks: false

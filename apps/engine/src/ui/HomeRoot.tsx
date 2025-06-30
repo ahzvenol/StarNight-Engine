@@ -3,7 +3,7 @@ import { useSignal } from 'micro-reactive-solid'
 import { onCleanup, onMount, Show } from 'solid-js'
 import { Content } from '@/utils/ui/Elements'
 import { Gallery } from '@/ui/Gallery/Gallery'
-import { stopPropagation } from '@/utils/solid/stopPropagation'
+import { suppress } from '@/utils/solid/suppress'
 import { BGM } from '../store/audio'
 import { Config } from './Config/Config'
 import { Menu } from './Menu/Menu'
@@ -24,7 +24,7 @@ export const HomeRoot: Component = () => {
     return (
         <>
             <Title />
-            <Content ref={stopPropagation('contextmenu')} onContextMenu={() => GUIHomeRootState('Title')}>
+            <Content ref={suppress('contextmenu')} onContextMenu={() => GUIHomeRootState('Title')}>
                 <Show when={['Config', 'Save', 'Load'].includes(GUIHomeRootState())}>
                     <Menu>
                         <Show when={GUIHomeRootState() === 'Config'}>

@@ -10,7 +10,7 @@ import { instance, starnight } from '@/store/starnight'
 import { Backlog } from '@/ui/Game/Backlog'
 import { Game } from '@/ui/Game/Game'
 import styles from '@/ui/Game/Game.module.scss'
-import { stopPropagation } from '@/utils/solid/stopPropagation'
+import { suppress } from '@/utils/solid/suppress'
 import { useEventListener } from '@/utils/solid/useEventListener'
 import { Config } from './Config/Config'
 import { GUIRootState } from './GUIRoot'
@@ -79,7 +79,7 @@ export const GameRoot: Component = () => {
             <Show when={starnight} keyed>
                 <Game />
             </Show>
-            <Content ref={stopPropagation('contextmenu')} onContextMenu={() => GUIGameRootState('Game')}>
+            <Content ref={suppress('contextmenu')} onContextMenu={() => GUIGameRootState('Game')}>
                 <Show when={['Config', 'Save', 'Load'].includes(GUIGameRootState())}>
                     <Menu>
                         <Show when={GUIGameRootState() === 'Config'}>

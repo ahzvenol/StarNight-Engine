@@ -5,7 +5,7 @@ import { Variable } from '@/utils/ui/Elements'
 import { Scrollbar } from '@/utils/ui/Scrollbar'
 import { ui } from '@/store/starnight'
 import { GUIGameRootState, useGame } from '@/ui/GameRoot'
-import { stopPropagation } from '@/utils/solid/stopPropagation'
+import { suppress } from '@/utils/solid/suppress'
 import { useSoundEffect } from '../useSoundEffect'
 import { translation } from '../translations'
 import { Clip } from '../../store/audio'
@@ -15,7 +15,7 @@ export const Backlog: Component = () => {
     const t = translation.gaming
     return (
         <div
-            ref={stopPropagation('contextmenu')}
+            ref={suppress('contextmenu')}
             class={styles.Game_Backlog_container}
             onContextMenu={() => GUIGameRootState('Game')}
         >
