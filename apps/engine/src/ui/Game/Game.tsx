@@ -49,7 +49,7 @@ export const Game: Component = () => {
         <Content>
             <Stage />
             <Show when={showControlPanel() && ui().input.choices() === null}>
-                <TextBox />
+                <TextBox text={ui().text} name={ui().name} />
             </Show>
             <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => showUI(false)} />
             <Show when={!showUI()}>

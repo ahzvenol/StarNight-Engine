@@ -52,7 +52,7 @@ export const text = ActScope(
                 current.text((prev) => prev + element.outerHTML)
                 const rubys = element.querySelectorAll('ruby')
                 const split = SplitText.create(ui.text,
-                    { type: 'chars', reduceWhiteSpace: false, ignore: rubys, smartWrap: true, aria: 'hidden' }
+                    { type: 'chars', reduceWhiteSpace: false, ignore: rubys, aria: 'hidden' }
                 )
                 const nodes = split.chars.concat(Array.from(rubys)).sort(compareElementOrder)
                 const speed = config.textspeed()

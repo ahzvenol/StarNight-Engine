@@ -1,5 +1,5 @@
-import type { Signal } from 'micro-reactive-solid'
 import type { Component } from 'solid-js'
+import type { Signal } from 'micro-reactive-solid'
 import { Clone } from '@/utils/ui/Elements'
 import { store } from '@/store'
 import { translation } from '../../translations'
@@ -7,6 +7,7 @@ import { Button } from '../Button'
 import { Cell } from '../Cell'
 import styles from '../Config.module.scss'
 import { Slider } from '../Slider'
+import { TextPreview } from '../TextPreview'
 
 export const Display: Component = () => {
     const t = translation.menu.options.pages.display.options
@@ -57,10 +58,9 @@ export const Display: Component = () => {
             <Cell title={t.textboxOpacity.title}>
                 <Slider signal={config.textboxopacity} />
             </Cell>
-            {/* <Cell title={t.textPreview.title}> */}
-            {/* 这是一个临时的组件，用于模拟文本预览的效果 */}
-            {/* <TextPreview /> */}
-            {/* </Cell> */}
+            <Cell title={t.textPreview.title}>
+                <TextPreview />
+            </Cell>
         </div>
     )
 }
