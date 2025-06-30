@@ -1,9 +1,9 @@
-import type { 添加动画命令参数别名, 用户输入命令参数别名, 用户选择命令参数别名, 预设动画命令参数别名 } from './translation'
+import type { 添加动画命令参数别名, 用户输入命令参数别名, 用户选择命令参数别名, 动效动画命令参数别名 } from './translation'
 import type { CommandTagBlocking, CommandTagDynamic } from '@starnight/core'
 import { Blocking, DynamicMacro } from '@starnight/core'
 import { MergedCommands } from '../../index'
 import { Alias, Api, flipObject } from '../../Translate'
-import { 通用命令参数别名, 图像命令参数别名, 音频命令参数别名, 预设动画别名 } from './translation'
+import { 通用命令参数别名, 图像命令参数别名, 音频命令参数别名, 动效动画别名 } from './translation'
 
 /**
  * 显示对话内容，设置角色名称和播放语音。
@@ -159,7 +159,7 @@ export const 添加动画 = Api(
 /**
  * 为指定目标添加滤镜，使用 PixiJS 滤镜实现。
  * @remarks
- * - 滤镜的动画效果可通过 基本动画 命令实现。
+ * - 滤镜动画可通过 基本动画 命令实现。
  * @param 参数对象
  * @param .作用目标 - 滤镜应用的目标标识符，舞台的标识符为0，背景的标识符为1（必需）
  * @param .滤镜实例 - PixiJS 滤镜实例，需为有效的 Filter 对象（必需）
@@ -171,25 +171,25 @@ export const 添加滤镜 = Api(
 )
 
 /**
- * 为指定目标应用动画效果。
+ * 为指定目标应用一段动效动画。
  * @remarks
- * - 动画效果会独立于主动画序列同时运行，但同一时间只应运行一个动画效果。
+ * - 动效动画会独立于主动画序列同时运行，但同一时间只应运行一个动效动画。
  * @param 参数对象
  * @param .作用目标 - 动画应用的目标标识符，舞台的标识符为0，背景的标识符为1（必需）
- * @param .预设名称 - 动画效果名称，如 "震动" 或 "摇晃"（必需）
+ * @param .预设名称 - 动画名称，如 "震动" 或 "摇晃"（必需）
  * @param .持续时间 - 动画持续时间，单位毫秒（必需）
  * @param .X轴幅度 - 横向动画幅度（可选，需至少提供 X轴幅度 或 Y轴幅度 两个参数中的一个）
  * @param .Y轴幅度 - 纵向动画幅度（可选，需至少提供 X轴幅度 或 Y轴幅度 两个参数中的一个）
  * @example
- * 预设动画({ 作用目标: "咸鱼", 预设名称: "摇晃", Y轴幅度: 15, 持续时间: 1000 })
+ * 动效动画({ 作用目标: "咸鱼", 预设名称: "摇晃", Y轴幅度: 15, 持续时间: 1000 })
  */
-export const 预设动画 = Api(
-    DynamicMacro<预设动画命令参数别名>(
+export const 动效动画 = Api(
+    DynamicMacro<动效动画命令参数别名>(
         () =>
             function* ({ 作用目标, 预设名称, 持续时间, X轴幅度, Y轴幅度 }) {
                 yield MergedCommands.Image.animation({
                     target: 作用目标,
-                    type: flipObject(预设动画别名)[预设名称],
+                    type: flipObject(动效动画别名)[预设名称],
                     duration: 持续时间,
                     x: X轴幅度 as unknown as number,
                     y: Y轴幅度 as unknown as number
@@ -318,9 +318,9 @@ export const 关闭音频 = Api(
  * - 转场动画用于场景切换，但不会自动处理背景或立绘的转场。
  * @param 预设名称 - 转场动画名称（如 "BlindH8"）
  * @example
- * 转场效果("BlindH8")
+ * 转场动画("BlindH8")
  */
-export const 转场效果 = Api(MergedCommands.Transition.apply)
+export const 转场动画 = Api(MergedCommands.Transition.apply)
 
 /**
  * 播放视频。

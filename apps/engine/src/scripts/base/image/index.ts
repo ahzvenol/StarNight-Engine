@@ -123,7 +123,6 @@ StarNight.GameEvents.setup.subscribe(({ ui: { view }, temp }) => {
 })
 
 StarNight.GameEvents.ready.subscribe(({ temp: { stage } }) => {
-    console.log(stage.children)
     stage.children.forEach((layer) => {
         layer.internal.internal.internal.internal.children.forEach((sprite) => load(sprite))
     })
