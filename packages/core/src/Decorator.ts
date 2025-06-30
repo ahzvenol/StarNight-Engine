@@ -13,9 +13,9 @@ import type { GameFragment, GameMacro } from './types/Game'
 import { noop } from 'es-toolkit'
 
 // 只在本幕内产生效果的命令,由此不需要初始化
+export function ActScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, R | void>
 export function ActScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardNonBlockingCommand<T, R | void>
 export function ActScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardBlockingCommand<T, R | void>
-export function ActScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, R | void>
 export function ActScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, R | void> {
     return (args) => async (context) => {
         if (!context.state.isInitializing()) return fn(args)(context)
@@ -23,9 +23,9 @@ export function ActScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, R 
 }
 
 // 只在执行过程中产生效果的命令,这样的命令应当也是ActScope的
+export function EffectScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, R | void>
 export function EffectScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardNonBlockingCommand<T, R | void>
 export function EffectScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardBlockingCommand<T, R | void>
-export function EffectScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, R | void>
 export function EffectScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, R | void> {
     return (args) => async (context) => {
         if (!context.state.isInitializing() && !context.state.isFast()) return fn(args)(context)

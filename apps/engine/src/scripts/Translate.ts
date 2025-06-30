@@ -52,6 +52,19 @@ export function flipObject<T extends Record<string | number | symbol, string | n
 }
 
 export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Partial<Record<keyof T, PropertyKey>>>(
+    fn: StandardDynamicCommand<T, R>,
+    map: M
+): StandardDynamicCommand<
+    {
+        [K in ValidMappedKeys<T, M> as undefined extends T[K['oldKey']] ? never : K['newKey']]: T[K['oldKey']]
+    } & {
+        [K in ValidMappedKeys<T, M> as undefined extends T[K['oldKey']] ? K['newKey'] : never]?: T[K['oldKey']]
+    } & {
+        [K in Exclude<keyof T, keyof M>]: T[K]
+    },
+    R
+>
+export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Partial<Record<keyof T, PropertyKey>>>(
     fn: StandardNonBlockingCommand<T, R>,
     map: M
 ): StandardNonBlockingCommand<
@@ -68,19 +81,6 @@ export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Parti
     fn: StandardBlockingCommand<T, R>,
     map: M
 ): StandardBlockingCommand<
-    {
-        [K in ValidMappedKeys<T, M> as undefined extends T[K['oldKey']] ? never : K['newKey']]: T[K['oldKey']]
-    } & {
-        [K in ValidMappedKeys<T, M> as undefined extends T[K['oldKey']] ? K['newKey'] : never]?: T[K['oldKey']]
-    } & {
-        [K in Exclude<keyof T, keyof M>]: T[K]
-    },
-    R
->
-export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Partial<Record<keyof T, PropertyKey>>>(
-    fn: StandardDynamicCommand<T, R>,
-    map: M
-): StandardDynamicCommand<
     {
         [K in ValidMappedKeys<T, M> as undefined extends T[K['oldKey']] ? never : K['newKey']]: T[K['oldKey']]
     } & {
