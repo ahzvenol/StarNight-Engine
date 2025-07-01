@@ -23,7 +23,7 @@ function isJSXElementOrJSXFragment(node: t.Node | null | undefined) {
     return t.isJSXElement(node) || t.isJSXFragment(node)
 }
 
-// 关键字: $action,$context,$await,$await,$say
+// 关键字: $action,$debugger,$context,$say,$await,$await,$call
 
 export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
     let currentMode = 'development'
