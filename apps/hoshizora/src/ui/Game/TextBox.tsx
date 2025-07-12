@@ -43,7 +43,8 @@ export const TextBox: Component = () => {
                     <div class={styles.Game_TextBox_name_background} style={{ opacity: 1 - config.textboxopacity() }} />
                     <div
                         class={styles.Game_TextBox_name}
-                        style={{ color: starnight().isRead() ? '#94c6ec' : '#ffffff' }}>
+                        style={{ color: starnight().isRead() ? '#94c6ec' : '#ffffff' }}
+                    >
                         {ui().name()}
                     </div>
                 </div>

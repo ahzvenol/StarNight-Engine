@@ -1,17 +1,18 @@
 import type { Signal } from 'micro-reactive-solid'
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
-import { router } from '@/router'
 import { useStore } from '@/store/context'
-import { CustomDefaultStore } from '@/store/custom'
+import { SystemDefaultStore } from '@/store/default'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { log } from '@/utils/Logger'
+import { GUIHomeRootState } from '../HomeRoot'
 import { Button } from '../Button'
+import { GUIRootState } from '../GUIRoot'
 import { BinaryButton, GroupButton } from './Button'
 import styles from './Config.module.scss'
 import Slider from './Slider'
 
-const Config: Component = () => {
+export const Config: Component = () => {
     log.info('Config组件函数被调用')
     const store = useStore()
     const config = store.config
@@ -25,11 +26,13 @@ const Config: Component = () => {
             <Clone count={3}>
                 {(index) => (
                     <Variable
-                        value={config[(['interruptclip', 'fastforwardunread', 'stopfastonchoice'] as const)[index]]}>
+                        value={config[(['interruptclip', 'fastforwardunread', 'stopfastonchoice'] as const)[index]]}
+                    >
                         {(item) => (
                             <div
                                 class={clsx(styles.Config_cell, styles.Config_cell_left)}
-                                style={{ bottom: `${110 + 75 * (4 - (index + 1) + 1)}px` }}>
+                                style={{ bottom: `${110 + 75 * (4 - (index + 1) + 1)}px` }}
+                            >
                                 <div class={styles.Config_cell_text}>
                                     {['单击停止语音播放', '快进未读文本', '在选项处解除快进'][index]}
                                 </div>
@@ -48,7 +51,8 @@ const Config: Component = () => {
                     <>
                         <div
                             class={clsx(styles.Config_cell, styles.Config_cell_right)}
-                            style={{ bottom: `${110 + 75 * (6 - (index + 1))}px` }}>
+                            style={{ bottom: `${110 + 75 * (6 - (index + 1))}px` }}
+                        >
                             <div class={styles.Config_cell_text}>
                                 {['全体', 'BGM', 'SE', '语音', '正常文字显示速度', '自动阅读速度'][index]}
                             </div>
@@ -64,8 +68,8 @@ const Config: Component = () => {
                                             else
                                                 return value instanceof Function
                                                     ? config.autoreadspeed(
-                                                          100 - (value(1 - config.textspeed(value)) / 100) * 100
-                                                      )
+                                                            100 - (value(1 - config.textspeed(value)) / 100) * 100
+                                                        )
                                                     : config.textspeed(100 - value * 100)
                                         }) as Signal<number>,
                                         ((value) => {
@@ -73,8 +77,8 @@ const Config: Component = () => {
                                             else
                                                 return value instanceof Function
                                                     ? config.autoreadspeed(
-                                                          2000 - (value(1 - config.autoreadspeed(value)) / 2000) * 2000
-                                                      )
+                                                            2000 - (value(1 - config.autoreadspeed(value)) / 2000) * 2000
+                                                        )
                                                     : config.autoreadspeed(2000 - value * 2000)
                                         }) as Signal<number>
                                     ][index]
@@ -84,14 +88,18 @@ const Config: Component = () => {
                     </>
                 )}
             </Clone>
-            <Button class={styles.Config_bottom_back_title} onClick={() => router.navigate('')} />
+            <Button
+                class={styles.Config_bottom_back_title}
+                onClick={() => {
+                    GUIRootState('Home')
+                    GUIHomeRootState('Title')
+                }}
+            />
             {/* 原作hover效果在点击后移除 */}
             <Button
                 class={styles.Config_bottom_reset}
-                onClick={async () => config((await CustomDefaultStore()).config)}
+                onClick={() => config(SystemDefaultStore().config)}
             />
         </div>
     )
 }
-
-export default Config

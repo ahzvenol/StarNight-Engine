@@ -6,7 +6,7 @@ const StoreContext = createContext<ReactiveStore>()
 
 const useStore = () => useContext(StoreContext)!
 
-const Context = <U extends JSX.Element>(props: { environment: ReactiveStore; children: U }) => (
+const Context = <U extends JSX.Element>(props: { environment: ReactiveStore, children: U }) => (
     <StoreContext.Provider value={props.environment}>{props.children}</StoreContext.Provider>
 )
 

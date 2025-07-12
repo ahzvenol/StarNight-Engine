@@ -6,7 +6,7 @@ import { Clone, Variable } from '@/utils/ui/Elements'
 import { store } from '@/store'
 import { translation } from '../translations'
 import { useSoundEffect } from '../useSoundEffect'
-import styles from './SaveAndLoad.module.scss'
+import styles from './SaveLoad.module.scss'
 import { SaveLoadElement } from './SaveLoadElement'
 
 export type SaveLoadMode = 'Save' | 'Load'

@@ -55,7 +55,8 @@ export const ExportImport: Component = () => {
             <Show when={state()}>
                 <div
                     style={{ left: '310px', top: '5px' }}
-                    class={state()!.isLeft() ? styles.Hakuuyosei_warn : styles.Hakuuyosei_success}>
+                    class={state()!.isLeft() ? styles.Hakuuyosei_warn : styles.Hakuuyosei_success}
+                >
                     {state()!.isLeft() ? state()!.left.get() : state()!.right.get()}
                 </div>
             </Show>

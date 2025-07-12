@@ -5,7 +5,7 @@ import { useStore } from '@/store/context'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { log } from '@/utils/Logger'
 import { ReRender } from '@/utils/solid/ReRender'
-import styles from './SaveAndLoad.module.scss'
+import styles from './SaveLoad.module.scss'
 import { SaveLoadElement } from './SaveLoadElement'
 
 export type SaveLoadMode = 'Save' | 'Load'
@@ -13,7 +13,7 @@ export type SaveLoadMode = 'Save' | 'Load'
 // 退出存档页面再进入不会重置到第一页
 const currentPage = useSignal(0)
 
-const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
+export const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
     log.info('SaveLoad组件函数被调用')
     const local = useStore().local
     const pageElementCount = 9
@@ -67,5 +67,3 @@ const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
         </div>
     )
 }
-
-export default SaveLoad

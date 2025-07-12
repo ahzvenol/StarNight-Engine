@@ -1,16 +1,16 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
 import { createEffect, Match, on, onMount, Show, Switch } from 'solid-js'
-import { router } from '@/router'
 import { onStoreReady } from '@/store'
 import { useStore } from '@/store/context'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/Logger'
-import { AudioIds, AudioMutex, Howler } from '../Audio'
+import { AudioIds, AudioMutex, Howler } from '@/store/audio'
 import { Button } from '../Button'
-import { restartGame } from '../Game/Game'
-import { Pages } from '../Pages'
+import { GUIHomeRootState } from '../HomeRoot'
+import { useGame } from '../GameRoot'
+import { GUIRootState } from '../GUIRoot'
 import styles from './Title.module.scss'
 
 const audio = Howler({ loop: true, src: './static/AudioClip/bgm01.flac' })
@@ -26,18 +26,20 @@ createEffect(
 
 onStoreReady.then(({ config: { bgmvolume } }) => createEffect(() => audio.volume(bgmvolume())))
 
-const Title: Component = () => {
+export const Title: Component = () => {
     log.info('Title组件函数被调用')
     const store = useStore()
     const system = store.system
     const local = store.extra
     onMount(() => {
-        if (AudioMutex() !== AudioIds.Title) AudioMutex(AudioIds.Title)
-        if (!audio.playing()) audio.play()
+        if (GUIRootState() === 'Home') {
+            if (AudioMutex() !== AudioIds.Title) AudioMutex(AudioIds.Title)
+            if (!audio.playing()) audio.play()
+        }
     })
     return (
         <div class={clsx('Page', styles.Title_container)}>
-            <div class={styles.Title_info_container} onClick={() => router.navigate(Pages.Hakuuyosei)}>
+            <div class={styles.Title_info_container} onClick={() => GUIHomeRootState('Hakuuyosei')}>
                 <div>
                     版本:{system.versionname()}&nbsp;&nbsp;{system.releasedate()}
                 </div>
@@ -62,11 +64,9 @@ const Title: Component = () => {
                                         style={{
                                             'background-image': `url('./static/Texture2D/title_${imageId}.webp')`
                                         }}
-                                        onClick={async () => {
-                                            if (index === 0) await restartGame({ index: 1 })
-                                            router.navigate(
-                                                [Pages.Game, Pages.Load, Pages.Config, Pages.Gallery][index]
-                                            )
+                                        onClick={() => {
+                                            if (index === 0) useGame({ count: 1 })
+                                            else GUIHomeRootState((['Load', 'Config', 'Gallery'] as const)[index])
                                         }}
                                     />
                                     <style jsx>
@@ -91,5 +91,3 @@ const Title: Component = () => {
         </div>
     )
 }
-
-export default Title

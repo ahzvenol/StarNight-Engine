@@ -21,10 +21,10 @@ const Slider: Component<{
     const resolvedTrack1 = children(() => props.track1).toArray()
     const resolvedTrack2 = children(() => props.track2).toArray()
     if (
-        (resolvedFill.length !== 1 || typeof resolvedFill[0] !== 'object') &&
-        (resolvedThumb.length !== 1 || typeof resolvedThumb[0] !== 'object') &&
-        (resolvedTrack1.length !== 1 || typeof resolvedTrack1[0] !== 'object') &&
-        (resolvedTrack2.length !== 1 || typeof resolvedTrack2[0] !== 'object')
+        (resolvedFill.length !== 1 || typeof resolvedFill[0] !== 'object')
+        && (resolvedThumb.length !== 1 || typeof resolvedThumb[0] !== 'object')
+        && (resolvedTrack1.length !== 1 || typeof resolvedTrack1[0] !== 'object')
+        && (resolvedTrack2.length !== 1 || typeof resolvedTrack2[0] !== 'object')
     ) {
         console.error('每个参数需要且仅需要一个HTMLElement')
         return <></>
@@ -96,8 +96,8 @@ const Slider: Component<{
         const fillLength = fill.getBoundingClientRect()[vertical ? 'height' : 'width']
 
         const start =
-            thumb.getBoundingClientRect()[vertical ? 'top' : 'left'] +
-            thumb.getBoundingClientRect()[vertical ? 'height' : 'width'] / 2
+            thumb.getBoundingClientRect()[vertical ? 'top' : 'left']
+            + thumb.getBoundingClientRect()[vertical ? 'height' : 'width'] / 2
 
         const current = event[vertical ? 'clientY' : 'clientX']
 
@@ -128,9 +128,9 @@ const Scrollbar: Component<{
     const resolvedTrack = children(() => props.track).toArray()
     const resolvedThumb = children(() => props.thumb).toArray()
     if (
-        (resolvedContainer.length !== 1 || typeof resolvedContainer[0] !== 'object') &&
-        (resolvedTrack.length !== 1 || typeof resolvedTrack[0] !== 'object') &&
-        (resolvedThumb.length !== 1 || typeof resolvedThumb[0] !== 'object')
+        (resolvedContainer.length !== 1 || typeof resolvedContainer[0] !== 'object')
+        && (resolvedTrack.length !== 1 || typeof resolvedTrack[0] !== 'object')
+        && (resolvedThumb.length !== 1 || typeof resolvedThumb[0] !== 'object')
     ) {
         console.error('每个参数需要且仅需要一个HTMLElement')
         return <></>
@@ -147,6 +147,9 @@ const Scrollbar: Component<{
         .filter((e) => e instanceof HTMLElement)
         .forEach((e) => box.appendChild(e))
     container.appendChild(box)
+
+    // 盒子的高度必须是auto
+    box.style.height = 'auto'
 
     // 把传入的轨道元素作为背景,使用新的元素限制滑块滚动距离
     const el = document.createElement('div')
@@ -185,14 +188,12 @@ const Scrollbar: Component<{
                     if (!isScroll) {
                         bs.scrollTo(0, percent() * bs.maxScrollY)
                     }
-                    // 为了使滑块不超出轨道,对滑块应用一个变换
-                    // thumb.style.transform = `translateY(${-percent() * 100}%)`
                 },
                 { defer: true }
             )
         )
 
-        const update = (position: { x: number; y: number }) => percent(position.y / bs.maxScrollY)
+        const update = (position: { x: number, y: number }) => percent(position.y / bs.maxScrollY)
 
         bs.on('scroll', update)
         bs.on('mousewheelMove', update)
@@ -212,4 +213,4 @@ const Scrollbar: Component<{
     )
 }
 
-export default Scrollbar
+export { Scrollbar }

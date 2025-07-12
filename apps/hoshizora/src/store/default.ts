@@ -1,5 +1,6 @@
 import type { GameConfig, GameGlobalData, GameLocalData } from '@starnight/core'
 import type { Reactive } from 'micro-reactive-solid'
+import type { SimplifyDeep } from 'type-fest'
 import { cloneDeep } from 'es-toolkit'
 import { isDevelopment, isMobile, isNative } from '@/utils/checkEnv'
 import { randomUUID } from '@/utils/randomUUID'
@@ -7,7 +8,8 @@ import { randomUUID } from '@/utils/randomUUID'
 export interface ExtraConfig {
     fullscreen: boolean
     textboxopacity: number
-    language: string
+    language: string | null
+    globalvolume: number
     bgmvolume: number
     sevolume: number
     clipvolume: number
@@ -35,10 +37,10 @@ const system = {
     key: 'Hoshizora',
     versioncode: version,
     versionname: 'next',
-    releasedate: '2025.x'
+    releasedate: '2025.7'
 }
 
-const config = {
+const config: Config = {
     fullscreen: isMobile() ? true : false,
     textboxopacity: 0.3,
     language: 'zh-CN',
@@ -55,11 +57,12 @@ const config = {
     autoreadspeed: 1000,
     fastreadspeed: isNative() || isDevelopment() ? 10 : 100,
     backlogmaxlength: 50
-} satisfies Config
+}
 
-const global = { unlock: [], readsegment: [], achievement: {} } as SaveGlobalData
+// todo:unlock -> unlocked
+const global: SaveGlobalData = { unlocked: [], readsegment: {}, achievement: {} }
 
-const local = {} as Record<number, SaveLocalData> & { [-1]?: GameLocalData }
+const local: Record<number, SaveLocalData> & { [-1]?: GameLocalData } = {}
 
 const extra = {
     uid: randomUUID(),
@@ -80,5 +83,5 @@ QQ交流群：<a href="https://cusky.tk/group/hoshizora" target="_blank">8164861
 
 export const SystemDefaultStore = () => cloneDeep({ system, config, global, local, extra } as const)
 
-export type Store = ReturnType<typeof SystemDefaultStore>
+export type Store = SimplifyDeep<ReturnType<typeof SystemDefaultStore>>
 export type ReactiveStore = Reactive<Store>

@@ -1,6 +1,6 @@
 import type { Component, JSX } from 'solid-js'
 import { useEventListener } from '@/utils/solid/useEventListener'
-import { UISE } from './Audio'
+import { UISE } from '@/store/audio'
 
 const ClickSE = UISE({ src: './static/mouse_click_1.wav' })
 const HoverSE = UISE({ src: './static/mouse_hover_1.wav' })

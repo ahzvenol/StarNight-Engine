@@ -1,35 +1,29 @@
 import { Capacitor } from '@capacitor/core'
+import { isTauri } from '@tauri-apps/api/core'
+import * as Tauri from '@tauri-apps/plugin-os'
 
-export const platform: string = Capacitor.getPlatform()
+export const platform = isTauri() ? Tauri.platform() : Capacitor.getPlatform()
 
-export function isAndroid(): boolean {
-    return platform === 'android'
-}
+export const isAndroid = () => platform === 'android'
 
-export function isIOS(): boolean {
-    return platform === 'ios'
-}
+export const isIOS = () => platform === 'ios'
 
-export function isWeb(): boolean {
-    return platform === 'web'
-}
+export const isWindows = () => platform === 'windows'
 
-export function isNative(): boolean {
-    return !isWeb()
-}
+export const isMacOS = () => platform === 'macos'
 
-export function isMobile(): boolean {
-    return isAndroid() || isIOS()
-}
+export const isLinux = () => platform === 'linux'
 
-export function isMobileLike(): boolean {
-    return window.matchMedia('(hover: none)').matches
-}
+export const isWeb = () => platform === 'web'
 
-export function isProduction(): boolean {
-    return !isDevelopment()
-}
+export const isMobile = () => isAndroid() || isIOS()
 
-export function isDevelopment(): boolean {
-    return import.meta.env.DEV === true
-}
+export const isDesktop = () => isWindows() || isMacOS() || isLinux()
+
+export const isNative = () => isMobile() || isDesktop()
+
+export const isTouchDevice = () => window.matchMedia('(hover: none)').matches
+
+export const isDevelopment = () => import.meta.env.DEV === true
+
+export const isProduction = () => !isDevelopment()

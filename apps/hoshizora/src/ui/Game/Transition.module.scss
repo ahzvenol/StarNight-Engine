@@ -11,7 +11,7 @@
 /* Each blind */
 .Game_Blind {
     position: relative;
-    width: 160px;
+    width: 12.5%;
     height: 100%;
     overflow: hidden;
     background: transparent;
@@ -20,11 +20,11 @@
 .Game_Blind::before {
     position: absolute;
     top: 0;
-    left: -160px;
-    width: 190px; /* 黑色区域 160px + 渐变区域 30px */
+    left: -100%;
+    width: 118.75%; /* 黑色区域 100% + 渐变区域 18.75% */
     height: 100%;
-    background: linear-gradient(to right, black 160px, rgba(0 0 0 / 0%) 190px);
-    animation: slide-black 0.3s ease forwards; /* 黑色区域从左到右扩展 */
+    background: linear-gradient(to right, black 84.21%, rgb(0 0 0 / 0%) 100%); /* 100% * (100/118.75) ≈ 84.21% */
+    animation: slide-black 1s ease forwards; /* 黑色区域从左到右扩展 */
     content: '';
 }
 /* Screen overlay for overall fading */
@@ -36,12 +36,12 @@
     height: 100%;
     background: black; /* 初始为黑色 */
     opacity: 0; /* 初始完全透明 */
-    animation: fade-black 0.3s ease forwards;
+    animation: fade-black 225ms ease forwards;
 }
 /* Animations */
 @keyframes slide-black {
     0% {
-        left: -160px; /* 初始在左侧之外 */
+        left: -100%; /* 初始在左侧之外 */
     }
 
     100% {
@@ -55,6 +55,6 @@
     }
 
     100% {
-        opacity: 1; /* 2秒后完全变黑 */
+        opacity: 1; /* 完全变黑 */
     }
 }

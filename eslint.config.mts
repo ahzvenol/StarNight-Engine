@@ -44,7 +44,8 @@ export default tseslint.config(
             ],
             'import/consistent-type-specifier-style': 'error',
             '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after' } }],
-            '@stylistic/lines-between-class-members': 'off',
+            '@stylistic/lines-between-class-members': 'off', // 允许类成员之间不换行
+            '@stylistic/jsx-one-expression-per-line': 'off', // 允许jsx同一行有多个表达式
             'import/no-unresolved': 'off',
             'solid/no-innerhtml': 'off', // 允许innerhtml(由于不存在非法输入)
             'solid/no-destructure': 'off', // 允许solid组件参数解构(由于项目风格是传输signal)

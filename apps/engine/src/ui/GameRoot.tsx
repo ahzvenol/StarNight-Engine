@@ -12,10 +12,10 @@ import { Game } from '@/ui/Game/Game'
 import styles from '@/ui/Game/Game.module.scss'
 import { suppress } from '@/utils/solid/suppress'
 import { useEventListener } from '@/utils/solid/useEventListener'
+import { SaveLoad } from '@/ui/SaveLoad/SaveLoad'
 import { Config } from './Config/Config'
 import { GUIRootState } from './GUIRoot'
 import { Menu } from './Menu/Menu'
-import { SaveLoad } from './SaveAndLoad/SaveLoad'
 
 export type GUIGameRootPages = 'Game' | 'Config' | 'Save' | 'Load' | 'Backlog'
 

@@ -48,7 +48,8 @@ export const Add: Component = () => {
                     if (!invalid()) {
                         local[Number(saveInput())]({ index: Number(actInput()) } as SaveLocalData)
                     }
-                }}>
+                }}
+            >
                 添加存档
             </div>
         </div>

@@ -25,12 +25,8 @@ export const CGElement: Component<{ i: number, cgs: GalleryGroup }> = ({ i, cgs 
             <div
                 ref={useSoundEffect('Click', 'Enter')}
                 class={styles.Gallery_CG_content_element}
-                style={{
-                    'animation-delay': `${100 + i * 60}ms`
-                }}
-                onClick={() => {
-                    if (canShow) pointer(0)
-                }}
+                style={{ 'animation-delay': `${100 + i * 60}ms` }}
+                onClick={() => { if (canShow) pointer(0) }}
             >
                 <div
                     class={styles.Gallery_CG_content_element_image}

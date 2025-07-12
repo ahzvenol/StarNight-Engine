@@ -10,7 +10,7 @@ import { useGame } from '../GameRoot'
 import { useDialog } from '../GlobalDialog/GlobalDialog'
 import { translation } from '../translations'
 import { useSoundEffect } from '../useSoundEffect'
-import styles from './SaveAndLoad.module.scss'
+import styles from './SaveLoad.module.scss'
 
 type SaveLoadElementProps = { i: number, mode: SaveLoadMode, index: number, slot: Reactive<SaveLocalData> }
 

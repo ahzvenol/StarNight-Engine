@@ -2,7 +2,7 @@ import { Capacitor } from '@capacitor/core'
 import { isTauri } from '@tauri-apps/api/core'
 import * as Tauri from '@tauri-apps/plugin-os'
 
-const platform = isTauri() ? Tauri.platform() : Capacitor.getPlatform()
+export const platform = isTauri() ? Tauri.platform() : Capacitor.getPlatform()
 
 export const isAndroid = () => platform === 'android'
 
