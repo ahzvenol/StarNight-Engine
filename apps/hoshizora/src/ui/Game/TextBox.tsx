@@ -24,7 +24,7 @@ export const TextBox: Component = () => {
                             <>
                                 <div>
                                     {line}
-                                    <Show when={index() === lines().length - 1 && ui().iconstate()}>
+                                    <Show when={index() === lines().length - 1 && ui().text() === starnight().current.text()}>
                                         <span class={styles.Game_TextBox_star_container}>
                                             <span class={styles.Game_TextBox_star} />
                                         </span>

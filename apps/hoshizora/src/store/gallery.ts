@@ -1,24 +1,25 @@
-export type MVItem = {
-    cover: string
-    uncover?: string
+import { mapValues } from 'es-toolkit'
+
+export type GalleryItem = {
     url: string
     condition?: string | string[]
 }
 
-export type CGItem = {
-    url: string
-    condition?: string | string[]
-}
-
-export type CGGroup = {
+export type MVEntry = {
     cover: string
     uncover?: string
-    items: CGItem[]
+    item: GalleryItem
 }
 
-export type GalleryEntry = CGGroup | MVItem
+export type CGEntry = {
+    cover: string
+    uncover?: string
+    items: GalleryItem[]
+}
 
-export const CG: Array<CGGroup> = [
+export type GalleryEntry = CGEntry | MVEntry
+
+export const CG: Array<CGEntry> = [
     ['evcg01', 'a', 'b', 'c', 'c2', 'd', 'e'],
     ['evcg20', 'a', 'b', 'c', 'd'],
     ['evcg02', 'a', 'b', 'c', 'd', 'e'],
@@ -51,12 +52,12 @@ export const CG: Array<CGGroup> = [
         }))
     }))
 
-export const MV: Array<MVItem> = [
-    { cover: `./static/op.webp`, uncover: `./static/Texture2D/gallery_thumb.webp`, url: './static/OP.mp4', condition: '/OP.mp4' },
-    { cover: `./static/ed.webp`, uncover: `./static/Texture2D/gallery_thumb.webp`, url: './static/ED.mp4', condition: '/ED.mp4' }
+export const MV: Array<MVEntry> = [
+    { cover: `./static/op.webp`, uncover: `./static/Texture2D/gallery_thumb.webp`, item: { url: './static/OP.mp4', condition: '/OP.mp4' } },
+    { cover: `./static/ed.webp`, uncover: `./static/Texture2D/gallery_thumb.webp`, item: { url: './static/ED.mp4', condition: '/ED.mp4' } }
 ]
 
-export const Music = {
+export const Music = mapValues({
     [-1]: ['#?@', '', '?????', '', '???', '0:00', '#?@'],
     0: ['music1', 'スタートリップ', 'スタートリップ', '', '保科めぐみ', '4:21', 'music1'],
     1: ['music1', 'スタートリップ（inst）', 'スタートリップ', 'inst', '丸山公詳', '4:21', 'music1_b'],
@@ -73,4 +74,5 @@ export const Music = {
     12: ['bgm11', 'スタートリップ（piano ver.）', 'スタートリップ', 'piano ver.', '保科めぐみ', '1:50', 'bgm11'],
     13: ['music2', 'ひだまりの場所', 'ひだまりの場所', '', '保科めぐみ', '4:50', 'music2'],
     14: ['music2', 'ひだまりの場所（inst）', 'ひだまりの場所', 'inst', '丸山公詳', '4:48', 'music2_b']
-} as Record<number, [string, string, string, string, string, string, string]>
+}, (value) => [`/AudioClip/${value[0]}.flac`, value[1], value[2], value[3], value[4], value[5], `./static/AudioClip/${value[6]}.flac`]) as
+Record<number, [string, string, string, string, string, string, string]>

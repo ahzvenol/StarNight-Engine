@@ -1,10 +1,8 @@
 .Game_Backlog_container {
-    z-index: 9;
     background-image: url('/static/Texture2D/backlog.webp');
 }
 
 .Game_Backlog_mask {
-    z-index: 1;
     background-color: black;
     opacity: 0.197;
 }
