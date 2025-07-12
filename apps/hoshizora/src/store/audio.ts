@@ -4,12 +4,7 @@ import { createEffect } from 'solid-js'
 import { HowlerInstance } from '@/lib/howler'
 import { onStoreReady } from '@/store'
 
-export enum AudioIds {
-    Title,
-    GalleryAudio,
-    GalleryVideo,
-    Game
-}
+export enum AudioIds { Title, GalleryAudio, GalleryVideo, Game }
 
 export const AudioMutex = useSignal<AudioIds>(AudioIds.Title)
 
