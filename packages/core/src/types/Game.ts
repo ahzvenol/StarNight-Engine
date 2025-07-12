@@ -2,6 +2,7 @@
 import type { Reactive } from 'micro-reactive-wrapper'
 import type { CommandOutput, StandardResolvedCommand } from './Command'
 import type { StarNightInstance, StarNightStateStatic } from '@/StarNight'
+import type { Except } from 'type-fest'
 
 export enum GameState {
     Initializing = 0,
@@ -28,40 +29,60 @@ export type GameScenario<R> = Generator<GameFragment<R>, unknown, unknown>
 
 export type GameScript = GameScenario<number>
 
+/** 游戏本地数据 */
 export interface GameLocalData {
     count: number
     index: number
     sence: string
 }
 
+/** 游戏全局数据 */
 export interface GameGlobalData {
     readsegment: Record<string, Array<[number, number]>>
 }
 
+/** 游戏实例临时数据 */
 export interface GameTempData {}
 
+/** 游戏外部UI数据，由外部传入 */
 export interface GameUIExternalData {}
 
+/** 游戏内部UI数据，由内部设置 */
 export interface GameUIInternalData {}
 
 export type GameConstructorParams = {
+    /** 游戏剧本 */
     script: GameScript
+    /** 游戏设置 */
     config: Reactive<GameConfig>
+    /** 游戏全局数据 */
     global: Reactive<GameGlobalData>
+    /** 游戏存档数据 */
     readonly local: { count: number } & Partial<GameLocalData>
+    /** 游戏外部UI数据 */
     ui: GameUIExternalData
 }
 
+/** 游戏实例上下文 */
 export type GameContext = {
+    /** 游戏实时数据 */
     current: Reactive<GameLocalData>
+    /** 游戏临时数据 */
     temp: GameTempData
+    /** 游戏UI数据 */
     ui: GameUIInternalData
+    /** 游戏实例 */
     readonly instance: StarNightInstance
-} & Omit<GameConstructorParams, 'book'>
+} & Except<GameConstructorParams, 'script'>
 
+/** 单幕上下文 */
 export type GameRuntimeContext = {
+    /** 游戏当前幕的状态 */
     readonly state: StarNightStateStatic
+    /** 游戏当前幕的特殊输出 */
     readonly output: CommandOutput
+    /** 游戏当前幕的快进Promise */
     readonly onActRush: Promise<GameRuntimeContext>
+    /** 游戏全局的结束Promise */
     readonly onGameStop: Promise<GameContext>
 } & GameContext

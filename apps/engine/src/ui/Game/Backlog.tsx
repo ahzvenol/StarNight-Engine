@@ -62,7 +62,7 @@ export const Backlog: Component = () => {
                                             )}
                                         </Variable>
                                     </Show>
-                                    <div class={styles.Game_Backlog_item_name}>{act.name}</div>
+                                    <div class={styles.Game_Backlog_item_name}>{act.local.name}</div>
                                 </div>
                                 <div class={styles.Game_Backlog_item_layout_2}>
                                     <div class={styles.Game_Backlog_item_text} innerHTML={act.text} />

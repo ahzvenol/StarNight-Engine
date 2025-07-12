@@ -13,15 +13,15 @@ import { RangeSet } from './utils/RangeSet'
 export type { Reactive } from 'micro-reactive-wrapper'
 
 export class StarNight {
-    // 游戏实例事件
+    /** 游戏实例事件 */
     public static readonly GameEvents = GameEvents
-    // 幕循环事件
+    /** 幕循环事件 */
     public static readonly ActEvents = ActEvents
-    // 主点击事件
+    /** 点击事件 */
     public static readonly ClickEvents = ClickEvents
-    // 全局响应式函数
+    /** 全局响应式函数 */
     public static useReactive: <T>(value: T) => Reactive<T> = useReactiveWrapper(<T>(arg0: T) => arg0)
-    // 实例工厂方法
+    /** 实例工厂方法 */
     public static instance = (params: GameConstructorParams) => new StarNightInstance(params)
 
     private constructor() {}
@@ -95,25 +95,25 @@ export class StarNightStateStatic {
 }
 
 export class StarNightInstance {
-    // 游戏实例事件
+    /** 游戏实例事件 */
     public readonly GameEvents = new GameEvents()
-    // 幕循环事件
+    /** 幕循环事件 */
     public readonly ActEvents = new ActEvents()
-    // 主点击事件
+    /** 点击事件 */
     public readonly ClickEvents = new ClickEvents()
-    // 游戏实例所持有的剧本
+    /** 游戏实例所持有的剧本 */
     public readonly script: GameScript
-    // 唯一id,用于区分不同实例
+    /** 唯一 id，用于区分不同实例 */
     public readonly uuid = randomUUID()
-    // 已读/未读标记
+    /** 已读/未读标记 */
     public readonly isRead = StarNight.useReactive(false)
-    // 游戏可见性,当游戏不可见时停止自动播放
+    /** 游戏可见性，当游戏不可见时停止自动播放 */
     public readonly isGameVisible = StarNight.useReactive(true)
-    // 游戏运行状态,从初始化状态进入普通/自动/快进三态转换
+    /** 游戏运行状态，从初始化状态进入普通/自动/快进三态转换 */
     public readonly state = new StarNightState()
-    // 游戏本地状态,用于存档/读档功能
+    /** 游戏实例状态，用于存档/读档功能 */
     public readonly current = StarNight.useReactive({ count: -1, index: NaN, sence: 'unknown' }) as Reactive<GameLocalData>
-    // 游戏实例上下文,是除单幕上下文外的基本上下文数据
+    /** 游戏实例上下文，是除单幕上下文外的基本上下文数据 */
     public readonly context: GameContext
 
     constructor(params: GameConstructorParams) {
@@ -135,16 +135,17 @@ export class StarNightInstance {
         ActLoop.bind(this)()
     }
 
+    /** 开始游戏 */
     public start = () => this.GameEvents.start.publish(this.context)
-
+    /** 退出游戏 */
     public stop = () => this.GameEvents.stop.publish(this.context)
-
+    /** 挂起游戏 */
     public suspend = () => {
         if (this.isGameVisible()) {
             this.GameEvents.suspend.publish(this.context)
         }
     }
-
+    /** 恢复游戏 */
     public resume = () => {
         if (!this.isGameVisible()) {
             this.GameEvents.resume.publish(this.context)
@@ -186,6 +187,7 @@ async function ActLoop(this: StarNightInstance) {
     const onGameStop = this.GameEvents.onStop()
     while (true) {
         const { value, done } = this.script.next()
+        // 超出剧本时退出
         if (done) return this.GameEvents.end.publish(this.context)
         this.current.count(this.current.count() + 1)
         // 如果用户离开游戏界面,等待用户回来
@@ -201,18 +203,14 @@ async function ActLoop(this: StarNightInstance) {
         // ActStart前的初始化工作
         this.ActEvents.next.publish(this.context)
         const onActRush = this.ActEvents.onRush()
-        const output = {
-            cont: StarNight.useReactive(false),
-            end: StarNight.useReactive(false),
-            state: StarNight.useReactive(undefined),
-            extime: StarNight.useReactive(undefined)
-        } satisfies CommandOutput
+        // 通过output收集命令返回的特殊数据
+        const output: CommandOutput = StarNight.useReactive({ cont: false, end: false, state: undefined, extime: undefined })
         const state = new StarNightStateStatic(this.state.now())
         const context = { ...this.context, state, output, onActRush, onGameStop }
         if (this.state.isInitializing() || this.state.isFast()) this.ActEvents.rush.publish(context)
         // ActStart
         this.ActEvents.start.publish(context)
-        // 收集命令返回的运行数据,处理可能影响游戏流程的部分,如jump和continue
+        // Fork返回下一幕的index
         const next = await Fork(value)(context)
         // ActEnd
         this.ActEvents.end.publish(context)
@@ -220,19 +218,23 @@ async function ActLoop(this: StarNightInstance) {
         // 等待过程受continue命令影响
         if (!this.state.isInitializing() && !output.cont()) {
             if (this.state.isFast()) {
+                // 在快进状态下等待一段时间
                 await delay(this.context.config.fastreadspeed())
             } else if (this.state.isAuto()) {
+                // 等待额外计时后再等待一段时间，之后如果还处于自动模式则resolve，否则继续等待自动事件
                 const onAutoNext = Promise.resolve(output.extime())
                     .then(() => delay(this.context.config.autoreadspeed()))
                     .then(() => (!this.state.isAuto() ? this.ClickEvents.onAuto() : Promise.resolve()))
+                // 在自动状态下等待步进、快进事件和onAutoNext
                 await Promise.race([this.ClickEvents.onStep(), onAutoNext, this.ClickEvents.onFast()])
             } else {
+                // 在普通状态下等待步进、自动、快进事件
                 await Promise.race([this.ClickEvents.onStep(), this.ClickEvents.onAuto(), this.ClickEvents.onFast()])
             }
         }
         if (Number.isInteger(next)) this.current.index(next)
-        // 游戏实例已销毁时退出,初始化时不判断以优化初始化速度。不需要发送事件,因为这个事件已经由用户发出
+        // 游戏实例已销毁时退出,初始化时忽略以优化初始化速度。不需要发送事件,因为这个事件已经由用户发出
         if (!this.state.isInitializing() && (await PromiseX.isSettled(onGameStop))) return
-        if (output.end()) return this.GameEvents.end.publish(this.context)
+        if (output.end()) return this.GameEvents.end.publish(this.context) // 通过end标志退出
     }
 }

@@ -51,6 +51,7 @@ export function flipObject<T extends Record<string | number | symbol, string | n
     return result
 }
 
+/** 为命令的参数提供别名，允许在调用时使用替代参数名。 */
 export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Partial<Record<keyof T, PropertyKey>>>(
     fn: StandardDynamicCommand<T, R>,
     map: M
@@ -109,6 +110,7 @@ export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Parti
     return (args) => async (context) => fn(renameKeys(args, flipmap))(context)
 }
 
+/** 将命令的类型转换为适用于剧本的形式，这不会改变命令的实际内容 */
 export function Api<T, R>(fn: StandardDynamicCommand<T, R>): Function1<T, R> & CommandTagDynamic
 export function Api<T, R>(fn: StandardNonBlockingCommand<T, R>): Function1<T, R> & CommandTagNonBlocking
 export function Api<T, R>(fn: StandardBlockingCommand<T, R>): Function1<T, R> & CommandTagBlocking

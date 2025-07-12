@@ -1,30 +1,32 @@
 import type { GameContext, GameRuntimeContext } from './types/Game'
 import { EventDispatcher } from './utils/EventDispatcher'
 
-// 游戏实例事件
+/**
+ * 游戏实例事件
+ */
 export class GameEvents {
-    // 初始化实例数据
+    /** 初始化游戏数据 */
     public static readonly setup = new EventDispatcher<GameContext>()
-    // 启动幕循环
+    /** 启动幕循环 */
     public static readonly start = new EventDispatcher<GameContext>()
-    // 初始化游戏完毕
+    /** 初始化游戏完毕 */
     public static readonly ready = new EventDispatcher<GameContext>()
-    // 自动结束
+    /** 自动结束 */
     public static readonly end = new EventDispatcher<GameContext>()
-    // 主动退出
+    /** 主动退出 */
     public static readonly stop = new EventDispatcher<GameContext>()
-    // 终止,结束/退出
+    /** 终止,结束/退出 */
     public static readonly exit = new EventDispatcher<GameContext>()
-    // 挂起
+    /** 挂起 */
     public static readonly suspend = new EventDispatcher<GameContext>()
-    // 恢复
+    /** 恢复 */
     public static readonly resume = new EventDispatcher<GameContext>()
-    // 挂起/恢复
+    /** 挂起/恢复 */
     public static readonly active = new EventDispatcher<boolean>()
 
     public static readonly onSetup = EventDispatcher.on(this.setup)
-    public static readonly onReady = EventDispatcher.on(this.ready)
     public static readonly onStart = EventDispatcher.on(this.start)
+    public static readonly onReady = EventDispatcher.on(this.ready)
     public static readonly onEnd = EventDispatcher.on(this.end)
     public static readonly onStop = EventDispatcher.on(this.stop)
     public static readonly onExit = EventDispatcher.on(this.exit)
@@ -34,8 +36,8 @@ export class GameEvents {
 
     constructor() {
         this.setup.subscribe((...args) => GameEvents.setup.publish(...args))
-        this.ready.subscribe((...args) => GameEvents.ready.publish(...args))
         this.start.subscribe((...args) => GameEvents.start.publish(...args))
+        this.ready.subscribe((...args) => GameEvents.ready.publish(...args))
         this.end.subscribe((...args) => GameEvents.end.publish(...args))
         this.stop.subscribe((...args) => GameEvents.stop.publish(...args))
         this.exit.subscribe((...args) => GameEvents.exit.publish(...args))
@@ -44,19 +46,28 @@ export class GameEvents {
         this.active.subscribe((...args) => GameEvents.active.publish(...args))
     }
 
+    /** 初始化实例数据 */
     public readonly setup = new EventDispatcher<GameContext>()
-    public readonly ready = new EventDispatcher<GameContext>()
+    /** 启动幕循环 */
     public readonly start = new EventDispatcher<GameContext>()
+    /** 初始化游戏完毕 */
+    public readonly ready = new EventDispatcher<GameContext>()
+    /** 自动结束 */
     public readonly end = new EventDispatcher<GameContext>()
+    /** 主动退出 */
     public readonly stop = new EventDispatcher<GameContext>()
+    /** 终止,结束/退出 */
     public readonly exit = new EventDispatcher<GameContext>()
+    /** 挂起 */
     public readonly suspend = new EventDispatcher<GameContext>()
+    /** 恢复 */
     public readonly resume = new EventDispatcher<GameContext>()
+    /** 挂起/恢复 */
     public readonly active = new EventDispatcher<boolean>()
 
     public readonly onSetup = EventDispatcher.on(this.setup)
-    public readonly onReady = EventDispatcher.on(this.ready)
     public readonly onStart = EventDispatcher.on(this.start)
+    public readonly onReady = EventDispatcher.on(this.ready)
     public readonly onEnd = EventDispatcher.on(this.end)
     public readonly onStop = EventDispatcher.on(this.stop)
     public readonly onExit = EventDispatcher.on(this.exit)
@@ -65,15 +76,17 @@ export class GameEvents {
     public readonly onActiveChange = EventDispatcher.on(this.active)
 }
 
-// 幕循环事件
+/**
+ * 幕循环事件
+ */
 export class ActEvents {
-    // 启动幕循环
+    /** 开始一幕 */
     public static readonly start = new EventDispatcher<GameRuntimeContext>()
-    // 自动结束
+    /** 自动结束 */
     public static readonly end = new EventDispatcher<GameRuntimeContext>()
-    // 进入下一幕
+    /** 进入下一幕 */
     public static readonly next = new EventDispatcher<GameContext>()
-    // 单幕快进
+    /** 单幕快进 */
     public static readonly rush = new EventDispatcher<GameRuntimeContext>()
 
     public static readonly onStart = EventDispatcher.on(this.start)
@@ -88,9 +101,13 @@ export class ActEvents {
         this.next.subscribe((...args) => ActEvents.next.publish(...args))
     }
 
+    /** 开始一幕 */
     public readonly start = new EventDispatcher<GameRuntimeContext>()
+    /** 自动结束 */
     public readonly end = new EventDispatcher<GameRuntimeContext>()
+    /** 单幕快进 */
     public readonly rush = new EventDispatcher<GameRuntimeContext>()
+    /** 进入下一幕 */
     public readonly next = new EventDispatcher<GameContext>()
 
     public readonly onStart = EventDispatcher.on(this.start)
@@ -99,18 +116,20 @@ export class ActEvents {
     public readonly onNext = EventDispatcher.on(this.next)
 }
 
-// 游戏点击事件
+/**
+ * 游戏点击事件
+ */
 export class ClickEvents {
-    // 步进
+    /** 步进 */
     public static readonly step = new EventDispatcher<void>()
-    // 快进/解除快进
-    public static readonly fast = new EventDispatcher<void>()
-    // 自动/解除自动
+    /** 自动/解除自动 */
     public static readonly auto = new EventDispatcher<void>()
+    /** 快进/解除快进 */
+    public static readonly fast = new EventDispatcher<void>()
 
     public static readonly onStep = EventDispatcher.on(this.step)
-    public static readonly onFast = EventDispatcher.on(this.fast)
     public static readonly onAuto = EventDispatcher.on(this.auto)
+    public static readonly onFast = EventDispatcher.on(this.fast)
 
     constructor() {
         this.step.subscribe((...args) => ClickEvents.step.publish(...args))
@@ -118,11 +137,14 @@ export class ClickEvents {
         this.auto.subscribe((...args) => ClickEvents.auto.publish(...args))
     }
 
+    /** 步进 */
     public readonly step = new EventDispatcher<void>()
-    public readonly fast = new EventDispatcher<void>()
+    /** 自动/解除自动 */
     public readonly auto = new EventDispatcher<void>()
+    /** 快进/解除快进 */
+    public readonly fast = new EventDispatcher<void>()
 
     public readonly onStep = EventDispatcher.on(this.step)
-    public readonly onFast = EventDispatcher.on(this.fast)
     public readonly onAuto = EventDispatcher.on(this.auto)
+    public readonly onFast = EventDispatcher.on(this.fast)
 }

@@ -23,7 +23,7 @@ function isJSXElementOrJSXFragment(node: t.Node | null | undefined) {
     return t.isJSXElement(node) || t.isJSXFragment(node)
 }
 
-// 关键字: $action,$debugger,$context,$say,$await,$await,$call
+// 关键字: $action,$debugger,$context,$include,$await,$await,$say
 
 export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
     let currentMode = 'development'
@@ -42,12 +42,6 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
         },
         async transform(code: string, id: string) {
             if (!/\.scenario\.(mjs|js|mts|ts|jsx|tsx)$/.test(id)) return null
-
-            // 转换注释形式的幕分隔符到$action
-            code = code
-                .split(/(?:\r\n|[\n-\r\u0085\u2028\u2029])/)
-                .map((line) => (/^\s*\/\/\s*-{4,}\s*$/.test(line) ? 'yield $action;' : line))
-                .join('\n')
 
             const projectRoot = process.cwd()
             const relativePath = pathUtil.relative(projectRoot, id)
@@ -82,10 +76,15 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
             let debug = false
 
             traverse(ast, {
+                // 编译$debugger到yield $debugger
+                // 编译$action到yield$action
                 ExpressionStatement(path) {
                     if (!inRootAsyncGenerator(path) || currentMode === 'production') return
                     const expression = path.node.expression
-                    if (t.isIdentifier(expression, { name: '$debugger' })) {
+
+                    if (t.isIdentifier(expression, { name: '$action' })) {
+                        path.replaceWith(t.yieldExpression(expression))
+                    } else if (t.isIdentifier(expression, { name: '$debugger' })) {
                         path.replaceWith(t.yieldExpression(expression))
                         debug = true
                     }
@@ -119,7 +118,7 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
             traverse(ast, {
                 // 编译$async.method()到yield $async.method()
                 // 编译$await.method()到await (yield $await.method())
-                // 编译$call(url)到yield* $scenario.default()
+                // 编译$include(url)到yield* $scenario.default()
                 CallExpression(path) {
                     if (!inRootAsyncGenerator(path)) return
                     const callee = path.node.callee
@@ -135,7 +134,7 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
                             path.replaceWith(t.awaitExpression(t.parenthesizedExpression(t.yieldExpression(path.node))))
                             path.skip()
                         }
-                    } else if (t.isIdentifier(path.node.callee, { name: '$call' })) {
+                    } else if (t.isIdentifier(path.node.callee, { name: '$include' })) {
                         path.replaceWith(
                             t.yieldExpression(
                                 t.callExpression(

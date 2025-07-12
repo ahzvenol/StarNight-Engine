@@ -1,5 +1,6 @@
 import type { GameConfig, GameGlobalData, GameLocalData } from '@starnight/core'
 import type { Reactive } from 'micro-reactive-solid'
+import type { SimplifyDeep } from 'type-fest'
 import { cloneDeep } from 'es-toolkit'
 import { isDevelopment, isMobile, isNative } from '@/utils/checkEnv'
 
@@ -40,7 +41,7 @@ const system = {
     releasedate: '2025.x'
 }
 
-const config = {
+const config: Config = {
     fullscreen: isMobile() ? true : false,
     textboxfont: 'WebgalUI',
     textboxfontsize: '155%',
@@ -59,15 +60,15 @@ const config = {
     autoreadspeed: 1000,
     fastreadspeed: isNative() || isDevelopment() ? 10 : 100,
     backlogmaxlength: 50
-} satisfies Config
+}
 
-const global = { unlocked: [], readsegment: {}, achievement: {} } as SaveGlobalData
+const global: SaveGlobalData = { unlocked: [], readsegment: {}, achievement: {} }
 
-const local = {} as Record<number, SaveLocalData> & { [0]?: GameLocalData } & { [-1]?: GameLocalData }
+const local: Record<number, SaveLocalData> & { [0]?: GameLocalData } & { [-1]?: GameLocalData } = {}
 
 const extra = {}
 
 export const SystemDefaultStore = () => cloneDeep({ system, config, global, local, extra } as const)
 
-export type Store = ReturnType<typeof SystemDefaultStore>
+export type Store = SimplifyDeep<ReturnType<typeof SystemDefaultStore>>
 export type ReactiveStore = Reactive<Store>
