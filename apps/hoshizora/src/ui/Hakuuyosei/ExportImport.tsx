@@ -4,13 +4,12 @@ import { omit, toMerged } from 'es-toolkit'
 import * as LZString from 'lz-string'
 import { useSignal } from 'micro-reactive-solid'
 import { Show } from 'solid-js'
-import { useStore } from '@/store/context'
 import { Either } from '@/utils/fp/Either'
 import { Try } from '@/utils/fp/Try'
+import { store } from '@/store'
 import styles from './Hakuuyosei.module.scss'
 
 export const ExportImport: Component = () => {
-    const store = useStore()
     const state = useSignal<Either<string, string> | null>(null)
     const importFn = () => {
         const result = Clipboard.read().then((res) => res.value)

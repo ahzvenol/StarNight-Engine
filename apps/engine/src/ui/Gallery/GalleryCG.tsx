@@ -40,7 +40,7 @@ export const GalleryCG: Component = () => {
                     {(i) => (
                         <Variable value={() => CG[(currentPage() - 1) * pageElementCount + i]}>
                             {(cgs) => (
-                                <Show when={cgs()} keyed>
+                                <Show keyed when={cgs()}>
                                     <CGElement i={i} cgs={cgs()} />
                                 </Show>
                             )}

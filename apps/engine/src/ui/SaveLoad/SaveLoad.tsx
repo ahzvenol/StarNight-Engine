@@ -49,7 +49,7 @@ export const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
                         {(i) => (
                             <Variable value={() => i + 1 + currentPage() * pageElementCount}>
                                 {(index) => (
-                                    <Show when={local[index()]} keyed>
+                                    <Show keyed when={local[index()]}>
                                         <SaveLoadElement i={i} mode={mode} index={index()} slot={local[index()]} />
                                     </Show>
                                 )}

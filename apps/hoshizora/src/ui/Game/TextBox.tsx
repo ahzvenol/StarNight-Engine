@@ -1,11 +1,11 @@
 import type { Component } from 'solid-js'
 import { For, Show } from 'solid-js'
-import { useStore } from '@/store/context'
 import { starnight, ui } from '@/store/starnight'
+import { store } from '@/store'
 import styles from './TextBox.module.scss'
 
 export const TextBox: Component = () => {
-    const config = useStore().config
+    const config = store.config
 
     const lines = () =>
         ui()

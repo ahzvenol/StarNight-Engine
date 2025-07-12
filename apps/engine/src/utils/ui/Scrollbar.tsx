@@ -117,7 +117,7 @@ const Slider: Component<{
     return <>{track2}</>
 }
 
-const Scrollbar: Component<{
+export const Scrollbar: Component<{
     container: JSX.Element
     content: JSX.Element
     track: JSX.Element
@@ -212,5 +212,3 @@ const Scrollbar: Component<{
         </>
     )
 }
-
-export { Scrollbar }

@@ -1,8 +1,7 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
 import { createEffect, Match, on, onMount, Show, Switch } from 'solid-js'
-import { onStoreReady } from '@/store'
-import { useStore } from '@/store/context'
+import { onStoreReady, store } from '@/store'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/Logger'
@@ -28,7 +27,6 @@ onStoreReady.then(({ config: { bgmvolume } }) => createEffect(() => audio.volume
 
 export const Title: Component = () => {
     log.info('Title组件函数被调用')
-    const store = useStore()
     const system = store.system
     const local = store.extra
     onMount(() => {
@@ -66,7 +64,7 @@ export const Title: Component = () => {
                                         }}
                                         onClick={() => {
                                             if (index === 0) useGame({ count: 1 })
-                                            else GUIHomeRootState((['Load', 'Config', 'Gallery'] as const)[index])
+                                            else GUIHomeRootState((['Load', 'Config', 'Gallery'] as const)[index - 1])
                                         }}
                                     />
                                     <style jsx>

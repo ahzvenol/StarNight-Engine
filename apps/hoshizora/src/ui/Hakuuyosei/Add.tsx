@@ -2,11 +2,12 @@ import type { Component } from 'solid-js'
 import type { SaveLocalData } from '@/store/default'
 import { useSignal } from 'micro-reactive-solid'
 import { Match, Switch } from 'solid-js'
-import { useStore } from '@/store/context'
+import { store } from '@/store'
 import styles from './Hakuuyosei.module.scss'
 
+// todo:
 export const Add: Component = () => {
-    const local = useStore().local
+    const local = store.local
     const actInput = useSignal('')
     const saveInput = useSignal('')
     const actIndex = () => Number(actInput())
@@ -46,7 +47,7 @@ export const Add: Component = () => {
                 class={styles.Hakuuyosei_button}
                 onClick={() => {
                     if (!invalid()) {
-                        local[Number(saveInput())]({ index: Number(actInput()) } as SaveLocalData)
+                        local[Number(saveInput())]({ count: Number(actInput()) } as SaveLocalData)
                     }
                 }}
             >

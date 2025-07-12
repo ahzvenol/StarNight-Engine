@@ -1,14 +1,14 @@
 import type { Component } from 'solid-js'
-import { useStore } from '@/store/context'
 import { starnight } from '@/store/starnight'
 import { suppress } from '@/utils/solid/suppress'
+import { store } from '@/store'
 import { Button } from '../Button'
 import { GUIGameRootState, useGame } from '../GameRoot'
 import styles from './ControlPanel.module.scss'
 import { showUI } from './Game'
 
 export const ControlPanel: Component = () => {
-    const slot = useStore().local[-1]
+    const slot = store.local[-1]
     return (
         <div ref={suppress('click')} class={styles.Game_ControlPanel_container}>
             <div class={styles.Game_ControlPanel_group_1}>

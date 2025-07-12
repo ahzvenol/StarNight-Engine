@@ -1,10 +1,10 @@
 import type { Component } from 'solid-js'
+import { Show } from 'solid-js'
 import clsx from 'clsx'
 import { useSignal } from 'micro-reactive-solid'
-import { useStore } from '@/store/context'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { log } from '@/utils/Logger'
-import { ReRender } from '@/utils/solid/ReRender'
+import { store } from '@/store'
 import styles from './SaveLoad.module.scss'
 import { SaveLoadElement } from './SaveLoadElement'
 
@@ -15,7 +15,7 @@ const currentPage = useSignal(0)
 
 export const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
     log.info('SaveLoad组件函数被调用')
-    const local = useStore().local
+    const local = store.local
     const pageElementCount = 9
 
     return (
@@ -52,17 +52,17 @@ export const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
                 </div>
             </div>
             <div class={styles.Save_Load_content}>
-                <Clone count={pageElementCount}>
-                    {(i) => (
-                        <Variable value={() => i + currentPage() * pageElementCount}>
-                            {(index) => (
-                                <ReRender key={index}>
+                <Show keyed when={currentPage().toString()}>
+                    <Clone count={pageElementCount}>
+                        {(i) => (
+                            <Variable value={() => i + currentPage() * pageElementCount}>
+                                {(index) => (
                                     <SaveLoadElement slot={local[index()]} mode={mode} index={index()} />
-                                </ReRender>
-                            )}
-                        </Variable>
-                    )}
-                </Clone>
+                                )}
+                            </Variable>
+                        )}
+                    </Clone>
+                </Show>
             </div>
         </div>
     )

@@ -76,7 +76,7 @@ export const GameRoot: Component = () => {
 
     return (
         <>
-            <Show when={starnight} keyed>
+            <Show keyed when={starnight}>
                 <Game />
             </Show>
             <Content ref={suppress('contextmenu')} onContextMenu={() => GUIGameRootState('Game')}>

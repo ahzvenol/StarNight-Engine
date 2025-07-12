@@ -1,20 +1,19 @@
 import type { Signal } from 'micro-reactive-solid'
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
-import { useStore } from '@/store/context'
 import { SystemDefaultStore } from '@/store/default'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { log } from '@/utils/Logger'
+import { store } from '@/store'
 import { GUIHomeRootState } from '../HomeRoot'
 import { Button } from '../Button'
 import { GUIRootState } from '../GUIRoot'
 import { BinaryButton, GroupButton } from './Button'
 import styles from './Config.module.scss'
-import Slider from './Slider'
+import { Slider } from './Slider'
 
 export const Config: Component = () => {
     log.info('Config组件函数被调用')
-    const store = useStore()
     const config = store.config
 
     return (

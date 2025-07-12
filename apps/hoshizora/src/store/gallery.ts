@@ -1,15 +1,24 @@
-export type GalleryItem = {
+export type MVItem = {
+    cover: string
+    uncover?: string
     url: string
     condition?: string | string[]
 }
 
-export type GalleryGroup = {
-    cover: string
-    uncover?: string
-    items: GalleryItem[]
+export type CGItem = {
+    url: string
+    condition?: string | string[]
 }
 
-export const CG: Array<GalleryGroup> = [
+export type CGGroup = {
+    cover: string
+    uncover?: string
+    items: CGItem[]
+}
+
+export type GalleryEntry = CGGroup | MVItem
+
+export const CG: Array<CGGroup> = [
     ['evcg01', 'a', 'b', 'c', 'c2', 'd', 'e'],
     ['evcg20', 'a', 'b', 'c', 'd'],
     ['evcg02', 'a', 'b', 'c', 'd', 'e'],
@@ -41,6 +50,11 @@ export const CG: Array<GalleryGroup> = [
             url: `./static/ImageAsset/${item}.webp`
         }))
     }))
+
+export const MV: Array<MVItem> = [
+    { cover: `./static/op.webp`, uncover: `./static/Texture2D/gallery_thumb.webp`, url: './static/OP.mp4', condition: '/OP.mp4' },
+    { cover: `./static/ed.webp`, uncover: `./static/Texture2D/gallery_thumb.webp`, url: './static/ED.mp4', condition: '/ED.mp4' }
+]
 
 export const Music = {
     [-1]: ['#?@', '', '?????', '', '???', '0:00', '#?@'],

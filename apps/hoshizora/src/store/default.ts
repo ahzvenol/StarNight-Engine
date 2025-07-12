@@ -59,7 +59,6 @@ const config: Config = {
     backlogmaxlength: 50
 }
 
-// todo:unlock -> unlocked
 const global: SaveGlobalData = { unlocked: [], readsegment: {}, achievement: {} }
 
 const local: Record<number, SaveLocalData> & { [-1]?: GameLocalData } = {}

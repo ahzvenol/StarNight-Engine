@@ -11,7 +11,7 @@ import { useEventListener } from '@/utils/solid/useEventListener'
 // track.style.width = `${props.signal() * 100}%`
 // thumb.style.left = `${props.signal() * 100}%`
 // 或者有什么新点子可以实现滑块功能的话,这些属性也可以覆盖掉
-const Slider: Component<{
+export const Slider: Component<{
     fill?: JSX.Element
     thumb: JSX.Element
     track: JSX.Element
@@ -126,5 +126,3 @@ const Slider: Component<{
 
     return <>{track}</>
 }
-
-export { Slider }

@@ -29,7 +29,7 @@ export const BackIcon = () => (
     </svg>
 )
 
-export const PlayIcon: Component<{ width: string; height: string }> = ({ width, height }) => (
+export const PlayIcon: Component<{ width: string, height: string }> = ({ width, height }) => (
     <svg
         width={width}
         height={height}
@@ -38,7 +38,8 @@ export const PlayIcon: Component<{ width: string; height: string }> = ({ width, 
         stroke="currentColor"
         stroke-width="5"
         stroke-linecap="butt"
-        stroke-linejoin="miter">
+        stroke-linejoin="miter"
+    >
         <path
             d="M17.533 10.974a1 1 0 0 0-1.537.844v24.356a1 1 0 0 0 1.537.844L36.67 24.84a1 1 0 0 0 0-1.688L17.533 10.974Z"
             fill="currentColor"
@@ -47,7 +48,7 @@ export const PlayIcon: Component<{ width: string; height: string }> = ({ width, 
     </svg>
 )
 
-export const PauseIcon: Component<{ width: string; height: string }> = ({ width, height }) => (
+export const PauseIcon: Component<{ width: string, height: string }> = ({ width, height }) => (
     <svg
         width={width}
         height={height}
@@ -56,13 +57,14 @@ export const PauseIcon: Component<{ width: string; height: string }> = ({ width,
         stroke="currentColor"
         stroke-width="5"
         stroke-linecap="butt"
-        stroke-linejoin="miter">
+        stroke-linejoin="miter"
+    >
         <path d="M14 12h4v24h-4zM30 12h4v24h-4z" />
         <path fill="currentColor" stroke="none" d="M14 12h4v24h-4zM30 12h4v24h-4z" />
     </svg>
 )
 
-export const StopIcon: Component<{ width: string; height: string }> = ({ width, height }) => (
+export const StopIcon: Component<{ width: string, height: string }> = ({ width, height }) => (
     <svg width={width} height={height} viewBox="0 0 48 48" fill="none">
         <path
             d="M34 12H14C12.8954 12 12 12.8954 12 14V34C12 35.1046 12.8954 36 14 36H34C35.1046 36 36 35.1046 36 34V14C36 12.8954 35.1046 12 34 12Z"
@@ -71,7 +73,7 @@ export const StopIcon: Component<{ width: string; height: string }> = ({ width, 
     </svg>
 )
 
-export const SoundIcon: Component<{ width: string; height: string }> = ({ width, height }) => (
+export const SoundIcon: Component<{ width: string, height: string }> = ({ width, height }) => (
     <svg
         width={width}
         height={height}
@@ -80,7 +82,8 @@ export const SoundIcon: Component<{ width: string; height: string }> = ({ width,
         stroke="currentColor"
         stroke-width="4"
         stroke-linecap="butt"
-        stroke-linejoin="miter">
+        stroke-linejoin="miter"
+    >
         <path d="m14 16 10-9v34l-10-9H6V16h8Z" />
         <path d="M31.071 16.929c3.905 3.905 3.905 10.237 0 14.142M36.727 11.272c7.03 7.03 7.03 18.426 0 25.456" />
     </svg>
