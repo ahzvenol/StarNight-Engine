@@ -38,19 +38,20 @@ export default tseslint.config(
             'import/order': [
                 'error',
                 {
-                    // sortTypesGroup: true, // 这条规则还没发布
+                    sortTypesGroup: true, // 类型导入单独排序
                     groups: ['type', 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object']
                 }
             ],
             'import/consistent-type-specifier-style': 'error',
-            '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after' } }],
+            '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after' } }], // 操作符写在每一行前面，'='除外
+            '@stylistic/max-statements-per-line': ['error', { max: 1, ignoredNodes: ['IfStatement'] }], // 允许同一行有if表达式和其他表达式
             '@stylistic/lines-between-class-members': 'off', // 允许类成员之间不换行
             '@stylistic/jsx-one-expression-per-line': 'off', // 允许jsx同一行有多个表达式
-            'import/no-unresolved': 'off',
+            'import/no-unresolved': 'off', // 无意义的规则
             'solid/no-innerhtml': 'off', // 允许innerhtml(由于不存在非法输入)
-            'solid/no-destructure': 'off', // 允许solid组件参数解构(由于项目风格是传输signal)
+            'solid/no-destructure': 'off', // 允许solid组件参数解构(由于项目风格是传递signal)
             'solid/event-handlers': 'error', // 禁用小写的事件侦听器,如onclick
-            '@typescript-eslint/consistent-type-imports': 'error', // 如果导入类型(type),将导入类型和导出其他对象分开写
+            '@typescript-eslint/consistent-type-imports': 'error', // 将类型导入和其他导入分开写
             '@typescript-eslint/no-for-in-array': 'error', // 禁止使用for in来进行数组访问
             'clsx/prefer-objects-over-logical': 'error' // 禁止在clsx()中使用逻辑表达式
         }

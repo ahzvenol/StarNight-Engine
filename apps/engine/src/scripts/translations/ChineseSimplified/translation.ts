@@ -1,5 +1,5 @@
-import type { ImageTarget, AnimationTypes, ImageTargetBackground, ImageTargetSprite, ImageTargetStage, ImageTweenArgs } from '../../base/image'
 import type { TweenCommandArgs } from '@/scripts/base/tween'
+import type { ImageTarget, AnimationTypes, ImageTargetBackground, ImageTargetSprite, ImageTargetStage, ImageTweenArgs } from '../../base/image'
 
 export const 通用命令参数别名 = {
     id: '标识符',

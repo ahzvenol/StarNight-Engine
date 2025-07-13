@@ -1,5 +1,5 @@
-import type { 添加动画命令参数别名, 用户输入命令参数别名, 用户选择命令参数别名, 动效动画命令参数别名 } from './translation'
 import type { CommandTagBlocking, CommandTagDynamic } from '@starnight/core'
+import type { 添加动画命令参数别名, 用户输入命令参数别名, 用户选择命令参数别名, 动效动画命令参数别名 } from './translation'
 import { Blocking, DynamicMacro } from '@starnight/core'
 import { MergedCommands } from '../../index'
 import { Alias, Api, flipObject } from '../../Translate'
