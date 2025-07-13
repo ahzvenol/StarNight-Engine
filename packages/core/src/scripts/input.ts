@@ -3,15 +3,6 @@ import type { GameRuntimeContext } from '../types/Game'
 import { Blocking } from '@/Decorator'
 import { StarNight } from '@/index'
 
-declare module '@/index' {
-    interface GameLocalData {
-        input: Array<unknown>
-    }
-    interface GameTempData {
-        input: ArrayIterator<unknown>
-    }
-}
-
 StarNight.GameEvents.setup.subscribe(({ current, local, temp }) => {
     current.input([])
     temp.input = local.input?.values() || [].values()

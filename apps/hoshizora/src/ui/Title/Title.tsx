@@ -5,7 +5,7 @@ import { onStoreReady, store } from '@/store'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/Logger'
-import { AudioIds, AudioMutex, Howler } from '@/store/audio'
+import { AudioMutex, Howler } from '@/store/audio'
 import { Button } from '../Button'
 import { GUIHomeRootState } from '../HomeRoot'
 import { useGame } from '../GameRoot'
@@ -17,7 +17,7 @@ createEffect(
     on(
         AudioMutex,
         () => {
-            if (AudioMutex() !== AudioIds.Title) audio.stop()
+            if (AudioMutex() !== 'Title') audio.stop()
         },
         { defer: true }
     )
@@ -31,7 +31,7 @@ export const Title: Component = () => {
     const local = store.extra
     onMount(() => {
         if (GUIRootState() === 'Home') {
-            if (AudioMutex() !== AudioIds.Title) AudioMutex(AudioIds.Title)
+            if (AudioMutex() !== 'Title') AudioMutex('Title')
             if (!audio.playing()) audio.play()
         }
     })

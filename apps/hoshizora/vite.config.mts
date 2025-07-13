@@ -21,7 +21,12 @@ export default defineConfig(({ command }) => ({
                 delegateEvents: false // 禁用solid事件委托
             }
         }),
-        obfuscator({ apply: 'build' }),
+        obfuscator({
+            apply: 'build',
+            include: [
+                'src/scripts/**/*.{js,jsx,ts,tsx}'
+            ]
+        }),
         legacy({
             modernPolyfills: true,
             renderLegacyChunks: false
@@ -57,7 +62,12 @@ export default defineConfig(({ command }) => ({
     build: {
         target: 'es2015',
         sourcemap: false,
-        minify: 'terser'
+        minify: 'terser',
+        terserOptions: {
+            output: {
+                comments: false
+            }
+        }
     },
     esbuild: {
         drop: command === 'build' ? ['console', 'debugger'] : []

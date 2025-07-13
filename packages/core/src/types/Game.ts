@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { Reactive } from 'micro-reactive-wrapper'
-import type { CommandOutput, StandardResolvedCommand } from './Command'
-import type { StarNightInstance, StarNightStateStatic } from '@/StarNight'
 import type { Except } from 'type-fest'
+import type { StarNightInstance, StarNightStateStatic } from '@/StarNight'
+import type { CommandOutput, StandardResolvedCommand } from './Command'
 
 export enum GameState {
     Initializing = 0,
@@ -34,6 +34,7 @@ export interface GameLocalData {
     count: number
     index: number
     sence: string
+    input: Array<unknown>
 }
 
 /** 游戏全局数据 */
@@ -42,7 +43,9 @@ export interface GameGlobalData {
 }
 
 /** 游戏实例临时数据 */
-export interface GameTempData {}
+export interface GameTempData {
+    input: ArrayIterator<unknown>
+}
 
 /** 游戏外部UI数据，由外部传入 */
 export interface GameUIExternalData {}

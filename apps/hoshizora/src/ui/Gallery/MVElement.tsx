@@ -3,7 +3,7 @@ import type { MVEntry } from '@/store/gallery'
 import { useSignal } from 'micro-reactive-solid'
 import { Show } from 'solid-js'
 import { Portal } from 'solid-js/web'
-import { AudioIds, AudioMutex } from '@/store/audio'
+import { AudioMutex } from '@/store/audio'
 import { store } from '@/store'
 import { CGMountPoint } from './Gallery'
 import styles from './Gallery.module.scss'
@@ -23,7 +23,7 @@ export const MVElement: Component<{ entry: MVEntry }> = ({ entry }) => {
                 }}
                 onClick={() => {
                     if (canShow) {
-                        AudioMutex(AudioIds.GalleryVideo)
+                        AudioMutex('GalleryVideo' )
                         pointer(0)
                     }
                 }}

@@ -4,9 +4,7 @@ import { createEffect } from 'solid-js'
 import { HowlerInstance } from '@/lib/howler'
 import { onStoreReady } from '@/store'
 
-export enum AudioIds { Title, GalleryAudio, GalleryVideo, Game }
-
-export const AudioMutex = useSignal<AudioIds>(AudioIds.Title)
+export const AudioMutex = useSignal<'Title' | 'GalleryAudio' | 'GalleryVideo' | 'Game'>('Title')
 
 function suspendWhenDocumentHidden(audio: Howl) {
     let wasPlaying = false

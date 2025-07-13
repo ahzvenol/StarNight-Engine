@@ -30,7 +30,7 @@ export interface ExtraLocalSaveData {
 
 export type SaveLocalData = ExtraLocalSaveData & GameLocalData
 
-const version = 32
+const version = 33
 
 const system = {
     name: '星空列车与白的旅行',
