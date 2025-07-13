@@ -24,6 +24,7 @@ export default defineConfig(({ command }) => ({
         obfuscator({
             apply: 'build',
             include: [
+                'scenario/**/*.{js,jsx,ts,tsx}',
                 'src/scripts/**/*.{js,jsx,ts,tsx}'
             ]
         }),
