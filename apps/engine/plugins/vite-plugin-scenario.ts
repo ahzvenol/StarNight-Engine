@@ -26,8 +26,6 @@ function isJSXElementOrJSXFragment(node: t.Node | null | undefined) {
 // 关键字: $action,$debugger,$context,$include,$await,$await,$say
 
 export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
-    let currentMode = 'development'
-
     if (options.src && !Array.isArray(options.src)) options.src = [options.src]
     if (options.async && !Array.isArray(options.async)) options.async = [options.async]
     if (options.await && !Array.isArray(options.await)) options.await = [options.await]
@@ -37,9 +35,6 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
     return {
         name: 'vite-plugin-scenario-transform',
         enforce: 'pre',
-        config(_, { mode }) {
-            currentMode = mode // 存储当前 mode
-        },
         async transform(code: string, id: string) {
             if (!/\.scenario\.(mjs|js|mts|ts|jsx|tsx)$/.test(id)) return null
 
@@ -77,9 +72,9 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
 
             traverse(ast, {
                 // 编译$debugger到yield $debugger
-                // 编译$action到yield$action
+                // 编译$action到yield $action
                 ExpressionStatement(path) {
-                    if (!inRootAsyncGenerator(path) || currentMode === 'production') return
+                    if (!inRootAsyncGenerator(path)) return
                     const expression = path.node.expression
 
                     if (t.isIdentifier(expression, { name: '$action' })) {
@@ -178,7 +173,7 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
                         path.skip()
                     }
                 },
-                // 编译野生标签字符串到yield $say({name,text,clip?})
+                // 编译野生标签字符串到yield $action;yield $say({name,text,clip?})
                 LabeledStatement(path) {
                     if (!inRootAsyncGenerator(path)) return
                     if (t.isExpressionStatement(path.node.body)) {
