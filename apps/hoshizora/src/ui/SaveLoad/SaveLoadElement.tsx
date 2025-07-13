@@ -2,32 +2,31 @@ import type { Reactive } from 'micro-reactive-solid'
 import type { Component } from 'solid-js'
 import type { SaveLocalData } from '@/store/default'
 import type { SaveLoadMode } from './SaveLoad'
+import type { GameLocalData } from '@starnight/core'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { Show } from 'solid-js'
-import { starnight } from '@/store/starnight'
 import { Content } from '@/utils/ui/Elements'
 import { Scale } from '@/utils/ui/Scale'
+import { starnight } from '@/store/starnight'
 import { useGame } from '../GameRoot'
+import { ref } from '../Game/Game'
 import styles from './SaveLoad.module.scss'
 
 type SaveLoadElementProps = { mode: SaveLoadMode, index: number, slot: Reactive<SaveLocalData> }
 
-function snapshot() {
+export function snapshot() {
     const app = starnight().context.temp.pixi
     const stage = app.renderer.extract.canvas(app.stage, app.screen) as HTMLCanvasElement
     const canvas = (<canvas width={480} height={270} />) as HTMLCanvasElement
     canvas.getContext('2d')!.drawImage(stage, 0, 0, app.screen.width, app.screen.height, 0, 0, 480, 270)
-    return canvas.toDataURL('image/webp', 0.5)
+    const element = ref().cloneNode(true) as HTMLElement
+    element.querySelector('canvas')?.replaceWith(<img src={canvas.toDataURL('image/webp', 0.5)} /> as HTMLElement)
+    return element.innerHTML
 }
 
-// todo:完整预览图
-function record(slot: Reactive<SaveLocalData>) {
-    slot({
-        ...starnight().current(),
-        date: dayjs().valueOf(),
-        snapshot: snapshot()
-    })
+export function record(slot: Reactive<SaveLocalData>, current: GameLocalData) {
+    slot({ ...current, date: dayjs().valueOf(), snapshot: snapshot() })
 }
 
 export const SaveLoadElement: Component<SaveLoadElementProps> = ({ mode, index, slot }) => {
@@ -35,11 +34,14 @@ export const SaveLoadElement: Component<SaveLoadElementProps> = ({ mode, index, 
     return (
         <div
             class={clsx(styles.Save_Load_content_element, {
-                [styles.Save_Load_content_element_hover]: (mode === 'Save' && !isAutoSaveSolt) || slot() !== undefined
+                [styles.Save_Load_content_element_hover]: (
+                    mode === 'Save' && !isAutoSaveSolt) || (mode === 'Load' && slot() !== undefined
+                )
             })}
             onClick={() => {
-                if (mode === 'Save') record(slot)
-                else if (slot() !== undefined) useGame(slot()!)
+                if (mode === 'Save') {
+                    if (!isAutoSaveSolt) record(slot, starnight().current())
+                } else if (slot() !== undefined) useGame(slot()!)
             }}
         >
             <div class={styles.Save_Load_content_element_index}>

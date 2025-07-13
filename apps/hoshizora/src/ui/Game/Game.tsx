@@ -1,4 +1,5 @@
 import type { Component } from 'solid-js'
+import type { Signal } from 'micro-reactive-solid'
 import { throttle } from 'es-toolkit'
 import { useSignal } from 'micro-reactive-solid'
 import { createEffect, Show } from 'solid-js'
@@ -16,6 +17,8 @@ import { Video } from './Video'
 import { Transition } from './Transition'
 
 export const showUI = useSignal(true)
+
+export const ref = useSignal(null) as unknown as Signal<HTMLElement>
 
 export const Game: Component = () => {
     log.info('GameUI组件函数被调用')
@@ -44,7 +47,7 @@ export const Game: Component = () => {
 
     const showControlPanel = () => showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'
     return (
-        <Content>
+        <Content ref={ref}>
             <Stage />
             <Show when={showControlPanel() && ui().input.choices() === null}>
                 <TextBox />

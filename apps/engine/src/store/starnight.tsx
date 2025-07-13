@@ -30,8 +30,4 @@ export const instance = async (local: GameConstructorParams['local']) => {
 }
 
 // 如果处在调试模式,直接进入游戏页
-debug.then((isDebug) => {
-    if (isDebug) {
-        useGame({ count: 1 })
-    }
-})
+debug.then((isDebug) => { if (isDebug) useGame({ count: 1 }) })

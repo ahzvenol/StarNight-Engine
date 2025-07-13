@@ -23,11 +23,7 @@ function snapshot() {
 }
 
 function record(slot: Reactive<SaveLocalData>) {
-    slot({
-        ...starnight().current(),
-        date: dayjs().valueOf(),
-        snapshot: snapshot()
-    })
+    slot({ ...starnight().current(), date: dayjs().valueOf(), snapshot: snapshot() })
 }
 
 export const SaveLoadElement: Component<SaveLoadElementProps> = ({ i, mode, index, slot }) => {
