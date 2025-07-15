@@ -8,7 +8,6 @@ import styles from './Hakuuyosei.module.scss'
 
 StarNight.ActEvents.next.subscribe(({ current, local, instance }) => {
     if (instance.state.isInitializing()) {
-        console.log(Object.keys(local).length === 1, 'index' in local)
         if (Object.keys(local).length === 1 && 'index' in local) {
             if (current.index() === local.index) {
                 local.count = current.count() + 1
@@ -17,7 +16,6 @@ StarNight.ActEvents.next.subscribe(({ current, local, instance }) => {
     }
 })
 
-// todo:
 export const AddSave: Component = () => {
     const local = store.local
     const actInput = useSignal('')
