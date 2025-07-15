@@ -1,29 +1,29 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
 import { createEffect, Match, on, onMount, Show, Switch } from 'solid-js'
-import { onStoreReady, store } from '@/store'
+import { store } from '@/store'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/Logger'
-import { AudioMutex, Howler } from '@/store/audio'
+import { AudioMutex, BGM } from '@/store/audio'
 import { Button } from '../Button'
 import { GUIHomeRootState } from '../HomeRoot'
 import { useGame } from '../GameRoot'
 import { GUIRootState } from '../GUIRoot'
 import styles from './Title.module.scss'
 
-const audio = Howler({ loop: true, src: './static/AudioClip/bgm01.flac' })
+const audio = BGM({ loop: true, src: './static/AudioClip/bgm01.flac' })
+
 createEffect(
     on(
         AudioMutex,
-        () => {
-            if (AudioMutex() !== 'Title') audio.stop()
+        (now) => {
+            if (now !== 'Title') audio.stop()
+            console.log(now, audio.playing())
         },
         { defer: true }
     )
 )
-
-onStoreReady.then(({ config: { bgmvolume } }) => createEffect(() => audio.volume(bgmvolume())))
 
 export const Title: Component = () => {
     log.info('Title组件函数被调用')
