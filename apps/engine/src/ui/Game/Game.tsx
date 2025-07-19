@@ -44,7 +44,7 @@ export const Game: Component = () => {
         }
     })
 
-    const showControlPanel = () => showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'
+    const showControlPanel = () => showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog' && ui().text() !== null
     return (
         <Content>
             <Stage />
