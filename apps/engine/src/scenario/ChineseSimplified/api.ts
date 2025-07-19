@@ -1,8 +1,8 @@
 import type { CommandTagBlocking, CommandTagDynamic } from '@starnight/core'
 import type { 添加动画命令参数别名, 用户输入命令参数别名, 用户选择命令参数别名, 动效动画命令参数别名 } from './translation'
 import { Blocking, DynamicMacro } from '@starnight/core'
-import { MergedCommands } from '../../index'
-import { Alias, Api, flipObject } from '../../Translate'
+import { MergedCommands } from '../../scripts/index'
+import { Alias, Api, flipObject } from '../Translate'
 import { 通用命令参数别名, 图像命令参数别名, 音频命令参数别名, 动效动画别名 } from './translation'
 
 /**

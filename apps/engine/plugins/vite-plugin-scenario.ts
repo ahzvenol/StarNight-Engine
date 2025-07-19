@@ -15,15 +15,7 @@ const generate = _generate.default as typeof _generate
 type Options = { src: string | string[], async: string | string[], await: string | string[] }
 type InternalOptions = { src: string[], async: string[], await: string[] }
 
-function isStringOrTemplateLiteral(node: t.Node | null | undefined) {
-    return t.isStringLiteral(node) || t.isTemplateLiteral(node)
-}
-
-function isJSXElementOrJSXFragment(node: t.Node | null | undefined) {
-    return t.isJSXElement(node) || t.isJSXFragment(node)
-}
-
-// 关键字: $action,$debugger,$context,$include,$await,$await,$say
+// 关键字: $action,$debugger,$context,$include,$async,$await,$character
 
 export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
     if (options.src && !Array.isArray(options.src)) options.src = [options.src]
@@ -148,56 +140,61 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
                         path.skip()
                     }
                 },
-                // 编译野生字符串到yield $say({text,clip?})
                 ExpressionStatement(path) {
                     if (!inRootAsyncGenerator(path)) return
                     const expression = path.node.expression
-                    let properties = null
-                    if (isStringOrTemplateLiteral(expression) || isJSXElementOrJSXFragment(expression)) {
-                        properties = [t.objectProperty(t.identifier('text'), expression)]
+                    let callExpr: t.CallExpression | null = null
+                    let isTaggedTemplatePattern = false
+
+                    // --- 内部逻辑判断：检查 expression 是否是 TaggedTemplateExpression 模式 ---
+                    let tag: t.Expression | null = null
+                    const callArgs: t.Expression[] = []
+
+                    if (t.isTaggedTemplateExpression(expression)) {
+                        // Case: noi`...`
+                        tag = expression.tag
+                        callArgs.push(expression.quasi) // 将 TemplateLiteral 节点作为参数
+                        isTaggedTemplatePattern = true
                     } else if (
                         t.isBinaryExpression(expression)
                         && expression.operator === '+'
-                        && (isStringOrTemplateLiteral(expression.left) || isJSXElementOrJSXFragment(expression.left))
-                        && isStringOrTemplateLiteral(expression.right)
+                        && t.isTaggedTemplateExpression(expression.left)
+                        && t.isStringLiteral(expression.right)
                     ) {
-                        properties = [
-                            t.objectProperty(t.identifier('text'), expression.left),
-                            t.objectProperty(t.identifier('clip'), expression.right)
-                        ]
+                        // Case: noi`...` + '/audio.mp3'
+                        tag = expression.left.tag
+                        callArgs.push(expression.left.quasi)
+                        callArgs.push(expression.right)
+                        isTaggedTemplatePattern = true
                     }
-                    if (properties) {
-                        const sayCall = t.callExpression(t.identifier('$say'), [t.objectExpression(properties)])
-                        path.insertBefore(t.yieldExpression(t.identifier('$action')))
-                        path.replaceWith(t.expressionStatement(t.yieldExpression(sayCall)))
-                        path.skip()
+
+                    // 如果匹配了 TaggedTemplate 模式，构建 CallExpression
+                    if (isTaggedTemplatePattern && tag) {
+                        callExpr = t.callExpression(tag, callArgs)
                     }
-                },
-                // 编译野生标签字符串到yield $action;yield $say({name,text,clip?})
-                LabeledStatement(path) {
-                    if (!inRootAsyncGenerator(path)) return
-                    if (t.isExpressionStatement(path.node.body)) {
-                        const expression = path.node.body.expression
-                        let properties = null
-                        if (isStringOrTemplateLiteral(expression) || isJSXElementOrJSXFragment(expression)) {
-                            properties = [t.objectProperty(t.identifier('text'), expression)]
-                        } else if (
-                            t.isBinaryExpression(expression)
-                            && expression.operator === '+'
-                            && (isStringOrTemplateLiteral(expression.left) || isJSXElementOrJSXFragment(expression.left))
-                            && isStringOrTemplateLiteral(expression.right)
-                        ) {
-                            properties = [
-                                t.objectProperty(t.identifier('text'), expression.left),
-                                t.objectProperty(t.identifier('clip'), expression.right)
-                            ]
-                        }
-                        if (properties) {
-                            const labelName = path.node.label.name
-                            properties.unshift(t.objectProperty(t.identifier('name'), t.stringLiteral(labelName)))
-                            const sayCall = t.callExpression(t.identifier('$say'), [t.objectExpression(properties)])
-                            path.insertBefore(t.yieldExpression(t.identifier('$action')))
-                            path.replaceWith(t.expressionStatement(t.yieldExpression(sayCall)))
+
+                    // --- 根据是否匹配以及父级类型进行转换 ---
+                    if (callExpr) {
+                        // 成功匹配到 TaggedTemplateExpression 模式
+                        const parentPath = path.parentPath
+
+                        // 判断父级是否是带 '$' 标签的 LabeledStatement
+                        if (parentPath.isLabeledStatement() && parentPath.node.label.name === '$') {
+                            // 规则: $: noi`...` -> yield noi(...)
+                            // 用 callExpr 替换整个 LabeledStatement
+                            parentPath.replaceWith(t.expressionStatement(t.yieldExpression(callExpr)))
+                            path.skip() // 虽然父级被替换，但跳过当前路径以示明确处理完毕
+                        } else {
+                            // 规则: noi`...` 或 otherLabel: noi`...` -> yield $action; yield noi(...)
+
+                            // 确定要操作的语句节点：是 LabeledStatement 还是 ExpressionStatement 本身
+                            const statementToModify = parentPath.isLabeledStatement() ? parentPath : path
+
+                            // 在语句前插入 yield $action
+                            statementToModify.insertBefore(t.expressionStatement(t.yieldExpression(t.identifier('$action'))))
+
+                            // 用 yield callExpr 替换整个语句
+                            statementToModify.replaceWith(t.expressionStatement(t.yieldExpression(callExpr)))
                             path.skip()
                         }
                     }

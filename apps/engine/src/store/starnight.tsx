@@ -1,7 +1,7 @@
 import type { GameConstructorParams, StarNightInstance } from '@starnight/core'
 import { StarNight } from '@starnight/core'
 import { useReactive, useSignal } from 'micro-reactive-solid'
-import { ScenarioDSL } from '@/scripts/ScenarioDSL'
+import { ScenarioDSL } from '@/scenario/ScenarioDSL'
 import { useGame } from '@/ui/GameRoot'
 import { BGM, SE, Clip } from './audio'
 import { onStoreReady } from '.'
