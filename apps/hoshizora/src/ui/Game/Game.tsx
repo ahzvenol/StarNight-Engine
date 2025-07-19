@@ -45,18 +45,18 @@ export const Game: Component = () => {
         }
     })
 
-    const showControlPanel = () => showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'
+    const showUICompute = () => showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'
     return (
         <Content ref={ref}>
             <Stage />
-            <Show when={showControlPanel() && ui().input.choices() === null}>
+            <Show when={showUICompute() && ui().input.choices() === null && ui().text() !== null}>
                 <TextBox />
             </Show>
             <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => showUI(false)} />
             <Show when={!showUI()}>
                 <div class={styles.Game_mask} onClick={() => showUI(true)} onContextMenu={() => showUI(true)} />
             </Show>
-            <Show when={showControlPanel()}>
+            <Show when={showUICompute() && (ui().text() !== null || ui().input.choices() !== null)}>
                 <ControlPanel />
             </Show>
             <Show when={ui().input.click() !== null}>

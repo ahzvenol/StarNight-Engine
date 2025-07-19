@@ -15,19 +15,19 @@ declare module '@starnight/core' {
         text: string
     }
     interface GameUIInternalData {
-        text: HTMLElement
+        text: Reactive<HTMLElement | null>
     }
 }
 
 StarNight.GameEvents.setup.subscribe(({ current, ui }) => {
     current.text('')
-    ui.text = document.createElement('div')
+    ui.text = StarNight.useReactive(null)
 })
 
 StarNight.ActEvents.start.subscribe(({ state, current, ui }) => {
     if (!state.isInitializing()) {
         current.text('')
-        ui.text.innerHTML = ''
+        ui.text(null)
     }
 })
 
@@ -48,16 +48,17 @@ export const text = ActScope(
                             )
                         : [arg0])
                 )
-                ui.text.append(element)
+                ui.text((i) => i === null ? document.createElement('div') : i)
+                ui.text()!.append(element)
                 current.text((prev) => prev + element.outerHTML)
                 const rubys = element.querySelectorAll('ruby')
-                const split = SplitText.create(ui.text,
+                const split = SplitText.create(ui.text()!,
                     { type: 'chars', reduceWhiteSpace: false, ignore: rubys, aria: 'hidden' }
                 )
                 const nodes = split.chars.concat(Array.from(rubys)).sort(compareElementOrder)
                 const speed = config.textspeed()
                 yield Tween.apply({
-                    target: nodes, id: ui.text, mode: 'from', opacity: 0,
+                    target: nodes, id: ui.text(), mode: 'from', opacity: 0,
                     duration: nodes.length * speed, ease: 'sine.out', stagger: speed / 1000
                 })(context)
             }
