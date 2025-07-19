@@ -23,7 +23,7 @@ export const MVElement: Component<{ entry: MVEntry }> = ({ entry }) => {
                 }}
                 onClick={() => {
                     if (canShow) {
-                        AudioMutex('GalleryVideo' )
+                        AudioMutex('GalleryVideo')
                         pointer(0)
                     }
                 }}
