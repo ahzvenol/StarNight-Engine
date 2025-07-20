@@ -6,23 +6,6 @@ import { Alias, Api, flipObject } from '../Translate'
 import { 通用命令参数别名, 图像命令参数别名, 音频命令参数别名, 动效动画别名 } from './translation'
 
 /**
- * 显示对话内容，设置角色名称和播放配音。
- * @remarks
- * - 使用对话的命令形式不会自动划分幕。
- * - 与简化形式相同，名称参数开头的第一个`$`被视为空白。
- * - 通过传入 HTML 元素可以自定义文本样式。
- * @param 参数对象
- * @param .文本 - 要显示的文本内容（必需）
- * @param .名称 - 要显示的角色名称（可选）
- * @param .配音 - 要播放的配音文件路径（可选）
- * @example
- * $执行.对话({ 文本: "咕咕咕", 名称: "鸽子", 配音: "/咕.mp3" })
- */
-export const 对话 = Api(
-    Alias(MergedCommands.Say.apply, { text: '文本', name: '名称', clip: '配音' } as const)
-)
-
-/**
  * 设置背景图片，使用 GSAP 实现，支持位置、缩放、滤镜等属性。
  * @remarks
  * - `持续时间` 仅控制背景图片的入场动画时长（淡入效果），其他属性（如位置、缩放、滤镜等）会立即应用。
