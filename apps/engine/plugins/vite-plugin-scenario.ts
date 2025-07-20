@@ -181,9 +181,14 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
                         // 判断父级是否是带 '$' 标签的 LabeledStatement
                         if (parentPath.isLabeledStatement() && parentPath.node.label.name === '$') {
                             // 规则: $: noi`...` -> yield noi(...)
-                            // 用 callExpr 替换整个 LabeledStatement
                             parentPath.replaceWith(t.expressionStatement(t.yieldExpression(callExpr)))
-                            path.skip() // 虽然父级被替换，但跳过当前路径以示明确处理完毕
+                            // 添加没有实际影响的表达式，在后续筛选src时记录资源
+                            if (callArgs.length > 1) {
+                                parentPath.insertAfter(t.expressionStatement(t.objectExpression([
+                                    t.objectProperty(t.identifier('src'), callArgs[1])
+                                ])))
+                            }
+                            path.skip()
                         } else {
                             // 规则: noi`...` 或 otherLabel: noi`...` -> yield $action; yield noi(...)
 
@@ -195,6 +200,13 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
 
                             // 用 yield callExpr 替换整个语句
                             statementToModify.replaceWith(t.expressionStatement(t.yieldExpression(callExpr)))
+
+                            // 添加没有实际影响的表达式，在后续筛选src时记录资源
+                            if (callArgs.length > 1) {
+                                statementToModify.insertAfter(t.expressionStatement(t.objectExpression([
+                                    t.objectProperty(t.identifier('src'), callArgs[1])
+                                ])))
+                            }
                             path.skip()
                         }
                     }
