@@ -31,6 +31,9 @@ export const MVElement: Component<{ entry: MVEntry }> = ({ entry }) => {
             <Show when={pointer() >= 0}>
                 <Portal mount={document.getElementById(CGMountPoint)!}>
                     <video
+                        ref={(ref) => {
+                            ref.volume = store.config.globalvolume()
+                        }}
                         class={styles.Gallery_VCG_view}
                         src={entry.item.url}
                         autoplay
