@@ -1,5 +1,5 @@
 import type { Component, JSX } from 'solid-js'
-import { useEventListener } from '@/utils/solid/useEventListener'
+import { once } from 'es-toolkit'
 import { UISE } from '@/store/audio'
 
 const ClickSE = UISE({ src: './static/mouse_click_1.wav' })
@@ -9,8 +9,11 @@ export const Button: Component<Omit<JSX.HTMLAttributes<HTMLDivElement>, 'ref'>> 
     return (
         <div
             ref={(ref) => {
-                useEventListener('click', () => ClickSE.play(), { target: ref })
-                useEventListener('mouseenter', () => HoverSE.play(), { target: ref })
+                ref.addEventListener('click', () => ClickSE.play())
+                // 当元素被添加到页面上时，如果光标已经处于其上方，不要触发进入音效。
+                ref.addEventListener('mouseenter', () =>
+                    ref.addEventListener('mousemove', once(() => HoverSE.play()))
+                )
             }}
             {...props}
         />

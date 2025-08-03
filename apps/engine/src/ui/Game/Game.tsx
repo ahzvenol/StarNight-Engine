@@ -44,21 +44,22 @@ export const Game: Component = () => {
         }
     })
 
-    const showUICompute = () => showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'
     return (
         <Content>
             <Stage />
-            <Show when={showUICompute() && ui().input.choices() === null}>
-                <div style={{ display: ui().text() !== null ? 'contents' : 'none' }}>
-                    <TextBox text={ui().text()!} name={ui().name} />
+            <Show when={showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'}>
+                <div style={{ display: (ui().text() !== null && ui().input.choices() === null) ? 'contents' : 'none' }}>
+                    <TextBox text={ui().text()} name={ui().name} />
                 </div>
             </Show>
             <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => showUI(false)} />
             <Show when={!showUI()}>
                 <div class={styles.Game_mask} onClick={() => showUI(true)} onContextMenu={() => showUI(true)} />
             </Show>
-            <Show when={showUICompute() && (ui().text() !== null || ui().input.choices() !== null)}>
-                <ControlPanel />
+            <Show when={showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'}>
+                <div style={{ display: (ui().text() !== null || ui().input.choices() !== null) ? 'contents' : 'none' }}>
+                    <ControlPanel />
+                </div>
             </Show>
             <Show when={ui().input.click() !== null}>
                 <div class={styles.Game_mask} onClick={ui().input.click()!} />

@@ -1,3 +1,4 @@
+import { once } from 'es-toolkit'
 import click_se from '@/assets/click.mp3'
 import dialog_se from '@/assets/dialog.mp3'
 import mouse_enter from '@/assets/mouse-enter.mp3'
@@ -17,8 +18,11 @@ export const useSoundEffect =
     (...args: Array<Effect>) =>
         (ref: HTMLElement) => {
             const set = new Set(args)
+            // 当元素被添加到页面上时，如果光标已经处于其上方，不要触发进入音效。
             if (set.has('Enter')) {
-                ref.addEventListener('mouseenter', () => SEEnter.play())
+                ref.addEventListener('mouseenter', () =>
+                    ref.addEventListener('mousemove', once(() => SEEnter.play()))
+                )
             }
             if (set.has('Click')) {
                 ref.addEventListener('click', () => SEClick.play())

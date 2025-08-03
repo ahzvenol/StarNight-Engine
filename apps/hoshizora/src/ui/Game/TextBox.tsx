@@ -10,7 +10,7 @@ export const TextBox: Component = () => {
     const lines = () =>
         ui()
             .text()
-            .split('\n')
+            ?.split('\n')
             .filter((line) => line !== '')
 
     return (
@@ -24,13 +24,13 @@ export const TextBox: Component = () => {
                             <>
                                 <div>
                                     {line}
-                                    <Show when={index() === lines().length - 1 && ui().text() === starnight().current.text()}>
+                                    <Show when={lines() && index() === lines()!.length - 1 && ui().text() === starnight().current.text()}>
                                         <span class={styles.Game_TextBox_star_container}>
                                             <span class={styles.Game_TextBox_star} />
                                         </span>
                                     </Show>
                                 </div>
-                                <Show when={index() !== lines().length - 1}>
+                                <Show when={lines() && index() === lines()!.length - 1}>
                                     <br />
                                 </Show>
                             </>

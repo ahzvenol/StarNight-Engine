@@ -4,7 +4,7 @@ import { Show } from 'solid-js'
 import { store } from '@/store'
 import styles from './TextBox.module.scss'
 
-export const TextBox: Component<{ text: HTMLElement, name: Accessor<string> }> = (props) => {
+export const TextBox: Component<{ text: HTMLElement | null, name: Accessor<string> }> = (props) => {
     const config = store.config
     return (
         <div class={styles.Game_TextBox_container} style={{ 'font-family': config.textboxfont() }}>
