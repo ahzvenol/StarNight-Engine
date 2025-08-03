@@ -47,7 +47,6 @@ onStoreReady.then(({ config: { globalvolume, bgmvolume, sevolume, clipvolume, ui
 export class MediaManager {
     public static current: Howl | HTMLMediaElement | null = null
     public static request = (media: Howl | HTMLMediaElement | null) => {
-        console.log(this.current, this.current instanceof Howler)
         if (media !== this.current) {
             if (this.current instanceof HTMLMediaElement) this.current.pause()
             else if (this.current !== null) this.current.stop()

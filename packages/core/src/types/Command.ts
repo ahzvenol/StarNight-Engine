@@ -1,6 +1,6 @@
 import type { Signal } from 'micro-reactive-wrapper'
 import type { Tagged } from 'type-fest'
-import type { GameMacroGenerator, GameRuntimeContext, GameState } from './Game'
+import type { GameFragmentGenerator, GameRuntimeContext, GameState } from './Game'
 
 /** 会在幕循环中被处理的特殊值 */
 export type CommandOutput = {
@@ -24,7 +24,7 @@ export type NonBlockingCommand<T, R> = Function1<GameRuntimeContext, Function1<T
 export type BlockingCommand<T, R> = Function1<GameRuntimeContext, Function1<T, Promise<R>>>
 
 // 使用生成器函数定义一个宏命令
-export type MacroCommand<T, R> = Function1<GameRuntimeContext, Function1<T, GameMacroGenerator<R>>>
+export type MacroCommand<T, R> = Function1<GameRuntimeContext, Function1<T, GameFragmentGenerator<R>>>
 
 export type CommandTagNonBlocking = Tagged<object, 'Async'>
 

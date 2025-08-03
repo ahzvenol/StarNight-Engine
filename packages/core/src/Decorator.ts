@@ -9,7 +9,7 @@ import type {
     StandardNonBlockingCommand,
     StandardResolvedCommand
 } from './types/Command'
-import type { GameFragment, GameMacro } from './types/Game'
+import type { GameFragment } from './types/Game'
 import { noop } from 'es-toolkit'
 
 /**
@@ -108,28 +108,12 @@ export function Blocking<T = void, R = void>(fn: BlockingCommand<T, R>): Standar
 }
 
 /**
- * 解析生成器到 Resolved 命令，在第一个 yield 或 await 前是同步的。
- * - 如果 await Promise，等待 Promise 解析。
- * - 如果 yield ResolvedCommand，注入 Context 并执行。
+ * 解析生成器到 Resolved 命令，在 yield Promise 前是同步的。
+ * - 如果 yield Promise，等待 Promise 解析并返回 Promise 内部的值。
+ * - 如果 yield Function，传入 Context 作为函数参数，执行并返回函数的返回值。
+ * - 如果 yield 其他数据，直接返回该数据。
  */
 export function Fork<R>(fn: GameFragment<R>): StandardResolvedCommand<R> {
-    return async (context) => {
-        const generator = fn(context)
-        const arr = Array<Promise<unknown>>()
-        while (true) {
-            const { value, done } = await generator.next(arr.slice(-1)[0])
-            if (done) return Promise.all(arr).then(() => value)
-            else arr.push(value(context))
-        }
-    }
-}
-
-/**
- * 解析生成器到 Resolved 命令，在 yield Promise 前是同步的。
- * - 如果 yield Promise，等待 Promise 解析并返回 Promise 的值。
- * - 如果 yield ResolvedCommand，注入 Context 并执行。
- */
-export function Macro<R>(fn: GameMacro<R>): StandardResolvedCommand<R> {
     return async (context) => {
         const generator = fn(context)
         const arr = Array<unknown>()
@@ -137,7 +121,8 @@ export function Macro<R>(fn: GameMacro<R>): StandardResolvedCommand<R> {
             const { value, done } = generator.next(arr.slice(-1)[0])
             if (value instanceof Promise) arr.push(await value)
             else if (done) return Promise.all(arr).then(() => value)
-            else arr.push(value(context))
+            else if (value instanceof Function) arr.push(value(context))
+            else arr.push(value)
         }
     }
 }
@@ -147,19 +132,19 @@ export function Macro<R>(fn: GameMacro<R>): StandardResolvedCommand<R> {
  * 由 NonBlocking 和 Dynamic 参与组成的宏可以作为 Dynamic 的。
  */
 export function DynamicMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardDynamicCommand<T, R> {
-    return ((args) => (context) => Macro((context) => fn(context)(args))(context)) as StandardDynamicCommand<T, R>
+    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardDynamicCommand<T, R>
 }
 
 /**
  * 由 NonBlocking 和 Dynamic 参与组成的宏可以作为 NonBlocking 的。
  */
 export function NonBlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardNonBlockingCommand<T, R> {
-    return ((args) => (context) => Macro((context) => fn(context)(args))(context)) as StandardNonBlockingCommand<T, R>
+    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardNonBlockingCommand<T, R>
 }
 
 /**
  * 由 Blocking 命令参与组成的宏应该也是 Blocking 的。
  */
 export function BlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardBlockingCommand<T, R> {
-    return ((args) => (context) => Macro((context) => fn(context)(args))(context)) as StandardBlockingCommand<T, R>
+    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardBlockingCommand<T, R>
 }

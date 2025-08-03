@@ -5,10 +5,10 @@ import { State } from '.'
 
 export const apply = ActScope(
     DynamicMacro<TransitionTypes>(
-        (context) =>
+        () =>
             function* (arg0) {
                 yield State.ui(false)
-                yield Transition.apply(arg0)(context)
+                yield (yield Transition.apply(arg0))
                 yield State.ui(true)
             }
     )

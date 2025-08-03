@@ -8,11 +8,11 @@ export const volume = Audio.volume
 export type AudioBGMCommandArgs = Except<AudioSetCommandArgs, 'type'> & { duration?: number, loop?: false }
 
 export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
-    (context) =>
+    () =>
         function* (_args) {
             const args = { loop: true, ..._args, type: 'bgm', id: _args.id || 'bgm' } as const
             if (args.duration) {
-                yield Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
+                yield (yield Audio.volume({ target: args.id, volume: 0, duration: args.duration }))
                 yield Audio.close({ target: args.id })
                 yield Audio.set({ ...args, volume: 0 })
                 yield Audio.volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
@@ -26,11 +26,11 @@ export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
 export type AudioSECommandArgs = Except<AudioSetCommandArgs, 'type'> & { duration?: number, loop?: true }
 
 export const se = NonBlockingMacro<AudioSECommandArgs>(
-    (context) =>
+    () =>
         function* (_args) {
             const args = { ..._args, type: 'se', id: _args.id || 'se' } as const
             if (args.duration) {
-                yield Audio.volume({ target: args.id, volume: 0, duration: args.duration })(context)
+                yield (yield Audio.volume({ target: args.id, volume: 0, duration: args.duration }))
                 yield Audio.close({ target: args.id })
                 yield Audio.set({ ...args, volume: 0 })
                 yield Audio.volume({ target: args.id, volume: args.volume || 1, duration: args.duration })
@@ -53,9 +53,9 @@ export const clip = NonBlockingMacro<AudioClipCommandArgs>(
 )
 
 export const close = DynamicMacro<{ target: string, duration?: number }>(
-    (context) =>
+    () =>
         function* (args) {
-            yield Audio.volume({ volume: 0, ...args })(context)
+            yield (yield Audio.volume({ volume: 0, ...args }))
             yield Audio.close({ target: args.target })
         }
 )

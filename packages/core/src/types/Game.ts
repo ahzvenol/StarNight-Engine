@@ -17,13 +17,9 @@ export interface GameConfig {
     autoreadspeed: number
 }
 
-export type GameMacroGenerator<R> = Generator<StandardResolvedCommand<unknown> | Promise<unknown>, R, unknown>
-
-export type GameFragmentGenerator<R> = AsyncGenerator<StandardResolvedCommand<unknown>, R, unknown>
+export type GameFragmentGenerator<R> = Generator<unknown, R, unknown>
 
 export type GameFragment<R> = Function1<GameRuntimeContext, GameFragmentGenerator<R>>
-
-export type GameMacro<R> = Function1<GameRuntimeContext, GameMacroGenerator<R>>
 
 export type GameScenario<R> = Generator<GameFragment<R>, unknown, unknown>
 
