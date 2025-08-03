@@ -1,6 +1,6 @@
 import type { Except } from 'type-fest'
 import type { AudioSetCommandArgs } from '../base/audio'
-import { DynamicMacro, NonBlockingMacro } from '@starnight/core'
+import { ActScope, DynamicMacro, NonBlockingMacro } from '@starnight/core'
 import { Audio } from '../base'
 
 export const volume = Audio.volume
@@ -43,13 +43,15 @@ export const se = NonBlockingMacro<AudioSECommandArgs>(
 
 export type AudioClipCommandArgs = Except<AudioSetCommandArgs, 'type' | 'id' | 'loop'>
 
-export const clip = NonBlockingMacro<AudioClipCommandArgs>(
-    () =>
-        function* (_args) {
-            const args = { ..._args, type: 'clip', id: 'clip' } as const
-            yield Audio.close({ target: args.id })
-            yield Audio.set(args)
-        }
+export const clip = ActScope(
+    NonBlockingMacro<AudioClipCommandArgs>(
+        () =>
+            function* (_args) {
+                const args = { ..._args, type: 'clip', id: 'clip' } as const
+                yield Audio.close({ target: args.id })
+                yield Audio.set(args)
+            }
+    )
 )
 
 export const close = DynamicMacro<{ target: string, duration?: number }>(

@@ -25,43 +25,6 @@ export class StarNight {
     public static instance = (params: GameConstructorParams) => new StarNightInstance(params)
 
     private constructor() {}
-
-    static {
-        // 事件日志绑定
-        // 游戏初始化计时器
-        StarNight.GameEvents.start.subscribe(({ instance: { uuid } }) => console.time(uuid))
-        StarNight.GameEvents.ready.subscribe(({ instance: { uuid } }) => console.timeEnd(uuid))
-
-        StarNight.GameEvents.start.subscribe(() => console.info('Game:游戏开始'))
-        StarNight.GameEvents.end.subscribe(() => console.info('Game:游戏结束'))
-        StarNight.GameEvents.stop.subscribe(() => console.info('Game:游戏终止'))
-        StarNight.GameEvents.exit.subscribe(() => console.info('Game:游戏退出'))
-        StarNight.GameEvents.suspend.subscribe(() => console.info('Game:游戏挂起'))
-        StarNight.GameEvents.resume.subscribe(() => console.info('Game:游戏从挂起中恢复'))
-        StarNight.GameEvents.active.subscribe((active) => console.info(`Game:游戏活动状态:${active}`))
-        StarNight.GameEvents.ready.subscribe(() => console.info(`Game:初始化完成`))
-
-        StarNight.ActEvents.start.subscribe(({ state, current: { count: index } }) => {
-            if (state.isInitializing()) {
-                console.info(`Act:开始初始化第${index()}幕...`)
-            } else {
-                console.info(`Act:开始执行第${index()}幕...`)
-            }
-        })
-        StarNight.ActEvents.end.subscribe(({ state, current: { count: index } }) => {
-            if (!state.isInitializing()) console.info(`Act:第${index()}幕执行结束`)
-        })
-        StarNight.ActEvents.rush.subscribe(({ state }) => {
-            if (!state.isInitializing()) console.info('Act:执行单幕快进')
-        })
-        StarNight.ActEvents.next.subscribe(({ current: { count: index }, instance: { state } }) => {
-            if (!state.isInitializing()) console.info(`Act:准备执行第${index()}幕`)
-        })
-
-        StarNight.ClickEvents.step.subscribe(() => console.info('ClickEvent:触发点击事件'))
-        StarNight.ClickEvents.fast.subscribe(() => console.info('ClickEvent:触发快进/解除快进事件'))
-        StarNight.ClickEvents.auto.subscribe(() => console.info('ClickEvent:触发自动/解除自动事件'))
-    }
 }
 
 export class StarNightState {
