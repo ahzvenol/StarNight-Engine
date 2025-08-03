@@ -3,7 +3,7 @@ import type { MVEntry } from '@/store/gallery'
 import { useSignal } from 'micro-reactive-solid'
 import { Show } from 'solid-js'
 import { Portal } from 'solid-js/web'
-import { AudioMutex } from '@/store/audio'
+import { MediaManager } from '@/store/audio'
 import { store } from '@/store'
 import { CGMountPoint } from './Gallery'
 import styles from './Gallery.module.scss'
@@ -23,7 +23,6 @@ export const MVElement: Component<{ entry: MVEntry }> = ({ entry }) => {
                 }}
                 onClick={() => {
                     if (canShow) {
-                        AudioMutex('GalleryVideo')
                         pointer(0)
                     }
                 }}
@@ -32,6 +31,7 @@ export const MVElement: Component<{ entry: MVEntry }> = ({ entry }) => {
                 <Portal mount={document.getElementById(CGMountPoint)!}>
                     <video
                         ref={(ref) => {
+                            MediaManager.request(ref)
                             ref.volume = store.config.globalvolume()
                         }}
                         class={styles.Gallery_VCG_view}

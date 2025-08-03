@@ -1,11 +1,11 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
-import { createEffect, Match, on, onMount, Show, Switch } from 'solid-js'
+import { Match, onMount, Show, Switch } from 'solid-js'
 import { store } from '@/store'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { isDevelopment, isNative } from '@/utils/checkEnv'
 import { log } from '@/utils/Logger'
-import { AudioMutex, BGM } from '@/store/audio'
+import { BGM, MediaManager } from '@/store/audio'
 import { Button } from '../Button'
 import { GUIHomeRootState } from '../HomeRoot'
 import { useGame } from '../GameRoot'
@@ -14,24 +14,13 @@ import styles from './Title.module.scss'
 
 const audio = BGM({ loop: true, src: './static/AudioClip/bgm01.flac' })
 
-createEffect(
-    on(
-        AudioMutex,
-        (now) => {
-            if (now !== 'Title') audio.stop()
-            console.log(now, audio.playing())
-        },
-        { defer: true }
-    )
-)
-
 export const Title: Component = () => {
     log.info('Title组件函数被调用')
     const system = store.system
     const local = store.extra
     onMount(() => {
         if (GUIRootState() === 'Home') {
-            if (AudioMutex() !== 'Title') AudioMutex('Title')
+            MediaManager.request(audio)
             if (!audio.playing()) audio.play()
         }
     })

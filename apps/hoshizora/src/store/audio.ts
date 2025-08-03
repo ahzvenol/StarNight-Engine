@@ -1,10 +1,7 @@
 import type { Howl, HowlConstructor, HowlOptions } from '@/lib/howler'
-import { useSignal } from 'micro-reactive-solid'
 import { createEffect } from 'solid-js'
 import { HowlerInstance } from '@/lib/howler'
 import { onStoreReady } from '@/store'
-
-export const AudioMutex = useSignal<'Title' | 'GalleryAudio' | 'GalleryVideo' | 'Game'>('Title')
 
 function suspendWhenDocumentHidden(audio: Howl) {
     let wasPlaying = false
@@ -46,3 +43,22 @@ onStoreReady.then(({ config: { globalvolume, bgmvolume, sevolume, clipvolume, ui
     createEffect(() => ClipGlobal.volume(globalvolume() * clipvolume()))
     createEffect(() => UISEGlobal.volume(globalvolume() * uisevolume()))
 })
+
+export class MediaManager {
+    public static current: Howl | HTMLMediaElement | null = null
+    public static request = (media: Howl | HTMLMediaElement | null) => {
+        console.log(this.current, this.current instanceof Howler)
+        if (media !== this.current) {
+            if (this.current instanceof HTMLMediaElement) this.current.pause()
+            else if (this.current !== null) this.current.stop()
+            this.current = media
+        }
+        return media
+    }
+
+    public static release = () => {
+        if (this.current instanceof HTMLMediaElement) this.current.pause()
+        else if (this.current instanceof Howler) this.current.stop()
+        this.current = null
+    }
+}
