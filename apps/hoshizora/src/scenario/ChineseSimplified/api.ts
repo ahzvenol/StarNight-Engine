@@ -43,7 +43,7 @@ import { 通用命令参数别名, 图像命令参数别名, 音频命令参数�
  * @param .合并颜色矩阵 - 是否合并颜色矩阵滤镜（可选，默认 false）
  * @param .变换矩阵 - 自定义变换矩阵，类型为 PixiPlugin.PixiMatrix（可选）
  * @example
- * $执行.设置背景({ 资源路径: "/咸鱼池塘.jpg", 持续时间: 500, X坐标: -120, 模糊: 5, 亮度: 1.2 })
+ * $.设置背景({ 资源路径: "/咸鱼池塘.jpg", 持续时间: 500, X坐标: -120, 模糊: 5, 亮度: 1.2 })
  */
 export const 设置背景 = Api(
     Alias(MergedCommands.Image.bg, Object.assign(通用命令参数别名, 图像命令参数别名))
@@ -90,7 +90,7 @@ export const 设置背景 = Api(
  * @param .合并颜色矩阵 - 是否合并颜色矩阵滤镜（可选，默认 false）
  * @param .变换矩阵 - 自定义变换矩阵，类型为 PixiPlugin.PixiMatrix（可选）
  * @example
- * $执行.设置立绘({ 标识符: "咸鱼", 资源路径: "/saltfish/fish.jpg", 持续时间: 500, X坐标: 640, Y坐标: 640, 模糊: 5 })
+ * $.设置立绘({ 标识符: "咸鱼", 资源路径: "/saltfish/fish.jpg", 持续时间: 500, X坐标: 640, Y坐标: 640, 模糊: 5 })
  */
 export const 设置立绘 = Api(
     Alias(MergedCommands.Image.sprite, Object.assign(通用命令参数别名, 图像命令参数别名))
@@ -137,7 +137,7 @@ export const 设置立绘 = Api(
  * @param .合并颜色矩阵 - 是否合并颜色矩阵滤镜（可选，默认 false）
  * @param .变换矩阵 - 自定义变换矩阵，类型为 PixiPlugin.PixiMatrix（可选）
  * @example
- * $执行.添加动画({ 作用目标: "咸鱼", 持续时间: 1000, X坐标: "+=100", Y坐标: 720, 缓动函数: "M0,0,C0,0,1,1,1,1" })
+ * $.添加动画({ 作用目标: "咸鱼", 持续时间: 1000, X坐标: "+=100", Y坐标: 720, 缓动函数: "M0,0,C0,0,1,1,1,1" })
  */
 export const 添加动画 = Api(
     Alias(MergedCommands.Image.tween, Object.assign(通用命令参数别名, 图像命令参数别名))
@@ -152,7 +152,7 @@ export const 添加动画 = Api(
  * @param .作用目标 - 滤镜应用的目标标识符，舞台的标识符为0，背景的标识符为1（必需）
  * @param .滤镜实例 - PixiJS 滤镜实例，需为有效的 Filter 对象（必需）
  * @example
- * $执行.添加滤镜({ 作用目标: "咸鱼", 滤镜实例: new BlurFilter(5) })
+ * $.添加滤镜({ 作用目标: "咸鱼", 滤镜实例: new BlurFilter(5) })
  */
 export const 添加滤镜 = Api(
     Alias(MergedCommands.Image.filter, Object.assign(通用命令参数别名, { filter: '滤镜实例' } as const))
@@ -169,7 +169,7 @@ export const 添加滤镜 = Api(
  * @param .X轴幅度 - 横向动画幅度（可选，需至少提供 X轴幅度 或 Y轴幅度 两个参数中的一个）
  * @param .Y轴幅度 - 纵向动画幅度（可选，需至少提供 X轴幅度 或 Y轴幅度 两个参数中的一个）
  * @example
- * $执行.动效动画({ 作用目标: "咸鱼", 预设名称: "摇晃", Y轴幅度: 15, 持续时间: 1000 })
+ * $.动效动画({ 作用目标: "咸鱼", 预设名称: "摇晃", Y轴幅度: 15, 持续时间: 1000 })
  */
 export const 动效动画 = Api(
     DynamicMacro<动效动画命令参数别名>(
@@ -196,9 +196,9 @@ export const 动效动画 = Api(
  * @param .持续时间 - 淡出动画的持续时间，单位毫秒（可选，默认 225）。
  * @example
  * // 关闭单个立绘
- * $执行.关闭图像({ 作用目标: "咸鱼" })
+ * $.关闭图像({ 作用目标: "咸鱼" })
  * // 同时关闭多个立绘
- * $执行.关闭图像({ 作用目标: ["咸鱼", "鸽子"] })
+ * $.关闭图像({ 作用目标: ["咸鱼", "鸽子"] })
  */
 export const 关闭图像 = Api(
     Alias(MergedCommands.Image.close, Object.assign(通用命令参数别名, {} as const))
@@ -207,7 +207,7 @@ export const 关闭图像 = Api(
 /**
  * 立即移除所有立绘，无淡出动画。
  * @example
- * $执行.清空立绘()
+ * $.清空立绘()
  */
 export const 清空立绘 = Api(MergedCommands.Image.clean)
 
@@ -226,7 +226,7 @@ export const 清空立绘 = Api(MergedCommands.Image.clean)
  * @param .播放速度 - 音频播放速度，范围 0.5 到 4（可选，1 为无调整）
  * @param .使用HTML5 - 是否使用 HTML5 音频播放，适合大文件以减少加载时间（可选，默认自动选择）
  * @example
- * $执行.设置配乐({ 资源路径: "/bgm01.mp3", 持续时间: 1000, 音量: 0.5 })
+ * $.设置配乐({ 资源路径: "/bgm01.mp3", 持续时间: 1000, 音量: 0.5 })
  */
 export const 设置配乐 = Api(
     Alias(MergedCommands.Audio.bgm, Object.assign(通用命令参数别名, 音频命令参数别名))
@@ -247,7 +247,7 @@ export const 设置配乐 = Api(
  * @param .播放速度 - 音频播放速度，范围 0.5 到 4（可选，1 为无调整）
  * @param .使用HTML5 - 是否使用 HTML5 音频播放，适合大文件以减少加载时间（可选，默认自动选择）
  * @example
- * $执行.设置音效({ 资源路径: "/se01.mp3", 循环播放: true, 持续时间: 500, 音量: 0.7 })
+ * $.设置音效({ 资源路径: "/se01.mp3", 循环播放: true, 持续时间: 500, 音量: 0.7 })
  */
 export const 设置音效 = Api(
     Alias(MergedCommands.Audio.se, Object.assign(通用命令参数别名, 音频命令参数别名))
@@ -265,7 +265,7 @@ export const 设置音效 = Api(
  * @param .播放速度 - 音频播放速度，范围 0.5 到 4（可选，1 为无调整）
  * @param .使用HTML5 - 是否使用 HTML5 音频播放，适合大文件以减少加载时间（可选，默认自动选择）
  * @example
- * $执行.设置配音({ 资源路径: "/noi01.mp3", 音量: 0.8, 播放速度: 1.2 })
+ * $.设置配音({ 资源路径: "/noi01.mp3", 音量: 0.8, 播放速度: 1.2 })
  */
 export const 设置配音 = Api(
     Alias(MergedCommands.Audio.clip, Object.assign(通用命令参数别名, 音频命令参数别名))
@@ -280,7 +280,7 @@ export const 设置配音 = Api(
  * @param .音量 - 目标音量，范围 0 到 1（必需）
  * @param .持续时间 - 音量渐变过渡时间，单位毫秒（可选）
  * @example
- * $执行.设置音量({ 作用目标: "bgm", 音量: 0.5, 持续时间: 1000 })
+ * $.设置音量({ 作用目标: "bgm", 音量: 0.5, 持续时间: 1000 })
  */
 export const 设置音量 = Api(
     Alias(MergedCommands.Audio.volume, Object.assign(通用命令参数别名, 音频命令参数别名))
@@ -294,7 +294,7 @@ export const 设置音量 = Api(
  * @param .作用目标 - 要关闭的音轨标识符（必需）
  * @param .持续时间 - 音量渐出过渡时间，单位毫秒（可选）
  * @example
- * $执行.关闭音频({ 作用目标: "bgm", 持续时间: 1000 })
+ * $.关闭音频({ 作用目标: "bgm", 持续时间: 1000 })
  */
 export const 关闭音频 = Api(
     Alias(MergedCommands.Audio.close, Object.assign(通用命令参数别名, 音频命令参数别名))
@@ -306,7 +306,7 @@ export const 关闭音频 = Api(
  * - 转场动画用于场景切换，但不会自动处理背景或立绘的转场。
  * @param 预设名称 - 转场动画名称（如 "BlindH8"）
  * @example
- * $执行.转场动画("BlindH8")
+ * $.转场动画("BlindH8")
  */
 export const 转场动画 = Api(MergedCommands.Transition.apply)
 
@@ -316,7 +316,7 @@ export const 转场动画 = Api(MergedCommands.Transition.apply)
  * @param .资源路径 - 视频的文件路径（必需）
  * @param .允许跳过 - 是否允许用户跳过视频（可选，默认 true）
  * @example
- * $等待.播放视频({ 资源路径: "/OP.mp4", 允许跳过: false })
+ * $$.播放视频({ 资源路径: "/OP.mp4", 允许跳过: false })
  */
 export const 播放视频 = Api(
     Alias(MergedCommands.Video.use, Object.assign(通用命令参数别名, { skip: '允许跳过' } as const))
@@ -328,7 +328,7 @@ export const 播放视频 = Api(
  * @param .描述文本 - 输入框显示的提示文本（（可选）
  * @returns 用户输入的文本
  * @example
- * const res = $等待.用户输入({ 描述文本: "请输入你的名字" })
+ * const res = $$.用户输入({ 描述文本: "请输入你的名字" })
  */
 export const 用户输入 = Api(
     Blocking<用户输入命令参数别名, string>(
@@ -347,7 +347,7 @@ export const 用户输入 = Api(
  * @param .禁用 - 是否禁用该选项（可选，默认 false）
  * @returns 用户所选项的标识符
  * @example
- * const label = $等待.用户选择([
+ * const label = $$.用户选择([
  *   { 标识符: "*そのまま渡す", 描述文本: "直接给她" },
  *   { 标识符: "*振ってから渡す", 描述文本: "晃晃再给她" }
  * ])
@@ -366,7 +366,7 @@ export const 用户选择 = Api(
 /**
  * 等待用户点击。
  * @example
- * $等待.用户点击()
+ * $$.用户点击()
  */
 export const 用户点击 = Api(MergedCommands.Input.click)
 
@@ -376,7 +376,7 @@ export const 用户点击 = Api(MergedCommands.Input.click)
  * - 设置 `false` N 次，需相应设置 `true` N 次以复位。
  * @param 状态 - true 为显示，false 为隐藏
  * @example
- * $执行.显示界面(true)
+ * $.显示界面(true)
  */
 export const 显示界面 = Api(MergedCommands.State.ui)
 
@@ -385,7 +385,7 @@ export const 显示界面 = Api(MergedCommands.State.ui)
  * - 设置 `false` N 次，需相应设置 `true` N 次以复位。
  * @param 状态 - true 为允许，false 为禁止
  * @example
- * $执行.允许点击(true)
+ * $.允许点击(true)
  */
 export const 允许点击 = Api(MergedCommands.State.click)
 
@@ -395,7 +395,7 @@ export const 允许点击 = Api(MergedCommands.State.click)
  * - 在默认情况下，设置背景、立绘、音频等时，将自动解锁相关鉴赏内容。
  * @param 资源路径 - 要解锁的 CG 或内容文件路径
  * @example
- * $执行.解锁鉴赏("cg01.jpg")
+ * $.解锁鉴赏("cg01.jpg")
  */
 export const 解锁鉴赏 = Api(MergedCommands.Var.unlock)
 
@@ -403,14 +403,14 @@ export const 解锁鉴赏 = Api(MergedCommands.Var.unlock)
  * 解锁指定成就。
  * @param 成就ID - 成就的编号
  * @example
- * $执行.解锁成就(1)
+ * $.解锁成就(1)
  */
 export const 解锁成就 = Api(MergedCommands.Var.achieve)
 
 /**
  * 自动进入下一幕，无需用户点击。
  * @example
- * $执行.自动继续()
+ * $.自动继续()
  */
 export const 自动继续 = Api(MergedCommands.System.cont)
 
@@ -418,7 +418,7 @@ export const 自动继续 = Api(MergedCommands.System.cont)
  * 等待指定时间。
  * @param 时间 - 等待时间，单位毫秒
  * @example
- * $等待.系统计时(500)
+ * $$.系统计时(500)
  */
 export const 系统计时 = Api(MergedCommands.System.wait)
 
@@ -427,7 +427,7 @@ export const 系统计时 = Api(MergedCommands.System.wait)
  * @remarks
  * - 在默认情况下，命令执行后将返回标题页。
  * @example
- * $执行.结束剧情()
+ * $.结束剧情()
  */
 export const 结束剧情 = Api(MergedCommands.System.end)
 
@@ -439,7 +439,7 @@ export const 结束剧情 = Api(MergedCommands.System.end)
  * @param .资源路径 - iframe 的 URL （必需）
  * @returns 页面发送的结果数据
  * @example
- * $等待.嵌入页面({ 资源路径: "example.com" })
+ * $$.嵌入页面({ 资源路径: "example.com" })
  */
 export const 嵌入页面 = Api(
     Alias(MergedCommands.Input.iframe, 通用命令参数别名)
@@ -452,7 +452,7 @@ export const 嵌入页面 = Api(
  * @param 回调函数 - 返回 Promise 的函数（必需）
  * @returns 回调函数的结果
  * @example
- * $等待.基本输入(async () => new Date().toISOString())
+ * $$.基本输入(async () => new Date().toISOString())
  */
 export const 基本输入 = Api(MergedCommands.System.input) as (<T>(arg0: Function0<Promise<T>>) => T) & CommandTagBlocking
 
@@ -471,7 +471,7 @@ export const 基本输入 = Api(MergedCommands.System.input) as (<T>(arg0: Funct
  * @param .位置 - 动画在 GSAP 动画序列中的位置，可传入符合 GSAP 位置参数要求的值 （可选）
  * @param ...属性 - 目标对象的任意属性，如 scale、opacity 等
  * @example
- * $执行.基本动画({ 目标: document.querySelector(".box"), 持续时间: 1000, x: "+=100", opacity: 0.5 })
+ * $.基本动画({ 目标: document.querySelector(".box"), 持续时间: 1000, x: "+=100", opacity: 0.5 })
  */
 export const 基本动画 = Api(
     Alias(

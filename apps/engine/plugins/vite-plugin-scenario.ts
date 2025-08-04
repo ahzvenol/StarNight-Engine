@@ -12,17 +12,15 @@ const traverse = _traverse.default as typeof _traverse
 // @ts-expect-error 不存在属性“default
 const generate = _generate.default as typeof _generate
 
-type Options = { src: string | string[], async: string | string[], await: string | string[] }
-type InternalOptions = { src: string[], async: string[], await: string[] }
+type Options = { src: string | string[] }
+type InternalOptions = { src: string[] }
 
 // 关键字: $action,$debugger,$context,$include,$async,$await,$character
 
 export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
     if (options.src && !Array.isArray(options.src)) options.src = [options.src]
-    if (options.async && !Array.isArray(options.async)) options.async = [options.async]
-    if (options.await && !Array.isArray(options.await)) options.await = [options.await]
 
-    const opt = mergeConfig({ src: ['src'], async: ['$async'], await: ['$await'] }, options) as InternalOptions
+    const opt = mergeConfig({ src: ['src'] }, options) as InternalOptions
 
     return {
         name: 'vite-plugin-scenario-transform',
@@ -50,7 +48,7 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
                 }
             })
 
-            const rootAsyncGeneratorFunction = t.functionExpression(null, [], t.blockStatement(otherNodes), true, true)
+            const rootAsyncGeneratorFunction = t.functionExpression(null, [], t.blockStatement(otherNodes), true)
 
             const exportDefaultNode = t.exportDefaultDeclaration(rootAsyncGeneratorFunction)
 
@@ -76,7 +74,7 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
                         debug = true
                     }
                 },
-                // 编译$context到(await (yield async (ctx) => ctx))
+                // 编译$context到yield (ctx) => ctx)
                 Identifier(path) {
                     if (path.node.name === '$context') {
                         if (!inRootAsyncGenerator(path)) return
@@ -91,10 +89,8 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
                         ) return
                         path.replaceWith(
                             t.parenthesizedExpression(
-                                t.awaitExpression(
-                                    t.yieldExpression(
-                                        t.arrowFunctionExpression([t.identifier('ctx')], t.identifier('ctx'), true)
-                                    )
+                                t.yieldExpression(
+                                    t.arrowFunctionExpression([t.identifier('ctx')], t.identifier('ctx'))
                                 )
                             )
                         )
@@ -103,22 +99,18 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
             })
 
             traverse(ast, {
-                // 编译$async.method()到yield $async.method()
-                // 编译$await.method()到await (yield $await.method())
-                // 编译$include(url)到yield* $scenario.default()
+                // 编译$.method()到yield $.method()
+                // 编译$$.method()到yield (yield $$.method())
+                // 编译$include(url)到yield* yield(import(url)).default()
                 CallExpression(path) {
                     if (!inRootAsyncGenerator(path)) return
                     const callee = path.node.callee
                     if (t.isMemberExpression(callee)) {
-                        if (
-                            opt.async.some((name) => t.isIdentifier(callee.object, { name }))
-                        ) {
+                        if (t.isIdentifier(callee.object, { name: '$' })) {
                             path.replaceWith(t.yieldExpression(path.node))
                             path.skip()
-                        } else if (
-                            opt.await.some((name) => t.isIdentifier(callee.object, { name }))
-                        ) {
-                            path.replaceWith(t.awaitExpression(t.parenthesizedExpression(t.yieldExpression(path.node))))
+                        } else if (t.isIdentifier(callee.object, { name: '$$' })) {
+                            path.replaceWith(t.yieldExpression(t.parenthesizedExpression(t.yieldExpression(path.node))))
                             path.skip()
                         }
                     } else if (t.isIdentifier(path.node.callee, { name: '$include' })) {
@@ -127,7 +119,7 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
                                 t.callExpression(
                                     t.memberExpression(
                                         t.parenthesizedExpression(
-                                            t.awaitExpression(
+                                            t.yieldExpression(
                                                 t.callExpression(t.import(), [path.node.arguments[0]])
                                             )
                                         ),
@@ -178,37 +170,35 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
                         // 成功匹配到 TaggedTemplateExpression 模式
                         const parentPath = path.parentPath
 
-                        // 判断父级是否是带 '$' 标签的 LabeledStatement
-                        if (parentPath.isLabeledStatement() && parentPath.node.label.name === '$') {
-                            // 规则: $: noi`...` -> yield noi(...)
-                            parentPath.replaceWith(t.expressionStatement(t.yieldExpression(callExpr)))
-                            // 添加没有实际影响的表达式，在后续筛选src时记录资源
-                            if (callArgs.length > 1) {
-                                parentPath.insertAfter(t.expressionStatement(t.objectExpression([
-                                    t.objectProperty(t.identifier('src'), callArgs[1])
-                                ])))
-                            }
-                            path.skip()
-                        } else {
-                            // 规则: noi`...` 或 otherLabel: noi`...` -> yield $action; yield noi(...)
+                        const statementToModify = parentPath.isLabeledStatement() ? parentPath : path
 
-                            // 确定要操作的语句节点：是 LabeledStatement 还是 ExpressionStatement 本身
-                            const statementToModify = parentPath.isLabeledStatement() ? parentPath : path
-
+                        // 规则: noi`...` 或 otherLabel: noi`...` -> yield $action; yield noi(...)
+                        if (!parentPath.isLabeledStatement()) {
                             // 在语句前插入 yield $action
                             statementToModify.insertBefore(t.expressionStatement(t.yieldExpression(t.identifier('$action'))))
-
-                            // 用 yield callExpr 替换整个语句
                             statementToModify.replaceWith(t.expressionStatement(t.yieldExpression(callExpr)))
-
-                            // 添加没有实际影响的表达式，在后续筛选src时记录资源
-                            if (callArgs.length > 1) {
-                                statementToModify.insertAfter(t.expressionStatement(t.objectExpression([
-                                    t.objectProperty(t.identifier('src'), callArgs[1])
-                                ])))
-                            }
-                            path.skip()
+                            // 判断父级是否是带 '$' 标签的 LabeledStatement
+                        } else if (parentPath.node.label.name === '$') {
+                            // 规则: $: noi`...` -> yield noi(...)
+                            parentPath.replaceWith(t.expressionStatement(t.yieldExpression(callExpr)))
+                        // 判断父级是否是带 '$$' 标签的 LabeledStatement
+                        } else if (parentPath.node.label.name === '$$') {
+                            // 规则: $$: noi`...` -> yield (yield noi(...))
+                            parentPath.replaceWith(t.expressionStatement(t.yieldExpression(t.yieldExpression(callExpr))))
                         }
+
+                        // 添加没有实际影响的表达式，在后续筛选src时记录资源
+                        if (callArgs.length > 1) {
+                            statementToModify.insertAfter(
+                                t.expressionStatement(
+                                    t.objectExpression([
+                                        t.objectProperty(t.identifier('src'), callArgs[1])
+                                    ])
+                                )
+                            )
+                        }
+
+                        path.skip()
                     }
                 }
             })
