@@ -172,19 +172,18 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
 
                         const statementToModify = parentPath.isLabeledStatement() ? parentPath : path
 
-                        // 规则: noi`...` 或 otherLabel: noi`...` -> yield $action; yield noi(...)
-                        if (!parentPath.isLabeledStatement()) {
-                            // 在语句前插入 yield $action
-                            statementToModify.insertBefore(t.expressionStatement(t.yieldExpression(t.identifier('$action'))))
-                            statementToModify.replaceWith(t.expressionStatement(t.yieldExpression(callExpr)))
-                            // 判断父级是否是带 '$' 标签的 LabeledStatement
-                        } else if (parentPath.node.label.name === '$') {
-                            // 规则: $: noi`...` -> yield noi(...)
+                        // 判断父级是否是带 '$' 标签的 LabeledStatement
+                        // 规则: $: noi`...` -> yield noi(...)
+                        if (parentPath.isLabeledStatement() && parentPath.node.label.name === '$') {
                             parentPath.replaceWith(t.expressionStatement(t.yieldExpression(callExpr)))
                         // 判断父级是否是带 '$$' 标签的 LabeledStatement
-                        } else if (parentPath.node.label.name === '$$') {
-                            // 规则: $$: noi`...` -> yield (yield noi(...))
+                        // 规则: $$: noi`...` -> yield (yield noi(...))
+                        } else if (parentPath.isLabeledStatement() && parentPath.node.label.name === '$$') {
                             parentPath.replaceWith(t.expressionStatement(t.yieldExpression(t.yieldExpression(callExpr))))
+                        // 规则: noi`...` 或 otherLabel: noi`...` -> yield $action; yield noi(...)
+                        } else {
+                            statementToModify.insertBefore(t.expressionStatement(t.yieldExpression(t.identifier('$action'))))
+                            statementToModify.replaceWith(t.expressionStatement(t.yieldExpression(callExpr)))
                         }
 
                         // 添加没有实际影响的表达式，在后续筛选src时记录资源
