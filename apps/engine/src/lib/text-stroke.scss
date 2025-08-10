@@ -1,17 +1,17 @@
-/* stylelint-disable */
-@function text-stroke($size: 2, $color: #fff, $correction: 0) {
-    $size-rounded: round($size);
-    $size-rest: $size-rounded - $size;
+@use 'sass:math';
+@use 'sass:list';
 
+@function text-stroke($size: 2, $color: #fff, $correction: 0) {
+    $size-rounded: math.round($size);
+    $size-rest: $size-rounded - $size;
     $radius: $size - $correction;
     $stroke: ();
 
-    @for $i from -$size-rounded through $size-rounded {
+    @for $i from - $size-rounded through $size-rounded {
         $i: $i + $size-rest;
 
-        @for $k from -$size-rounded through $size-rounded {
+        @for $k from - $size-rounded through $size-rounded {
             $k: $k + $size-rest;
-
             $x: $k;
             $y: $i;
 
@@ -27,8 +27,8 @@
                 $y: $i + 0.5;
             }
 
-            @if ($x * $x + $y * $y <= $radius * $radius) {
-                $stroke: append($stroke, $i * 1px $k * 1px 0 $color, comma);
+            @if $x * $x + $y * $y <= $radius * $radius {
+                $stroke: list.append($stroke, ($i * 1px $k * 1px 0 $color), comma);
             }
         }
     }

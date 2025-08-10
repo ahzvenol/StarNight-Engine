@@ -1,4 +1,4 @@
-@import '@/lib/text-stroke';
+@use '@/lib/text-stroke' as *;
 
 .Game_TextBox_text_container {
     bottom: 0;
