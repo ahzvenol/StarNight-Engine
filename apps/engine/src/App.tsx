@@ -4,6 +4,7 @@ import { onStoreReady } from './store'
 import { GUIRoot } from './ui/GUIRoot'
 import { isMobile, isTouchDevice } from './utils/checkEnv'
 import { log } from './utils/Logger'
+import { exitFullscreen, requestFullscreen } from './utils/fullscreen'
 
 // 禁止右键,禁止拖动
 document.oncontextmenu = document.onmousedown = () => false
@@ -21,9 +22,9 @@ onStoreReady.then((store) => {
         createEffect(() => {
             log.info('全屏模式: ' + store.config.fullscreen())
             if (store.config.fullscreen()) {
-                document.documentElement.requestFullscreen()
+                requestFullscreen()
             } else {
-                if (document.fullscreenElement !== null) document.exitFullscreen()
+                exitFullscreen()
             }
         })
     }
