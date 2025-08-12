@@ -6,10 +6,10 @@ export class EventDispatcher<T> {
             () =>
                 new Promise<T>(event.once)
 
-    public all: Set<EventListener<T>> = new Set()
+    private listeners: Set<EventListener<T>> = new Set()
 
     public publish = (payload: T): void => {
-        for (const fn of this.all) {
+        for (const fn of this.listeners) {
             try {
                 fn(payload)
             } catch (e) {
@@ -19,14 +19,14 @@ export class EventDispatcher<T> {
     }
 
     public subscribe = (listener: EventListener<T>): void => {
-        this.all.add(listener)
+        this.listeners.add(listener)
     }
 
     public unsubscribe = (listener?: EventListener<T>): void => {
         if (listener) {
-            this.all.delete(listener)
+            this.listeners.delete(listener)
         } else {
-            this.all.clear()
+            this.listeners.clear()
         }
     }
 
