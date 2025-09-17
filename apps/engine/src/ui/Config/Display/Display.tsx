@@ -63,7 +63,7 @@ export const Display: Component = () => {
                 <Slider signal={config.textboxopacity} />
             </Cell>
             <Cell title={t.textPreview.title}>
-                <Show keyed when={config.textspeed()}>
+                <Show keyed when={config.textspeed() + 1}>
                     <Show keyed when={refresh()}>
                         <Content onClick={() => refresh(Symbol())}>
                             <TextPreview />
