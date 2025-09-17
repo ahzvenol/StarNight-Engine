@@ -2,7 +2,7 @@ import { DynamicMacro } from '@starnight/core'
 import { Backlog, Say } from '../base'
 import { Audio } from './index'
 
-export type SayCommandArgs = { text: string | HTMLElement | HTMLElement[], name?: string, clip?: string }
+export type SayCommandArgs = { text: string, name?: string, clip?: string }
 
 export const apply = DynamicMacro<SayCommandArgs>(
     () =>
@@ -11,7 +11,7 @@ export const apply = DynamicMacro<SayCommandArgs>(
             element.append(...(Array.isArray(text) ? text : [text]))
             if (clip !== undefined) yield Audio.clip({ src: clip })
             if (name !== undefined) yield Say.name(name)
-            yield Backlog.add({ text: element.innerHTML, name, clip })
+            yield Backlog.add({ text, name, clip })
             yield (yield Say.text(text))
         }
 )

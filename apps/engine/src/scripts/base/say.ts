@@ -2,7 +2,6 @@ import type { Reactive } from '@starnight/core'
 import { ActScope, Dynamic, NonBlocking, StarNight } from '@starnight/core'
 import { gsap } from 'gsap'
 import { SplitText } from 'gsap/SplitText'
-import { isString } from 'es-toolkit'
 import { Tween } from './index'
 
 gsap.registerPlugin(SplitText)
@@ -35,21 +34,13 @@ const compareElementOrder = (a: Node, b: Node) =>
     a.compareDocumentPosition(b) & 2 ? 1 : a.compareDocumentPosition(b) & 4 ? -1 : 0
 
 export const text = ActScope(
-    Dynamic<string | HTMLElement | HTMLElement[]>(
+    Dynamic<string>(
         (context) =>
             function* (arg0) {
                 const { current, config, ui } = context
                 const element = document.createElement('div')
-                element.append(...(Array.isArray(arg0)
-                    ? arg0
-                    : isString(arg0)
-                        ? arg0.split('\n').flatMap((line, index, arr) =>
-                                index === arr.length - 1 ? [line] : [line, document.createElement('br')]
-                            )
-                        : [arg0])
-                )
-                ui.text((i) => i === null ? document.createElement('div') : i)
-                ui.text()!.append(element)
+                element.innerHTML = arg0
+                ui.text((i) => i || document.createElement('div')).append(element)
                 current.text((prev) => prev + element.outerHTML)
                 const rubys = element.querySelectorAll('ruby')
                 const split = SplitText.create(ui.text()!,
