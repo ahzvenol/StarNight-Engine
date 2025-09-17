@@ -194,12 +194,12 @@ export type ImageTweenArgs = OmitIndexSignature<Except<
 >>
 
 export type ImageTweenCommandArgs = ImageTweenArgs
-    & { ease?: TweenCommandArgs['ease'], duration?: number }
+    & { ease?: TweenCommandArgs['ease'], duration?: number, repeat?: number, yoyo?: boolean }
     & ({ target: ImageTargetStage, inherit?: never } | { target: ImageTargetSprite | ImageTargetBackground, inherit?: false })
 
 export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>
-        function* ({ target: _target, inherit = true, ease, duration, alpha, ...args }) {
+        function* ({ inherit = true, target: _target, ease, duration, repeat, yoyo, alpha, ...args }) {
             if (alpha !== undefined) (args as Record<string, unknown>).autoAlpha = alpha
             const target = _target === 0
                 ? stage.children.map((e) => e.internal.internal)
@@ -207,7 +207,7 @@ export const tween = DynamicMacro<ImageTweenCommandArgs>(
                     ? find(_target, stage)?.internal.internal.internal.internal
                     : find(_target, stage)?.internal.internal.internal.internal.children.slice(-1)[0]
             if (isUndefined(target)) return
-            yield Tween.apply({ target, ease, duration, pixi: args })
+            yield Tween.apply({ target, ease, duration, repeat, yoyo, pixi: args })
         }
 )
 

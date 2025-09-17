@@ -19,6 +19,12 @@ StarNight.GameEvents.setup.subscribe(({ temp }) => {
 
 StarNight.ActEvents.start.subscribe(({ state, temp: { activetimelines } }) => {
     if (!state.isInitializing()) {
+        activetimelines.forEach((timeline) => {
+            if (timeline.duration() !== timeline.time()) {
+                timeline.seek(timeline.duration())
+            }
+        }
+        )
         activetimelines.clear()
     }
 })
@@ -54,7 +60,10 @@ export const apply = Dynamic<TweenCommandArgs>(
                 )
                 const current = timeline.duration()
                 yield promise
-                if (current === timeline.duration()) timeline.seek(timeline.duration())
+                const isLoop = timeline.getChildren().some((a) => a.repeat() === -1)
+                if (current === timeline.duration() && !isLoop) {
+                    timeline.seek(timeline.duration())
+                }
             }
         }
 )

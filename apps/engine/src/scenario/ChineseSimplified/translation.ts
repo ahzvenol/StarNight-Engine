@@ -8,7 +8,7 @@ export const 通用命令参数别名 = {
     duration: '持续时间'
 } as const
 
-export const 图像命令参数别名 = {
+export const 添加动画命令参数别名 = {
     inherit: '继承',
     z: '图层高度',
     alpha: '透明度',
@@ -46,6 +46,17 @@ export const 图像命令参数别名 = {
     ease: '缓动函数'
 } as const
 
+export const 基本动画命令参数别名 = {
+    id: '标识符',
+    target: '作用目标',
+    duration: '持续时间',
+    mode: '模式',
+    ease: '缓动函数',
+    position: '位置',
+    repeat: '重复次数',
+    yoyo: '往返播放'
+} as const
+
 export const 音频命令参数别名 = {
     volume: '音量',
     html5: '使用HTML5',
@@ -56,8 +67,8 @@ export const 音频命令参数别名 = {
 export const 动效动画别名 = { shake: '震动', punch: '摇晃' } as const satisfies Record<AnimationTypes, string>
 
 export type 添加动画命令参数别名 =
-    { [K in keyof ImageTweenArgs as typeof 图像命令参数别名[K]]: ImageTweenArgs[K] }
-    & { 缓动函数?: TweenCommandArgs['ease'], 持续时间?: number }
+    { [K in keyof ImageTweenArgs as typeof 添加动画命令参数别名[K]]: ImageTweenArgs[K] }
+    & { 缓动函数?: TweenCommandArgs['ease'], 持续时间?: number, 重复次数?: number, 往返播放?: boolean }
     & ({ 作用目标: ImageTargetStage } | { 作用目标: ImageTargetSprite | ImageTargetBackground, 继承?: false })
 
 export type 动效动画命令参数别名 =

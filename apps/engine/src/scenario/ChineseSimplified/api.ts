@@ -1,9 +1,9 @@
 import type { CommandTagBlocking, CommandTagDynamic } from '@starnight/core'
-import type { 添加动画命令参数别名, 用户输入命令参数别名, 用户选择命令参数别名, 动效动画命令参数别名 } from './translation'
+import type { 用户输入命令参数别名, 用户选择命令参数别名, 动效动画命令参数别名 } from './translation'
 import { Blocking, DynamicMacro } from '@starnight/core'
 import { MergedCommands } from '../../scripts/index'
 import { Alias, Api, flipObject } from '../Translate'
-import { 通用命令参数别名, 图像命令参数别名, 音频命令参数别名, 动效动画别名 } from './translation'
+import { 通用命令参数别名, 添加动画命令参数别名, 音频命令参数别名, 动效动画别名, 基本动画命令参数别名 } from './translation'
 
 /**
  * 设置背景图片，使用 GSAP 实现，支持位置、缩放、滤镜等属性。
@@ -46,7 +46,7 @@ import { 通用命令参数别名, 图像命令参数别名, 音频命令参数�
  * $.设置背景({ 资源路径: "/咸鱼池塘.jpg", 持续时间: 500, X坐标: -120, 模糊: 5, 亮度: 1.2 })
  */
 export const 设置背景 = Api(
-    Alias(MergedCommands.Image.bg, Object.assign(通用命令参数别名, 图像命令参数别名))
+    Alias(MergedCommands.Image.bg, Object.assign(通用命令参数别名, 添加动画命令参数别名))
 )
 
 /**
@@ -93,7 +93,7 @@ export const 设置背景 = Api(
  * $.设置立绘({ 标识符: "咸鱼", 资源路径: "/saltfish/fish.jpg", 持续时间: 500, X坐标: 640, Y坐标: 640, 模糊: 5 })
  */
 export const 设置立绘 = Api(
-    Alias(MergedCommands.Image.sprite, Object.assign(通用命令参数别名, 图像命令参数别名))
+    Alias(MergedCommands.Image.sprite, Object.assign(通用命令参数别名, 添加动画命令参数别名))
 )
 
 /**
@@ -105,6 +105,8 @@ export const 设置立绘 = Api(
  * @param 参数对象
  * @param .作用目标 - 动画应用的目标标识符，舞台的标识符为0，背景的标识符为1（必需）
  * @param .持续时间 - 动画持续时间，单位毫秒（可选，默认 0，无动画）
+ * @param .重复次数 - 动画重复播放的次数（可选，-1为无限循环）
+ * @param .往返播放 - 是否在动画完成后反向播放（可选，默认 false）
  * @param .缓动函数 - 动画缓动函数，支持 GSAP 缓动预设、缓动曲线或函数（可选，默认 "none"）
  * @param .继承 - 是否在切换图像后继承当前动画属性（默认 true）
  * @param .X坐标 - 横坐标（可选，默认 0）
@@ -140,7 +142,7 @@ export const 设置立绘 = Api(
  * $.添加动画({ 作用目标: "咸鱼", 持续时间: 1000, X坐标: "+=100", Y坐标: 720, 缓动函数: "M0,0,C0,0,1,1,1,1" })
  */
 export const 添加动画 = Api(
-    Alias(MergedCommands.Image.tween, Object.assign(通用命令参数别名, 图像命令参数别名))
+    Alias(MergedCommands.Image.tween, Object.assign(通用命令参数别名, 添加动画命令参数别名))
 ) as ((arg0: 添加动画命令参数别名) => void) & CommandTagDynamic
 
 /**
@@ -466,6 +468,8 @@ export const 基本输入 = Api(MergedCommands.System.input) as (<T>(arg0: Funct
  * @param .目标 - 动画应用的目标对象，接受 GSAP 支持的 TweenTarget（必需）
  * @param .模式 - 动画模式，"from" 表示从指定值开始，"to" 表示到指定值结束（可选，默认 "to"）
  * @param .持续时间 - 动画持续时间，单位毫秒（可选，默认 0）
+ * @param .重复次数 - 动画重复播放的次数（可选，-1为无限循环）
+ * @param .往返播放 - 是否在动画完成后反向播放（可选，默认 false）
  * @param .缓动函数 - 动画缓动函数，支持 GSAP 缓动预设、缓动曲线或函数（可选，默认 "none"）
  * @param .标识符 - 动画序列的标识符，针对同一标识符的多个动画将按顺序执行。（可选，默认与目标参数值相同）
  * @param .位置 - 动画在 GSAP 动画序列中的位置，可传入符合 GSAP 位置参数要求的值 （可选）
@@ -474,8 +478,5 @@ export const 基本输入 = Api(MergedCommands.System.input) as (<T>(arg0: Funct
  * $.基本动画({ 目标: document.querySelector(".box"), 持续时间: 1000, x: "+=100", opacity: 0.5 })
  */
 export const 基本动画 = Api(
-    Alias(
-        MergedCommands.Tween.apply,
-        { id: '标识符', target: '作用目标', duration: '持续时间', mode: '模式', ease: '缓动函数', position: '位置' } as const
-    )
+    Alias(MergedCommands.Tween.apply, 基本动画命令参数别名)
 )

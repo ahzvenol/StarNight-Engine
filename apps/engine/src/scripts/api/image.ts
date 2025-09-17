@@ -13,7 +13,7 @@ NonBlockingMacro<{ target: NonNullable<ImageCloseCommandArgs['target']> } & { du
                 const targets = Array.isArray(_target) ? _target : [_target]
                 for (const target of targets) {
                     yield Fork(
-                        async function* () {
+                        function* () {
                             yield Image.tween({ target, inherit: false, alpha: 0, duration })
                         }
                     )
@@ -30,7 +30,7 @@ export const tween = Image.tween
 
 export const filter = Image.filter
 
-export type ImageSpriteCommandArgs = ImageSetCommandArgs & Except<ImageTweenCommandArgs, 'target' | 'ease' | 'inherit'>
+export type ImageSpriteCommandArgs = ImageSetCommandArgs & Except<ImageTweenCommandArgs, 'target' | 'ease' | 'inherit' | 'repeat' | 'yoyo'>
 
 export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
     () =>
@@ -44,7 +44,7 @@ export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
 )
 
 export type ImageBGCommandArgs =
-Except<ImageSetCommandArgs, 'z' | 'id'> & Except<ImageTweenCommandArgs, 'target' | 'ease' | 'inherit' | 'alpha'>
+Except<ImageSetCommandArgs, 'z' | 'id'> & Except<ImageTweenCommandArgs, 'target' | 'ease' | 'inherit' | 'alpha' | 'repeat' | 'yoyo'>
 
 export const bg = NonBlockingMacro<ImageBGCommandArgs>(
     () =>
