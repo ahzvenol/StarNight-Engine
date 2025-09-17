@@ -79,7 +79,8 @@ StarNight.GameEvents.setup.subscribe(({ current, ui }) => {
     ui.name = current.name
 })
 
-export const name =
+export const name = ActScope(
     NonBlocking<string>((context) => (arg0) => {
         context.current.name(arg0)
     })
+)

@@ -35,7 +35,7 @@ export const Backlog: Component = () => {
                                     >
                                         <BackIcon />
                                     </div>
-                                    <div class={styles.Game_Backlog_element_name}>{act.local.name}</div>
+                                    <div class={styles.Game_Backlog_element_name}>{act.name}</div>
                                     <div class={styles.Game_Backlog_element_text}>{act.text}</div>
                                 </div>
                             )}

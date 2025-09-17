@@ -11,7 +11,7 @@ export const apply = DynamicMacro<SayCommandArgs>(
             element.append(...(Array.isArray(text) ? text : [text]))
             if (clip !== undefined) yield Audio.clip({ src: clip })
             if (name !== undefined) yield Say.name(name)
-            yield Backlog.add({ text: element.innerHTML, clip })
+            yield Backlog.add({ text: element.innerHTML, name, clip })
             yield (yield Say.text(text))
         }
 )
