@@ -2,10 +2,8 @@
     "name": "@starnight/monorepo",
     "private": true,
     "scripts": {
-        "hoshizora:dev": "bun --filter @starnight/hoshizora dev",
-        "webgal:dev": "bun --filter @starnight/engine dev",
+        "engine:dev": "bun --filter @starnight/engine dev",
         "core:build": "bun --filter @starnight/core build",
-        "parser:build": "bun --filter @starnight/parser build",
         "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
         "lint:style": "stylelint src\"/**/*.+(css|scss|less|stylus|sass|postcss)\" --fix",
         "lint:all": "concurrently \"bun run lint:style\" \"bun run lint:fix\""
@@ -31,6 +29,6 @@
     },
     "workspaces": [
         "packages/*",
-        "apps/*"
+        "engine/"
     ]
 }
