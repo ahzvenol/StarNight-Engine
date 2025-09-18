@@ -13,11 +13,23 @@ import { NestedContainer } from './NestedContainer'
 
 gsap.registerPlugin(PixiPlugin)
 PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
+
+// 扩大DisplayObject-name属性的适用类型
+// 修正Container-getChildByName方法的泛型
+declare module 'pixi.js' {
+    interface DisplayObject {
+        name: unknown
+    }
+    interface Container<T extends DisplayObject = DisplayObject> {
+        getChildByName(name: NonNullable<unknown>): T | null
+    }
+}
+
+// 修正PIXI锚点逻辑,使其不影响图像位置
 Transform.prototype.updateLocalTransform = function (): void {
     const lt = this.localTransform
 
     if (this._localID !== this._currentLocalID) {
-        // get the matrix values of the displayobject based on its transform properties..
         lt.a = this._cx * this.scale.x
         lt.b = this._sx * this.scale.x
         lt.c = this._cy * this.scale.y
@@ -27,7 +39,6 @@ Transform.prototype.updateLocalTransform = function (): void {
         lt.ty = this.position.y + this.pivot.y - (this.pivot.x * lt.b + this.pivot.y * lt.d)
         this._currentLocalID = this._localID
 
-        // force an update..
         this._parentID = -1
     }
 }
@@ -35,7 +46,6 @@ Transform.prototype.updateTransform = function (parentTransform: Transform): voi
     const lt = this.localTransform
 
     if (this._localID !== this._currentLocalID) {
-        // get the matrix values of the displayobject based on its transform properties..
         lt.a = this._cx * this.scale.x
         lt.b = this._sx * this.scale.x
         lt.c = this._cy * this.scale.y
@@ -45,12 +55,10 @@ Transform.prototype.updateTransform = function (parentTransform: Transform): voi
         lt.ty = this.position.y + this.pivot.y - (this.pivot.x * lt.b + this.pivot.y * lt.d)
         this._currentLocalID = this._localID
 
-        // force an update..
         this._parentID = -1
     }
 
     if (this._parentID !== parentTransform._worldID) {
-        // concat the parent matrix with the objects transform.
         const pt = parentTransform.worldTransform
         const wt = this.worldTransform
 
@@ -63,7 +71,6 @@ Transform.prototype.updateTransform = function (parentTransform: Transform): voi
 
         this._parentID = parentTransform._worldID
 
-        // update the id of the transform..
         this._worldID++
     }
 }
@@ -108,16 +115,13 @@ function load(sprite: SrcSprite) {
     if (resource.source instanceof HTMLVideoElement) resource.source.muted = true
 }
 
-function find(target: ImageTargetSprite | ImageTargetBackground, stage: ImageStage): ImageLayer | undefined {
-    return stage.children.find((layer) => layer.label === target)
-}
-
 StarNight.GameEvents.setup.subscribe(({ ui: { view }, temp }) => {
     const { width, height } = view
     const container = new Container()
     container.pivot = { x: width / 2, y: height / 2 }
     temp.pixi = new Application({ view, width, height })
     temp.stage = temp.pixi.stage as ImageStage
+    temp.stage.sortableChildren = true
     // @ts-expect-error 类型...上不存在属性...
     globalThis['__PIXI_APP__'] = temp.pixi
 })
@@ -144,11 +148,11 @@ export const set = NonBlocking<ImageSetCommandArgs>(
             const sprite = new SrcSprite(src)
             // 实现立绘切换的交叉溶解效果
             if (id !== 1) sprite.blendMode = BLEND_MODES.ADD
-            container = find(id, stage)?.internal
+            container = stage.getChildByName(id)?.internal
             if (!container) {
                 const { width, height } = view
                 container = new NestedContainer(new NestedContainer(new NestedContainer(new Container<SrcSprite>())))
-                const layer = new RenderLayerSprite(container, { width, height, label: id })
+                const layer = new RenderLayerSprite(container, { width, height, name: id })
                 stage.addChild(layer)
             }
             if (!state.isInitializing()) load(sprite)
@@ -169,11 +173,11 @@ export const close = NonBlocking<ImageCloseCommandArgs>(
             const exclude: Array<unknown> = Array.isArray(_exclude) ? _exclude : isUndefined(_exclude) ? [] : [_exclude]
             if (target.length > 0) {
                 stage.children
-                    .filter((layer) => target.includes(layer.label))
+                    .filter((layer) => target.includes(layer.name))
                     .forEach((layer) => stage.removeChild(layer))
             } else {
                 stage.children
-                    .filter((layer) => !exclude.includes(layer.label))
+                    .filter((layer) => !exclude.includes(layer.name))
                     .forEach((layer) => stage.removeChild(layer))
             }
         }
@@ -204,8 +208,8 @@ export const tween = DynamicMacro<ImageTweenCommandArgs>(
             const target = _target === 0
                 ? stage.children.map((e) => e.internal.internal)
                 : inherit
-                    ? find(_target, stage)?.internal.internal.internal.internal
-                    : find(_target, stage)?.internal.internal.internal.internal.children.slice(-1)[0]
+                    ? stage.getChildByName(_target)?.internal.internal.internal.internal
+                    : stage.getChildByName(_target)?.internal.internal.internal.internal.children.slice(-1)[0]
             if (isUndefined(target)) return
             yield Tween.apply({ target, ease, duration, repeat, yoyo, pixi: args })
         }
@@ -216,7 +220,7 @@ export type ImageFilterCommandArgs = { target: ImageTarget, filter: Filter }
 export const filter = NonBlocking<ImageFilterCommandArgs>(
     ({ temp: { stage } }) =>
         ({ target: _target, filter }) => {
-            const target = _target === 0 ? stage : find(_target, stage)?.internal.internal.internal.internal
+            const target = _target === 0 ? stage : stage.getChildByName(_target)?.internal.internal.internal.internal
             if (target) {
                 if (target.filters) target.filters.push(filter)
                 else target.filters = [filter]
@@ -243,7 +247,7 @@ export const animation = EffectScope(
                 // 由于RenderLayer只渲染指定大小的范围,对舞台实现动画效果的方式是为所有元素都应用一个相同的动画
                 const target = _target === 0
                     ? stage.children.map((e) => e.internal)
-                    : find(_target, stage)?.internal.internal.internal
+                    : stage.getChildByName(_target)?.internal.internal.internal
                 if (isUndefined(target)) return
                 yield new Promise((res) =>
                     gsap.to(target, {
