@@ -144,20 +144,20 @@ export type ImageSetCommandArgs = { id: ImageTargetSprite | ImageTargetBackgroun
 export const set = NonBlocking<ImageSetCommandArgs>(
     ({ state, ui: { view }, temp: { stage } }) =>
         ({ id, src, z }) => {
-            let container: ImageItem | undefined
+            let layer: RenderLayerSprite<ImageItem> | null
             const sprite = new SrcSprite(src)
             // 实现立绘切换的交叉溶解效果
             if (id !== 1) sprite.blendMode = BLEND_MODES.ADD
-            container = stage.getChildByName(id)?.internal
-            if (!container) {
+            layer = stage.getChildByName(id)
+            if (!layer) {
                 const { width, height } = view
-                container = new NestedContainer(new NestedContainer(new NestedContainer(new Container<SrcSprite>())))
-                const layer = new RenderLayerSprite(container, { width, height, name: id })
+                const container = new NestedContainer(new NestedContainer(new NestedContainer(new Container<SrcSprite>())))
+                layer = new RenderLayerSprite(container, { width, height, name: id })
                 stage.addChild(layer)
             }
             if (!state.isInitializing()) load(sprite)
-            if (!isUndefined(z)) container.zIndex = z
-            container.internal.internal.internal.addChild(sprite)
+            if (!isUndefined(z)) layer.zIndex = z
+            layer.internal.internal.internal.internal.addChild(sprite)
         }
 )
 
