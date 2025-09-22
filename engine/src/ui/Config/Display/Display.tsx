@@ -1,9 +1,9 @@
 import type { Component } from 'solid-js'
 import type { Signal } from 'micro-reactive-solid'
 import { useSignal } from 'micro-reactive-solid'
-import { Show } from 'solid-js'
 import { Clone, Content } from '@/utils/ui/Elements'
 import { store } from '@/store'
+import { ReRender } from '@/utils/ui/ReRender'
 import { translation } from '../../translations'
 import { Button } from '../Button'
 import { Cell } from '../Cell'
@@ -63,13 +63,13 @@ export const Display: Component = () => {
                 <Slider signal={config.textboxopacity} />
             </Cell>
             <Cell title={t.textPreview.title}>
-                <Show keyed when={config.textspeed() + 1}>
-                    <Show keyed when={refresh()}>
+                <ReRender key={config.textspeed()}>
+                    <ReRender key={refresh()}>
                         <Content onClick={() => refresh(Symbol())}>
                             <TextPreview />
                         </Content>
-                    </Show>
-                </Show>
+                    </ReRender>
+                </ReRender>
             </Cell>
         </div>
     )

@@ -13,6 +13,7 @@ import styles from '@/ui/Game/Game.module.scss'
 import { suppress } from '@/utils/solid/suppress'
 import { useEventListener } from '@/utils/solid/useEventListener'
 import { SaveLoad } from '@/ui/SaveLoad/SaveLoad'
+import { ReRender } from '@/utils/ui/ReRender'
 import { Config } from './Config/Config'
 import { GUIRootState } from './GUIRoot'
 import { Menu } from './Menu/Menu'
@@ -76,9 +77,9 @@ export const GameRoot: Component = () => {
 
     return (
         <>
-            <Show keyed when={starnight}>
+            <ReRender key={starnight()}>
                 <Game />
-            </Show>
+            </ReRender>
             <Content ref={suppress('contextmenu')} onContextMenu={() => GUIGameRootState('Game')}>
                 <Show when={['Config', 'Save', 'Load'].includes(GUIGameRootState())}>
                     <Menu>

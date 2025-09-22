@@ -1,9 +1,9 @@
 import type { Component } from 'solid-js'
 import clsx from 'clsx'
 import { useSignal } from 'micro-reactive-solid'
-import { Show } from 'solid-js'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { store } from '@/store'
+import { ReRender } from '@/utils/ui/ReRender'
 import { translation } from '../translations'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './SaveLoad.module.scss'
@@ -49,9 +49,9 @@ export const SaveLoad: Component<{ mode: SaveLoadMode }> = ({ mode }) => {
                         {(i) => (
                             <Variable value={() => i + 1 + currentPage() * pageElementCount}>
                                 {(index) => (
-                                    <Show keyed when={local[index()]}>
+                                    <ReRender key={local[index()]()}>
                                         <SaveLoadElement i={i} mode={mode} index={index()} slot={local[index()]} />
-                                    </Show>
+                                    </ReRender>
                                 )}
                             </Variable>
                         )}

@@ -5,6 +5,7 @@ import { useSignal } from 'micro-reactive-solid'
 import { For, Show } from 'solid-js'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { CG } from '@/store/gallery'
+import { ReRender } from '@/utils/ui/ReRender'
 import { useSoundEffect } from '../useSoundEffect'
 import { CGElement } from './CGElement'
 import styles from './GalleryCG.module.scss'
@@ -36,17 +37,19 @@ export const GalleryCG: Component = () => {
                 </div>
             </div>
             <div class={styles.Gallery_CG_content}>
-                <For each={range(0, pageElementCount)}>
-                    {(i) => (
-                        <Variable value={() => CG[(currentPage() - 1) * pageElementCount + i]}>
-                            {(cgs) => (
-                                <Show keyed when={cgs()}>
-                                    <CGElement i={i} cgs={cgs()} />
-                                </Show>
-                            )}
-                        </Variable>
-                    )}
-                </For>
+                <ReRender key={currentPage()}>
+                    <For each={range(0, pageElementCount)}>
+                        {(i) => (
+                            <Variable value={() => CG[(currentPage() - 1) * pageElementCount + i]}>
+                                {(cgs) => (
+                                    <Show when={cgs()}>
+                                        <CGElement i={i} cgs={cgs()} />
+                                    </Show>
+                                )}
+                            </Variable>
+                        )}
+                    </For>
+                </ReRender>
             </div>
         </div>
     )
