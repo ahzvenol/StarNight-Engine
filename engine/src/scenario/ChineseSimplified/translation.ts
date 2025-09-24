@@ -75,6 +75,8 @@ export type 动效动画命令参数别名 =
     { 作用目标: ImageTarget, 预设名称: (typeof 动效动画别名)[AnimationTypes], 持续时间: number }
     & ({ X轴幅度: number, Y轴幅度?: number } | { X轴幅度?: number, Y轴幅度: number })
 
+export type 清空立绘命令参数别名 = { 持续时间: number } | void
+
 export type 用户输入命令参数别名 = { 描述文本: string } | void
 
 export type 用户选择命令参数别名<T> = Array<{ 标识符: T, 描述文本: string, 禁用?: true }>

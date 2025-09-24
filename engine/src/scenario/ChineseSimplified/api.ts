@@ -1,5 +1,5 @@
-import type { CommandTagBlocking, CommandTagDynamic } from '@starnight/core'
-import type { 用户输入命令参数别名, 用户选择命令参数别名, 动效动画命令参数别名 } from './translation'
+import type { CommandTagBlocking, CommandTagDynamic, CommandTagNonBlocking } from '@starnight/core'
+import type { 用户输入命令参数别名, 用户选择命令参数别名, 动效动画命令参数别名, 清空立绘命令参数别名 } from './translation'
 import { Blocking, DynamicMacro } from '@starnight/core'
 import { MergedCommands } from '../../scripts/index'
 import { Alias, Api, flipObject } from '../Translate'
@@ -209,11 +209,15 @@ export const 关闭图像 = Api(
 )
 
 /**
- * 立即移除所有立绘，无淡出动画。
+ * 移除所有立绘，支持淡出动画。
+ * @remarks
+ * - `持续时间` 控制立绘消失时的淡出动画时长。
  * @example
  * $.清空立绘()
  */
-export const 清空立绘 = Api(MergedCommands.Image.clean)
+export const 清空立绘 = Api(
+    Alias(MergedCommands.Image.clean, Object.assign(通用命令参数别名, {} as const))
+) as ((arg0: 清空立绘命令参数别名) => void) & CommandTagNonBlocking
 
 /**
  * 设置背景音乐（BGM），使用 Howler 实现，支持音量、循环播放等属性。
