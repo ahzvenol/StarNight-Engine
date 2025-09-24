@@ -1,38 +1,23 @@
 import type { Except } from 'type-fest'
 import type { ImageCloseCommandArgs, ImageSetCommandArgs, ImageTweenCommandArgs } from '../base/image'
-import { Fork, NonBlockingMacro } from '@starnight/core'
+import { NonBlockingMacro } from '@starnight/core'
 import { omit } from 'es-toolkit'
 import { Image } from '../base'
-
-declare module '@starnight/core' {
-    interface GameLocalData {
-        iclearpoint?: number
-    }
-}
 
 export const close =
 NonBlockingMacro<{ target: NonNullable<ImageCloseCommandArgs['target']> } & { duration?: ImageTweenCommandArgs['duration'] }>(
     () =>
         function* ({ duration = 225, target: _target }) {
-            if (!duration) yield Image.close({ target: _target })
-            else {
-                const targets = Array.isArray(_target) ? _target : [_target]
-                for (const target of targets) {
-                    yield Fork(
-                        function* () {
-                            yield Image.tween({ target, inherit: false, alpha: 0, duration })
-                        }
-                    )
-                }
-            }
+            yield Image.close({ target: _target, duration })
         }
 )
 
-export const clean = NonBlockingMacro(
-    ({ current }) =>
-        function* () {
+export const clean = NonBlockingMacro<{ duration?: ImageTweenCommandArgs['duration'] } | void>(
+    ({ current, local: { iclearpoint } }) =>
+        function* ({ duration } = {}) {
             current.iclearpoint(current.count())
-            yield Image.close({ exclude: 1 })
+            if (iclearpoint && current.count() < iclearpoint) return
+            yield Image.close({ exclude: 1, duration })
         }
 )
 
@@ -45,9 +30,9 @@ export const filter = Image.filter
 export type ImageSpriteCommandArgs = ImageSetCommandArgs & Except<ImageTweenCommandArgs, 'target' | 'ease' | 'inherit' | 'repeat' | 'yoyo'>
 
 export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
-    ({ current, local }) =>
+    ({ current, local: { iclearpoint } }) =>
         function* ({ duration = 225, ...args }) {
-            if (local.iclearpoint && current.count() < local.iclearpoint) return
+            if (iclearpoint && current.count() < iclearpoint) return
             yield Image.tween({ target: args.id, inherit: false, alpha: 0, duration })
             yield Image.set({ id: args.id, src: args.src, z: args.z })
             yield Image.tween({ target: args.id, inherit: false, alpha: 0, duration: 0 })

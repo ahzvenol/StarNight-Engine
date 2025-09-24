@@ -91,6 +91,9 @@ export type ImageTargetSprite = string
 export type ImageTarget = ImageTargetSprite | ImageTargetBackground | ImageTargetStage
 
 declare module '@starnight/core' {
+    interface GameLocalData {
+        iclearpoint?: number
+    }
     interface GameUIExternalData {
         view: HTMLCanvasElement
     }
@@ -164,22 +167,24 @@ export const set = NonBlocking<ImageSetCommandArgs>(
 export type ImageCloseCommandArgs = MergeExclusive<
     { target: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> },
     { exclude?: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> }
->
+> & { duration?: number }
 
-export const close = NonBlocking<ImageCloseCommandArgs>(
-    ({ temp: { stage } }) =>
-        ({ target: _target, exclude: _exclude }) => {
-            const target: Array<unknown> = Array.isArray(_target) ? _target : isUndefined(_target) ? [] : [_target]
-            const exclude: Array<unknown> = Array.isArray(_exclude) ? _exclude : isUndefined(_exclude) ? [] : [_exclude]
-            if (target.length > 0) {
-                stage.children
-                    .filter((layer) => target.includes(layer.name))
-                    .forEach((layer) => stage.removeChild(layer))
-            } else {
-                stage.children
-                    .filter((layer) => !exclude.includes(layer.name))
-                    .forEach((layer) => stage.removeChild(layer))
-            }
+export const close = DynamicMacro<ImageCloseCommandArgs>(
+    ({ current, temp: { stage } }) =>
+        function* ({ target: _target, exclude: _exclude, duration }) {
+            const _targets: Array<unknown> = Array.isArray(_target) ? _target : isUndefined(_target) ? [] : [_target]
+            const _excludes: Array<unknown> = Array.isArray(_exclude) ? _exclude : isUndefined(_exclude) ? [] : [_exclude]
+            const targets = stage.children
+                .filter((layer) => _targets.length > 0
+                    ? _targets.includes(layer.name)
+                    : !_excludes.includes(layer.name)
+                )
+            targets.forEach((layer) => layer.name = null)
+            if (duration) yield (yield Tween.apply({ target: targets, duration, pixi: { alpha: 0 } }))
+            targets.forEach((layer) => layer.destroy())
+            const isStageEmpty = stage.children.length === 0
+            const isOnlyBackground = stage.children.length === 1 && stage.children[0].name === 1
+            if (isStageEmpty || isOnlyBackground) current.iclearpoint(current.count())
         }
 )
 
