@@ -1,8 +1,14 @@
 import type { Except } from 'type-fest'
 import type { ImageCloseCommandArgs, ImageSetCommandArgs, ImageTweenCommandArgs } from '../base/image'
-import { Fork, NonBlocking, NonBlockingMacro } from '@starnight/core'
+import { Fork, NonBlockingMacro } from '@starnight/core'
 import { omit } from 'es-toolkit'
 import { Image } from '../base'
+
+declare module '@starnight/core' {
+    interface GameLocalData {
+        iclearpoint?: number
+    }
+}
 
 export const close =
 NonBlockingMacro<{ target: NonNullable<ImageCloseCommandArgs['target']> } & { duration?: ImageTweenCommandArgs['duration'] }>(
@@ -22,7 +28,13 @@ NonBlockingMacro<{ target: NonNullable<ImageCloseCommandArgs['target']> } & { du
         }
 )
 
-export const clean = NonBlocking((context) => () => Image.close({ exclude: 1 })(context))
+export const clean = NonBlockingMacro(
+    ({ current }) =>
+        function* () {
+            current.iclearpoint(current.count())
+            yield Image.close({ exclude: 1 })
+        }
+)
 
 export const animation = Image.animation
 
@@ -33,8 +45,9 @@ export const filter = Image.filter
 export type ImageSpriteCommandArgs = ImageSetCommandArgs & Except<ImageTweenCommandArgs, 'target' | 'ease' | 'inherit' | 'repeat' | 'yoyo'>
 
 export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
-    () =>
+    ({ current, local }) =>
         function* ({ duration = 225, ...args }) {
+            if (local.iclearpoint && current.count() < local.iclearpoint) return
             yield Image.tween({ target: args.id, inherit: false, alpha: 0, duration })
             yield Image.set({ id: args.id, src: args.src, z: args.z })
             yield Image.tween({ target: args.id, inherit: false, alpha: 0, duration: 0 })
