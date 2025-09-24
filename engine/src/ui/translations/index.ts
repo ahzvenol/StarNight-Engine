@@ -13,6 +13,8 @@ import { Japanese } from './Japanese'
 
 type Translations = typeof translations
 
+type Languages = keyof Translations
+
 export const translations = {
     'zh-CN': ChineseSimplified,
     'zh-TW': ChineseTraditional,
@@ -30,17 +32,17 @@ export const descriptions = {
     fr: 'Français',
     de: 'Deutsch',
     'zh-TW': '繁體中文'
-} satisfies Record<keyof Translations, string>
+} satisfies Record<Languages, string>
 
 // 可选as Reactive<typeof language[keyof typeof language]>,这时类型系统可以检测出翻译的缺失并要求全部可选语言都具备对应值的翻译
 // 目前采用的策略是以默认语言为最大集合,合并选择的语言和默认语言的翻译,通过默认语言补全翻译缺失的值
 export const translation = useReactive({}) as Reactive<Translations['zh-CN']>
 
 onStoreReady.then((store) => {
-    const lang = store.config.language as Reactive<keyof Translations>
+    const lang = store.config.language as Reactive<Languages>
     // 如果没有设置默认语言,根据用户语言自动选择合适的翻译,如果不存在该翻译,回退到简体中文
     if (lang() === null) {
-        lang((Object.keys(translations).find((lang) => navigator.language.startsWith(lang)) as keyof Translations) || 'zh-CN')
+        lang((Object.keys(translations).find((lang) => navigator.language.startsWith(lang)) as Languages) || 'zh-CN')
     }
     // 根据当前语言设置更新translation和document.documentElement.lang
     createEffect(
