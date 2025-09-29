@@ -49,11 +49,7 @@ function catchAsync<R>(output: Function0<Promise<R>>): Promise<R | void> {
 }
 
 function catchSync<R>(output: Function0<R>): R | void {
-    try {
-        return output()
-    } catch (error) {
-        console.error('命令运行出错:', error)
-    }
+    try { return output() } catch (error) { console.error('命令运行出错:', error) }
 }
 
 // Dynamic核心函数,实现了同步/异步转换
@@ -139,20 +135,20 @@ export function Fork<R>(fn: GameFragment<R>): StandardResolvedCommand<Promise<R>
 /**
  * 由 NonBlocking 和 Dynamic 参与组成的宏可以作为 Dynamic 的。
  */
-export function DynamicMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardDynamicCommand<T, Promise<R>> {
-    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardDynamicCommand<T, Promise<R>>
+export function DynamicMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardDynamicCommand<T, R> {
+    return ((args) => Fork((context) => fn(context)(args))) as StandardDynamicCommand<T, R>
 }
 
 /**
  * 由 NonBlocking 和 Dynamic 参与组成的宏可以作为 NonBlocking 的。
  */
-export function NonBlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardNonBlockingCommand<T, R> {
-    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardNonBlockingCommand<T, R>
+export function NonBlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardNonBlockingCommand<T, Promise<R>> {
+    return ((args) => Fork((context) => fn(context)(args))) as StandardNonBlockingCommand<T, Promise<R>>
 }
 
 /**
  * 由 Blocking 命令参与组成的宏应该也是 Blocking 的。
  */
-export function BlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardBlockingCommand<T, Promise<R>> {
-    return ((args) => (context) => Fork((context) => fn(context)(args))(context)) as StandardBlockingCommand<T, Promise<R>>
+export function BlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardBlockingCommand<T, R> {
+    return ((args) => Fork((context) => fn(context)(args))) as StandardBlockingCommand<T, R>
 }
