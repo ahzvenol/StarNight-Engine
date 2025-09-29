@@ -2,7 +2,7 @@
 import type { Reactive } from 'micro-reactive-wrapper'
 import type { Except } from 'type-fest'
 import type { StarNightInstance, StarNightStateStatic } from '@/StarNight'
-import type { CommandOutput, StandardResolvedCommand } from './Command'
+import type { CommandOutput } from './Command'
 
 export enum GameState {
     Initializing = 0,

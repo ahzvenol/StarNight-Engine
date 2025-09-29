@@ -33,13 +33,13 @@ export type CommandTagBlocking = Tagged<object, 'Await'>
 export type CommandTagDynamic = CommandTagNonBlocking & CommandTagBlocking
 
 // Resolved命令已经传入所需参数,等待注入Context
-export type StandardResolvedCommand<R> = Function1<GameRuntimeContext, Promise<R>>
+export type StandardResolvedCommand<R> = Function1<GameRuntimeContext, R>
 
-// Standard命令返回一个永不失败的Promise
+// Standard命令已经捕获异常,执行永不失败
 export type StandardCommand<T, R> = Function1<T, StandardResolvedCommand<R>>
 
-export type StandardDynamicCommand<T, R> = StandardCommand<T, R> & CommandTagDynamic
+export type StandardDynamicCommand<T, R> = StandardCommand<T, Promise<R>> & CommandTagDynamic
 
 export type StandardNonBlockingCommand<T, R> = StandardCommand<T, R> & CommandTagNonBlocking
 
-export type StandardBlockingCommand<T, R> = StandardCommand<T, R> & CommandTagBlocking
+export type StandardBlockingCommand<T, R> = StandardCommand<T, Promise<R>> & CommandTagBlocking
