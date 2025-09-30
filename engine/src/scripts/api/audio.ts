@@ -1,6 +1,6 @@
 import type { Except } from 'type-fest'
 import type { AudioSetCommandArgs } from '../base/audio'
-import { ActScope, DynamicMacro, NonBlockingMacro } from '@starnight/core'
+import { ActScope, NonBlockingMacro } from '@starnight/core'
 import { Audio } from '../base'
 
 export const volume = Audio.volume
@@ -54,10 +54,4 @@ export const clip = ActScope(
     )
 )
 
-export const close = DynamicMacro<{ target: string, duration?: number }>(
-    () =>
-        function* (args) {
-            yield (yield Audio.volume({ volume: 0, ...args }))
-            yield Audio.close({ target: args.target })
-        }
-)
+export const close = Audio.close

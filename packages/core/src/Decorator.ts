@@ -1,3 +1,4 @@
+/* eslint-disable @stylistic/max-statements-per-line */
 import type {
     BlockingCommand,
     DynamicCommand,
@@ -15,33 +16,31 @@ import { isPromise, noop } from 'es-toolkit'
 /**
  * 只在本幕内产生效果的命令，由此不需要初始化。
  */
-export function ActScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, R | void>
-export function ActScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardNonBlockingCommand<T, R | void>
-export function ActScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardBlockingCommand<T, R | void>
+export function ActScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, void>
+export function ActScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardNonBlockingCommand<T, void>
+export function ActScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardBlockingCommand<T, void>
 export function ActScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, R | void> {
     return (args) => (context) => {
-        if (!context.state.isInitializing()) return fn(args)(context)
+        if (!context.state.isInitializing()) fn(args)(context)
     }
 }
 
 /**
  * 只在执行过程中产生效果的命令，这样的命令应当也是 ActScope 的。
  */
-export function EffectScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, R | void>
-export function EffectScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardNonBlockingCommand<T, R | void>
-export function EffectScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardBlockingCommand<T, R | void>
-export function EffectScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, R | void> {
+export function EffectScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, void>
+export function EffectScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardNonBlockingCommand<T, void>
+export function EffectScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardBlockingCommand<T, void>
+export function EffectScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, void> {
     return (args) => (context) => {
-        if (!context.state.isInitializing() && !context.state.isFast()) return fn(args)(context)
+        if (!context.state.isInitializing() && !context.state.isFast()) fn(args)(context)
     }
 }
 
 /**
  * 不产生任何效果的虚拟命令。
  */
-export function VirtualScope<T>(): StandardCommand<T, void> {
-    return () => async () => {}
-}
+export const VirtualScope = <T>(): StandardCommand<T, void> => () => () => {}
 
 // 辅助函数,捕获命令异常
 function catchAsync<R>(output: Function0<Promise<R>>): Promise<R | void> {
@@ -136,19 +135,19 @@ export function Fork<R>(fn: GameFragment<R>): StandardResolvedCommand<Promise<R>
  * 由 NonBlocking 和 Dynamic 参与组成的宏可以作为 Dynamic 的。
  */
 export function DynamicMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardDynamicCommand<T, R> {
-    return ((args) => Fork((context) => fn(context)(args))) as StandardDynamicCommand<T, R>
+    return ((args) => (context) => catchAsync(() => Fork((context) => fn(context)(args))(context))) as StandardDynamicCommand<T, R>
 }
 
 /**
  * 由 NonBlocking 和 Dynamic 参与组成的宏可以作为 NonBlocking 的。
  */
 export function NonBlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardNonBlockingCommand<T, Promise<R>> {
-    return ((args) => Fork((context) => fn(context)(args))) as StandardNonBlockingCommand<T, Promise<R>>
+    return ((args) => (context) => catchAsync(() => Fork((context) => fn(context)(args))(context))) as StandardNonBlockingCommand<T, Promise<R>>
 }
 
 /**
  * 由 Blocking 命令参与组成的宏应该也是 Blocking 的。
  */
 export function BlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardBlockingCommand<T, R> {
-    return ((args) => Fork((context) => fn(context)(args))) as StandardBlockingCommand<T, R>
+    return ((args) => (context) => catchAsync(() => Fork((context) => fn(context)(args))(context))) as StandardBlockingCommand<T, R>
 }

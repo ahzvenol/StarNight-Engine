@@ -1,6 +1,6 @@
 import type { Howl, HowlOptions } from '@/lib/howler'
-import { Dynamic, NonBlocking, StarNight } from '@starnight/core'
-import { delay, isUndefined } from 'es-toolkit'
+import { Dynamic, NonBlocking, NonBlockingMacro, StarNight } from '@starnight/core'
+import { delay } from 'es-toolkit'
 
 export interface AudioTracks {
     clip: Function1<HowlOptions, Howl>
@@ -81,7 +81,7 @@ export type AudioVolumeCommandArgs = { target: string, volume: number, duration?
 
 export const volume = Dynamic<AudioVolumeCommandArgs>(
     ({ temp: { audios } }) =>
-        function* ({ target, volume, duration = 0 }) {
+        function* ({ target, volume, duration }) {
             const audio = audios.get(target)
             // 要设置的音量如果和当前音量相同不会触发fade事件
             if (!audio || audio.volume() === volume) return
@@ -98,18 +98,20 @@ export const volume = Dynamic<AudioVolumeCommandArgs>(
         }
 )
 
-export type AudioCloseCommandArgs = { target?: string }
+export type AudioCloseCommandArgs = { target: string, duration?: number }
 
 // 根据名称关闭音轨
 // 如果省略了target,关闭全部轨道
-export const close = NonBlocking<AudioCloseCommandArgs>(
+export const close = NonBlockingMacro<AudioCloseCommandArgs>(
     ({ temp: { audios } }) =>
-        ({ target }) => {
-            const targets = isUndefined(target) ? audios.keys() : [target]
-            for (const key of targets) {
-                const audio = audios.get(key)
-                audios.delete(key)
-                audio?.unload()
+        function* ({ target, duration }) {
+            const audio = audios.get(target)
+            if (audio) {
+                if (duration) {
+                    yield volume({ volume: 0, target, duration })
+                }
+                audios.delete(target)
+                audio.unload()
             }
         }
 )

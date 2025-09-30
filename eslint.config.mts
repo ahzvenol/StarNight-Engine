@@ -44,9 +44,7 @@ export default tseslint.config(
             ],
             'import/consistent-type-specifier-style': 'error',
             '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after' } }], // 操作符写在每一行前面，'='除外
-            '@stylistic/max-statements-per-line': ['error', {
-                max: 1, ignoredNodes: ['IfStatement', 'TernaryExpression']
-            }], // 允许同一行有if表达式,try-catch表达式和其他表达式
+            '@stylistic/max-statements-per-line': ['error', { max: 1, ignoredNodes: ['IfStatement']}], // 允许同一行有if表达式和其他表达式
             '@stylistic/lines-between-class-members': 'off', // 允许类成员之间不换行
             '@stylistic/jsx-one-expression-per-line': 'off', // 允许jsx同一行有多个表达式
             'import/no-unresolved': 'off', // 无意义的规则
@@ -62,7 +60,7 @@ export default tseslint.config(
         files: ['**/*.scenario.ts', '**/*.scenario.tsx', '**/*.scenario.js', '**/*.scenario.jsx'],
         rules: {
             'no-fallthrough': 'off', // 剧本可以使用while-switch模拟goto
-            'no-unused-labels': 'off', // 剧本使用标签标记对话说话人
+            'no-unused-labels': 'off', // 剧本使用标签标记特殊语义
             '@typescript-eslint/no-unused-expressions': 'off', // 剧本中的正常情况
             '@stylistic/semi': 'off' // <div />;\n<div /> 会导致格式化错误
         }
