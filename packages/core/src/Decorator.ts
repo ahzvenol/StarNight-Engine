@@ -1,6 +1,9 @@
 /* eslint-disable @stylistic/max-statements-per-line */
 import type {
     BlockingCommand,
+    CommandTagBlocking,
+    CommandTagDynamic,
+    CommandTagNonBlocking,
     DynamicCommand,
     MacroCommand,
     NonBlockingCommand,
@@ -16,31 +19,26 @@ import { isPromise, noop } from 'es-toolkit'
 /**
  * 只在本幕内产生效果的命令，由此不需要初始化。
  */
-export function ActScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, void>
-export function ActScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardNonBlockingCommand<T, void>
-export function ActScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardBlockingCommand<T, void>
-export function ActScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, R | void> {
+export function ActScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardCommand<T, void | Promise<R>> & CommandTagDynamic
+export function ActScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardCommand<T, void | R> & CommandTagNonBlocking
+export function ActScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardCommand<T, void | Promise<R>> & CommandTagBlocking
+export function ActScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, void | R> {
     return (args) => (context) => {
-        if (!context.state.isInitializing()) fn(args)(context)
+        if (!context.state.isInitializing()) return fn(args)(context)
     }
 }
 
 /**
  * 只在执行过程中产生效果的命令，这样的命令应当也是 ActScope 的。
  */
-export function EffectScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, void>
-export function EffectScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardNonBlockingCommand<T, void>
-export function EffectScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardBlockingCommand<T, void>
-export function EffectScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, void> {
+export function EffectScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardCommand<T, void | Promise<R>> & CommandTagDynamic
+export function EffectScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardCommand<T, void | R> & CommandTagNonBlocking
+export function EffectScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardCommand<T, void | Promise<R>> & CommandTagBlocking
+export function EffectScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, void | R> {
     return (args) => (context) => {
-        if (!context.state.isInitializing() && !context.state.isFast()) fn(args)(context)
+        if (!context.state.isInitializing() && !context.state.isFast()) return fn(args)(context)
     }
 }
-
-/**
- * 不产生任何效果的虚拟命令。
- */
-export const VirtualScope = <T>(): StandardCommand<T, void> => () => () => {}
 
 // 辅助函数,捕获命令异常
 function catchAsync<R>(output: Function0<Promise<R>>): Promise<R | void> {

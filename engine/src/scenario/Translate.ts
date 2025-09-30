@@ -111,9 +111,9 @@ export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Parti
 }
 
 /** 将命令的类型转换为适用于剧本的形式，这不会改变命令的实际内容 */
-export function Api<T, R>(fn: StandardDynamicCommand<T, R>): Function1<T, R> & CommandTagDynamic
-export function Api<T, R>(fn: StandardNonBlockingCommand<T, R>): Function1<T, R> & CommandTagNonBlocking
-export function Api<T, R>(fn: StandardBlockingCommand<T, R>): Function1<T, R> & CommandTagBlocking
+export function Api<T, R>(fn: StandardCommand<T, R> & CommandTagDynamic): Function1<T, R> & CommandTagDynamic
+export function Api<T, R>(fn: StandardCommand<T, R> & CommandTagNonBlocking): Function1<T, R> & CommandTagNonBlocking
+export function Api<T, R>(fn: StandardCommand<T, R> & CommandTagBlocking): Function1<T, R> & CommandTagBlocking
 export function Api<T, R>(fn: StandardCommand<T, R>): Function1<T, R> {
     return fn as any
 }
