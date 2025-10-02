@@ -202,14 +202,15 @@ export type ImageTweenArgs = OmitIndexSignature<Except<
     | 'tilePosition' | 'tilePositionX' | 'tilePositionY' | 'tileScale' | 'tileScaleX' | 'tileScaleY' | 'tileX' | 'tileY'
 >>
 
-export type ImageTweenCommandArgs = ImageTweenArgs
+export type ImageTweenTarget =
+({ target: ImageTargetStage, inherit?: never } | { target: ImageTargetSprite | ImageTargetBackground, inherit?: false })
+
+export type ImageTweenCommandArgs = ImageTweenArgs & ImageTweenTarget
     & { ease?: TweenCommandArgs['ease'], duration?: number, repeat?: number, yoyo?: boolean }
-    & ({ target: ImageTargetStage, inherit?: never } | { target: ImageTargetSprite | ImageTargetBackground, inherit?: false })
 
 export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>
-        function* ({ inherit = true, target: _target, ease, duration, repeat, yoyo, alpha, ...args }) {
-            if (alpha !== undefined) (args as Record<string, unknown>).autoAlpha = alpha
+        function* ({ inherit = true, target: _target, ease, duration, repeat, yoyo, ...args }) {
             const target = _target === 0
                 ? stage.children.map((e) => e.internal.internal)
                 : inherit

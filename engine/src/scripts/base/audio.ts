@@ -1,5 +1,5 @@
 import type { Howl, HowlOptions } from '@/lib/howler'
-import { Dynamic, NonBlocking, NonBlockingMacro, StarNight } from '@starnight/core'
+import { Dynamic, DynamicMacro, NonBlocking, StarNight } from '@starnight/core'
 import { delay } from 'es-toolkit'
 
 export interface AudioTracks {
@@ -102,13 +102,13 @@ export type AudioCloseCommandArgs = { target: string, duration?: number }
 
 // 根据名称关闭音轨
 // 如果省略了target,关闭全部轨道
-export const close = NonBlockingMacro<AudioCloseCommandArgs>(
+export const close = DynamicMacro<AudioCloseCommandArgs>(
     ({ temp: { audios } }) =>
         function* ({ target, duration }) {
             const audio = audios.get(target)
             if (audio) {
                 if (duration) {
-                    yield volume({ volume: 0, target, duration })
+                    yield (yield volume({ volume: 0, target, duration }))
                 }
                 audios.delete(target)
                 audio.unload()
