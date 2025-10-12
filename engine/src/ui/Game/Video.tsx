@@ -20,6 +20,8 @@ export const Video: Component = () => {
                 autoplay
                 onClick={() => ui().video()?.race?.()}
                 onEnded={() => ui().video()?.race?.()}
+                playsinline
+                webkit-playsinline
                 // @ts-expect-error 类型上不存在属性
                 disablePictureInPicture
             />
