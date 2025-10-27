@@ -32,17 +32,13 @@ onStoreReady.then((store) => {
 
 const [store] = createResource(() => onStoreReady)
 
-// 整个配置文件在这里分发
 const App: Component = () => (
     <Switch>
-        <Match when={store.state === 'pending' || store.state === 'unresolved'}>
-            <></>
-        </Match>
-        <Match when={store.state === 'ready'}>
-            <GUIRoot />
-        </Match>
-        <Match when={store.state === 'errored'}>
+        <Match when={store.error}>
             <div>{store.error}</div>
+        </Match>
+        <Match when={!store.loading}>
+            <GUIRoot />
         </Match>
     </Switch>
 )
