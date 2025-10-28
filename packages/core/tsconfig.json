@@ -1,12 +1,14 @@
 {
     "include": ["src/**/*.ts"],
     "compilerOptions": {
+        "skipLibCheck": true,
         "strict": true,
         "target": "ESNext",
         "module": "ESNext",
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
+        "types": [],
         "noEmit": true,
         "isolatedModules": true,
         "baseUrl": ".",

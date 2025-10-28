@@ -1,5 +1,5 @@
 {
-    "include": ["**/*.ts", "**/*.tsx", "**/*.mts"],
+    "include": ["**/*.ts", "**/*.mts"],
     "compilerOptions": {
         "skipLibCheck": true,
         "strict": true,
@@ -8,16 +8,10 @@
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "jsx": "preserve",
-        "jsxImportSource": "solid-js",
         "types": ["vite/client"],
         "noEmit": true,
         "isolatedModules": true,
         "baseUrl": ".",
-        "paths": {
-            "@/*": ["src/*"]
-        },
         "noErrorTruncation": true,
-        "ignoreDeprecations": "5.0",
     }
 }
