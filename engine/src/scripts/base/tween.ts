@@ -23,8 +23,7 @@ StarNight.ActEvents.start.subscribe(({ state, temp: { activetimelines } }) => {
             if (timeline.duration() !== timeline.time()) {
                 timeline.seek(timeline.duration())
             }
-        }
-        )
+        })
         activetimelines.clear()
     }
 })
@@ -46,7 +45,7 @@ export const apply = Dynamic<TweenCommandArgs>(
             } else {
                 // 保证对同一个id的动画被顺序应用
                 if (!activetimelines.has(id)) {
-                    const timeline = gsap.timeline({ paused: false })
+                    const timeline = gsap.timeline()
                     activetimelines.set(id, timeline)
                 }
                 const timeline = activetimelines.get(id)!
@@ -59,6 +58,7 @@ export const apply = Dynamic<TweenCommandArgs>(
                     }, position)
                 )
                 const current = timeline.duration()
+                // todo:尝试用.call添加回调代替onComplete
                 yield promise
                 const isLoop = timeline.getChildren().some((a) => a.repeat() === -1)
                 if (current === timeline.duration() && !isLoop) {

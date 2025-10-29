@@ -1,12 +1,12 @@
 import type { Filter, ImageResource } from 'pixi.js'
 import type { Except, MergeExclusive } from 'type-fest'
 import type { TweenCommandArgs } from '../tween'
-import { Dynamic, DynamicMacro, EffectScope, NonBlocking, StarNight } from '@starnight/core'
+import { Dynamic, DynamicBlocking, DynamicMacro, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import { assert, isUndefined, omit, random } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { PixiPlugin } from 'gsap/PixiPlugin'
 import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform, Texture, BLEND_MODES } from 'pixi.js'
-import { Tween } from '../index'
+import { apply, TransformArgType } from '../tween copy'
 import { RenderLayerContainer } from './RenderLayerContainer'
 import { RenderLayerSprite } from './RenderLayerSprite'
 import { SrcSprite } from './SrcSprite'
@@ -100,7 +100,7 @@ declare module '@starnight/core' {
 }
 
 /** 加载精灵纹理,设置变换锚点到精灵及其父容器中心 */
-function load(sprite: SrcSprite) {
+function initializeSprite(sprite: SrcSprite) {
     sprite.texture = Texture.from(sprite.src)
     const handleLoaded = () => {
         if (sprite.destroyed) return
@@ -126,56 +126,36 @@ StarNight.GameEvents.setup.subscribe(({ ui: { view }, temp }) => {
 })
 
 StarNight.GameEvents.ready.subscribe(({ temp: { stage } }) => {
-    stage.children.forEach((layer) => layer.children.forEach((sprite) => load(sprite)))
+    stage.children.forEach((layer) => layer.children.forEach(initializeSprite))
 })
 
-type TweenVars = { [key: string]: unknown }
-type GSAPSpecialProperties = { ease?: gsap.EaseString | gsap.EaseFunction, repeat?: number, yoyo?: boolean, position?: string }
-type TimelineSpecialProperties = { target?: gsap.TweenTarget, transform: Array<TweenBlock> } & GSAPSpecialProperties
-type TweenSpecialProperties = { target?: gsap.TweenTarget, duration?: number } & GSAPSpecialProperties
-type TweenBlock = (TweenSpecialProperties & TweenVars) | TimelineSpecialProperties
-type BaseTimelineProperties = TimelineSpecialProperties & { target: gsap.TweenTarget }
-const isTimelineProperties = (block: TweenBlock): block is TimelineSpecialProperties => 'transform' in block
-
-function buildTimeline(properties: BaseTimelineProperties): gsap.core.Timeline {
-    const currentTarget = properties.target!
-    const props = omit(properties, ['target', 'position'])
-    const timeline = gsap.timeline(props)
-    for (const block of properties.transform) {
-        if (isTimelineProperties(block)) {
-            const { position, ...props } = block
-            if (!props.target) props.target = currentTarget
-            timeline.add(buildTimeline(props as BaseTimelineProperties), position)
-        } else {
-            const { target, position, ...props } = block
-            timeline.to(target || currentTarget, props, position)
-        }
-    }
-
-    return timeline
-}
-function buildTransform(target: gsap.TweenTarget, properties: TransformProperties): gsap.core.Timeline {
-    if (Array.isArray(properties)) return buildTimeline({ target, transform: properties })
-    else return buildTimeline({ target, transform: [properties] })
-}
-type TransformProperties = Except<TweenSpecialProperties, 'target'> | Array<TweenBlock>
-type TransitionFunction = Function1<{ before: Container, after: Container }, TweenBlock>
+type TransitionFunction = Function1<
+    { before?: Container, after?: Container },
+    { before: TransformArgType, after: TransformArgType }
+>
 
 export type ImageSetCommandArgs =
-    { id: ImageTargetSprite | ImageTargetBackground, src: string, z?: number }
-    & { inherit?: boolean, transition?: TransitionFunction, transform?: Transform, filters?: Array<Filter> }
+    { id: ImageTargetSprite | ImageTargetBackground, src?: string, z?: number }
+    & { inherit?: boolean, transition?: TransitionFunction, transform?: TransformArgType, filters?: Array<Filter> }
 
-export const set = NonBlocking<ImageSetCommandArgs>(
-    ({ state, temp: { stage } }) =>
-        ({ id, src, z, inherit, transition, transform, filters = null }) => {
-            const layer = stage.getChildByName(id) || stage.addChild(
-                new RenderLayerContainer<SrcSprite>({ name: id })
-            )
-            const sprite = layer.addChild(new SrcSprite(src))
-            if (!state.isInitializing()) load(sprite)
+export const set = DynamicBlocking<ImageSetCommandArgs>(
+    (context) =>
+        function* ({ id, src, z, inherit, transition, transform, filters = null }) {
+            const { state, temp: { stage } } = context
+            const layer = stage.getChildByName(id)
+                ?? stage.addChild(new RenderLayerContainer<SrcSprite>({ name: id }))
+            const before = layer.children.at(-1)
+            const after = src ? layer.addChild(new SrcSprite(src)) : undefined
             if (!isUndefined(z)) layer.zIndex = z
+            if (!state.isInitializing() && after) initializeSprite(after)
             if (inherit) layer.filters = filters
-            else sprite.filters = filters
+            else if (after) after.filters = filters
+            if (transform && after) yield apply({ target: after, transform: transform })(context)
+            if (transition) {
+                const trans = transition({ before, after })
+                if (before) yield apply({ target: before, transform: trans.before })(context)
+                if (after) yield apply({ target: after, transform: trans.after })(context)
+            }
         }
 )
 

@@ -63,9 +63,7 @@ export const text = Blocking<TextInput, string>(
         async (args) => {
             const { ui: { input: { text } } } = context
             const { promise, resolve } = Promise.withResolvers<string>()
-            text(
-                Object.assign({ resolve }, args || {}) as TextInput & { resolve: (value: string) => void }
-            )
+            text(Object.assign({ resolve }, args))
             const res = await System.input(() => promise)(context)
             text(() => null)
             return res
