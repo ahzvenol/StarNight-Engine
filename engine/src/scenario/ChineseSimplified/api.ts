@@ -1,9 +1,9 @@
 import type { CommandTagBlocking, CommandTagDynamic, CommandTagNonBlocking } from '@starnight/core'
-import type { 用户输入命令参数别名, 用户选择命令参数别名, 动效动画命令参数别名, 清空立绘命令参数别名 } from './translation'
+import type { 用户输入命令参数别名, 用户选择命令参数别名, 动效动画命令参数别名, 清空立绘命令参数别名, 添加动画命令参数别名 } from './translation'
 import { Blocking, DynamicMacro } from '@starnight/core'
 import { MergedCommands } from '../../scripts/index'
 import { Alias, Api, flipObject } from '../Translate'
-import { 通用命令参数别名, 添加动画命令参数别名, 音频命令参数别名, 动效动画别名, 基本动画命令参数别名 } from './translation'
+import { 通用命令参数映射, 添加动画命令参数映射, 音频命令参数映射, 动效动画映射, 基本动画命令参数映射 } from './translation'
 
 /**
  * 设置背景图片，使用 GSAP 实现，支持位置、缩放、滤镜等属性。
@@ -47,7 +47,7 @@ import { 通用命令参数别名, 添加动画命令参数别名, 音频命令�
  * $.设置背景({ 资源路径: "/咸鱼池塘.jpg", 持续时间: 500, X坐标: -120, 模糊: 5, 亮度: 1.2 })
  */
 export const 设置背景 = Api(
-    Alias(MergedCommands.Image.bg, Object.assign(通用命令参数别名, 添加动画命令参数别名))
+    Alias(MergedCommands.Image.bg, Object.assign(通用命令参数映射, 添加动画命令参数映射))
 )
 
 /**
@@ -95,7 +95,7 @@ export const 设置背景 = Api(
  * $.设置立绘({ 标识符: "咸鱼", 资源路径: "/saltfish/fish.jpg", 持续时间: 500, X坐标: 640, Y坐标: 640, 模糊: 5 })
  */
 export const 设置立绘 = Api(
-    Alias(MergedCommands.Image.sprite, Object.assign(通用命令参数别名, 添加动画命令参数别名))
+    Alias(MergedCommands.Image.sprite, Object.assign(通用命令参数映射, 添加动画命令参数映射))
 )
 
 /**
@@ -144,7 +144,7 @@ export const 设置立绘 = Api(
  * $.添加动画({ 作用目标: "咸鱼", 持续时间: 1000, X坐标: "+=100", Y坐标: 720, 缓动函数: "M0,0,C0,0,1,1,1,1" })
  */
 export const 添加动画 = Api(
-    Alias(MergedCommands.Image.tween, Object.assign(通用命令参数别名, 添加动画命令参数别名))
+    Alias(MergedCommands.Image.tween, Object.assign(通用命令参数映射, 添加动画命令参数映射))
 ) as ((arg0: 添加动画命令参数别名) => void) & CommandTagDynamic
 
 /**
@@ -159,7 +159,7 @@ export const 添加动画 = Api(
  * $.添加滤镜({ 作用目标: "咸鱼", 滤镜实例: new BlurFilter(5) })
  */
 export const 添加滤镜 = Api(
-    Alias(MergedCommands.Image.filter, Object.assign(通用命令参数别名, { filter: '滤镜实例' } as const))
+    Alias(MergedCommands.Image.filter, Object.assign(通用命令参数映射, { filter: '滤镜实例' } as const))
 )
 
 /**
@@ -181,7 +181,7 @@ export const 动效动画 = Api(
             function* ({ 作用目标, 预设名称, 持续时间, X轴幅度, Y轴幅度 }) {
                 yield MergedCommands.Image.animation({
                     target: 作用目标,
-                    type: flipObject(动效动画别名)[预设名称],
+                    type: flipObject(动效动画映射)[预设名称],
                     duration: 持续时间,
                     x: X轴幅度 as unknown as number,
                     y: Y轴幅度 as unknown as number
@@ -205,7 +205,7 @@ export const 动效动画 = Api(
  * $.关闭图像({ 作用目标: ["咸鱼", "鸽子"] })
  */
 export const 关闭图像 = Api(
-    Alias(MergedCommands.Image.close, Object.assign(通用命令参数别名, {} as const))
+    Alias(MergedCommands.Image.close, Object.assign(通用命令参数映射, {} as const))
 )
 
 /**
@@ -216,7 +216,7 @@ export const 关闭图像 = Api(
  * $.清空立绘()
  */
 export const 清空立绘 = Api(
-    Alias(MergedCommands.Image.clean, Object.assign(通用命令参数别名, {} as const))
+    Alias(MergedCommands.Image.clean, Object.assign(通用命令参数映射, {} as const))
 ) as ((arg0: 清空立绘命令参数别名) => void) & CommandTagNonBlocking
 
 /**
@@ -237,7 +237,7 @@ export const 清空立绘 = Api(
  * $.设置配乐({ 资源路径: "/bgm01.mp3", 持续时间: 1000, 音量: 0.5 })
  */
 export const 设置配乐 = Api(
-    Alias(MergedCommands.Audio.bgm, Object.assign(通用命令参数别名, 音频命令参数别名))
+    Alias(MergedCommands.Audio.bgm, Object.assign(通用命令参数映射, 音频命令参数映射))
 )
 
 /**
@@ -258,7 +258,7 @@ export const 设置配乐 = Api(
  * $.设置音效({ 资源路径: "/se01.mp3", 循环播放: true, 持续时间: 500, 音量: 0.7 })
  */
 export const 设置音效 = Api(
-    Alias(MergedCommands.Audio.se, Object.assign(通用命令参数别名, 音频命令参数别名))
+    Alias(MergedCommands.Audio.se, Object.assign(通用命令参数映射, 音频命令参数映射))
 )
 
 /**
@@ -276,7 +276,7 @@ export const 设置音效 = Api(
  * $.设置配音({ 资源路径: "/noi01.mp3", 音量: 0.8, 播放速度: 1.2 })
  */
 export const 设置配音 = Api(
-    Alias(MergedCommands.Audio.clip, Object.assign(通用命令参数别名, 音频命令参数别名))
+    Alias(MergedCommands.Audio.clip, Object.assign(通用命令参数映射, 音频命令参数映射))
 )
 
 /**
@@ -291,7 +291,7 @@ export const 设置配音 = Api(
  * $.设置音量({ 作用目标: "bgm", 音量: 0.5, 持续时间: 1000 })
  */
 export const 设置音量 = Api(
-    Alias(MergedCommands.Audio.volume, Object.assign(通用命令参数别名, 音频命令参数别名))
+    Alias(MergedCommands.Audio.volume, Object.assign(通用命令参数映射, 音频命令参数映射))
 )
 
 /**
@@ -305,7 +305,7 @@ export const 设置音量 = Api(
  * $.关闭音频({ 作用目标: "bgm", 持续时间: 1000 })
  */
 export const 关闭音频 = Api(
-    Alias(MergedCommands.Audio.close, Object.assign(通用命令参数别名, 音频命令参数别名))
+    Alias(MergedCommands.Audio.close, Object.assign(通用命令参数映射, 音频命令参数映射))
 )
 
 /**
@@ -327,7 +327,7 @@ export const 转场动画 = Api(MergedCommands.Transition.apply)
  * $$.播放视频({ 资源路径: "/OP.mp4", 允许跳过: false })
  */
 export const 播放视频 = Api(
-    Alias(MergedCommands.Video.use, Object.assign(通用命令参数别名, { skip: '允许跳过' } as const))
+    Alias(MergedCommands.Video.use, Object.assign(通用命令参数映射, { skip: '允许跳过' } as const))
 )
 
 /**
@@ -450,7 +450,7 @@ export const 结束剧情 = Api(MergedCommands.System.end)
  * $$.嵌入页面({ 资源路径: "example.com" })
  */
 export const 嵌入页面 = Api(
-    Alias(MergedCommands.Input.iframe, 通用命令参数别名)
+    Alias(MergedCommands.Input.iframe, 通用命令参数映射)
 )
 
 /**
@@ -481,8 +481,8 @@ export const 基本输入 = Api(MergedCommands.System.input) as (<T>(arg0: Funct
  * @param .位置 - 动画在 GSAP 动画序列中的位置，可传入符合 GSAP 位置参数要求的值 （可选）
  * @param ...属性 - 目标对象的任意属性，如 scale、opacity 等
  * @example
- * $.基本动画({ 目标: document.querySelector(".box"), 持续时间: 1000, x: "+=100", opacity: 0.5 })
+ * $.基本动画({ 作用目标: document.querySelector(".box"), 持续时间: 1000, x: "+=100", opacity: 0.5 })
  */
 export const 基本动画 = Api(
-    Alias(MergedCommands.Tween.apply, 基本动画命令参数别名)
+    Alias(MergedCommands.Tween.apply, 基本动画命令参数映射)
 )

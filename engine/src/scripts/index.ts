@@ -9,10 +9,22 @@ export const MergedCommands = merge(
     mapValues(Macro, (value) => mapValues(value, (value) => value))
 ) as MergeDeep<typeof API, typeof Macro>
 
+export type FilterDynamicCommands<T> = {
+    [K in keyof T as T[K] extends CommandTagNonBlocking & CommandTagBlocking ? K : never]: T[K]
+}
+
 export type FilterBlockingCommands<T> = {
-    [K in keyof T as T[K] extends CommandTagBlocking ? K : never]: T[K]
+    [K in keyof T as
+    T[K] extends CommandTagBlocking
+        ? (T[K] extends CommandTagNonBlocking ? never : K)
+        : never
+    ]: T[K]
 }
 
 export type FilterNonBlockingCommands<T> = {
-    [K in keyof T as T[K] extends CommandTagNonBlocking ? K : never]: T[K]
+    [K in keyof T as
+    T[K] extends CommandTagNonBlocking
+        ? (T[K] extends CommandTagBlocking ? never : K)
+        : never
+    ]: T[K]
 }

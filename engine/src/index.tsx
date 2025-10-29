@@ -1,8 +1,8 @@
 /* @refresh reload */
-import { render } from 'solid-js/web'
-import { DelegatedEvents } from 'solid-js/web'
-import App from './App'
+import { render, DelegatedEvents } from 'solid-js/web'
+
 import './index.css'
+import App from './App'
 
 // 禁止Dynamic组件使用事件委托
 DelegatedEvents.clear()

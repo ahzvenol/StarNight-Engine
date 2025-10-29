@@ -16,7 +16,7 @@ if (isMobile() || isTouchDevice()) document.documentElement.classList.add('mobil
 onStoreReady.then((store) => (document.title = store.system.name()))
 
 // 如果不是移动端,将全屏设置项绑定到浏览器全屏状态
-// 由用户通过F11等方式触发的全屏无法被js感知,并不能自动更新设置
+// 由用户通过F11等方式触发的全屏不会通知js,不能自动更新设置
 onStoreReady.then((store) => {
     if (!isMobile()) {
         createEffect(() => {
