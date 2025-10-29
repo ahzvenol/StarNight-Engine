@@ -1,5 +1,6 @@
 import { resolve } from 'path'
 import type { PluginOption } from 'vite'
+import glsl from 'vite-plugin-glsl'
 import legacy from '@vitejs/plugin-legacy'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
@@ -12,6 +13,9 @@ export default defineConfig(({ command }) => ({
     plugins: [
         scenario({
             src: '资源路径'
+        }),
+        glsl({
+            include: ['**/*.vert', '**/*.frag']
         }),
         solid({
             solid: {

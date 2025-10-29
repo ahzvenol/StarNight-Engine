@@ -2,11 +2,12 @@ import type { Filter, ImageResource } from 'pixi.js'
 import type { Except, MergeExclusive } from 'type-fest'
 import type { TweenCommandArgs } from '../tween'
 import { Dynamic, DynamicMacro, EffectScope, NonBlocking, StarNight } from '@starnight/core'
-import { isUndefined, random } from 'es-toolkit'
+import { assert, isUndefined, omit, random } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { PixiPlugin } from 'gsap/PixiPlugin'
 import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform, Texture, BLEND_MODES } from 'pixi.js'
 import { Tween } from '../index'
+import { RenderLayerContainer } from './RenderLayerContainer'
 import { RenderLayerSprite } from './RenderLayerSprite'
 import { SrcSprite } from './SrcSprite'
 import { NestedContainer } from './NestedContainer'
@@ -15,7 +16,7 @@ gsap.registerPlugin(PixiPlugin)
 PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
 
 // 扩大DisplayObject-name属性的适用类型
-// 修正Container-getChildByName方法的泛型
+// 修复Container-getChildByName方法的泛型
 declare module 'pixi.js' {
     interface DisplayObject {
         name: unknown
@@ -25,7 +26,7 @@ declare module 'pixi.js' {
     }
 }
 
-// 修正PIXI锚点逻辑,使其不影响图像位置
+// 修正PIXI锚点逻辑,使其不影响精灵位置
 Transform.prototype.updateLocalTransform = function (): void {
     const lt = this.localTransform
 
@@ -75,12 +76,7 @@ Transform.prototype.updateTransform = function (parentTransform: Transform): voi
     }
 }
 
-// 第一层容器用于舞台特殊动画,第二层容器用于舞台动画,第三层容器用于元素特殊动画,第四层容器用于元素动画
-type ImageItem = NestedContainer<NestedContainer<NestedContainer<Container<SrcSprite>>>>
-
-type ImageLayer = RenderLayerSprite<ImageItem>
-
-type ImageStage = Container<ImageLayer>
+type ImageStage = Container<RenderLayerContainer<SrcSprite>>
 
 export type ImageTargetStage = 0
 
@@ -103,6 +99,7 @@ declare module '@starnight/core' {
     }
 }
 
+/** 加载精灵纹理,设置变换锚点到精灵及其父容器中心 */
 function load(sprite: SrcSprite) {
     sprite.texture = Texture.from(sprite.src)
     const handleLoaded = () => {
@@ -120,73 +117,91 @@ function load(sprite: SrcSprite) {
 
 StarNight.GameEvents.setup.subscribe(({ ui: { view }, temp }) => {
     const { width, height } = view
-    const container = new Container()
-    container.pivot = { x: width / 2, y: height / 2 }
     temp.pixi = new Application({ view, width, height })
     temp.stage = temp.pixi.stage as ImageStage
     temp.stage.sortableChildren = true
+    temp.stage.pivot = { x: width / 2, y: height / 2 }
     // @ts-expect-error 类型...上不存在属性...
     globalThis['__PIXI_APP__'] = temp.pixi
 })
 
 StarNight.GameEvents.ready.subscribe(({ temp: { stage } }) => {
-    stage.children.forEach((layer) => {
-        layer.internal.internal.internal.internal.children.forEach((sprite) => load(sprite))
-    })
+    stage.children.forEach((layer) => layer.children.forEach((sprite) => load(sprite)))
 })
 
-// 在幕结束时清理,每个容器下只保留一个Sprite
-StarNight.ActEvents.end.subscribe(({ temp: { stage } }) => {
-    stage.children.forEach((layer) => {
-        layer.internal.internal.internal.internal.children.slice(0, -1).forEach((sprite) => sprite.destroy())
-    })
-})
+type TweenVars = { [key: string]: unknown }
+type GSAPSpecialProperties = { ease?: gsap.EaseString | gsap.EaseFunction, repeat?: number, yoyo?: boolean, position?: string }
+type TimelineSpecialProperties = { target?: gsap.TweenTarget, transform: Array<TweenBlock> } & GSAPSpecialProperties
+type TweenSpecialProperties = { target?: gsap.TweenTarget, duration?: number } & GSAPSpecialProperties
+type TweenBlock = (TweenSpecialProperties & TweenVars) | TimelineSpecialProperties
+type BaseTimelineProperties = TimelineSpecialProperties & { target: gsap.TweenTarget }
+const isTimelineProperties = (block: TweenBlock): block is TimelineSpecialProperties => 'transform' in block
 
-export type ImageSetCommandArgs = { id: ImageTargetSprite | ImageTargetBackground, src: string, z?: number }
+function buildTimeline(properties: BaseTimelineProperties): gsap.core.Timeline {
+    const currentTarget = properties.target!
+    const props = omit(properties, ['target', 'position'])
+    const timeline = gsap.timeline(props)
+    for (const block of properties.transform) {
+        if (isTimelineProperties(block)) {
+            const { position, ...props } = block
+            if (!props.target) props.target = currentTarget
+            timeline.add(buildTimeline(props as BaseTimelineProperties), position)
+        } else {
+            const { target, position, ...props } = block
+            timeline.to(target || currentTarget, props, position)
+        }
+    }
+
+    return timeline
+}
+function buildTransform(target: gsap.TweenTarget, properties: TransformProperties): gsap.core.Timeline {
+    if (Array.isArray(properties)) return buildTimeline({ target, transform: properties })
+    else return buildTimeline({ target, transform: [properties] })
+}
+type TransformProperties = Except<TweenSpecialProperties, 'target'> | Array<TweenBlock>
+type TransitionFunction = Function1<{ before: Container, after: Container }, TweenBlock>
+
+export type ImageSetCommandArgs =
+    { id: ImageTargetSprite | ImageTargetBackground, src: string, z?: number }
+    & { inherit?: boolean, transition?: TransitionFunction, transform?: Transform, filters?: Array<Filter> }
 
 export const set = NonBlocking<ImageSetCommandArgs>(
-    ({ state, ui: { view }, temp: { stage } }) =>
-        ({ id, src, z }) => {
-            let layer: RenderLayerSprite<ImageItem> | null
-            const sprite = new SrcSprite(src)
-            // 实现立绘切换的交叉溶解效果
-            if (id !== 1) sprite.blendMode = BLEND_MODES.ADD
-            layer = stage.getChildByName(id)
-            if (!layer) {
-                const { width, height } = view
-                const container = new NestedContainer(new NestedContainer(new NestedContainer(new Container<SrcSprite>())))
-                layer = new RenderLayerSprite(container, { width, height, name: id })
-                stage.addChild(layer)
-            }
+    ({ state, temp: { stage } }) =>
+        ({ id, src, z, inherit, transition, transform, filters = null }) => {
+            const layer = stage.getChildByName(id) || stage.addChild(
+                new RenderLayerContainer<SrcSprite>({ name: id })
+            )
+            const sprite = layer.addChild(new SrcSprite(src))
             if (!state.isInitializing()) load(sprite)
             if (!isUndefined(z)) layer.zIndex = z
-            layer.internal.internal.internal.internal.addChild(sprite)
+            if (inherit) layer.filters = filters
+            else sprite.filters = filters
         }
 )
 
-export type ImageCloseCommandArgs = MergeExclusive<
-    { target: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> },
-    { exclude?: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> }
-> & { duration?: number }
+// export type ImageCloseCommandArgs = MergeExclusive<
+//     { target: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> },
+//     { exclude?: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> }
+// > & { duration?: number }
 
-export const close = DynamicMacro<ImageCloseCommandArgs>(
-    ({ current, temp: { stage } }) =>
-        function* ({ target: _target, exclude: _exclude, duration }) {
-            const _targets: Array<unknown> = Array.isArray(_target) ? _target : isUndefined(_target) ? [] : [_target]
-            const _excludes: Array<unknown> = Array.isArray(_exclude) ? _exclude : isUndefined(_exclude) ? [] : [_exclude]
-            const targets = stage.children
-                .filter((layer) => _targets.length > 0
-                    ? _targets.includes(layer.name)
-                    : !_excludes.includes(layer.name)
-                )
-            targets.forEach((layer) => layer.name = null)
-            if (duration) yield (yield Tween.apply({ target: targets, duration, pixi: { alpha: 0 } }))
-            targets.forEach((layer) => layer.destroy())
-            const isStageEmpty = stage.children.length === 0
-            const isOnlyBackground = stage.children.length === 1 && stage.children[0].name === 1
-            if (isStageEmpty || isOnlyBackground) current.iclearpoint(current.count())
-        }
-)
+// export const close = DynamicMacro<ImageCloseCommandArgs>(
+//     ({ current, temp: { stage } }) =>
+//         function* ({ target: _target, exclude: _exclude, duration }) {
+//             const _targets: Array<unknown> = Array.isArray(_target) ? _target : isUndefined(_target) ? [] : [_target]
+//             const _excludes: Array<unknown> = Array.isArray(_exclude) ? _exclude : isUndefined(_exclude) ? [] : [_exclude]
+//             const targets = stage.children
+//                 .filter((layer) => _targets.length > 0
+//                     ? _targets.includes(layer.name)
+//                     : !_excludes.includes(layer.name)
+//                 )
+//             targets.forEach((layer) => layer.name = null)
+//             if (duration) yield (yield Tween.apply({ target: targets, duration, pixi: { alpha: 0 } }))
+//             targets.forEach((layer) => layer.destroy())
+//             const isStageEmpty = stage.children.length === 0
+//             const isOnlyBackground = stage.children.length === 1 && stage.children[0].name === 1
+//             if (isStageEmpty || isOnlyBackground) current.iclearpoint(current.count())
+//         }
+// )
 
 type OmitIndexSignature<T> = {
     [K in keyof T as
@@ -212,57 +227,11 @@ export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>
         function* ({ inherit = true, target: _target, ease, duration, repeat, yoyo, ...args }) {
             const target = _target === 0
-                ? stage.children.map((e) => e.internal.internal)
+                ? stage
                 : inherit
-                    ? stage.getChildByName(_target)?.internal.internal.internal.internal
-                    : stage.getChildByName(_target)?.internal.internal.internal.internal.children.slice(-1)[0]
+                    ? stage.getChildByName(_target)
+                    : stage.getChildByName(_target)?.children.slice(-1)[0]
             if (isUndefined(target)) return
             yield Tween.apply({ target, ease, duration, repeat, yoyo, pixi: args })
         }
-)
-
-export type ImageFilterCommandArgs = { target: ImageTarget, filter: Filter }
-
-export const filter = NonBlocking<ImageFilterCommandArgs>(
-    ({ temp: { stage } }) =>
-        ({ target: _target, filter }) => {
-            const target = _target === 0 ? stage : stage.getChildByName(_target)?.internal.internal.internal.internal
-            if (target) {
-                if (target.filters) target.filters.push(filter)
-                else target.filters = [filter]
-            }
-        }
-)
-
-export type ImageAnimationCommandArgs =
-    { target: ImageTarget, type: AnimationTypes, duration: number }
-    & ({ x: number, y?: number } | { x?: number, y: number })
-
-const shake = (p: number) => (p === 0 || p === 1) ? 0 : random(p - 1, 1 - p)
-
-const punch = (p: number) => (p === 0 || p === 1) ? 0 : Math.pow(2, -10 * p) * Math.sin((20 * Math.PI * p) / 3)
-
-const AnimationPersets = { shake, punch } as const
-
-export type AnimationTypes = keyof typeof AnimationPersets
-
-export const animation = EffectScope(
-    Dynamic<ImageAnimationCommandArgs>(
-        ({ temp: { stage } }) =>
-            function* ({ target: _target, type, x = 0, y = 0, duration }) {
-                // 由于RenderLayer只渲染指定大小的范围,对舞台实现动画效果的方式是为所有元素都应用一个相同的动画
-                const target = _target === 0
-                    ? stage.children.map((e) => e.internal)
-                    : stage.getChildByName(_target)?.internal.internal.internal
-                if (isUndefined(target)) return
-                yield new Promise((res) =>
-                    gsap.to(target, {
-                        pixi: { x, y },
-                        ease: AnimationPersets[type],
-                        duration: duration / 1000,
-                        onComplete: res
-                    })
-                )
-            }
-    )
 )

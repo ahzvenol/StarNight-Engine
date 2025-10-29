@@ -15,7 +15,6 @@ import { TextBox } from './TextBox'
 import { TextInput } from './TextInput'
 import { Video } from './Video'
 import { Iframe } from './Iframe'
-import { Transition } from './Transition'
 
 export const showUI = useSignal(true)
 
@@ -63,9 +62,6 @@ export const Game: Component = () => {
             </Show>
             <Show when={ui().input.click() !== null}>
                 <div class={styles.Game_mask} onClick={ui().input.click()!} />
-            </Show>
-            <Show when={ui().transition() !== null}>
-                <Transition />
             </Show>
             <Show when={ui().input.text() !== null}>
                 <TextInput />
