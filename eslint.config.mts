@@ -43,8 +43,16 @@ export default tseslint.config(
                 }
             ],
             'import/consistent-type-specifier-style': 'error',
-            '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after' } }], // 操作符写在每一行前面，'='除外
-            '@stylistic/max-statements-per-line': ['error', { max: 1, ignoredNodes: ['IfStatement'] }], // 允许同一行有if表达式和其他表达式
+            // 操作符写在每一行前面，'='除外
+            '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after' } }],
+            // 允许同一行有if表达式和其他表达式
+            '@stylistic/max-statements-per-line': ['error', { max: 1, ignoredNodes: ['IfStatement'] }],
+            // 使用逗号作为类型中的成员分隔符
+            '@stylistic/member-delimiter-style': ['error', {
+                singleline: { delimiter: 'comma', requireLast: false },
+                multiline: { delimiter: 'comma', requireLast: false },
+                overrides: { interface: { multiline: { delimiter: 'none', requireLast: true } } }
+            }],
             '@stylistic/lines-between-class-members': 'off', // 允许类成员之间不换行
             '@stylistic/jsx-one-expression-per-line': 'off', // 允许jsx同一行有多个表达式
             'import/no-unresolved': 'off', // 无意义的规则

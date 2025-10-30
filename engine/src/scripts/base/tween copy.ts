@@ -12,12 +12,21 @@ declare module '@starnight/core' {
     }
 }
 
+type PixiVars = {
+    x?: number | string, y?: number | string, width?: number | string, height?: number | string, alpha?: number | string,
+    pivot?: number, pivotX?: number | string, pivotY?: number | string, angle?: number | string,
+    scale?: number | string, scaleX?: number | string, scaleY?: number | string,
+    skew?: number | string, skewX?: number | string, skewY?: number | string,
+    brightness?: number, contrast?: number, saturation?: number, hue?: number,
+    blur?: number, blurX?: number, blurY?: number, blurPadding?: number, colorize?: string | number, colorizeAmount?: number
+}
+
 type TweenVars = Record<string, number | string> & Record<number, Record<string, number | string>>
-type GSAPEaseArg = gsap.EaseString | gsap.EaseFunction
-type GSAPSpecialProps = { ease?: GSAPEaseArg, repeat?: number, yoyo?: boolean, position?: string, label?: string }
-type TweenSpecialProps = { duration?: number } & GSAPSpecialProps
-type TimelineSpecialProps = { transform: Array<TweenBlock> } & GSAPSpecialProps
-type TweenBlock = (TweenSpecialProps | TweenVars) | TimelineSpecialProps
+type GsapEaseArg = gsap.EaseString | gsap.EaseFunction
+type GsapSpecialProps = { ease?: GsapEaseArg, repeat?: number, yoyo?: boolean, position?: string, label?: string }
+type TweenSpecialProps = { duration?: number } & GsapSpecialProps
+type TimelineSpecialProps = { transform: Array<TweenBlock> } & GsapSpecialProps
+type TweenBlock = (TweenSpecialProps | (TweenVars & PixiVars)) | TimelineSpecialProps
 
 const isTimelineProps = (block: TweenBlock): block is TimelineSpecialProps => 'transform' in block
 
@@ -63,16 +72,18 @@ export const apply = Dynamic<TweenCommandArgs>(
     ({ state, temp: { activetimelines } }) =>
         function* ({ target, transform }) {
             const subTimeline = buildTransform(target, transform)
-            if (state.isInitializing()) {
-                subTimeline.seek(subTimeline.duration())
-            } else {
+            if (state.isInitializing()) subTimeline.progress(1)
+            else {
+                // 对同一个目标的动画添加到同一个timeline中,如果没有position参数,默认依次执行
                 const timeline = activetimelines.get(target)
                     ?? activetimelines.set(target, gsap.timeline()).get(target)!
                 timeline.add(subTimeline, (transform as { position?: string }).position)
-                yield new Promise((res) => subTimeline.once('complete', res))
-                const isLastAnimation = subTimeline.endTime() === timeline.duration()
-                const isInfiniteAnimation = timeline.getChildren().some((a) => a.repeat() === -1)
-                if (isLastAnimation && !isInfiniteAnimation) timeline.progress(1)
+                // 如果当前存在无限循环的动画,就不再计入时间统计,此类timeline将在下一幕开始时被完成
+                const isInfinite = timeline.getChildren().some((a) => a.repeat() === -1)
+                if (!isInfinite) {
+                    yield new Promise((res) => subTimeline.once('complete', res))
+                    if (subTimeline.endTime() === timeline.duration()) timeline.progress(1)
+                }
             }
         }
 )

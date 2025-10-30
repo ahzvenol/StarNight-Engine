@@ -1,12 +1,13 @@
 import type { Filter, ImageResource } from 'pixi.js'
 import type { Except, MergeExclusive } from 'type-fest'
 import type { TweenCommandArgs } from '../tween'
+import type { TransformArgType } from '../tween copy'
 import { Dynamic, DynamicBlocking, DynamicMacro, EffectScope, NonBlocking, StarNight } from '@starnight/core'
 import { assert, isUndefined, omit, random } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { PixiPlugin } from 'gsap/PixiPlugin'
 import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform, Texture, BLEND_MODES } from 'pixi.js'
-import { apply, TransformArgType } from '../tween copy'
+import { apply } from '../tween copy'
 import { RenderLayerContainer } from './RenderLayerContainer'
 import { RenderLayerSprite } from './RenderLayerSprite'
 import { SrcSprite } from './SrcSprite'
@@ -206,11 +207,10 @@ export type ImageTweenCommandArgs = ImageTweenArgs & ImageTweenTarget
 export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>
         function* ({ inherit = true, target: _target, ease, duration, repeat, yoyo, ...args }) {
-            const target = _target === 0
-                ? stage
-                : inherit
-                    ? stage.getChildByName(_target)
-                    : stage.getChildByName(_target)?.children.slice(-1)[0]
+            // eslint-disable-next-line @stylistic/multiline-ternary
+            const target = _target === 0 ? stage : inherit
+                ? stage.getChildByName(_target)
+                : stage.getChildByName(_target)?.children.at(-1)
             if (isUndefined(target)) return
             yield Tween.apply({ target, ease, duration, repeat, yoyo, pixi: args })
         }
