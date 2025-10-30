@@ -1,17 +1,15 @@
 import type { Filter, ImageResource } from 'pixi.js'
-import type { Except, MergeExclusive } from 'type-fest'
-import type { TweenCommandArgs } from '../tween'
-import type { TransformArgType } from '../tween copy'
-import { Dynamic, DynamicBlocking, DynamicMacro, EffectScope, NonBlocking, StarNight } from '@starnight/core'
-import { assert, isUndefined, omit, random } from 'es-toolkit'
+import type { MergeExclusive } from 'type-fest'
+
+import type { TransformBlock } from '../tween'
+import { DynamicMacro, StarNight } from '@starnight/core'
+import { isUndefined } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { PixiPlugin } from 'gsap/PixiPlugin'
-import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform, Texture, BLEND_MODES } from 'pixi.js'
-import { apply } from '../tween copy'
+import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform, Texture } from 'pixi.js'
+import { Tween } from '..'
 import { RenderLayerContainer } from './RenderLayerContainer'
-import { RenderLayerSprite } from './RenderLayerSprite'
 import { SrcSprite } from './SrcSprite'
-import { NestedContainer } from './NestedContainer'
 
 gsap.registerPlugin(PixiPlugin)
 PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
@@ -132,86 +130,73 @@ StarNight.GameEvents.ready.subscribe(({ temp: { stage } }) => {
 
 type TransitionFunction = Function1<
     { before?: Container, after?: Container },
-    { before: TransformArgType, after: TransformArgType }
+    { before: TransformBlock, after: TransformBlock }
 >
 
-export type ImageSetCommandArgs =
-    { id: ImageTargetSprite | ImageTargetBackground, src?: string, z?: number }
-    & { inherit?: boolean, transition?: TransitionFunction, transform?: TransformArgType, filters?: Array<Filter> }
+export type ImageSetCommandArgs = {
+    id: ImageTargetSprite | ImageTargetBackground, inherit?: false, src: string | null, z?: number,
+    transition?: TransitionFunction, transform?: TransformBlock, filters?: Array<Filter>
+}
 
-export const set = DynamicBlocking<ImageSetCommandArgs>(
-    (context) =>
-        function* ({ id, src, z, inherit, transition, transform, filters = null }) {
-            const { state, temp: { stage } } = context
+export const set = DynamicMacro<ImageSetCommandArgs>(
+    ({ state, temp: { stage } }) =>
+        function* ({ id, inherit = true, src, z, transition, transform, filters = null }) {
             const layer = stage.getChildByName(id)
-                ?? stage.addChild(new RenderLayerContainer<SrcSprite>({ name: id }))
+                || stage.addChild(new RenderLayerContainer<SrcSprite>({ name: id }))
             const before = layer.children.at(-1)
             const after = src ? layer.addChild(new SrcSprite(src)) : undefined
             if (!isUndefined(z)) layer.zIndex = z
             if (!state.isInitializing() && after) initializeSprite(after)
             if (inherit) layer.filters = filters
             else if (after) after.filters = filters
-            if (transform && after) yield apply({ target: after, transform: transform })(context)
+            if (!after) layer.name = undefined
+            if (transform && after) yield Tween.apply({ target: after, transform: transform })
             if (transition) {
                 const trans = transition({ before, after })
-                if (before) yield apply({ target: before, transform: trans.before })(context)
-                if (after) yield apply({ target: after, transform: trans.after })(context)
+                yield Promise.all([
+                    before && (yield Tween.apply({ target: before, transform: trans.before })),
+                    after && (yield Tween.apply({ target: after, transform: trans.after }))
+                ])
             }
+            if (after) before?.destroy()
+            else layer.destroy()
         }
 )
 
-// export type ImageCloseCommandArgs = MergeExclusive<
-//     { target: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> },
-//     { exclude?: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> }
-// > & { duration?: number }
+export type ImageCloseCommandArgs = MergeExclusive<
+    { target: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> },
+    { exclude?: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> }
+> & { transition?: TransitionFunction }
 
-// export const close = DynamicMacro<ImageCloseCommandArgs>(
-//     ({ current, temp: { stage } }) =>
-//         function* ({ target: _target, exclude: _exclude, duration }) {
-//             const _targets: Array<unknown> = Array.isArray(_target) ? _target : isUndefined(_target) ? [] : [_target]
-//             const _excludes: Array<unknown> = Array.isArray(_exclude) ? _exclude : isUndefined(_exclude) ? [] : [_exclude]
-//             const targets = stage.children
-//                 .filter((layer) => _targets.length > 0
-//                     ? _targets.includes(layer.name)
-//                     : !_excludes.includes(layer.name)
-//                 )
-//             targets.forEach((layer) => layer.name = null)
-//             if (duration) yield (yield Tween.apply({ target: targets, duration, pixi: { alpha: 0 } }))
-//             targets.forEach((layer) => layer.destroy())
-//             const isStageEmpty = stage.children.length === 0
-//             const isOnlyBackground = stage.children.length === 1 && stage.children[0].name === 1
-//             if (isStageEmpty || isOnlyBackground) current.iclearpoint(current.count())
-//         }
-// )
-
-type OmitIndexSignature<T> = {
-    [K in keyof T as
-    string extends K ? never :
-        number extends K ? never :
-            K
-    ]: T[K];
-}
-
-export type ImageTweenArgs = OmitIndexSignature<Except<
-    PixiPlugin.Vars,
-    'zIndex' | 'positionX' | 'positionY' | 'resolution' | 'fillColor' | 'lineColor' | 'rotation' | 'autoAlpha' | 'tint'
-    | 'tilePosition' | 'tilePositionX' | 'tilePositionY' | 'tileScale' | 'tileScaleX' | 'tileScaleY' | 'tileX' | 'tileY'
->>
+export const close = DynamicMacro<ImageCloseCommandArgs>(
+    ({ current, temp: { stage } }) =>
+        function* ({ target: _target, exclude: _exclude, transition }) {
+            const _targets: Set<ImageTargetSprite | ImageTargetBackground> =
+                Array.isArray(_target) ? new Set(_target) : isUndefined(_target) ? new Set() : new Set([_target])
+            const _excludes: Set<ImageTargetSprite | ImageTargetBackground> =
+                Array.isArray(_exclude) ? new Set(_exclude) : isUndefined(_exclude) ? new Set() : new Set([_exclude])
+            const targets: Set<ImageTargetSprite | ImageTargetBackground> | Array<ImageTargetSprite | ImageTargetBackground> =
+                _targets.size > 0 ? _targets : stage.children.filter((layer) => !_excludes.has(layer.name)).map((layer) => layer.name)
+            for (const target of targets) yield set({ id: target, src: null, transition })
+            const isStageEmpty = stage.children.length === 0
+            const isOnlyBackground = stage.children.length === 1 && stage.children[0].name === 1
+            if (isStageEmpty || isOnlyBackground) current.iclearpoint(current.count())
+        }
+)
 
 export type ImageTweenTarget =
 ({ target: ImageTargetStage, inherit?: never } | { target: ImageTargetSprite | ImageTargetBackground, inherit?: false })
 
-export type ImageTweenCommandArgs = ImageTweenArgs & ImageTweenTarget
-    & { ease?: TweenCommandArgs['ease'], duration?: number, repeat?: number, yoyo?: boolean }
+export type ImageTweenCommandArgs = ImageTweenTarget & { transform: TransformBlock }
 
 export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ temp: { stage } }) =>
-        function* ({ inherit = true, target: _target, ease, duration, repeat, yoyo, ...args }) {
+        function* ({ target: _target, inherit = true, transform }) {
             // eslint-disable-next-line @stylistic/multiline-ternary
             const target = _target === 0 ? stage : inherit
                 ? stage.getChildByName(_target)
                 : stage.getChildByName(_target)?.children.at(-1)
             if (isUndefined(target)) return
-            yield Tween.apply({ target, ease, duration, repeat, yoyo, pixi: args })
+            yield Tween.apply({ target, transform })
         }
 )

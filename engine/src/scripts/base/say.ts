@@ -2,7 +2,6 @@ import type { Reactive } from '@starnight/core'
 import { ActScope, Dynamic, NonBlocking, StarNight } from '@starnight/core'
 import { gsap } from 'gsap'
 import { SplitText } from '@/lib/SplitText'
-import { Tween } from './index'
 
 gsap.registerPlugin(SplitText)
 
@@ -35,9 +34,8 @@ const compareElementOrder = (a: Node, b: Node) =>
 
 export const text = ActScope(
     Dynamic<string>(
-        (context) =>
+        ({ current, config, ui, temp: { activetimelines } }) =>
             function* (arg0) {
-                const { current, config, ui } = context
                 const element = document.createElement('div')
                 element.innerHTML = arg0
                 ui.text((i) => i || document.createElement('div')).append(element)
@@ -47,11 +45,13 @@ export const text = ActScope(
                     { type: 'chars', reduceWhiteSpace: false, ignore: rubys, aria: 'hidden' }
                 )
                 const nodes = split.chars.concat(Array.from(rubys)).sort(compareElementOrder)
-                const speed = config.textspeed()
-                yield Tween.apply({
-                    target: nodes, id: ui.text(), mode: 'from', opacity: 0,
-                    duration: nodes.length * speed, ease: 'sine.out', stagger: speed / 1000
-                })(context)
+                const speed = config.textspeed() / 1000
+                const timeline = activetimelines.get(ui.text()!)
+                    || activetimelines.set(ui.text()!, gsap.timeline()).get(ui.text()!)!
+                timeline.from(nodes, { duration: nodes.length * speed, ease: 'sine.out', stagger: speed, opacity: 0 })
+                const currentDuration = timeline.duration()
+                yield new Promise((resolve) => timeline.once('complete', resolve))
+                if (currentDuration === timeline.duration()) timeline.progress(1)
             }
     )
 )
