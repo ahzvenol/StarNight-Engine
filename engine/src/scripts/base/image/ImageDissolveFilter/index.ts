@@ -8,7 +8,9 @@ export type ImageDissolveFilterOptions = { progress?: number, ramplen?: number, 
 export class ImageDissolveFilter extends Filter {
     constructor(uTexture: Texture, options: ImageDissolveFilterOptions = {}) {
         const { progress = 0, ramplen = 8, reverse = false } = options
-
         super(vertex, fragment, { uTexture, progress, ramplen, reverse })
     }
+
+    get progress() { return this.uniforms.progress }
+    set progress(v: number) { this.uniforms.progress = v }
 }
