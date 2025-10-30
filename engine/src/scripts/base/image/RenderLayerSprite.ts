@@ -15,6 +15,7 @@ export class RenderLayerSprite<T extends Container> extends Sprite {
 
     constructor(public internal: T, options: IBaseTextureOptions & { name?: NonNullable<unknown> }) {
         super(RenderTexture.create(options))
+        // @ts-expect-error 不能将类型“{}”分配给类型...
         if (options.name) this.name = options.name
         const update = () => this._renderer?.render(this.internal, { renderTexture: this.texture, clear: true })
         this.on('added', () => Ticker.system.add(update))

@@ -1,9 +1,8 @@
 import type { Filter, ImageResource } from 'pixi.js'
 import type { MergeExclusive } from 'type-fest'
-
 import type { TransformBlock } from '../tween'
 import { DynamicMacro, StarNight } from '@starnight/core'
-import { isUndefined } from 'es-toolkit'
+import { isUndefined, negate } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { PixiPlugin } from 'gsap/PixiPlugin'
 import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform, Texture } from 'pixi.js'
@@ -18,10 +17,10 @@ PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
 // 修复Container-getChildByName方法的泛型
 declare module 'pixi.js' {
     interface DisplayObject {
-        name: unknown
+        name: ImageTargetStageChildren | undefined
     }
     interface Container<T extends DisplayObject = DisplayObject> {
-        getChildByName(name: NonNullable<unknown>): T | null
+        getChildByName(name: NonNullable<ImageTargetStageChildren>): T | null
     }
 }
 
@@ -83,7 +82,7 @@ export type ImageTargetBackground = 1
 
 export type ImageTargetSprite = string
 
-export type ImageTarget = ImageTargetSprite | ImageTargetBackground | ImageTargetStage
+export type ImageTargetStageChildren = ImageTargetBackground | ImageTargetSprite
 
 declare module '@starnight/core' {
     interface GameLocalData {
@@ -128,13 +127,13 @@ StarNight.GameEvents.ready.subscribe(({ temp: { stage } }) => {
     stage.children.forEach((layer) => layer.children.forEach(initializeSprite))
 })
 
-type TransitionFunction = Function1<
+export type TransitionFunction = Function1<
     { before?: Container, after?: Container },
     { before: TransformBlock, after: TransformBlock }
 >
 
 export type ImageSetCommandArgs = {
-    id: ImageTargetSprite | ImageTargetBackground, inherit?: false, src: string | null, z?: number,
+    id: ImageTargetStageChildren, inherit?: false, src: string | null, z?: number,
     transition?: TransitionFunction, transform?: TransformBlock, filters?: Array<Filter>
 }
 
@@ -145,12 +144,19 @@ export const set = DynamicMacro<ImageSetCommandArgs>(
                 || stage.addChild(new RenderLayerContainer<SrcSprite>({ name: id }))
             const before = layer.children.at(-1)
             const after = src ? layer.addChild(new SrcSprite(src)) : undefined
+            // z这个属性是特殊的,因为它只能设置在layer上
             if (!isUndefined(z)) layer.zIndex = z
-            if (!state.isInitializing() && after) initializeSprite(after)
             if (inherit) layer.filters = filters
             else if (after) after.filters = filters
+            // 当src显式设置为null,就从stage中移除layer
             if (!after) layer.name = undefined
-            if (transform && after) yield Tween.apply({ target: after, transform: transform })
+            else if (!state.isInitializing()) initializeSprite(after)
+            if (transform) {
+                if (inherit) yield Tween.apply({ target: layer, transform: transform })
+                // 如果layer之前添加了动画,这里的行为就有些未定义
+                else if (after) yield Tween.apply({ target: after, transform: transform })
+            }
+            // 先应用transform,之后再应用transition,方便转场滤镜追加在最后
             if (transition) {
                 const trans = transition({ before, after })
                 yield Promise.all([
@@ -158,34 +164,34 @@ export const set = DynamicMacro<ImageSetCommandArgs>(
                     after && (yield Tween.apply({ target: after, transform: trans.after }))
                 ])
             }
-            if (after) before?.destroy()
-            else layer.destroy()
+            // close相对于set的唯一特殊之处就是移除并销毁layer
+            (after ? before : layer)?.destroy()
         }
 )
 
 export type ImageCloseCommandArgs = MergeExclusive<
-    { target: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> },
-    { exclude?: ImageTargetSprite | ImageTargetBackground | Array<ImageTargetSprite | ImageTargetBackground> }
+    { target: ImageTargetStageChildren | Array<ImageTargetStageChildren> },
+    { exclude?: ImageTargetStageChildren | Array<ImageTargetStageChildren> }
 > & { transition?: TransitionFunction }
 
 export const close = DynamicMacro<ImageCloseCommandArgs>(
     ({ current, temp: { stage } }) =>
         function* ({ target: _target, exclude: _exclude, transition }) {
-            const _targets: Set<ImageTargetSprite | ImageTargetBackground> =
-                Array.isArray(_target) ? new Set(_target) : isUndefined(_target) ? new Set() : new Set([_target])
-            const _excludes: Set<ImageTargetSprite | ImageTargetBackground> =
+            const _targets: Array<ImageTargetStageChildren> =
+                Array.isArray(_target) ? _target : isUndefined(_target) ? [] : [_target]
+            const _excludes: Set<ImageTargetStageChildren> =
                 Array.isArray(_exclude) ? new Set(_exclude) : isUndefined(_exclude) ? new Set() : new Set([_exclude])
-            const targets: Set<ImageTargetSprite | ImageTargetBackground> | Array<ImageTargetSprite | ImageTargetBackground> =
-                _targets.size > 0 ? _targets : stage.children.filter((layer) => !_excludes.has(layer.name)).map((layer) => layer.name)
+            const targets: Set<ImageTargetStageChildren> | Array<ImageTargetStageChildren> =
+                _targets.length > 0 ? _targets : stage.children.map((layer) => layer.name!).filter(negate(_excludes.has))
+            const isEmptyStage = (targets.length - stage.children.length) === 0
+            const isOnlyBackground = (targets.length - stage.children.length) === 1 && !targets.includes(1)
+            if (isEmptyStage || isOnlyBackground) current.iclearpoint(current.count())
             for (const target of targets) yield set({ id: target, src: null, transition })
-            const isStageEmpty = stage.children.length === 0
-            const isOnlyBackground = stage.children.length === 1 && stage.children[0].name === 1
-            if (isStageEmpty || isOnlyBackground) current.iclearpoint(current.count())
         }
 )
 
 export type ImageTweenTarget =
-({ target: ImageTargetStage, inherit?: never } | { target: ImageTargetSprite | ImageTargetBackground, inherit?: false })
+({ target: ImageTargetStage, inherit?: never } | { target: ImageTargetStageChildren, inherit?: false })
 
 export type ImageTweenCommandArgs = ImageTweenTarget & { transform: TransformBlock }
 

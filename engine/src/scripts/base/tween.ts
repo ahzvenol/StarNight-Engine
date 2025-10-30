@@ -33,8 +33,8 @@ const PixiKeySet = new Set([
 type TweenVars = Record<string, number | string>
 type FiltersVars = Record<number, Record<string, number | string>>
 type GsapEaseArg = gsap.EaseString | gsap.EaseFunction
-type GsapSpecialProps = { ease?: GsapEaseArg, repeat?: number, yoyo?: boolean, position?: string, label?: string }
-type TweenSpecialProps = { duration?: number } & GsapSpecialProps
+type GsapSpecialProps = { ease?: GsapEaseArg, repeat?: number, yoyo?: boolean, position?: number | string }
+type TweenSpecialProps = { duration?: number, delay?: number, label?: string } & GsapSpecialProps
 type TimelineSpecialProps = { defaults?: TweenSpecialProps | TweenVars, transform: Array<TweenBlock> } & GsapSpecialProps
 type TweenBlock = (TweenSpecialProps | (TweenVars & PixiVars & FiltersVars)) | TimelineSpecialProps
 
@@ -54,14 +54,14 @@ function buildTimeline(target: gsap.TweenTarget, _props: TweenBlock): gsap.core.
             for (const key in props) {
                 const value = props[key as keyof typeof props]
                 if (PixiKeySet.has(key)) pixi[key] = value
-                else if (/^[0-9]+$/.test(key)) filters[key] = value
+                else if (/^-?\d+$/.test(key)) filters[key] = value
                 else defaults[key] = value
             }
             const timeline = gsap.timeline({ defaults, paused: true })
             if (Object.keys(pixi).length !== 0) timeline.to(target, { pixi }, 0)
             if (Object.keys(filters).length !== 0) {
                 for (const [key, props] of Object.entries(filters)) {
-                    const filter = target.filters?.[Number(key)]
+                    const filter = target.filters?.at(Number(key))
                     if (filter) timeline.to(filter, props as object, 0)
                 }
             }
@@ -85,7 +85,7 @@ StarNight.ActEvents.start.subscribe(({ state, temp: { activetimelines } }) => {
 })
 StarNight.ActEvents.start.subscribe(({ temp: { activetimelines } }) => activetimelines.clear())
 
-export const _apply = Dynamic<{ target: gsap.TweenTarget, transform: TweenBlock }>(
+const _apply = Dynamic<{ target: gsap.TweenTarget, transform: TweenBlock }>(
     ({ state, temp: { activetimelines } }) =>
         function* ({ target, transform }) {
             const subTimeline = buildTimeline(target, transform)

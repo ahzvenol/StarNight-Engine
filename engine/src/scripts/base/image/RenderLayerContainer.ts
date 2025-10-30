@@ -6,6 +6,7 @@ const RENDER_LAYER_FILTERS = [new AlphaFilter()]
 export class RenderLayerContainer<T extends DisplayObject = DisplayObject> extends Container<T> {
     constructor(options?: { name?: NonNullable<unknown> }) {
         super()
+        // @ts-expect-error 不能将类型“{}”分配给类型...
         if (options?.name) this.name = options.name
     }
 
