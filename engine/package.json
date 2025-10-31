@@ -48,6 +48,7 @@
         "clsx": "^2.1.1",
         "dayjs": "^1.11.13",
         "es-toolkit": "^1.38.0",
+        "gifuct-js": "^2.1.2",
         "gsap": "^3.13.0",
         "icon-park-solid": "^1.4.3",
         "localforage": "^1.10.0",

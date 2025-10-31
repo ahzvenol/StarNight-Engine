@@ -5,11 +5,12 @@ import { DynamicMacro, NonBlocking, StarNight } from '@starnight/core'
 import { isFunction, isString, isUndefined, negate } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { PixiPlugin } from 'gsap/PixiPlugin'
-import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform, Texture } from 'pixi.js'
+import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform, Texture, INSTALLED } from 'pixi.js'
 import { Tween } from '..'
 import { NestedContainer } from './NestedContainer'
 import { RenderLayerContainer } from './RenderLayerContainer'
 import { SrcSprite } from './SrcSprite'
+import { GifResource } from './GifResource'
 
 gsap.registerPlugin(PixiPlugin)
 PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
@@ -24,6 +25,9 @@ declare module 'pixi.js' {
         getChildByName(name: NonNullable<ImageTargetStageChildren>): T | null
     }
 }
+
+// 通过GifResource支持.gif格式
+INSTALLED.push(GifResource)
 
 // 增强getChildAt函数,使其支持负数索引
 Container.prototype.getChildAt = function (index: number) {
