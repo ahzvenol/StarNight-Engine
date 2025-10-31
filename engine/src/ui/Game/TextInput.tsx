@@ -12,7 +12,7 @@ export const TextInput: Component = () => {
         <div class={styles.Game_TextInput_container_outer}>
             <div class={styles.Game_TextInput_container} style={{ 'font-family': config.textboxfont() }}>
                 <div class={styles.Game_TextInput_container_inner}>
-                    <div class={styles.Game_TextInput_title}>{ui().input.text()?.text || 'Please Input'}</div>
+                    <div class={styles.Game_TextInput_title}>{ui().input.text()?.text ?? 'Please Input'}</div>
                     <input
                         class={styles.Game_TextInput_input}
                         onMouseDown={(e) => (e.target as HTMLInputElement).focus()}

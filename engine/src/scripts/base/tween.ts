@@ -1,3 +1,4 @@
+import type { MergeExclusive } from 'type-fest'
 import { Dynamic, DynamicMacro, StarNight } from '@starnight/core'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
@@ -36,7 +37,7 @@ type GsapEaseArg = gsap.EaseString | gsap.EaseFunction
 type GsapSpecialProps = { ease?: GsapEaseArg, repeat?: number, yoyo?: boolean, position?: number | string }
 type TweenSpecialProps = { duration?: number, delay?: number, label?: string } & GsapSpecialProps
 type TimelineSpecialProps = { defaults?: TweenSpecialProps | TweenVars, transform: Array<TweenBlock> } & GsapSpecialProps
-type TweenBlock = (TweenSpecialProps | (TweenVars & PixiVars & FiltersVars)) | TimelineSpecialProps
+type TweenBlock = MergeExclusive<(TweenSpecialProps | (TweenVars & PixiVars & FiltersVars)), TimelineSpecialProps>
 
 const isTimelineProps = (block: TweenBlock): block is TimelineSpecialProps => 'transform' in block
 
@@ -50,7 +51,7 @@ function buildTimeline(target: gsap.TweenTarget, _props: TweenBlock): gsap.core.
         return timeline
     } else {
         if (target instanceof Container) {
-            const [defaults, pixi, filters] = [{}, {}, {}] as Record<string, unknown>[]
+            const [defaults, pixi, filters] = [{}, {}, {}] as Array<Record<string, unknown>>
             for (const key in props) {
                 const value = props[key as keyof typeof props]
                 if (PixiKeySet.has(key)) pixi[key] = value
@@ -58,7 +59,9 @@ function buildTimeline(target: gsap.TweenTarget, _props: TweenBlock): gsap.core.
                 else defaults[key] = value
             }
             const timeline = gsap.timeline({ defaults, paused: true })
-            if (Object.keys(pixi).length !== 0) timeline.to(target, { pixi }, 0)
+            if (Object.keys(pixi).length !== 0) {
+                timeline.to(target, { pixi }, 0)
+            }
             if (Object.keys(filters).length !== 0) {
                 for (const [key, props] of Object.entries(filters)) {
                     const filter = target.filters?.at(Number(key))
@@ -91,7 +94,7 @@ const _apply = Dynamic<{ target: gsap.TweenTarget, transform: TweenBlock }>(
             const subTimeline = buildTimeline(target, transform)
             // 对同一个目标的动画添加到同一个timeline中,如果没有position参数,默认依次执行
             const timeline = activetimelines.get(target)
-                || activetimelines.set(target, gsap.timeline()).get(target)!
+                ?? activetimelines.set(target, gsap.timeline()).get(target)!
             // 为了position参数工作正常,始终需要维护map并将subTimeline添加到根timeline
             timeline.add(subTimeline, (transform.position))
             // 如果当前存在无限循环的动画,就不再计入时间统计,此类timeline将在下一幕开始时被完成

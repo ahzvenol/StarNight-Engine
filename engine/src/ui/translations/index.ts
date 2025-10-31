@@ -42,7 +42,7 @@ onStoreReady.then((store) => {
     const lang = store.config.language as Reactive<Languages>
     // 如果没有设置默认语言,根据用户语言自动选择合适的翻译,如果不存在该翻译,回退到简体中文
     if (lang() === null) {
-        lang((Object.keys(translations).find((lang) => navigator.language.startsWith(lang)) as Languages) || 'zh-CN')
+        lang((Object.keys(translations).find((lang) => navigator.language.startsWith(lang)) as Languages) ?? 'zh-CN')
     }
     // 根据当前语言设置更新translation和document.documentElement.lang
     createEffect(

@@ -12,10 +12,10 @@ export const store = useReactive<Store>(null as unknown as Store)
 async function initializeStore() {
     localforage.config({ name: SystemDefaultStore().system.key })
 
-    const config = (await localforage.getItem<Store['config'] | null>('config')) || {}
-    const global = (await localforage.getItem<Store['global'] | null>('global')) || {}
-    const local = (await localforage.getItem<Store['local'] | null>('local')) || {}
-    const extra = (await localforage.getItem<Store['extra'] | null>('extra')) || {}
+    const config = (await localforage.getItem<Store['config'] | null>('config')) ?? {}
+    const global = (await localforage.getItem<Store['global'] | null>('global')) ?? {}
+    const local = (await localforage.getItem<Store['local'] | null>('local')) ?? {}
+    const extra = (await localforage.getItem<Store['extra'] | null>('extra')) ?? {}
 
     store(toMerged(SystemDefaultStore(), { config, global, local, extra }))
 

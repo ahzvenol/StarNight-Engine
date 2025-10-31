@@ -38,7 +38,7 @@ export const text = ActScope(
             function* (arg0) {
                 const element = document.createElement('div')
                 element.innerHTML = arg0
-                ui.text((i) => i || document.createElement('div')).append(element)
+                ui.text((i) => i ?? document.createElement('div')).append(element)
                 current.text((prev) => prev + element.outerHTML)
                 const rubys = element.querySelectorAll('ruby')
                 const split = SplitText.create(ui.text()!,
@@ -47,7 +47,7 @@ export const text = ActScope(
                 const nodes = split.chars.concat(Array.from(rubys)).sort(compareElementOrder)
                 const speed = config.textspeed() / 1000
                 const timeline = activetimelines.get(ui.text()!)
-                    || activetimelines.set(ui.text()!, gsap.timeline()).get(ui.text()!)!
+                    ?? activetimelines.set(ui.text()!, gsap.timeline()).get(ui.text()!)!
                 timeline.from(nodes, { duration: nodes.length * speed, ease: 'sine.out', stagger: speed, opacity: 0 })
                 const currentDuration = timeline.duration()
                 yield new Promise((resolve) => timeline.once('complete', resolve))

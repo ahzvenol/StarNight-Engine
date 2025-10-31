@@ -15,7 +15,7 @@ const scenarios = import.meta.glob(
 
 // 剧本入口,默认为index.scenario
 export const entry = ['mjs', 'js', 'mts', 'ts', 'jsx', 'tsx'].reduce<GameCompiledScenarioDSL>(
-    (acc, ext) => acc || scenarios[`/scenario/index.scenario.${ext}`]?.default, null as unknown as GameCompiledScenarioDSL
+    (acc, ext) => acc ?? scenarios[`/scenario/index.scenario.${ext}`]?.default, null as unknown as GameCompiledScenarioDSL
 )
 
 export const debug = Object.values(scenarios).map((scenario) => scenario?.default.debug).some(Boolean)
