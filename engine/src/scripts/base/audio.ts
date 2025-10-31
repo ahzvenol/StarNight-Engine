@@ -39,18 +39,18 @@ StarNight.ActEvents.start.subscribe(({ state, config, temp: { audios } }) => {
 })
 
 export type AudioSetCommandArgs = {
-    type: keyof AudioTracks
-    id?: string
-    src: string
-    volume?: number
-    html5?: boolean | undefined
-    loop?: boolean | undefined
+    type: keyof AudioTracks,
+    target: string,
+    src: string,
+    volume?: number,
+    html5?: boolean | undefined,
+    loop?: boolean | undefined,
     rate?: number | undefined
 }
 
 export const set = NonBlocking<AudioSetCommandArgs>(
     ({ state, output: { extime }, ui: { audio: audiotracks }, temp: { audios } }) =>
-        ({ type, id = type, ...args }) => {
+        ({ type, target, ...args }) => {
             const isNotEffectSocpe = state.isInitializing() || state.isFast()
             const isClip = type === 'clip'
             const isNotLoopSE = type === 'se' && args.loop !== true
@@ -63,13 +63,13 @@ export const set = NonBlocking<AudioSetCommandArgs>(
                 autoplay: true,
                 preload: !state.isInitializing()
             })
-            audios.set(id, audio)
+            audios.set(target, audio)
             // 如果音频不是循环的,就不希望它播放完毕之后再被其他事件调用play()了
             if (!args.loop) {
                 audio.once('end', () => {
                     audio.unload()
-                    if (audios.get(id) === audio) {
-                        audios.delete(id)
+                    if (audios.get(target) === audio) {
+                        audios.delete(target)
                     }
                 })
             }

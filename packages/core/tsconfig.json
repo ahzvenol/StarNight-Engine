@@ -12,9 +12,6 @@
         "noEmit": true,
         "isolatedModules": true,
         "baseUrl": ".",
-        "paths": {
-            "@/*": ["src/*"]
-        },
         "noErrorTruncation": true,
     }
 }

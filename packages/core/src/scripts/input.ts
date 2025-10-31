@@ -1,7 +1,7 @@
 import type { CommandTagBlocking } from '../types/Command'
 import type { GameRuntimeContext } from '../types/Game'
-import { Blocking } from '@/Decorator'
-import { StarNight } from '@/index'
+import { Blocking } from '../Decorator'
+import { StarNight } from '../index'
 
 StarNight.GameEvents.setup.subscribe(({ current, local, temp }) => {
     current.input([])

@@ -1,5 +1,5 @@
-import { resolve } from 'path'
 import type { PluginOption } from 'vite'
+import { resolve } from 'path'
 import glsl from 'vite-plugin-glsl'
 import legacy from '@vitejs/plugin-legacy'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -34,7 +34,8 @@ export default defineConfig(({ command }) => ({
     resolve: {
         alias: {
             '@': resolve(__dirname, './src'), // 设置为@ 则使用时为 "@/components/index.module.css"
-            scenario: resolve(__dirname, './scenario') // 为剧本文件提供单独的文件夹目录
+            scenario: resolve(__dirname, './scenario'), // 为剧本文件提供单独的文件夹目录
+            '@starnight/core': resolve(__dirname, '../packages/core/src') // 链接内核包动态热更新
         }
     },
     clearScreen: false, // 1. prevent vite from obscuring rust errors

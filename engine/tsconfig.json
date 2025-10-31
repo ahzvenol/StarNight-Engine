@@ -15,7 +15,8 @@
         "isolatedModules": true,
         "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["src/*"],
+            "@starnight/core": ["../packages/core/src"]
         },
         "noErrorTruncation": true,
         "ignoreDeprecations": "5.0",
