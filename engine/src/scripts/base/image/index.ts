@@ -117,6 +117,9 @@ function initializeSprite(sprite: SrcSprite) {
         sprite.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
         if (sprite.parent) {
             sprite.parent.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
+            if (sprite.parent.parent) {
+                sprite.parent.parent.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
+            }
         }
     }
     if (sprite.texture.baseTexture.valid) handleLoaded()

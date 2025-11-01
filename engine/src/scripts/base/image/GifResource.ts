@@ -36,7 +36,6 @@ export class GifResource extends BaseImageResource {
     public animationSpeed: number
     public readonly fps: number
 
-    private _arrayBuffer: ArrayBuffer | null = null
     private _frames: PrecomputedFrame[] = []
     private _currentTime = 0
     private _playing = false
@@ -58,10 +57,9 @@ export class GifResource extends BaseImageResource {
 
         this._loadPromise = (async () => {
             const res = await settings.ADAPTER.fetch(this.url)
-            this._arrayBuffer = await res.arrayBuffer()
+            const buffer = await res.arrayBuffer()
 
-            const buffer = this._arrayBuffer
-            if (!buffer || !buffer.byteLength) throw new Error('Invalid GIF buffer')
+            if (!buffer?.byteLength) throw new Error('Invalid GIF buffer')
 
             const gif = parseGIF(buffer)
             const gifFrames = decompressFrames(gif, true)
@@ -145,7 +143,6 @@ export class GifResource extends BaseImageResource {
         this.stop()
         super.dispose()
         this._frames = []
-        this._arrayBuffer = null
         this._loadPromise = null
     }
 
