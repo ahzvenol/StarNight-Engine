@@ -1,4 +1,4 @@
-import type { CommandTagBlocking, GameRuntimeContext, Reactive } from '@starnight/core'
+import type { CommandTagBlocking, Reactive } from '@starnight/core'
 import { Blocking, DynamicBlocking, GameState, StarNight } from '@starnight/core'
 import { System } from './index'
 
@@ -87,7 +87,7 @@ StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.choices(null))
 
 export const choose = Blocking(
     (context) =>
-        async (arg0) => {
+        async <T extends number | string>(arg0: Array<ChoiceItem<T>>): Promise<T> => {
             const { state, config, ui: { input }, output } = context
             const choices = arg0.map((item) => {
                 const { promise, resolve } = Promise.withResolvers<number | string>()
@@ -98,6 +98,6 @@ export const choose = Blocking(
             input.choices(null)
             if (config.stopfastonchoice() && state.isFast()) output.state(GameState.Normal)
             if (config.stopautoonchoice() && state.isAuto()) output.state(GameState.Normal)
-            return chosen
+            return chosen as T
         }
-) as (<T extends number | string>(arg0: Array<ChoiceItem<T>>) => Function1<GameRuntimeContext, Promise<T>>) & CommandTagBlocking
+)

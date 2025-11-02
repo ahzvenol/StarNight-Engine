@@ -96,9 +96,24 @@ export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Parti
 }
 
 /** 将命令的类型转换为适用于剧本的形式，这不会改变命令的实际内容 */
-export function Api<T, R>(fn: StandardCommand<T, R> & CommandTagDynamic): Function1<T, R> & CommandTagDynamic
-export function Api<T, R>(fn: StandardCommand<T, R> & CommandTagNonBlocking): Function1<T, R> & CommandTagNonBlocking
-export function Api<T, R>(fn: StandardCommand<T, R> & CommandTagBlocking): Function1<T, R> & CommandTagBlocking
+export function Api<T, R>(fn: StandardDynamicCommand<T, R>): Function1<T, R> & CommandTagDynamic
+export function Api<T, R>(fn: StandardNonBlockingCommand<T, R>): Function1<T, R> & CommandTagNonBlocking
+export function Api<T, R>(fn: StandardBlockingCommand<T, R>): Function1<T, R> & CommandTagBlocking
 export function Api<T, R>(fn: StandardCommand<T, R>): Function1<T, R> {
+    return fn as any
+}
+
+export function GenericApi<T, R>(fn: StandardCommand<T, R>): Function1<T, R> {
+    return fn as any
+}
+
+export function TagGenericApi<T, R, F extends Function1<any, any>>(fn: T, type: StandardDynamicCommand<T, R>): F & CommandTagDynamic
+export function TagGenericApi<T, R, F extends Function1<any, any>>(fn: T, type: StandardNonBlockingCommand<T, R>): F & CommandTagNonBlocking
+export function TagGenericApi<T, R, F extends Function1<any, any>>(fn: T, type: StandardBlockingCommand<T, R>): F & CommandTagBlocking
+export function TagGenericApi<T, F>(fn: F):
+T extends StandardDynamicCommand<any, any> ? T & CommandTagDynamic :
+    T extends StandardNonBlockingCommand<any, any> ? T & CommandTagNonBlocking :
+        T extends StandardBlockingCommand<any, any> ? T & CommandTagBlocking :
+            never {
     return fn as any
 }

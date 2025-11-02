@@ -1,9 +1,9 @@
-import type { CommandTagBlocking, CommandTagDynamic, CommandTagNonBlocking } from '@starnight/core'
-import type { 用户输入命令参数别名, 用户选择命令参数别名, 动效动画命令参数别名, 清空立绘命令参数别名, 添加动画命令参数别名 } from './translation'
-import { Blocking, DynamicMacro } from '@starnight/core'
+import type { CommandTagBlocking, CommandTagDynamic } from '@starnight/core'
+import type { 用户输入命令参数别名, 用户选择命令参数别名, 添加动画命令参数别名 } from './translation'
+import { Blocking } from '@starnight/core'
 import { MergedCommands } from '../../scripts/index'
-import { Alias, Api, flipObject } from '../Translate'
-import { 通用命令参数映射, 添加动画命令参数映射, 音频命令参数映射, 动效动画映射, 基本动画命令参数映射 } from './translation'
+import { Alias, Api, GenericApi, TagGenericApi } from '../Translate'
+import { 通用命令参数映射, 添加动画命令参数映射, 音频命令参数映射, 基本动画命令参数映射 } from './translation'
 
 /**
  * 设置背景图片，使用 GSAP 实现，支持位置、缩放、滤镜等属性。
@@ -159,35 +159,7 @@ export const 添加动画 = Api(
  * $.添加滤镜({ 作用目标: "咸鱼", 滤镜实例: new BlurFilter(5) })
  */
 export const 添加滤镜 = Api(
-    Alias(MergedCommands.Image.filter, Object.assign(通用命令参数映射, { filter: '滤镜实例' } as const))
-)
-
-/**
- * 为指定目标应用一段动效动画。
- * @remarks
- * - 动效动画会独立于主动画序列同时运行，但同一时间只应运行一个动效动画。
- * @param 参数对象
- * @param .作用目标 - 动画应用的目标标识符，舞台的标识符为0，背景的标识符为1（必需）
- * @param .预设名称 - 动画名称，如 "震动" 或 "摇晃"（必需）
- * @param .持续时间 - 动画持续时间，单位毫秒（必需）
- * @param .X轴幅度 - 横向动画幅度（可选，需至少提供 X轴幅度 或 Y轴幅度 两个参数中的一个）
- * @param .Y轴幅度 - 纵向动画幅度（可选，需至少提供 X轴幅度 或 Y轴幅度 两个参数中的一个）
- * @example
- * $.动效动画({ 作用目标: "咸鱼", 预设名称: "摇晃", Y轴幅度: 15, 持续时间: 1000 })
- */
-export const 动效动画 = Api(
-    DynamicMacro<动效动画命令参数别名>(
-        () =>
-            function* ({ 作用目标, 预设名称, 持续时间, X轴幅度, Y轴幅度 }) {
-                yield MergedCommands.Image.animation({
-                    target: 作用目标,
-                    type: flipObject(动效动画映射)[预设名称],
-                    duration: 持续时间,
-                    x: X轴幅度 as unknown as number,
-                    y: Y轴幅度 as unknown as number
-                })
-            }
-    )
+    Alias(MergedCommands.Image.filters, Object.assign(通用命令参数映射, { filter: '滤镜实例' } as const))
 )
 
 /**
@@ -207,17 +179,6 @@ export const 动效动画 = Api(
 export const 关闭图像 = Api(
     Alias(MergedCommands.Image.close, Object.assign(通用命令参数映射, {} as const))
 )
-
-/**
- * 移除所有立绘，支持淡出动画。
- * @remarks
- * - `持续时间` 控制立绘消失时的淡出动画时长。
- * @example
- * $.清空立绘()
- */
-export const 清空立绘 = Api(
-    Alias(MergedCommands.Image.clean, Object.assign(通用命令参数映射, {} as const))
-) as ((arg0: 清空立绘命令参数别名) => void) & CommandTagNonBlocking
 
 /**
  * 设置背景音乐（BGM），使用 Howler 实现，支持音量、循环播放等属性。
@@ -309,16 +270,6 @@ export const 关闭音频 = Api(
 )
 
 /**
- * 播放一段转场动画。
- * @remarks
- * - 转场动画用于场景切换，但不会自动处理背景或立绘的转场。
- * @param 预设名称 - 转场动画名称（如 "BlindH8"）
- * @example
- * $.转场动画("BlindH8")
- */
-export const 转场动画 = Api(MergedCommands.Transition.apply)
-
-/**
  * 播放视频。
  * @param 参数对象
  * @param .资源路径 - 视频的文件路径（必需）
@@ -365,7 +316,7 @@ export const 用户选择 = Api(
         (context) =>
             async (args) => {
                 return MergedCommands.Input.choose(
-                    args.map(({ 标识符, 描述文本, 禁用 }) => ({ id: 标识符, text: 描述文本, disable: 禁用 }))
+                    args.map(({ 标识符, 描述文本, 禁用 }) => ({ label: 标识符, text: 描述文本, disable: 禁用 }))
                 )(context)
             }
     )
@@ -462,7 +413,7 @@ export const 嵌入页面 = Api(
  * @example
  * $$.基本输入(async () => new Date().toISOString())
  */
-export const 基本输入 = Api(MergedCommands.System.input) as (<T>(arg0: Function0<Promise<T>>) => T) & CommandTagBlocking
+export const 基本输入 = TagGenericApi(GenericApi(MergedCommands.System.input), MergedCommands.System.input)
 
 /**
  * 为任意对象添加动画效果，使用 GSAP 实现。
