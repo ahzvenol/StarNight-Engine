@@ -15,31 +15,31 @@ export type CommandOutput = {
 }
 
 /** 使用生成器函数定义一个耗时无阻塞命令 */
-export type DynamicCommand<T, R> = Function1<GameRuntimeContext, Function1<T, Generator<Promise<unknown>, R, void>>>
+export type DynamicCommand<T, R> = (ctx: GameRuntimeContext) => (arg0: T) => Generator<Promise<unknown>, R, void>
 
 /** 使用普通函数定义一个不耗时无阻塞命令 */
-export type NonBlockingCommand<T, R> = Function1<GameRuntimeContext, Function1<T, R>>
+export type NonBlockingCommand<T, R> = (ctx: GameRuntimeContext) => (arg0: T) => R
 
 /** 使用异步函数定义一个耗时阻塞命令 */
 export type BlockingCommand<T, R> = (ctx: GameRuntimeContext) => (arg0: T) => Promise<R>
 
 // 使用生成器函数定义一个宏命令
-export type MacroCommand<T, R> = Function1<GameRuntimeContext, Function1<T, GameFragmentGenerator<R>>>
+export type MacroCommand<T, R> = (ctx: GameRuntimeContext) => (arg0: T) => GameFragmentGenerator<R>
+
+// Resolved命令已经传入所需参数,等待注入Context
+export type StandardResolvedCommand<R> = (ctx: GameRuntimeContext) => R
+
+// Standard命令已经捕获异常,执行永不失败
+export type StandardCommand<T, R> = (arg0: T) => (ctx: GameRuntimeContext) => Promise<R>
+
+export type StandardDynamicCommand<T, R> = (arg0: T) => (ctx: GameRuntimeContext) => Promise<R>
+
+export type StandardNonBlockingCommand<T, R> = StandardCommand<T, R> & CommandTagNonBlocking
+
+export type StandardBlockingCommand<T, R> = ((arg0: T) => (ctx: GameRuntimeContext) => Promise<R>)
 
 export type CommandTagNonBlocking = Tagged<object, 'Async'>
 
 export type CommandTagBlocking = Tagged<object, 'Await'>
 
 export type CommandTagDynamic = CommandTagNonBlocking & CommandTagBlocking
-
-// Resolved命令已经传入所需参数,等待注入Context
-export type StandardResolvedCommand<R> = Function1<GameRuntimeContext, R>
-
-// Standard命令已经捕获异常,执行永不失败
-export type StandardCommand<T, R> = (arg0: T) => (ctx: GameRuntimeContext) => Promise<R>
-
-export type StandardDynamicCommand<T, R> = StandardCommand<T, Promise<R>> & CommandTagDynamic
-
-export type StandardNonBlockingCommand<T, R> = StandardCommand<T, R> & CommandTagNonBlocking
-
-export type StandardBlockingCommand<T, R> = StandardCommand<T, Promise<R>> & CommandTagBlocking
