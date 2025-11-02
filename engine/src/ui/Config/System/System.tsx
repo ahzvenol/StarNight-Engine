@@ -1,5 +1,6 @@
 import type { Signal } from 'micro-reactive-solid'
 import type { Component } from 'solid-js'
+import type { Languages } from '../../translations'
 import { Clipboard } from '@capacitor/clipboard'
 import { omit, toMerged } from 'es-toolkit'
 import * as LZString from 'lz-string'
@@ -77,7 +78,7 @@ export const System: Component = () => {
                     />
                 </Cell>
                 <Cell title={t.language.title}>
-                    <For each={Object.keys(translations) as (keyof typeof translations)[]}>
+                    <For each={Object.keys(translations) as Languages[]}>
                         {(key) => (
                             <Button key={key} signal={config.language}>
                                 {descriptions[key]}

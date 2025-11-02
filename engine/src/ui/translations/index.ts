@@ -11,9 +11,9 @@ import { French } from './French'
 import { German } from './German'
 import { Japanese } from './Japanese'
 
-type Translations = typeof translations
+export type Translations = typeof translations
 
-type Languages = keyof Translations
+export type Languages = keyof Translations
 
 export const translations = {
     'zh-CN': ChineseSimplified,

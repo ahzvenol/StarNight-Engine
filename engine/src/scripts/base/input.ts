@@ -70,7 +70,7 @@ export const text = Blocking<TextInput, string>(
         }
 )
 
-type ChoiceItem<T extends number | string> = { id: T, text: string, disable?: true }
+type ChoiceItem<T extends number | string> = { label: T, text: string, disable?: true }
 
 declare module '@starnight/core' {
     interface GameConfig {
@@ -91,7 +91,7 @@ export const choose = Blocking(
             const { state, config, ui: { input }, output } = context
             const choices = arg0.map((item) => {
                 const { promise, resolve } = Promise.withResolvers<number | string>()
-                return { ...item, promise, resolve: () => resolve(item.id) }
+                return { ...item, promise, resolve: () => resolve(item.label) }
             })
             input.choices(choices)
             const chosen = await System.input(() => Promise.race(choices.map((e) => e.promise)))(context)
