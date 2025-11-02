@@ -97,13 +97,15 @@ const _apply = Dynamic<{ target: gsap.TweenTarget, transform: TweenBlock }>(
                 ?? activetimelines.set(target, gsap.timeline()).get(target)!
             // 为了position参数工作正常,始终需要维护map并将subTimeline添加到根timeline
             timeline.add(subTimeline, (transform.position))
-            // 如果当前存在无限循环的动画,就不再计入时间统计,此类timeline将在下一幕开始时被完成
-            const isInfinite = timeline.getChildren().some((a) => a.repeat() === -1)
             if (state.isInitializing()) subTimeline.progress(1)
-            else if (!isInfinite && subTimeline.endTime() > timeline.time()) {
-                yield new Promise((res) => subTimeline.eventCallback('onComplete', res))
-                // 这行代码用于快进时设置最终状态,如果动画正常运行完毕,则不产生任何效果
-                if (subTimeline.endTime() === timeline.duration()) timeline.progress(1)
+            else {
+                // 如果当前存在无限循环的动画,就不再计入时间统计,此类timeline将在下一幕开始时被完成
+                const isInfinite = timeline.getChildren().some((a) => a.repeat() === -1)
+                if (!isInfinite && subTimeline.endTime() > timeline.time()) {
+                    yield new Promise((res) => subTimeline.eventCallback('onComplete', res))
+                    // 这行代码用于快进时设置最终状态,如果动画正常运行完毕,则不产生任何效果
+                    if (subTimeline.endTime() === timeline.duration()) timeline.progress(1)
+                }
             }
         }
 )
