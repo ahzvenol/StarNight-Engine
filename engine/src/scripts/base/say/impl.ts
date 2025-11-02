@@ -1,6 +1,7 @@
-import type { Reactive } from '@starnight/core'
+import type { GameLocalData, Reactive } from '@starnight/core'
 import { ActScope, Dynamic, NonBlocking, StarNight } from '@starnight/core'
 import { gsap } from 'gsap'
+import { cloneDeep } from 'es-toolkit'
 import { SplitText } from '@/lib/SplitText'
 
 gsap.registerPlugin(SplitText)
@@ -74,4 +75,30 @@ export const name = ActScope(
     NonBlocking<string>((context) => (arg0) => {
         context.current.name(arg0)
     })
+)
+
+export type BacklogCommandArgs = { text: string, name?: string, clip?: string }
+
+export type BacklogActData = { local: GameLocalData } & BacklogCommandArgs
+
+declare module '@starnight/core' {
+    interface GameConfig {
+        backlogmaxlength: number
+    }
+    interface GameUIInternalData {
+        backlog: Reactive<Array<BacklogActData>>
+    }
+}
+
+StarNight.GameEvents.setup.subscribe(({ ui }) => {
+    ui.backlog = StarNight.useReactive([])
+})
+
+export const log = NonBlocking<BacklogCommandArgs>(
+    ({ local, current, config, ui: { backlog } }) =>
+        ({ text, name, clip }) => {
+            if (current.count() <= local.count - config.backlogmaxlength()) return
+            backlog().unshift({ local: cloneDeep(current()), text, name, clip })
+            if (backlog().length > config.backlogmaxlength()) backlog().pop()
+        }
 )

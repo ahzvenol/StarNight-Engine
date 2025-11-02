@@ -17,7 +17,7 @@ export const Iframe: Component = () => {
                         }
                     })
                 }}
-                src={ui().input.iframe()!.src}
+                src={ui().input.iframe()!.url}
             />
         </div>
     )

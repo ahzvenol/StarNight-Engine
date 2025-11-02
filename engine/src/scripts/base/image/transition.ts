@@ -1,6 +1,6 @@
-import type { TransitionFunction } from '.'
+import type { TransitionFunction } from './impl'
 import { AlphaFilter, BLEND_MODES, Texture } from 'pixi.js'
-import { ImageDissolveFilter } from './ImageDissolveFilter'
+import { ImageDissolveFilter } from './utils/ImageDissolveFilter'
 
 export const Dissolve: (duration: number) => TransitionFunction =
 (duration) =>

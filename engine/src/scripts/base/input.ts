@@ -30,20 +30,18 @@ export const click = DynamicBlocking(
         }
 )
 
-type IframeInput = { src: string }
-
 interface GameUIInputData {
-    iframe: null | (IframeInput & InputResolve<unknown>)
+    iframe: null | ({ url: string } & InputResolve<unknown>)
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.iframe(null))
 
-export const iframe = Blocking<IframeInput, unknown>(
+export const iframe = Blocking<string, unknown>(
     (context) =>
-        async ({ src }) => {
+        async (url) => {
             const { ui: { input: { iframe } } } = context
             const { promise, resolve } = Promise.withResolvers<unknown>()
-            iframe(() => ({ src, resolve }))
+            iframe(() => ({ url, resolve }))
             const res = await System.input(() => promise)(context)
             iframe(() => null)
             return res
@@ -60,10 +58,10 @@ StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.text(null))
 
 export const text = Blocking<TextInput, string>(
     (context) =>
-        async (args) => {
+        async (arg0) => {
             const { ui: { input: { text } } } = context
             const { promise, resolve } = Promise.withResolvers<string>()
-            text(Object.assign({ resolve }, args))
+            text(Object.assign({ resolve }, arg0))
             const res = await System.input(() => promise)(context)
             text(() => null)
             return res
