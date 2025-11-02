@@ -106,14 +106,3 @@ export function Api<T, R>(fn: StandardCommand<T, R>): Function1<T, R> {
 export function GenericApi<T, R>(fn: StandardCommand<T, R>): Function1<T, R> {
     return fn as any
 }
-
-export function TagGenericApi<T, R, F extends Function1<any, any>>(fn: T, type: StandardDynamicCommand<T, R>): F & CommandTagDynamic
-export function TagGenericApi<T, R, F extends Function1<any, any>>(fn: T, type: StandardNonBlockingCommand<T, R>): F & CommandTagNonBlocking
-export function TagGenericApi<T, R, F extends Function1<any, any>>(fn: T, type: StandardBlockingCommand<T, R>): F & CommandTagBlocking
-export function TagGenericApi<T, F>(fn: F):
-T extends StandardDynamicCommand<any, any> ? T & CommandTagDynamic :
-    T extends StandardNonBlockingCommand<any, any> ? T & CommandTagNonBlocking :
-        T extends StandardBlockingCommand<any, any> ? T & CommandTagBlocking :
-            never {
-    return fn as any
-}

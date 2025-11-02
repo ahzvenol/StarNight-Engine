@@ -2,7 +2,7 @@ import type { CommandTagBlocking, CommandTagDynamic } from '@starnight/core'
 import type { 用户输入命令参数别名, 用户选择命令参数别名, 添加动画命令参数别名 } from './translation'
 import { Blocking } from '@starnight/core'
 import { MergedCommands } from '../../scripts/index'
-import { Alias, Api, GenericApi, TagGenericApi } from '../Translate'
+import { Alias, Api, GenericApi } from '../Translate'
 import { 通用命令参数映射, 添加动画命令参数映射, 音频命令参数映射, 基本动画命令参数映射 } from './translation'
 
 /**

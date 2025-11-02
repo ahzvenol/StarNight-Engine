@@ -101,7 +101,7 @@ export function NonBlocking<T = void, R = void>(fn: NonBlockingCommand<T, R>): S
 /**
  * 需要等待用户输入的命令，在完成命令行为之前不能解除阻塞。
  */
-export function Blocking<T, R>(fn: BlockingCommand<T, R>): StandardBlockingCommand<T, R> {
+export function Blocking<T = void, R = void>(fn: BlockingCommand<T, R>): StandardBlockingCommand<T, R> {
     return ((args) => (context) => catchAsync(() => fn(context)(args))) as StandardBlockingCommand<T, R>
 }
 

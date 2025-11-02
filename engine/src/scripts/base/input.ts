@@ -1,4 +1,4 @@
-import type { CommandTagBlocking, Reactive } from '@starnight/core'
+import type { Reactive } from '@starnight/core'
 import { Blocking, DynamicBlocking, GameState, StarNight } from '@starnight/core'
 import { System } from './index'
 
