@@ -7,7 +7,7 @@ import { GUIGameRootState } from '../GameRoot'
 import { useDialog } from '../GlobalDialog/GlobalDialog'
 import { GUIRootState } from '../GUIRoot'
 import { GUIHomeRootState } from '../HomeRoot'
-import { translation } from '../translations'
+import { translation } from '../../locales'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './MenuPanel.module.scss'
 

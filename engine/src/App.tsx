@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { createEffect, createResource, Match, Switch } from 'solid-js'
 import { onStoreReady } from './store'
-import { GUIRoot } from './ui/GUIRoot'
+import { GUIRoot } from './views/GUIRoot'
 import { isMobile, isTouchDevice } from './utils/checkEnv'
 import { log } from './utils/Logger'
 import { exitFullscreen, requestFullscreen } from './utils/fullscreen'

@@ -8,7 +8,7 @@ import { Show } from 'solid-js'
 import { starnight } from '@/store/starnight'
 import { useGame } from '../GameRoot'
 import { useDialog } from '../GlobalDialog/GlobalDialog'
-import { translation } from '../translations'
+import { translation } from '../../locales'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './SaveLoad.module.scss'
 

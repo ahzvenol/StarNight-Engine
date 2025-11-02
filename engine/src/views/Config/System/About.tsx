@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { Left } from 'icon-park-solid'
 import { store } from '@/store'
-import { translation } from '@/ui/translations'
+import { translation } from '@/locales'
 import styles from './about.module.scss'
 
 export const About: Component<{ close: () => void }> = ({ close }) => {

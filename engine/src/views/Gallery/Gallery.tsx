@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { CloseSmall } from 'icon-park-solid'
 import { GUIHomeRootState } from '@/ui/HomeRoot'
-import { translation } from '../translations'
+import { translation } from '../../locales'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './Gallery.module.scss'
 import { GalleryCG } from './GalleryCG'

@@ -19,7 +19,7 @@ import { GUIGameRootState, useGame } from '@/ui/GameRoot'
 import { useDialog } from '@/ui/GlobalDialog/GlobalDialog'
 import { GUIRootState } from '@/ui/GUIRoot'
 import { useSoundEffect } from '../useSoundEffect'
-import { translation } from '../translations'
+import { translation } from '../../locales'
 import { showUI } from './Game'
 import styles from './ControlPanel.module.scss'
 

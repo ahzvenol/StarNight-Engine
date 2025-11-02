@@ -3,7 +3,7 @@ import { Clone } from '@/utils/ui/Elements'
 import { store } from '@/store'
 import { useGame } from '../GameRoot'
 import { GUIHomeRootState } from '../HomeRoot'
-import { translation } from '../translations'
+import { translation } from '../../locales'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './Title.module.scss'
 

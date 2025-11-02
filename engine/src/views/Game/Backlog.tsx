@@ -7,7 +7,7 @@ import { ui } from '@/store/starnight'
 import { GUIGameRootState, useGame } from '@/ui/GameRoot'
 import { suppress } from '@/utils/solid/suppress'
 import { useSoundEffect } from '../useSoundEffect'
-import { translation } from '../translations'
+import { translation } from '../../locales'
 import { Clip } from '../../store/audio'
 import styles from './Backlog.module.scss'
 
