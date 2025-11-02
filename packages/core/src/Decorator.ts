@@ -1,15 +1,10 @@
 /* eslint-disable @stylistic/max-statements-per-line */
-import type { Tag } from 'type-fest/source/tagged'
 import type {
     BlockingCommand,
-    CommandTagBlocking,
-    CommandTagDynamic,
-    CommandTagNonBlocking,
     DynamicCommand,
     MacroCommand,
     NonBlockingCommand,
     StandardBlockingCommand,
-    StandardCommand,
     StandardDynamicCommand,
     StandardNonBlockingCommand,
     StandardResolvedCommand
@@ -20,25 +15,33 @@ import { isPromise, noop } from 'es-toolkit'
 /**
  * 只在本幕内产生效果的命令，由此不需要初始化。
  */
-export function ActScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardCommand<T, void | Promise<R>> & CommandTagDynamic
-export function ActScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardCommand<T, void | R> & CommandTagNonBlocking
-export function ActScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardCommand<T, void | Promise<R>> & CommandTagBlocking
-export function ActScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, void | R> {
-    return (args) => (context) => {
-        if (!context.state.isInitializing()) return fn(args)(context)
-    }
+export function ActScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, void | R>
+export function ActScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardNonBlockingCommand<T, void | R>
+export function ActScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardBlockingCommand<T, void | R>
+export function ActScope<T, R>(
+    fn: | StandardDynamicCommand<T, R>
+        | StandardNonBlockingCommand<T, R>
+        | StandardBlockingCommand<T, R>
+): typeof fn {
+    return ((args) => (context: GameRuntimeContext) => {
+        if (!context.state.isInitializing()) return fn(args)(context as never)
+    }) as typeof fn
 }
 
 /**
  * 只在执行过程中产生效果的命令，这样的命令应当也是 ActScope 的。
  */
-export function EffectScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardCommand<T, void | Promise<R>> & CommandTagDynamic
-export function EffectScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardCommand<T, void | R> & CommandTagNonBlocking
-export function EffectScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardCommand<T, void | Promise<R>> & CommandTagBlocking
-export function EffectScope<T, R>(fn: StandardCommand<T, R>): StandardCommand<T, void | R> {
-    return (args) => (context) => {
-        if (!context.state.isInitializing() && !context.state.isFast()) return fn(args)(context)
-    }
+export function EffectScope<T, R>(fn: StandardDynamicCommand<T, R>): StandardDynamicCommand<T, void | R>
+export function EffectScope<T, R>(fn: StandardNonBlockingCommand<T, R>): StandardNonBlockingCommand<T, void | R>
+export function EffectScope<T, R>(fn: StandardBlockingCommand<T, R>): StandardBlockingCommand<T, void | R>
+export function EffectScope<T, R>(
+    fn: | StandardDynamicCommand<T, R>
+        | StandardNonBlockingCommand<T, R>
+        | StandardBlockingCommand<T, R>
+): typeof fn {
+    return ((args) => (context: GameRuntimeContext) => {
+        if (!context.state.isInitializing() && !context.state.isFast()) return fn(args)(context as never)
+    }) as typeof fn
 }
 
 // 辅助函数,捕获命令异常
@@ -150,3 +153,23 @@ export function NonBlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): St
 export function BlockingMacro<T = void, R = void>(fn: MacroCommand<T, R>): StandardBlockingCommand<T, R> {
     return ((args) => (context) => catchAsync(() => Fork((context) => fn(context)(args))(context))) as StandardBlockingCommand<T, R>
 }
+
+// 使用
+interface User { name: string, age: number }
+// 1. 定义品牌 symbol（唯一）
+declare const GameUserTag: unique symbol;
+
+// 2. GameUser 类型（带隐式品牌）
+type GameUser = User & { [GameUserTag]?: never };
+
+// 创建
+const u1: GameUser = { name: 'a', age: 1, } // OK
+const u2: User = { name: 'b', age: 2 }
+type IsGameUser<T> =
+  T extends User
+      ? [typeof GameUserTag] extends [keyof T]
+              ? true
+              : false
+      : false
+type a = IsGameUser<User>
+type a = IsGameUser<GameUser>

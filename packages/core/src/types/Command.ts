@@ -1,5 +1,4 @@
 import type { Signal } from 'micro-reactive-wrapper'
-import type { Tagged } from 'type-fest'
 import type { GameFragmentGenerator, GameRuntimeContext, GameState } from './Game'
 
 /** 会在幕循环中被处理的特殊值 */
@@ -14,14 +13,26 @@ export type CommandOutput = {
     extime: Signal<Promise<unknown> | undefined>
 }
 
+export declare const CommandTagNonBlocking: unique symbol
+
+export declare const CommandTagBlocking: unique symbol
+
+export declare const CommandTagDynamic: unique symbol
+
+export type CommandTagNonBlocking = { [CommandTagNonBlocking]?: never }
+
+export type CommandTagBlocking = { [CommandTagBlocking]?: never }
+
+export type CommandTagDynamic = { [CommandTagDynamic]?: never }
+
 /** 使用生成器函数定义一个耗时无阻塞命令 */
-export type DynamicCommand<T, R> = (ctx: GameRuntimeContext) => (arg0: T) => Generator<Promise<unknown>, R, void>
+export type DynamicCommand<T, R> = (ctx: GameRuntimeContext & { [CommandTagDynamic]?: never }) => (arg0: T) => Generator<Promise<unknown>, R, void>
 
 /** 使用普通函数定义一个不耗时无阻塞命令 */
-export type NonBlockingCommand<T, R> = (ctx: GameRuntimeContext) => (arg0: T) => R
+export type NonBlockingCommand<T, R> = (ctx: GameRuntimeContext & { [CommandTagNonBlocking]?: never }) => (arg0: T) => R
 
 /** 使用异步函数定义一个耗时阻塞命令 */
-export type BlockingCommand<T, R> = (ctx: GameRuntimeContext) => (arg0: T) => Promise<R>
+export type BlockingCommand<T, R> = (ctx: GameRuntimeContext & { [CommandTagBlocking]?: never }) => (arg0: T) => Promise<R>
 
 // 使用生成器函数定义一个宏命令
 export type MacroCommand<T, R> = (ctx: GameRuntimeContext) => (arg0: T) => GameFragmentGenerator<R>
@@ -30,16 +41,10 @@ export type MacroCommand<T, R> = (ctx: GameRuntimeContext) => (arg0: T) => GameF
 export type StandardResolvedCommand<R> = (ctx: GameRuntimeContext) => R
 
 // Standard命令已经捕获异常,执行永不失败
-export type StandardCommand<T, R> = (arg0: T) => (ctx: GameRuntimeContext) => Promise<R>
+export type StandardCommand<T, R> = (arg0: T) => (ctx: GameRuntimeContext) => R
 
-export type StandardDynamicCommand<T, R> = (arg0: T) => (ctx: GameRuntimeContext) => Promise<R>
+export type StandardDynamicCommand<T, R> = (arg0: T) => (ctx: GameRuntimeContext & { [CommandTagDynamic]?: never }) => Promise<R>
 
-export type StandardNonBlockingCommand<T, R> = StandardCommand<T, R> & CommandTagNonBlocking
+export type StandardNonBlockingCommand<T, R> = (arg0: T) => (ctx: GameRuntimeContext & { [CommandTagNonBlocking]?: never }) => R
 
-export type StandardBlockingCommand<T, R> = ((arg0: T) => (ctx: GameRuntimeContext) => Promise<R>)
-
-export type CommandTagNonBlocking = Tagged<object, 'Async'>
-
-export type CommandTagBlocking = Tagged<object, 'Await'>
-
-export type CommandTagDynamic = CommandTagNonBlocking & CommandTagBlocking
+export type StandardBlockingCommand<T, R> = (arg0: T) => (ctx: GameRuntimeContext & { [CommandTagBlocking]?: never }) => Promise<R>
