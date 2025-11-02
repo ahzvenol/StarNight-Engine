@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { Reactive } from 'micro-reactive-wrapper'
 import type { Except } from 'type-fest'
-import type { StarNightInstance, StarNightStateStatic } from '@/StarNight'
+import type { StarNightInstance, StarNightStateStatic } from '../StarNight'
 import type { CommandOutput } from './Command'
 
 export enum GameState {
@@ -19,7 +19,7 @@ export interface GameConfig {
 
 export type GameFragmentGenerator<R> = Generator<unknown, R, unknown>
 
-export type GameFragment<R> = Function1<GameRuntimeContext, GameFragmentGenerator<R>>
+export type GameFragment<R> = (ctx: GameRuntimeContext) => GameFragmentGenerator<R>
 
 export type GameScenario<R> = Generator<GameFragment<R>, unknown, unknown>
 

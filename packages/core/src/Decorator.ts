@@ -38,11 +38,11 @@ export function EffectScope<T, R>(fn: StandardCommand<T, R>): typeof fn {
 }
 
 // 辅助函数,捕获命令异常
-function catchAsync<R>(output: Function0<Promise<R>>): Promise<R | void> {
+function catchAsync<R>(output: () => Promise<R>): Promise<R | void> {
     return output().catch((error) => console.error('命令运行出错:', error))
 }
 
-function catchSync<R>(output: Function0<R>): R | void {
+function catchSync<R>(output: () => R): R | void {
     try { return output() } catch (error) { console.error('命令运行出错:', error) }
 }
 
