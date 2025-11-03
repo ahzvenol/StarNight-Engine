@@ -1,4 +1,4 @@
-import type { ImageBGCommandArgs, ImageSpriteCommandArgs } from '../base/image'
+import type { ImageBGCommandArgs, ImageSpriteCommandArgs } from '../api/image'
 import { NonBlockingMacro } from '@starnight/core'
 import { Image, Var } from '../api'
 

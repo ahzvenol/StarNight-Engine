@@ -1,4 +1,4 @@
-import type { VideoCommandArgs } from '../base/video'
+import type { VideoCommandArgs } from '../api/video'
 import { BlockingMacro } from '@starnight/core'
 import { Var, Video } from '../api'
 

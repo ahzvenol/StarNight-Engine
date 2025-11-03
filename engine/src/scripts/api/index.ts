@@ -1,5 +1,5 @@
 export * as Audio from './audio'
-export * as Image from './image/impl'
+export * as Image from './image'
 export * as Say from './say'
 export * as Input from './input'
 export * as State from './state'

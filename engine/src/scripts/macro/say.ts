@@ -1,4 +1,4 @@
-import type { SayCommandArgs } from '../base/say'
+import type { SayCommandArgs } from '../api/say'
 import { DynamicMacro } from '@starnight/core'
 import { Say } from '../api'
 

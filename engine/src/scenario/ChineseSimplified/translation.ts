@@ -1,5 +1,5 @@
-import type { TweenCommandArgs } from '@/scripts/base/tween'
-import type { ImageTarget, AnimationTypes, ImageTargetBackground, ImageTargetSprite, ImageTargetStage, ImageTweenArgs } from '../../scripts/base/image/impl'
+import type { TweenCommandArgs } from '@/scripts/api/tween'
+import type { ImageTarget, AnimationTypes, ImageTargetBackground, ImageTargetSprite, ImageTargetStage, ImageTweenArgs } from '../../scripts/api/image/impl'
 
 export const 通用命令参数映射 = {
     id: '标识符',
