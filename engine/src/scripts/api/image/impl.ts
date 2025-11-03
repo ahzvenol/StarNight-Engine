@@ -152,7 +152,7 @@ export const set = DynamicMacro<ImageSetCommandArgs>(
                 ?? stage.addChild(new RenderLayerContainer<NestedContainer<LazySprite>>({ name: target }))
             const before = layer.getChildAt(-1)
             const after = src === null ? null
-                : layer.addChild(new NestedContainer<LazySprite>(new LazySprite(src, { resourceOptions: { muted: true } })))
+                : layer.addChild(new NestedContainer(new LazySprite(src, { resourceOptions: { muted: true } })))
             // z这个属性是特殊的,因为它只能设置在顶层容器上,否则不起作用
             layer.zIndex = z ?? layer.zIndex
             after?.once('loaded', () => handleLoaded(after.internal))
