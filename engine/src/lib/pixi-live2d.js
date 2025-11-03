@@ -25,9 +25,9 @@ var __async = (__this, __arguments, generator) => {
     step((generator = generator.apply(__this, __arguments)).next());
   });
 };
-import { utils, Matrix, Texture, Transform, Point, ObservablePoint } from 'pixi.js';
-import { Container } from 'pixi.js';
-import { AlphaFilter } from 'pixi.js';
+import { utils, Matrix, Texture, Transform, Point, ObservablePoint } from "pixi.js";
+import { Container } from "pixi.js";
+import { AlphaFilter } from "pixi.js";
 const LOGICAL_WIDTH = 2;
 const LOGICAL_HEIGHT = 2;
 var CubismConfig;
@@ -3239,11 +3239,16 @@ class Cubism2InternalModel extends InternalModel {
       return;
     }
     try {
-      this.eyeBlink.blinkInterval = blinkParam.blinkInterval;
-      this.eyeBlink.blinkIntervalRandom = blinkParam.blinkIntervalRandom;
-      this.eyeBlink.closingDuration = blinkParam.closingDuration;
-      this.eyeBlink.closedDuration = blinkParam.closedDuration;
-      this.eyeBlink.openingDuration = blinkParam.openingDuration;
+      if (blinkParam.blinkInterval !== void 0)
+        this.eyeBlink.blinkInterval = blinkParam.blinkInterval;
+      if (blinkParam.blinkIntervalRandom !== void 0)
+        this.eyeBlink.blinkIntervalRandom = blinkParam.blinkIntervalRandom;
+      if (blinkParam.closingDuration !== void 0)
+        this.eyeBlink.closingDuration = blinkParam.closingDuration;
+      if (blinkParam.closedDuration !== void 0)
+        this.eyeBlink.closedDuration = blinkParam.closedDuration;
+      if (blinkParam.openingDuration !== void 0)
+        this.eyeBlink.openingDuration = blinkParam.openingDuration;
       this.eyeBlink.recalculateBlinkInterval();
     } catch (error) {
       console.error("Failed to set blink parameters:", error);
@@ -6275,137 +6280,6 @@ class BreathParameterData {
   }
   // パラメータへの重み
 }
-const _CubismEyeBlink = class _CubismEyeBlink {
-  /**
-   * インスタンスを作成する
-   * @param modelSetting モデルの設定情報
-   * @return 作成されたインスタンス
-   * @note 引数がNULLの場合、パラメータIDが設定されていない空のインスタンスを作成する。
-   */
-  static create(modelSetting) {
-    return new _CubismEyeBlink(modelSetting);
-  }
-  /**
-   * まばたきの間隔の設定
-   * @param blinkingInterval まばたきの間隔の時間[秒]
-   */
-  setBlinkingInterval(blinkingInterval) {
-    this._blinkingIntervalSeconds = blinkingInterval;
-  }
-  /**
-   * まばたきのモーションの詳細設定
-   * @param closing   まぶたを閉じる動作の所要時間[秒]
-   * @param closed    まぶたを閉じている動作の所要時間[秒]
-   * @param opening   まぶたを開く動作の所要時間[秒]
-   */
-  setBlinkingSetting(closing, closed, opening) {
-    this._closingSeconds = closing;
-    this._closedSeconds = closed;
-    this._openingSeconds = opening;
-  }
-  /**
-   * まばたきさせるパラメータIDのリストの設定
-   * @param parameterIds パラメータのIDのリスト
-   */
-  setParameterIds(parameterIds) {
-    this._parameterIds = parameterIds;
-  }
-  /**
-   * まばたきさせるパラメータIDのリストの取得
-   * @return パラメータIDのリスト
-   */
-  getParameterIds() {
-    return this._parameterIds;
-  }
-  /**
-   * モデルのパラメータの更新
-   * @param model 対象のモデル
-   * @param deltaTimeSeconds デルタ時間[秒]
-   */
-  updateParameters(model, deltaTimeSeconds) {
-    this._userTimeSeconds += deltaTimeSeconds;
-    let parameterValue;
-    let t = 0;
-    switch (this._blinkingState) {
-      case 2:
-        t = (this._userTimeSeconds - this._stateStartTimeSeconds) / this._closingSeconds;
-        if (t >= 1) {
-          t = 1;
-          this._blinkingState = 3;
-          this._stateStartTimeSeconds = this._userTimeSeconds;
-        }
-        parameterValue = 1 - t;
-        break;
-      case 3:
-        t = (this._userTimeSeconds - this._stateStartTimeSeconds) / this._closedSeconds;
-        if (t >= 1) {
-          this._blinkingState = 4;
-          this._stateStartTimeSeconds = this._userTimeSeconds;
-        }
-        parameterValue = 0;
-        break;
-      case 4:
-        t = (this._userTimeSeconds - this._stateStartTimeSeconds) / this._openingSeconds;
-        if (t >= 1) {
-          t = 1;
-          this._blinkingState = 1;
-          this._nextBlinkingTime = this.determinNextBlinkingTiming();
-        }
-        parameterValue = t;
-        break;
-      case 1:
-        if (this._nextBlinkingTime < this._userTimeSeconds) {
-          this._blinkingState = 2;
-          this._stateStartTimeSeconds = this._userTimeSeconds;
-        }
-        parameterValue = 1;
-        break;
-      case 0:
-      default:
-        this._blinkingState = 1;
-        this._nextBlinkingTime = this.determinNextBlinkingTiming();
-        parameterValue = 1;
-        break;
-    }
-    if (!_CubismEyeBlink.CloseIfZero) {
-      parameterValue = -parameterValue;
-    }
-    for (let i = 0; i < this._parameterIds.length; ++i) {
-      model.setParameterValueById(this._parameterIds[i], parameterValue);
-    }
-  }
-  /**
-   * コンストラクタ
-   * @param modelSetting モデルの設定情報
-   */
-  constructor(modelSetting) {
-    var _a, _b;
-    this._blinkingState = 0;
-    this._nextBlinkingTime = 0;
-    this._stateStartTimeSeconds = 0;
-    this._blinkingIntervalSeconds = 4;
-    this._closingSeconds = 0.1;
-    this._closedSeconds = 0.05;
-    this._openingSeconds = 0.15;
-    this._userTimeSeconds = 0;
-    this._parameterIds = [];
-    if (modelSetting == null) {
-      return;
-    }
-    this._parameterIds = (_b = (_a = modelSetting.getEyeBlinkParameters()) == null ? void 0 : _a.slice()) != null ? _b : this._parameterIds;
-  }
-  /**
-   * 次の瞬きのタイミングの決定
-   *
-   * @return 次のまばたきを行う時刻[秒]
-   */
-  determinNextBlinkingTiming() {
-    const r = Math.random();
-    return this._userTimeSeconds + r * (2 * this._blinkingIntervalSeconds - 1);
-  }
-};
-_CubismEyeBlink.CloseIfZero = true;
-let CubismEyeBlink = _CubismEyeBlink;
 class csmRect {
   /**
    * コンストラクタ
@@ -8400,6 +8274,164 @@ class CubismRenderer_WebGL extends CubismRenderer {
 CubismRenderer.staticRelease = () => {
   CubismRenderer_WebGL.doStaticRelease();
 };
+const _CubismEyeBlink = class _CubismEyeBlink {
+  /**
+   * コンストラクタ
+   * @param modelSetting モデルの設定情報
+   */
+  constructor(modelSetting) {
+    __publicField(this, "_blinkingState");
+    // 現在の状態
+    __publicField(this, "_parameterIds");
+    // 操作対象のパラメータのIDのリスト
+    __publicField(this, "_nextBlinkingTime");
+    // 次のまばたきの時刻[秒]
+    __publicField(this, "_stateStartTimeSeconds");
+    // 現在の状態が開始した時刻[秒]
+    __publicField(this, "_blinkingIntervalSeconds");
+    // まばたきの間隔[秒]
+    __publicField(this, "_blinkingIntervalRandomSeconds");
+    // まばたきの間隔のランダム値[秒]
+    __publicField(this, "_closingSeconds");
+    // まぶたを閉じる動作の所要時間[秒]
+    __publicField(this, "_closedSeconds");
+    // まぶたを閉じている動作の所要時間[秒]
+    __publicField(this, "_openingSeconds");
+    // まぶたを開く動作の所要時間[秒]
+    __publicField(this, "_userTimeSeconds");
+    var _a, _b;
+    this._blinkingState = 0;
+    this._nextBlinkingTime = 0;
+    this._stateStartTimeSeconds = 0;
+    this._blinkingIntervalSeconds = 4;
+    this._blinkingIntervalRandomSeconds = 1;
+    this._closingSeconds = 0.1;
+    this._closedSeconds = 0.05;
+    this._openingSeconds = 0.15;
+    this._userTimeSeconds = 0;
+    this._parameterIds = [];
+    if (modelSetting == null) {
+      return;
+    }
+    this._parameterIds = (_b = (_a = modelSetting.getEyeBlinkParameters()) == null ? void 0 : _a.slice()) != null ? _b : this._parameterIds;
+  }
+  /**
+   * インスタンスを作成する
+   * @param modelSetting モデルの設定情報
+   * @return 作成されたインスタンス
+   * @note 引数がNULLの場合、パラメータIDが設定されていない空のインスタンスを作成する。
+   */
+  static create(modelSetting) {
+    return new _CubismEyeBlink(modelSetting);
+  }
+  /**
+   * まばたきの間隔の設定
+   * @param blinkingInterval まばたきの間隔の時間[秒]
+   */
+  setBlinkingInterval(blinkingInterval) {
+    this._blinkingIntervalSeconds = blinkingInterval;
+  }
+  /**
+   * まばたきのモーションの詳細設定
+   * @param closing   まぶたを閉じる動作の所要時間[秒]
+   * @param closed    まぶたを閉じている動作の所要時間[秒]
+   * @param opening   まぶたを開く動作の所要時間[秒]
+   */
+  setBlinkingSetting(closing, closed, opening) {
+    this._closingSeconds = closing;
+    this._closedSeconds = closed;
+    this._openingSeconds = opening;
+  }
+  /**
+   * まばたきさせるパラメータIDのリストの設定
+   * @param parameterIds パラメータのIDのリスト
+   */
+  setParameterIds(parameterIds) {
+    this._parameterIds = parameterIds;
+  }
+  /**
+   * まばたきさせるパラメータIDのリストの取得
+   * @return パラメータIDのリスト
+   */
+  getParameterIds() {
+    return this._parameterIds;
+  }
+  /**
+   * モデルのパラメータの更新
+   * @param model 対象のモデル
+   * @param deltaTimeSeconds デルタ時間[秒]
+   */
+  updateParameters(model, deltaTimeSeconds) {
+    this._userTimeSeconds += deltaTimeSeconds;
+    let parameterValue;
+    let t = 0;
+    switch (this._blinkingState) {
+      case 2:
+        t = this._userTimeSeconds / this._closingSeconds;
+        if (t >= 1) {
+          t = 1;
+          this._blinkingState = 3;
+          this._userTimeSeconds = 0;
+        }
+        parameterValue = 1 - t;
+        break;
+      case 3:
+        t = this._userTimeSeconds / this._closedSeconds;
+        if (t >= 1) {
+          this._blinkingState = 4;
+          this._userTimeSeconds = 0;
+        }
+        parameterValue = 0;
+        break;
+      case 4:
+        t = this._userTimeSeconds / this._openingSeconds;
+        if (t >= 1) {
+          t = 1;
+          this._blinkingState = 1;
+          this._nextBlinkingTime = this.determinNextBlinkingTiming();
+          this._userTimeSeconds = 0;
+        }
+        parameterValue = t;
+        break;
+      case 1:
+        if (this._nextBlinkingTime < this._userTimeSeconds) {
+          this._blinkingState = 2;
+          this._userTimeSeconds = 0;
+        }
+        parameterValue = 1;
+        break;
+      case 0:
+      default:
+        this._blinkingState = 1;
+        this._nextBlinkingTime = this.determinNextBlinkingTiming();
+        parameterValue = 1;
+        break;
+    }
+    for (let i = 0; i < this._parameterIds.length; ++i) {
+      const paramId = this._parameterIds[i];
+      if (typeof paramId === "string") {
+        model.setParameterValueById(paramId, parameterValue);
+      }
+    }
+  }
+  /**
+   * 次の瞬きのタイミングの決定
+   *
+   * @return 次のまばたきを行う時刻[秒]
+   */
+  determinNextBlinkingTiming() {
+    let newBlinkInterval = this._blinkingIntervalSeconds;
+    newBlinkInterval += (Math.random() * 2 - 1) * this._blinkingIntervalRandomSeconds;
+    newBlinkInterval = Math.max(newBlinkInterval, 0);
+    return newBlinkInterval;
+  }
+};
+// デルタ時間の積算値[秒]
+/**
+ * IDで指定された目のパラメータが、0のときに閉じるなら true 、1の時に閉じるなら false 。
+ */
+__publicField(_CubismEyeBlink, "CloseIfZero", true);
+let CubismEyeBlink = _CubismEyeBlink;
 const tempMatrix = new CubismMatrix44();
 class Cubism4InternalModel extends InternalModel {
   constructor(coreModel, settings, options) {
@@ -8602,11 +8634,16 @@ class Cubism4InternalModel extends InternalModel {
       return;
     }
     try {
-      this.eyeBlink._blinkingIntervalSeconds = blinkParam.blinkInterval / 1e3;
-      this.eyeBlink._blinkingIntervalRandomSeconds = blinkParam.blinkIntervalRandom / 1e3;
-      this.eyeBlink._closingSeconds = blinkParam.closingDuration / 1e3;
-      this.eyeBlink._closedSeconds = blinkParam.closedDuration / 1e3;
-      this.eyeBlink._openingSeconds = blinkParam.openingDuration / 1e3;
+      if (blinkParam.blinkInterval !== void 0)
+        this.eyeBlink._blinkingIntervalSeconds = blinkParam.blinkInterval / 1e3;
+      if (blinkParam.blinkIntervalRandom !== void 0)
+        this.eyeBlink._blinkingIntervalRandomSeconds = blinkParam.blinkIntervalRandom / 1e3;
+      if (blinkParam.closingDuration !== void 0)
+        this.eyeBlink._closingSeconds = blinkParam.closingDuration / 1e3;
+      if (blinkParam.closedDuration !== void 0)
+        this.eyeBlink._closedSeconds = blinkParam.closedDuration / 1e3;
+      if (blinkParam.openingDuration !== void 0)
+        this.eyeBlink._openingSeconds = blinkParam.openingDuration / 1e3;
       this.eyeBlink._nextBlinkingTime = this.eyeBlink.determinNextBlinkingTiming();
     } catch (error) {
       console.error("Failed to set blink parameters:", error);

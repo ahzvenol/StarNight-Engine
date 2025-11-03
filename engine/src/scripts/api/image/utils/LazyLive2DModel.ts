@@ -36,7 +36,9 @@ export class LazyLive2DModel extends Container {
             this.model = model
             this.addChild(model)
             this.emit('loaded')
-            this.order.forEach((key) => this[key](this.cache[key] as never))
+            if (this.cache.blink) this.blink(...this.cache.blink)
+            // @ts-expect-error 类型...的参数不能赋给类型...的参数。
+            this.order.forEach((key) => this[key](...this.cache[key]))
             ;(this.cache as unknown as null) = (this.order as unknown as null) = null
         })
     }
@@ -76,6 +78,6 @@ export class LazyLive2DModel extends Container {
         if (this.model) {
             return this.model.internalModel.setBlinkParam(...args)
         }
-        this.updateCache('blink', args)
+        this.cache.blink = { ...this.cache.blink, ...args }
     }
 }

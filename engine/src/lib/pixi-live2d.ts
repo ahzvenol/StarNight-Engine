@@ -1450,7 +1450,7 @@ export declare abstract class InternalModel extends utils.EventEmitter {
 	 * Draws the model.
 	 */
 	abstract draw(gl: WebGLRenderingContext): void;
-	abstract setBlinkParam(blinkParam: BlinkParam): void;
+	abstract setBlinkParam(blinkParam: Partial<BlinkParam>): void;
 }
 export type Middleware<T> = (context: T, next: (err?: any) => Promise<void>) => Promise<void>;
 export interface Live2DFactoryOptions extends Live2DModelOptions {
@@ -2260,7 +2260,7 @@ export declare class Cubism2InternalModel extends InternalModel {
 	updateNaturalMovements(dt: DOMHighResTimeStamp, now: DOMHighResTimeStamp): void;
 	draw(gl: WebGLRenderingContext): void;
 	destroy(): void;
-	setBlinkParam(blinkParam: BlinkParam): void;
+	setBlinkParam(blinkParam: Partial<BlinkParam>): void;
 }
 export namespace CubismSpec {
 	export interface ModelJSON {
@@ -5271,7 +5271,7 @@ export declare class Cubism4InternalModel extends InternalModel {
 	updateNaturalMovements(dt: DOMHighResTimeStamp, now: DOMHighResTimeStamp): void;
 	draw(gl: WebGLRenderingContext): void;
 	destroy(): void;
-	setBlinkParam(blinkParam: BlinkParam): void;
+	setBlinkParam(blinkParam: Partial<BlinkParam>): void;
 }
 export interface CubismStartupOption {
 	logFunction: Live2DCubismCore.csmLogFunction;
