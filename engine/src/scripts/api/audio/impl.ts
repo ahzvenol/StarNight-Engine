@@ -90,10 +90,10 @@ export const volume = Dynamic<AudioVolumeCommandArgs>(
             if (!duration) {
                 audio.volume(volume)
             } else {
-                audio.fade(audio.volume(), volume, duration)
+                audio.fade(audio.volume(), volume, duration * 1000)
                 // 为了避免fade到一半被unload等极端情况导致不触发fade事件,使用delay在时间已到时强制释放
                 const fade = new Promise<void>((res) => audio.once('fade', () => res()))
-                yield Promise.race([fade, delay(duration)])
+                yield Promise.race([fade, delay(duration * 1000)])
             }
         }
 )
