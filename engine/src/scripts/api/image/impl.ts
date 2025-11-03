@@ -1,16 +1,17 @@
-import type { Filter, BaseImageResource } from 'pixi.js'
+/* eslint-disable @stylistic/multiline-ternary */
+import type { Filter } from 'pixi.js'
 import type { MergeExclusive } from 'type-fest'
 import type { TransformBlock } from '../tween'
 import { DynamicMacro, NonBlocking, StarNight } from '@starnight/core'
 import { isFunction, isString, isUndefined, negate } from 'es-toolkit'
 import { gsap } from 'gsap'
 import { PixiPlugin } from 'gsap/PixiPlugin'
-import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform, Texture, INSTALLED } from 'pixi.js'
+import { Application, Container, Sprite, BlurFilter, ColorMatrixFilter, Transform, INSTALLED } from 'pixi.js'
 import { Tween } from '..'
 import { NestedContainer } from './utils/NestedContainer'
 import { RenderLayerContainer } from './utils/RenderLayerContainer'
-import { SrcSprite } from './utils/SrcSprite'
 import { GifResource } from './utils/GifResource'
+import { LazySprite } from './utils/LazySprite'
 
 gsap.registerPlugin(PixiPlugin)
 PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
@@ -86,7 +87,7 @@ Transform.prototype.updateTransform = function (parentTransform: Transform): voi
     }
 }
 
-type ImageStage = Container<RenderLayerContainer<NestedContainer<SrcSprite>>>
+type ImageStage = Container<RenderLayerContainer<NestedContainer<LazySprite>>>
 
 export type ImageTargetStage = 0
 
@@ -109,25 +110,6 @@ declare module '@starnight/core' {
     }
 }
 
-/** 加载精灵纹理,设置变换锚点到精灵及其父容器中心 */
-function initializeSprite(sprite: SrcSprite) {
-    sprite.texture = Texture.from(sprite.src)
-    const handleLoaded = () => {
-        if (sprite.destroyed) return
-        sprite.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
-        if (sprite.parent) {
-            sprite.parent.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
-            if (sprite.parent.parent) {
-                sprite.parent.parent.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
-            }
-        }
-    }
-    if (sprite.texture.baseTexture.valid) handleLoaded()
-    else sprite.texture.baseTexture.once('loaded', handleLoaded)
-    const resource = sprite.texture.baseTexture.resource as BaseImageResource
-    if (resource.source instanceof HTMLVideoElement) resource.source.muted = true
-}
-
 StarNight.GameEvents.setup.subscribe(({ ui: { view }, temp }) => {
     const { width, height } = view
     temp.pixi = new Application({ view, width, height })
@@ -139,7 +121,7 @@ StarNight.GameEvents.setup.subscribe(({ ui: { view }, temp }) => {
 })
 
 StarNight.GameEvents.ready.subscribe(({ temp: { stage } }) => {
-    stage.children.forEach((layer) => layer.children.forEach((container) => initializeSprite(container.internal)))
+    stage.children.forEach((layer) => layer.children.forEach((container) => container.internal.load()))
 })
 
 export type TransitionFunction = Function1<
@@ -151,27 +133,41 @@ export type ImageSetCommandArgs = {
     target: ImageTargetStageChildren, src: string | null, z?: number, transition?: TransitionFunction
 }
 
+function handleLoaded(sprite: Sprite) {
+    if (sprite.destroyed) return
+    sprite.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
+    if (sprite.parent) {
+        sprite.parent.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
+        if (sprite.parent.parent) {
+            sprite.parent.parent.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
+        }
+    }
+}
+
 export const set = DynamicMacro<ImageSetCommandArgs>(
     ({ state, current, local: { iclearpoint }, temp: { stage } }) =>
         function* ({ target, src, z, transition }) {
             if (isString(target) && iclearpoint && current.count() < iclearpoint) return
             const layer = stage.getChildByName(target)
-                ?? stage.addChild(new RenderLayerContainer<NestedContainer<SrcSprite>>({ name: target }))
+                ?? stage.addChild(new RenderLayerContainer<NestedContainer<LazySprite>>({ name: target }))
             const before = layer.getChildAt(-1)
-            const after = src ? layer.addChild(new NestedContainer<SrcSprite>(new SrcSprite(src))) : undefined
-            // z这个属性是特殊的,因为它只能设置在layer上
-            if (!isUndefined(z)) layer.zIndex = z
-            // 当src显式设置为null,就从stage中移除layer
+            const after = src === null ? null
+                : layer.addChild(new NestedContainer<LazySprite>(new LazySprite(src, { resourceOptions: { muted: true } })))
+            // z这个属性是特殊的,因为它只能设置在顶层容器上,否则不起作用
+            layer.zIndex = z ?? layer.zIndex
+            after?.once('loaded', () => handleLoaded(after.internal))
+            // 当src显式设置为null,就将layer的标签移除,此时并未实际移除该layer,但不会再查询到它
             if (!after) layer.name = undefined
-            else if (!state.isInitializing()) initializeSprite(after.internal)
-            // 转场效果运行在独立的一层上,避免影响用户层
-            // 为了正确的混合,转场滤镜作为滤镜的最后一个或应用在容器的外层
-            if (transition) {
-                const trans = transition({ before, after })
-                yield Promise.all([
-                    before && (yield Tween.apply({ target: before, transform: trans.before })),
-                    after && (yield Tween.apply({ target: after, transform: trans.after }))
-                ])
+            else if (!state.isInitializing()) {
+                after.internal.load()
+                // 为了正确的混合,转场滤镜运行在外层,为了避免影响用户层,转场滤镜使用独立容器
+                if (transition) {
+                    const trans = transition({ before, after })
+                    yield Promise.all([
+                        before && (yield Tween.apply({ target: before, transform: trans.before })),
+                        after && (yield Tween.apply({ target: after, transform: trans.after }))
+                    ])
+                }
             }
             // close相对于set的唯一特殊之处就是移除并销毁layer
             (after ? before : layer)?.destroy()
@@ -209,7 +205,6 @@ export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ current, local: { iclearpoint }, temp: { stage } }) =>
         function* ({ target: _target, inherit = true, transform }) {
             if (isString(_target) && iclearpoint && current.count() < iclearpoint) return
-            // eslint-disable-next-line @stylistic/multiline-ternary
             const target = _target === 0 ? stage : inherit
                 ? stage.getChildByName(_target)
                 : stage.getChildByName(_target)?.getChildAt(-1).internal
@@ -226,7 +221,6 @@ export const filters = NonBlocking<ImageFilterCommandArgs>(
     ({ current, local: { iclearpoint }, temp: { stage } }) =>
         ({ target: _target, inherit = true, filters }) => {
             if (isString(_target) && iclearpoint && current.count() < iclearpoint) return
-            // eslint-disable-next-line @stylistic/multiline-ternary
             const target = _target === 0 ? stage : inherit
                 ? stage.getChildByName(_target)
                 : stage.getChildByName(_target)?.getChildAt(-1).internal
