@@ -5,12 +5,11 @@ import solid from 'eslint-plugin-solid'
 import tseslint from 'typescript-eslint'
 import sortimport from 'eslint-plugin-import'
 
-clsx.configs.recommended.plugins = { clsx: clsx }
 export default tseslint.config(
     eslint.configs.recommended,
     tseslint.configs.recommended,
     solid.configs['flat/recommended'],
-    clsx.configs.recommended,
+    clsx.configs.flat.recommended,
     stylistic.configs.customize({
         indent: 4,
         quotes: 'single',
