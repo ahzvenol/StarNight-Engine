@@ -6,6 +6,7 @@
         "target": "ESNext",
         "module": "ESNext",
         "moduleResolution": "node",
+        "moduleDetection": "force",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "jsx": "preserve",

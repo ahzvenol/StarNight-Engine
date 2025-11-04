@@ -4,13 +4,12 @@ import { createEffect } from 'solid-js'
 import { noop } from 'es-toolkit'
 import { onStoreReady } from '@/store'
 import { MergedCommands } from '@/scripts'
+import { Api } from './ScenarioEffectDSL'
 
-export const $debugger = Symbol()
-
-const $character = (name: string) => (text: string, clip?: string) => MergedCommands.Say.apply({ text, name, clip })
+export const $character = (name: string) => (text: string, clip?: string) => Api(MergedCommands.Say.apply)({ text, name, clip })
 
 // 挂载关键变量和函数到window
-Object.assign(window, { $character, $debugger, $include: noop })
+Object.assign(window, { $debugger, $character, $include: noop })
 
 // 挂载store到window,拆箱store以省略Singal概念
 onStoreReady.then((store) =>
@@ -29,6 +28,14 @@ type $say = (strings: TemplateStringsArray, ...values: unknown[]) => void
 declare global {
 
     /**
+     * 在剧本中使用 `$character` 创建角色。
+     * @example
+     * const noi = $character("诺瓦")
+     * - 不要在剧本之外使用这个变量。
+     */
+    const $character: (arg0: string) => $say
+
+    /**
      * 在剧本中使用 `$store` 访问包括设置，存档在内的全部游戏数据。
      * @remarks
      * - 不要在剧本之外使用这个变量。
@@ -44,26 +51,25 @@ declare global {
 
     /**
      * 在剧本中使用 `$action` 手动划分幕
+     * @remarks
+     * - 这是一个编译期属性，不要在剧本之外使用这个变量。
      */
     const $action: unknown
 
     /**
      * 在剧本中使用 `$debugger` 让剧情从指定位置开始。
+     * @remarks
+     * - 这是一个编译期属性，不要在剧本之外使用这个变量。
      */
     const $debugger: unique symbol
 
     /**
      * 在剧本中使用 `$include` 将指定剧本的内容嵌入。
+     * @remarks
+     * - 这是一个编译期属性，不要在剧本之外使用这个变量。
      * @example
      * $include('./example.scenario.tsx')
      */
     const $include: (arg0: string) => void
-
-    /**
-     * 在剧本中使用 `$character` 创建角色。
-     * @example
-     * const noi = $character("诺瓦")
-     */
-    const $character: (arg0: string) => $say
 
 }

@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
-    CommandTagBlocking,
-    CommandTagDynamic,
-    CommandTagNonBlocking,
     StandardBlockingCommand,
     StandardCommand,
     StandardDynamicCommand,
@@ -93,26 +90,4 @@ export function Alias<T extends Record<PropertyKey, unknown>, R, M extends Parti
     const flipmap = invert(map)
     // @ts-expect-error 可赋给 "T" 类型的约束，但可以使用约束 "Record<PropertyKey, unknown>" 的其他子类型实例化 "T"。
     return (args) => fn(renameKeys(args ?? {}, flipmap))
-}
-
-/** 将命令的类型转换为适用于剧本的形式，这不会改变命令的实际内容 */
-export function Api<T, R>(fn: StandardDynamicCommand<T, R>): ((arg0: T) => R) & CommandTagDynamic
-export function Api<T, R>(fn: StandardNonBlockingCommand<T, R>): ((arg0: T) => R) & CommandTagNonBlocking
-export function Api<T, R>(fn: StandardBlockingCommand<T, R>): ((arg0: T) => R) & CommandTagBlocking
-export function Api<T, R>(fn: StandardCommand<T, R>): (arg0: T) => R {
-    return fn as any
-}
-
-export function DynamicApi<F>(fn: F): F & CommandTagDynamic {
-    return fn as any
-}
-export function NonBlockApi<F>(fn: F): F & CommandTagNonBlocking {
-    return fn as any
-}
-export function BlockingApi<F>(fn: F): F & CommandTagBlocking {
-    return fn as any
-}
-
-export function GenericApi<T, R>(fn: StandardCommand<T, R>): (arg0: T) => R {
-    return fn as any
 }

@@ -2,7 +2,8 @@ import type { CommandTagBlocking, CommandTagDynamic } from '@starnight/core'
 import type { 用户输入命令参数别名, 用户选择命令参数别名, 添加动画命令参数别名 } from './translation'
 import { Blocking } from '@starnight/core'
 import { MergedCommands } from '../../scripts/index'
-import { Alias, Api, BlockingApi, GenericApi } from '../Translate'
+import { Alias } from '../Translate'
+import { Api, TagBlocking, GenericApi } from '../ScenarioEffectDSL'
 import { 通用命令参数映射, 添加动画命令参数映射, 音频命令参数映射, 基本动画命令参数映射 } from './translation'
 
 /**
@@ -411,7 +412,7 @@ export const 嵌入页面 = Api(MergedCommands.Input.iframe)
  * @example
  * $$.基本输入(async () => new Date().toISOString())
  */
-export const 基本输入 = BlockingApi(GenericApi(MergedCommands.System.input))
+export const 基本输入 = TagBlocking(GenericApi(MergedCommands.System.input))
 
 /**
  * 为任意对象添加动画效果，使用 GSAP 实现。
