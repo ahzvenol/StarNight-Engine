@@ -1,10 +1,6 @@
 .idea/
 
-.bsp/
-
 node_modules/
-
-resources/
 
 dist/
 
@@ -20,3 +16,6 @@ static/
 stats.html
 
 .vercel
+
+*.scenario.js
+*.scenario.ts
