@@ -20,11 +20,11 @@ export const $debugger = Symbol()
 
 export type $debugger = typeof $debugger
 
-export type GameScenarioEffectDSL = () => AsyncGenerator<number | typeof $debugger, unknown, unknown>
+export type GameScenarioEffectDSL = () => AsyncGenerator<number | $debugger, unknown, unknown>
 
 const GlobalEffectPromisesList: Array<Promise<unknown>> = []
 
-export function* ScenarioEffectDSL(DSL: GameScenarioEffectDSL, debug: boolean = false): GameScript {
+export function* ScenarioDSL(DSL: GameScenarioEffectDSL, debug: boolean = false): GameScript {
     let value: unknown
     let index: number
     let done: boolean | undefined
@@ -34,7 +34,7 @@ export function* ScenarioEffectDSL(DSL: GameScenarioEffectDSL, debug: boolean = 
         yield function* (context: GameRuntimeContext) {
             window.$context = context
             while (true) {
-                const current = (yield scenario.next(value)) as IteratorResult<number | typeof $debugger, unknown>
+                const current = (yield scenario.next(value)) as IteratorResult<number | $debugger, unknown>
                 done = current.done
                 if (current.done) {
                     index = NaN

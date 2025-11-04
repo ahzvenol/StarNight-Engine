@@ -4,7 +4,7 @@ import { createEffect } from 'solid-js'
 import { noop } from 'es-toolkit'
 import { onStoreReady } from '@/store'
 import { MergedCommands } from '@/scripts'
-import { Api } from './ScenarioEffectDSL'
+import { Api } from './ScenarioDSL'
 
 export const $character = (name: string) => (text: string, clip?: string) => Api(MergedCommands.Say.apply)({ text, name, clip })
 

@@ -3,7 +3,7 @@ import type { 用户输入命令参数别名, 用户选择命令参数别名, �
 import { Blocking } from '@starnight/core'
 import { MergedCommands } from '../../scripts/index'
 import { Alias } from '../Translate'
-import { Api, TagBlocking, GenericApi } from '../ScenarioEffectDSL'
+import { Api, TagBlocking, GenericApi } from '../ScenarioDSL'
 import { 通用命令参数映射, 添加动画命令参数映射, 音频命令参数映射, 基本动画命令参数映射 } from './translation'
 
 /**
