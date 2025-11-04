@@ -1,9 +1,9 @@
 import type { Component } from 'solid-js'
 import { Clone } from '@/utils/ui/Elements'
 import { store } from '@/store'
+import { translation } from '@/locales'
 import { useGame } from '../GameRoot'
 import { GUIHomeRootState } from '../HomeRoot'
-import { translation } from '../../locales'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './Title.module.scss'
 

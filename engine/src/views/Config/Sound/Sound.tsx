@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js'
 import { Clone } from '@/utils/ui/Elements'
 import { store } from '@/store'
-import { translation } from '../../../locales'
+import { translation } from '@/locales'
 import { Button } from '../Button'
 import { Cell } from '../Cell'
 import styles from '../Config.module.scss'
