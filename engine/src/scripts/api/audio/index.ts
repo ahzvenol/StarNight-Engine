@@ -12,8 +12,7 @@ export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
         function* (_args) {
             const args = { loop: true, ..._args, type: 'bgm', target: _args.target ?? 'bgm' } as const
             if (args.duration) {
-                yield (yield Impl.volume({ target: args.target, volume: 0, duration: args.duration }))
-                yield Impl.close({ target: args.target })
+                yield (yield Impl.close({ target: args.target, duration: args.duration }))
                 yield Impl.set({ ...args, volume: 0 })
                 yield Impl.volume({ target: args.target, volume: args.volume ?? 1, duration: args.duration })
             } else {
@@ -31,8 +30,7 @@ export const se = NonBlockingMacro<AudioSECommandArgs>(
         function* (_args) {
             const args = { ..._args, type: 'se', target: _args.target ?? 'se' } as const
             if (args.duration) {
-                yield (yield Impl.volume({ target: args.target, volume: 0, duration: args.duration }))
-                yield Impl.close({ target: args.target })
+                yield (yield Impl.close({ target: args.target, duration: args.duration }))
                 yield Impl.set({ ...args, volume: 0 })
                 yield Impl.volume({ target: args.target, volume: args.volume ?? 1, duration: args.duration })
             } else {

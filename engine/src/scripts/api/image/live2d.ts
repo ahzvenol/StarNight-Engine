@@ -2,10 +2,7 @@ import '@/lib/live2dcubismcore.min.js'
 import '@/lib/live2d.min.js'
 import type { ImageTargetSprite } from './impl'
 import { NonBlocking } from '@starnight/core'
-import { SoundManager } from '@/lib/pixi-live2d'
 import { LazyLive2DModel } from './utils/LazyLive2DModel'
-
-SoundManager.volume = 0
 
 // model.model!.scale.set(Math.min(app.screen.width / model.width, app.screen.height / model.height))
 
@@ -28,17 +25,6 @@ export const expression = NonBlocking<Live2DExpressionCommandArgs>(
             if (iclearpoint && current.count() < iclearpoint) return
             const target = stage.getChildByName(_target)?.getChildAt(-1).internal
             if (target instanceof LazyLive2DModel) target.expression(expression)
-        }
-)
-
-export type Live2DSpeakCommandArgs = { target: ImageTargetSprite, src: string }
-
-export const speak = NonBlocking<Live2DSpeakCommandArgs>(
-    ({ current, local: { iclearpoint }, temp: { stage } }) =>
-        ({ target: _target, src: sound }) => {
-            if (iclearpoint && current.count() < iclearpoint) return
-            const target = stage.getChildByName(_target)?.getChildAt(-1).internal
-            if (target instanceof LazyLive2DModel) target.speak(sound)
         }
 )
 

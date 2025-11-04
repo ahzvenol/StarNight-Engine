@@ -103,6 +103,12 @@ export function Api<T, R>(fn: StandardCommand<T, R>): (arg0: T) => R {
     return fn as any
 }
 
+export function DynamicApi<F>(fn: F): F & CommandTagDynamic {
+    return fn as any
+}
+export function NonBlockApi<F>(fn: F): F & CommandTagNonBlocking {
+    return fn as any
+}
 export function BlockingApi<F>(fn: F): F & CommandTagBlocking {
     return fn as any
 }
