@@ -153,8 +153,8 @@ export interface HowlOptions extends HowlListeners {
      */
     xhr?:
         | {
-            method?: string | undefined
-            headers?: Record<string, string> | undefined
+            method?: string | undefined,
+            headers?: Record<string, string> | undefined,
             withCredentials?: boolean | undefined
         }
         | undefined

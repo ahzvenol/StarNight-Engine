@@ -1,5 +1,5 @@
 import type { Component } from 'solid-js'
-import clsx from 'clsx'
+import { clsx } from 'clsx'
 import { range } from 'es-toolkit'
 import { useSignal } from 'micro-reactive-solid'
 import { For, Show } from 'solid-js'

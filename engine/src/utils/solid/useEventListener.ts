@@ -1,10 +1,6 @@
 import { onCleanup } from 'solid-js'
 
-export type UseEventListenerOptions = {
-    target?: EventTarget
-    capture?: boolean
-    passive?: boolean
-}
+export type UseEventListenerOptions = { target?: EventTarget, capture?: boolean, passive?: boolean }
 
 export function useEventListener<K extends keyof DocumentEventMap>(
     type: K,

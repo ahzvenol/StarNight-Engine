@@ -1,5 +1,5 @@
 import type { Component } from 'solid-js'
-import clsx from 'clsx'
+import { clsx } from 'clsx'
 import { useSignal } from 'micro-reactive-solid'
 import { Clone, Variable } from '@/utils/ui/Elements'
 import { store } from '@/store'

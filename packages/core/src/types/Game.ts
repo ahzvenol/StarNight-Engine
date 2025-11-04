@@ -51,13 +51,13 @@ export interface GameUIInternalData {}
 
 export type GameConstructorParams = {
     /** 游戏剧本 */
-    script: GameScript
+    script: GameScript,
     /** 游戏设置 */
-    config: Reactive<GameConfig>
+    config: Reactive<GameConfig>,
     /** 游戏全局数据 */
-    global: Reactive<GameGlobalData>
+    global: Reactive<GameGlobalData>,
     /** 游戏存档数据 */
-    readonly local: { count: number } & Partial<GameLocalData>
+    readonly local: { count: number } & Partial<GameLocalData>,
     /** 游戏外部UI数据 */
     ui: GameUIExternalData
 }
@@ -65,11 +65,11 @@ export type GameConstructorParams = {
 /** 游戏实例上下文 */
 export type GameContext = {
     /** 游戏实时数据 */
-    current: Reactive<GameLocalData>
+    current: Reactive<GameLocalData>,
     /** 游戏临时数据 */
-    temp: GameTempData
+    temp: GameTempData,
     /** 游戏UI数据 */
-    ui: GameUIInternalData
+    ui: GameUIInternalData,
     /** 游戏实例 */
     readonly instance: StarNightInstance
 } & Except<GameConstructorParams, 'script'>
@@ -77,11 +77,11 @@ export type GameContext = {
 /** 单幕上下文 */
 export type GameRuntimeContext = {
     /** 游戏当前幕的状态 */
-    readonly state: StarNightStateStatic
+    readonly state: StarNightStateStatic,
     /** 游戏当前幕的特殊输出 */
-    readonly output: CommandOutput
+    readonly output: CommandOutput,
     /** 游戏当前幕的快进Promise */
-    readonly onActRush: Promise<GameRuntimeContext>
+    readonly onActRush: Promise<GameRuntimeContext>,
     /** 游戏全局的结束Promise */
     readonly onGameStop: Promise<GameContext>
 } & GameContext

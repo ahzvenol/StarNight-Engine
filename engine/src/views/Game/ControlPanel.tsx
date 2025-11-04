@@ -1,6 +1,6 @@
 import type { IIconProps } from 'icon-park-solid/src/runtime'
 import type { Component } from 'solid-js'
-import clsx from 'clsx'
+import { clsx } from 'clsx'
 import {
     AlignTextLeftOne,
     DoubleDown,

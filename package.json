@@ -5,9 +5,9 @@
         "engine:dev": "bun --filter @starnight/engine dev",
         "engine:build": "bun --filter @starnight/engine build",
         "core:build": "bun --filter @starnight/core build",
-        "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx src",
-        "lint:style": "stylelint src\"/**/*.+(css|scss|less|stylus|sass|postcss)\" --fix",
-        "lint:all": "concurrently \"bun run lint:style\" \"bun run lint:fix\""
+        "lint:fix": "bun run --filter '*' lint:fix",
+        "lint:style": "bun run --filter '*' lint:style",
+        "lint:all": "bun run --filter '*' lint:all"
     },
     "devDependencies": {
         "@eslint/js": "^9.27.0",

@@ -1,7 +1,7 @@
 import type { Signal } from 'micro-reactive-solid'
 import type { GUIGameRootPages } from '../GameRoot'
 import type { GUIHomeRootPages } from '../HomeRoot'
-import clsx from 'clsx'
+import { clsx } from 'clsx'
 import { FolderOpen, Home, Logout, Save, SettingTwo } from 'icon-park-solid'
 import { translation } from '@/locales'
 import { GUIGameRootState } from '../GameRoot'

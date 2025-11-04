@@ -1,11 +1,11 @@
 export type GalleryItem = {
-    url: string
+    url: string,
     condition?: string | string[]
 }
 
 export type GalleryGroup = {
-    cover: string
-    uncover?: string
+    cover: string,
+    uncover?: string,
     items: GalleryItem[]
 }
 

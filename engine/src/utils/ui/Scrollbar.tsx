@@ -9,11 +9,11 @@ import { useEventListener } from '@/utils/solid/useEventListener'
 BScroll.use(MouseWheel)
 
 const Slider: Component<{
-    fill?: JSX.Element
-    thumb: JSX.Element
-    track1: JSX.Element
-    track2: JSX.Element
-    signal: Reactive<number>
+    fill?: JSX.Element,
+    thumb: JSX.Element,
+    track1: JSX.Element,
+    track2: JSX.Element,
+    signal: Reactive<number>,
     vertical?: boolean
 }> = (props) => {
     const resolvedFill = children(() => props.fill ?? <div />).toArray()
@@ -118,10 +118,10 @@ const Slider: Component<{
 }
 
 export const Scrollbar: Component<{
-    container: JSX.Element
-    content: JSX.Element
-    track: JSX.Element
-    thumb: JSX.Element
+    container: JSX.Element,
+    content: JSX.Element,
+    track: JSX.Element,
+    thumb: JSX.Element,
     default?: number
 }> = (props) => {
     const resolvedContainer = children(() => props.container).toArray()

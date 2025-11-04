@@ -12,13 +12,13 @@ import { useEventListener } from '@/utils/solid/useEventListener'
 // thumb.style.left = `${props.signal() * 100}%`
 // 或者有什么新点子可以实现滑块功能的话,这些属性也可以覆盖掉
 export const Slider: Component<{
-    fill?: JSX.Element
-    thumb: JSX.Element
-    track: JSX.Element
-    signal: Reactive<number>
-    vertical?: boolean
-    onSlideStart?: (event: MouseEvent | TouchEvent) => void
-    onSlideEnd?: (event: MouseEvent | TouchEvent) => void
+    fill?: JSX.Element,
+    thumb: JSX.Element,
+    track: JSX.Element,
+    signal: Reactive<number>,
+    vertical?: boolean,
+    onSlideStart?: (event: MouseEvent | TouchEvent) => void,
+    onSlideEnd?: (event: MouseEvent | TouchEvent) => void,
     onTrackClick?: (event: MouseEvent) => void
 }> = (props) => {
     const resolvedFill = children(() => props.fill ?? <div />).toArray()

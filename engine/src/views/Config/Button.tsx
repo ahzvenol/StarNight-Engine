@@ -1,6 +1,6 @@
 import type { Reactive } from 'micro-reactive-solid'
 import type { JSX } from 'solid-js'
-import clsx from 'clsx'
+import { clsx } from 'clsx'
 import { createSelector, splitProps } from 'solid-js'
 import { useEventListener } from '@/utils/solid/useEventListener'
 import { useSoundEffect } from '../useSoundEffect'
