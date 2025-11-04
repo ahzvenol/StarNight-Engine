@@ -2,9 +2,10 @@ import type { GameRuntimeContext } from '@starnight/core'
 import type { Store } from '@/store/default'
 import { createEffect } from 'solid-js'
 import { noop } from 'es-toolkit'
-import { $debugger } from '@/scenario/ScenarioDSL'
 import { onStoreReady } from '@/store'
 import { MergedCommands } from '@/scripts'
+
+export const $debugger = Symbol()
 
 const $character = (name: string) => (text: string, clip?: string) => MergedCommands.Say.apply({ text, name, clip })
 
@@ -44,12 +45,12 @@ declare global {
     /**
      * 在剧本中使用 `$action` 手动划分幕
      */
-    const $action: symbol
+    const $action: unknown
 
     /**
      * 在剧本中使用 `$debugger` 让剧情从指定位置开始。
      */
-    const $debugger: symbol
+    const $debugger: unique symbol
 
     /**
      * 在剧本中使用 `$include` 将指定剧本的内容嵌入。
