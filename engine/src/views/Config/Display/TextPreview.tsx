@@ -14,7 +14,7 @@ export const TextPreview: Component = () => {
     return (
         <div class={styles.Config_TextPreview}>
             <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-                <TextBox text={element} name={() => '文本显示预览'} />
+                <TextBox text={() => element} name={() => '文本显示预览'} />
             </div>
         </div>
     )

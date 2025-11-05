@@ -18,8 +18,8 @@ export const Video: Component = () => {
                 }}
                 src={ui().video()!.src}
                 autoplay
-                onClick={() => ui().video()?.race?.()}
-                onEnded={() => ui().video()?.race?.()}
+                onClick={() => ui().video()!.race?.()}
+                onEnded={() => ui().video()!.race?.()}
                 playsinline
                 webkit-playsinline
                 // @ts-expect-error 类型上不存在属性

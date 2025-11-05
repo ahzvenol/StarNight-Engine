@@ -1,4 +1,4 @@
-import type { Component } from 'solid-js'
+import type { Accessor, Component } from 'solid-js'
 import { throttle } from 'es-toolkit'
 import { useSignal } from 'micro-reactive-solid'
 import { createEffect, Show } from 'solid-js'
@@ -48,7 +48,7 @@ export const Game: Component = () => {
             <Stage />
             <Show when={showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'}>
                 <div style={{ display: (ui().text() !== null && ui().input.choices() === null) ? 'contents' : 'none' }}>
-                    <TextBox text={ui().text()} name={ui().name} />
+                    <TextBox text={ui().text as Accessor<HTMLElement>} name={ui().name} />
                 </div>
             </Show>
             <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => showUI(false)} />
