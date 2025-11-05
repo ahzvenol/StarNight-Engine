@@ -1,5 +1,3 @@
-import '@/lib/live2dcubismcore.min.js'
-import '@/lib/live2d.min.js'
 import type { ImageTargetSprite } from './impl'
 import { NonBlocking } from '@starnight/core'
 import { LazyLive2DModel } from './utils/LazyLive2DModel'
@@ -12,7 +10,7 @@ export const motion = NonBlocking<Live2DMotionCommandArgs>(
     ({ current, local: { iclearpoint }, temp: { stage } }) =>
         ({ target: _target, motion }) => {
             if (iclearpoint && current.count() < iclearpoint) return
-            const target = stage.getChildByName(_target)?.getChildAt(-1).internal
+            const target = stage.map.get(_target)?.getChildAt(-1)?.internal
             if (target instanceof LazyLive2DModel) target.motion(motion, 0, 3)
         }
 )
@@ -23,7 +21,7 @@ export const expression = NonBlocking<Live2DExpressionCommandArgs>(
     ({ current, local: { iclearpoint }, temp: { stage } }) =>
         ({ target: _target, expression }) => {
             if (iclearpoint && current.count() < iclearpoint) return
-            const target = stage.getChildByName(_target)?.getChildAt(-1).internal
+            const target = stage.map.get(_target)?.getChildAt(-1)?.internal
             if (target instanceof LazyLive2DModel) target.expression(expression)
         }
 )
@@ -34,7 +32,7 @@ export const focus = NonBlocking<Live2FocusCommandArgs>(
     ({ current, local: { iclearpoint }, temp: { stage } }) =>
         ({ target: _target, x, y, instant }) => {
             if (iclearpoint && current.count() < iclearpoint) return
-            const target = stage.getChildByName(_target)?.getChildAt(-1).internal
+            const target = stage.map.get(_target)?.getChildAt(-1)?.internal
             if (target instanceof LazyLive2DModel) target.focus(x, y, instant)
         }
 )
@@ -49,7 +47,7 @@ export const blink = NonBlocking<Live2BlinkCommandArgs>(
             closing: closingDuration, closed: closedDuration, opening: openingDuration
         }) => {
             if (iclearpoint && current.count() < iclearpoint) return
-            const target = stage.getChildByName(_target)?.getChildAt(-1).internal
+            const target = stage.map.get(_target)?.getChildAt(-1)?.internal
             if (target instanceof LazyLive2DModel) {
                 target.blink({ blinkInterval, blinkIntervalRandom, closingDuration, closedDuration, openingDuration })
             }

@@ -4,12 +4,6 @@ import { AlphaFilter, Container } from 'pixi.js'
 const RENDER_LAYER_FILTERS = [new AlphaFilter()]
 
 export class RenderLayerContainer<T extends DisplayObject = DisplayObject> extends Container<T> {
-    constructor(options?: { name?: NonNullable<unknown> }) {
-        super()
-        // @ts-expect-error 不能将类型“{}”分配给类型...
-        if (options?.name) this.name = options.name
-    }
-
     override render(renderer: Renderer): void {
         // if the object is not visible or the alpha is 0 then no need to render this element
         if (!this.visible || this.worldAlpha <= 0 || !this.renderable) {

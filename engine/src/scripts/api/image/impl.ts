@@ -1,6 +1,7 @@
 /* eslint-disable @stylistic/multiline-ternary */
-import type { Filter } from 'pixi.js'
+import type { DisplayObject, Filter } from 'pixi.js'
 import type { MergeExclusive } from 'type-fest'
+import type { GameTempData } from '@starnight/core'
 import type { TransformBlock } from '../tween'
 import { DynamicMacro, NonBlocking, StarNight } from '@starnight/core'
 import { isFunction, isString, isUndefined, negate } from 'es-toolkit'
@@ -19,11 +20,8 @@ PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
 // 扩大DisplayObject-name属性的适用类型
 // 修复Container-getChildByName方法的泛型
 declare module 'pixi.js' {
-    interface DisplayObject {
-        name: ImageTargetStageChildren | undefined
-    }
     interface Container<T extends DisplayObject = DisplayObject> {
-        getChildByName(name: NonNullable<ImageTargetStageChildren>): T | null
+        getChildAt(index: number): T | undefined
     }
 }
 
@@ -32,9 +30,7 @@ INSTALLED.push(GifResource)
 
 // 增强getChildAt函数,使其支持负数索引
 Container.prototype.getChildAt = function (index: number) {
-    const res = this.children.at(index)
-    if (res !== undefined) return res
-    else throw new Error(`getChildAt: Index (${index}) does not exist.`)
+    return this.children.at(index)
 }
 
 // 修正PIXI锚点逻辑,使其不影响精灵位置
@@ -106,14 +102,15 @@ declare module '@starnight/core' {
     }
     interface GameTempData {
         pixi: Application<HTMLCanvasElement>
-        stage: ImageStage
+        stage: ImageStage & { map: Map<ImageTargetStageChildren, ImageStage['children'][number]> }
     }
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui: { view }, temp }) => {
     const { width, height } = view
     temp.pixi = new Application({ view, width, height })
-    temp.stage = temp.pixi.stage as ImageStage
+    temp.stage = temp.pixi.stage as GameTempData['stage']
+    temp.stage.map = new Map()
     temp.stage.sortableChildren = true
     temp.stage.pivot = { x: width / 2, y: height / 2 }
     // @ts-expect-error 类型...上不存在属性...
@@ -148,18 +145,18 @@ export const set = DynamicMacro<ImageSetCommandArgs>(
     ({ state, current, local: { iclearpoint }, temp: { stage } }) =>
         function* ({ target, src, z, transition }) {
             if (isString(target) && iclearpoint && current.count() < iclearpoint) return
-            const layer = stage.getChildByName(target)
-                ?? stage.addChild(new RenderLayerContainer<NestedContainer<LazySprite>>({ name: target }))
+            const layer = stage.map.get(target)
+                ?? stage.addChild(new RenderLayerContainer<NestedContainer<LazySprite>>())
+            layer.zIndex = z ?? layer.zIndex
+            // 当src显式设置为null,就将layer从map中移除,此时并未实际移除该layer,但不会再查询到它
+            stage.map[src === null ? 'delete' : 'set'](target, layer)
             const before = layer.getChildAt(-1)
-            const after = src === null ? null
+            const after = src === null ? undefined
                 : layer.addChild(new NestedContainer(new LazySprite(src, { resourceOptions: { muted: true } })))
             // z这个属性是特殊的,因为它只能设置在顶层容器上,否则不起作用
-            layer.zIndex = z ?? layer.zIndex
             after?.once('loaded', () => handleLoaded(after.internal))
-            // 当src显式设置为null,就将layer的标签移除,此时并未实际移除该layer,但不会再查询到它
-            if (!after) layer.name = undefined
-            else if (!state.isInitializing()) {
-                after.internal.load()
+            if (!state.isInitializing()) {
+                after?.internal.load()
                 // 为了正确的混合,转场滤镜运行在外层,为了避免影响用户层,转场滤镜使用独立容器
                 if (transition) {
                     const trans = transition({ before, after })
@@ -186,9 +183,8 @@ export const close = DynamicMacro<ImageCloseCommandArgs>(
                 Array.isArray(_target) ? new Set(_target) : isUndefined(_target) ? new Set() : new Set([_target])
             const _excludes: Set<ImageTargetStageChildren> =
                 Array.isArray(_exclude) ? new Set(_exclude) : isUndefined(_exclude) ? new Set() : new Set([_exclude])
-            const layers = stage.children.map((layer) => layer.name!)
-            const targets: Array<ImageTargetStageChildren> =
-                _targets.size > 0 ? layers.filter(_targets.has) : layers.filter(negate(_excludes.has))
+            const layers = [...stage.map.keys()]
+            const targets = _targets.size > 0 ? layers.filter(_targets.has) : layers.filter(negate(_excludes.has))
             const isEmptyStage = (targets.length - stage.children.length) === 0
             const isOnlyBackground = (targets.length - stage.children.length) === 1 && !targets.includes(1)
             if (isEmptyStage || isOnlyBackground) current.iclearpoint(current.count())
@@ -206,8 +202,8 @@ export const tween = DynamicMacro<ImageTweenCommandArgs>(
         function* ({ target: _target, inherit = true, transform }) {
             if (isString(_target) && iclearpoint && current.count() < iclearpoint) return
             const target = _target === 0 ? stage : inherit
-                ? stage.getChildByName(_target)
-                : stage.getChildByName(_target)?.getChildAt(-1).internal
+                ? stage.map.get(_target)
+                : stage.map.get(_target)?.getChildAt(-1)?.internal
             if (isUndefined(target)) return
             yield Tween.apply({ target, transform })
         }
@@ -222,11 +218,11 @@ export const filters = NonBlocking<ImageFilterCommandArgs>(
         ({ target: _target, inherit = true, filters }) => {
             if (isString(_target) && iclearpoint && current.count() < iclearpoint) return
             const target = _target === 0 ? stage : inherit
-                ? stage.getChildByName(_target)
-                : stage.getChildByName(_target)?.getChildAt(-1).internal
+                ? stage.map.get(_target)
+                : stage.map.get(_target)?.getChildAt(-1)?.internal
             if (target) {
                 if (isFunction(filters)) {
-                    target.filters = (filters as SetFilterFunction)(target.filters)
+                    target.filters = filters(target.filters) as Array<Filter>
                 } else target.filters = filters as Array<Filter> | null
             }
         }
