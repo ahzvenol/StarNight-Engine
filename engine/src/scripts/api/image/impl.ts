@@ -13,6 +13,7 @@ import { NestedContainer } from './utils/NestedContainer'
 import { RenderLayerContainer } from './utils/RenderLayerContainer'
 import { GifResource } from './utils/GifResource'
 import { LazySprite } from './utils/LazySprite'
+import { LazyLive2DModel } from './utils/LazyLive2DModel'
 
 gsap.registerPlugin(PixiPlugin)
 PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
@@ -83,7 +84,7 @@ Transform.prototype.updateTransform = function (parentTransform: Transform): voi
     }
 }
 
-type ImageStage = Container<RenderLayerContainer<NestedContainer<LazySprite>>>
+type ImageStage = Container<RenderLayerContainer<NestedContainer<LazySprite | LazyLive2DModel>>>
 
 export type ImageTargetStage = 0
 
@@ -130,19 +131,24 @@ export type ImageSetCommandArgs = {
     target: ImageTargetStageChildren, src: string | null, z?: number, transition?: TransitionFunction
 }
 
-function handleLoaded(sprite: Sprite) {
+function handleLoaded(app: Application, sprite: Sprite | LazyLive2DModel) {
     if (sprite.destroyed) return
-    sprite.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
-    if (sprite.parent) {
-        sprite.parent.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
-        if (sprite.parent.parent) {
-            sprite.parent.parent.pivot = { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
-        }
+    if (sprite instanceof LazyLive2DModel) {
+        const model = sprite.model!
+        model!.scale.set(Math.min(app.screen.width / model.width, app.screen.height / model.height))
     }
+    const { x, y } = sprite instanceof LazyLive2DModel
+        ? { x: sprite.width / 2, y: sprite.height / 2 }
+        : { x: sprite.texture.orig.width / 2, y: sprite.texture.orig.height / 2 }
+    sprite.pivot = { x, y }
+    if (!sprite.parent) return
+    sprite.parent.pivot = { x, y }
+    if (!sprite.parent.parent) return
+    sprite.parent.parent.pivot = { x, y }
 }
 
 export const set = DynamicMacro<ImageSetCommandArgs>(
-    ({ state, current, local: { iclearpoint }, temp: { stage } }) =>
+    ({ state, current, local: { iclearpoint }, temp: { pixi, stage } }) =>
         function* ({ target, src, z, transition }) {
             if (isString(target) && iclearpoint && current.count() < iclearpoint) return
             const layer = stage.map.get(target)
@@ -151,10 +157,11 @@ export const set = DynamicMacro<ImageSetCommandArgs>(
             // 当src显式设置为null,就将layer从map中移除,此时并未实际移除该layer,但不会再查询到它
             stage.map[src === null ? 'delete' : 'set'](target, layer)
             const before = layer.getChildAt(-1)
-            const after = src === null ? undefined
+            const after = src === null ? undefined : src?.endsWith('.json')
+                ? layer.addChild(new NestedContainer(new LazyLive2DModel(src)))
                 : layer.addChild(new NestedContainer(new LazySprite(src, { resourceOptions: { muted: true } })))
             // z这个属性是特殊的,因为它只能设置在顶层容器上,否则不起作用
-            after?.once('loaded', () => handleLoaded(after.internal))
+            after?.once('loaded', () => handleLoaded(pixi, after.internal))
             if (!state.isInitializing()) {
                 after?.internal.load()
                 // 为了正确的混合,转场滤镜运行在外层,为了避免影响用户层,转场滤镜使用独立容器

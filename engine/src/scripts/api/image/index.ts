@@ -1,6 +1,7 @@
 import type { Except } from 'type-fest'
 import { DynamicMacro, NonBlockingMacro } from '@starnight/core'
 import * as Impl from './impl'
+import * as Live2D from './live2d'
 import { Dissolve } from './transition'
 
 const dissolve = Dissolve(0.225)
@@ -22,6 +23,8 @@ export const bg = NonBlockingMacro<ImageBGCommandArgs>(
             yield Impl.set({ transition, ...args, z: -Infinity, target: 1 })
         }
 )
+
+export const l2d = Live2D.composite
 
 export const close = DynamicMacro<Impl.ImageCloseCommandArgs>(
     () =>

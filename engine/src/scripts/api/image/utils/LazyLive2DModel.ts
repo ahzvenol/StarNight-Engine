@@ -1,17 +1,36 @@
-import type { JSONObject, ModelSettings, Live2DFactoryOptions } from '@/lib/pixi-live2d'
+import type { JSONObject, ModelSettings, Live2DFactoryOptions, Live2DModel as ILive2DModel } from '@/lib/pixi-live2d'
 import { Container } from 'pixi.js'
-import { Live2DModel } from '@/lib/pixi-live2d'
+
+const Live2DCubism2 = new Promise<void>((resolve, reject) => {
+    const script = document.createElement('script')
+    script.src = 'live2d.min1.js'
+    script.onload = () => resolve()
+    script.onerror = () => reject(console.warn('Could not find Cubism 4 runtime.'))
+    document.head.appendChild(script)
+})
+const Live2DCubism4 = new Promise<void>((resolve, reject) => {
+    const script = document.createElement('script')
+    script.src = 'live2dcubismcore.min.js'
+    script.onload = () => resolve()
+    script.onerror = () => reject(console.warn('Could not find Cubism 4 runtime.'))
+    document.head.appendChild(script)
+})
+
+const Live2DModel = Promise.all([Live2DCubism2, Live2DCubism4])
+    .then(() => import('@/lib/pixi-live2d'))
+    .then((module) => module.Live2DModel)
+    .catch(() => null)
 
 type Cache = Partial<{
-    motion: Parameters<Live2DModel['motion']>,
-    expression: Parameters<Live2DModel['expression']>,
-    speak: Parameters<Live2DModel['speak']>,
-    focus: Parameters<Live2DModel['focus']>,
-    blink: Parameters<Live2DModel['internalModel']['setBlinkParam']>
+    motion: Parameters<ILive2DModel['motion']>,
+    expression: Parameters<ILive2DModel['expression']>,
+    speak: Parameters<ILive2DModel['speak']>,
+    focus: Parameters<ILive2DModel['focus']>,
+    blink: Parameters<ILive2DModel['internalModel']['setBlinkParam']>
 }>
 
 export class LazyLive2DModel extends Container {
-    public model: Live2DModel | null = null
+    public model: ILive2DModel | null = null
 
     protected cache: Cache = {}
     protected order: Set<keyof Cache> = new Set()
@@ -32,18 +51,21 @@ export class LazyLive2DModel extends Container {
     }
 
     public load() {
-        Live2DModel.from(this.source, this.options).then((model) => {
-            this.model = model
-            this.addChild(model)
-            this.emit('loaded')
-            if (this.cache.blink) this.blink(...this.cache.blink)
-            // @ts-expect-error 类型...的参数不能赋给类型...的参数。
-            this.order.forEach((key) => this[key](...this.cache[key]))
-            ;(this.cache as unknown as null) = (this.order as unknown as null) = null
-        })
+        Live2DModel
+            .then((Live2DModel) => Live2DModel?.from(this.source, this.options))
+            .then((model) => {
+                if (!model) return
+                this.model = model
+                this.addChild(model)
+                this.emit('loaded')
+                if (this.cache.blink) this.blink(...this.cache.blink)
+                // @ts-expect-error 类型...的参数不能赋给类型...的参数。
+                this.order.forEach((key) => this[key](...this.cache[key]))
+                ;(this.cache as unknown as null) = (this.order as unknown as null) = null
+            })
     }
 
-    public motion(...args: Parameters<Live2DModel['motion']>): Promise<boolean> {
+    public motion(...args: Parameters<ILive2DModel['motion']>): Promise<boolean> {
         if (this.model) {
             return this.model.motion(...args)
         }
@@ -51,7 +73,7 @@ export class LazyLive2DModel extends Container {
         return Promise.resolve(false)
     }
 
-    public expression(...args: Parameters<Live2DModel['expression']>): Promise<boolean> {
+    public expression(...args: Parameters<ILive2DModel['expression']>): Promise<boolean> {
         if (this.model) {
             return this.model.expression(...args)
         }
@@ -59,7 +81,7 @@ export class LazyLive2DModel extends Container {
         return Promise.resolve(false)
     }
 
-    public speak(...args: Parameters<Live2DModel['speak']>): Promise<boolean> {
+    public speak(...args: Parameters<ILive2DModel['speak']>): Promise<boolean> {
         if (this.model) {
             return this.model.speak(...args)
         }
@@ -67,14 +89,14 @@ export class LazyLive2DModel extends Container {
         return Promise.resolve(false)
     }
 
-    public focus(...args: Parameters<Live2DModel['focus']>): void {
+    public focus(...args: Parameters<ILive2DModel['focus']>): void {
         if (this.model) {
             return this.model.focus(...args)
         }
         this.updateCache('focus', args)
     }
 
-    public blink(...args: Parameters<Live2DModel['internalModel']['setBlinkParam']>): void {
+    public blink(...args: Parameters<ILive2DModel['internalModel']['setBlinkParam']>): void {
         if (this.model) {
             return this.model.internalModel.setBlinkParam(...args)
         }

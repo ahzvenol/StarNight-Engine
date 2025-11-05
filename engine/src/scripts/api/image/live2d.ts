@@ -2,8 +2,6 @@ import type { ImageTargetSprite } from './impl'
 import { NonBlocking } from '@starnight/core'
 import { LazyLive2DModel } from './utils/LazyLive2DModel'
 
-// model.model!.scale.set(Math.min(app.screen.width / model.width, app.screen.height / model.height))
-
 export type Live2DMotionCommandArgs = { target: ImageTargetSprite, motion: string }
 
 export const motion = NonBlocking<Live2DMotionCommandArgs>(
@@ -49,6 +47,31 @@ export const blink = NonBlocking<Live2BlinkCommandArgs>(
             if (iclearpoint && current.count() < iclearpoint) return
             const target = stage.map.get(_target)?.getChildAt(-1)?.internal
             if (target instanceof LazyLive2DModel) {
+                target.blink({ blinkInterval, blinkIntervalRandom, closingDuration, closedDuration, openingDuration })
+            }
+        }
+)
+
+export type Live2DCompositeCommandArgs = {
+    target: ImageTargetSprite, motion?: string, expression?: string,
+    focus?: { x: number, y: number, instant?: boolean },
+    blink?: { interval?: number, random?: number, closing?: number, opening?: number, closed?: number }
+}
+
+export const composite = NonBlocking<Live2DCompositeCommandArgs>(
+    ({ current, local: { iclearpoint }, temp: { stage } }) =>
+        ({ target: _target, motion, expression, focus, blink }) => {
+            if (iclearpoint && current.count() < iclearpoint) return
+            const target = stage.map.get(_target)?.getChildAt(-1)?.internal
+            if (!(target instanceof LazyLive2DModel)) return
+            if (motion) target.motion(motion, 0, 3)
+            if (expression) target.expression(expression)
+            if (focus) target.focus(focus.x, focus.y, focus.instant)
+            if (blink) {
+                const {
+                    interval: blinkInterval, random: blinkIntervalRandom,
+                    closing: closingDuration, closed: closedDuration, opening: openingDuration
+                } = blink
                 target.blink({ blinkInterval, blinkIntervalRandom, closingDuration, closedDuration, openingDuration })
             }
         }
