@@ -46,7 +46,7 @@ export class StarNightState {
 }
 
 export class StarNightStateStatic {
-    constructor(public readonly now: number) {}
+    public constructor(public readonly now: number) {}
 
     public isInitializing = () => this.now === GameState.Initializing
 
@@ -79,7 +79,7 @@ export class StarNightInstance {
     /** 游戏实例上下文，是除单幕上下文外的基本上下文数据 */
     public readonly context: GameContext
 
-    constructor(params: GameConstructorParams) {
+    public constructor(params: GameConstructorParams) {
         this.GameEvents.active.subscribe((visible) => this.isGameVisible(visible))
         this.GameEvents.suspend.subscribe(() => this.GameEvents.active.publish(false))
         this.GameEvents.resume.subscribe(() => this.GameEvents.active.publish(true))

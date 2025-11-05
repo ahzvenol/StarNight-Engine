@@ -9,7 +9,7 @@ export class TimeoutController {
     public get isExecuted(): boolean {
         return this._isExecuted
     }
-    constructor(callback: () => void, delay: number) {
+    public constructor(callback: () => void, delay: number) {
         this.executeOnceCallback = () => {
             if (this._isExecuted) return
             this._isExecuted = true

@@ -24,15 +24,15 @@ function arrayToRanges(list: Array<number>): Array<[number, number]> {
 
 export class RangeSet {
     private constructor(private ranges: Array<[number, number]> = []) {}
-    static fromRanges = (arr: Array<[number, number]>) => new RangeSet(arr)
-    static fromArray = (arr: Array<number>) => new RangeSet(arrayToRanges(arr))
-    push = (num: number) => {
+    public static fromRanges = (arr: Array<[number, number]>) => new RangeSet(arr)
+    public static fromArray = (arr: Array<number>) => new RangeSet(arrayToRanges(arr))
+    public push = (num: number) => {
         if (!this.includes(num)) {
             this.ranges = arrayToRanges([...this.getArray(), num])
         }
         return this
     }
-    includes = (num: number): boolean => this.ranges.some((e) => e[0] <= num && num <= e[1])
-    getRanges = (): Array<[number, number]> => this.ranges
-    getArray = (): Array<number> => this.ranges.flatMap((e) => range(e[0], e[1] + 1))
+    public includes = (num: number): boolean => this.ranges.some((e) => e[0] <= num && num <= e[1])
+    public getRanges = (): Array<[number, number]> => this.ranges
+    public getArray = (): Array<number> => this.ranges.flatMap((e) => range(e[0], e[1] + 1))
 }

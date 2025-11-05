@@ -34,7 +34,7 @@ export class GameEvents {
     public static readonly onResume = EventDispatcher.on(this.resume)
     public static readonly onActiveChange = EventDispatcher.on(this.active)
 
-    constructor() {
+    public constructor() {
         this.setup.subscribe((...args) => GameEvents.setup.publish(...args))
         this.start.subscribe((...args) => GameEvents.start.publish(...args))
         this.ready.subscribe((...args) => GameEvents.ready.publish(...args))
@@ -94,7 +94,7 @@ export class ActEvents {
     public static readonly onRush = EventDispatcher.on(this.rush)
     public static readonly onNext = EventDispatcher.on(this.next)
 
-    constructor() {
+    public constructor() {
         this.start.subscribe((...args) => ActEvents.start.publish(...args))
         this.end.subscribe((...args) => ActEvents.end.publish(...args))
         this.rush.subscribe((...args) => ActEvents.rush.publish(...args))
@@ -131,7 +131,7 @@ export class ClickEvents {
     public static readonly onAuto = EventDispatcher.on(this.auto)
     public static readonly onFast = EventDispatcher.on(this.fast)
 
-    constructor() {
+    public constructor() {
         this.step.subscribe((...args) => ClickEvents.step.publish(...args))
         this.fast.subscribe((...args) => ClickEvents.fast.publish(...args))
         this.auto.subscribe((...args) => ClickEvents.auto.publish(...args))

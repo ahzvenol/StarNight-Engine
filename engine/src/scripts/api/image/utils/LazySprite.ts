@@ -2,7 +2,7 @@ import type { IBaseTextureOptions } from 'pixi.js'
 import { Sprite, Texture } from 'pixi.js'
 
 export class LazySprite extends Sprite {
-    constructor(public readonly src: string, public readonly options?: IBaseTextureOptions) { super() }
+    public constructor(public readonly src: string, public readonly options?: IBaseTextureOptions) { super() }
 
     public load() {
         this.texture = Texture.from(this.src, this.options)

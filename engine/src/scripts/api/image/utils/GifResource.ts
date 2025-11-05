@@ -29,7 +29,11 @@ const findFrame = (frames: PrecomputedFrame[], time: number) => {
 }
 
 export class GifResource extends BaseImageResource {
-    declare source: HTMLCanvasElement
+    public static override test(_src: unknown, ext?: string): boolean {
+        return ext === 'gif'
+    }
+
+    public declare source: HTMLCanvasElement
 
     public autoPlay: boolean
     public loop: boolean
@@ -41,7 +45,7 @@ export class GifResource extends BaseImageResource {
     private _playing = false
     private _loadPromise: Promise<this> | null = null
 
-    constructor(public readonly url: string, options: GifResourceOptions = {}) {
+    public constructor(public readonly url: string, options: GifResourceOptions = {}) {
         super(document.createElement('canvas'))
 
         this.autoPlay = options.autoPlay ?? true
@@ -52,7 +56,7 @@ export class GifResource extends BaseImageResource {
         if (options.autoLoad !== false) this.load()
     }
 
-    override async load(): Promise<this> {
+    public override async load(): Promise<this> {
         if (this._loadPromise) return this._loadPromise
 
         this._loadPromise = (async () => {
@@ -121,6 +125,13 @@ export class GifResource extends BaseImageResource {
         Ticker.shared.remove(this._update, this)
     }
 
+    public override dispose(): void {
+        this.stop()
+        super.dispose()
+        this._frames = []
+        this._loadPromise = null
+    }
+
     private _update(): void {
         if (!this._playing || !this._frames.length) return
 
@@ -137,16 +148,5 @@ export class GifResource extends BaseImageResource {
             if (this.loop) this._currentTime %= end
             else this.stop()
         }
-    }
-
-    override dispose(): void {
-        this.stop()
-        super.dispose()
-        this._frames = []
-        this._loadPromise = null
-    }
-
-    static override test(_src: unknown, ext?: string): boolean {
-        return ext === 'gif'
     }
 }

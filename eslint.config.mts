@@ -60,6 +60,7 @@ export default tseslint.config(
             'solid/event-handlers': 'error', // 禁用小写的事件侦听器,如onclick
             '@typescript-eslint/consistent-type-imports': 'error', // 将类型导入和其他导入分开写
             '@typescript-eslint/no-for-in-array': 'error', // 禁止使用for in来进行数组访问
+            '@typescript-eslint/explicit-member-accessibility': 'error', // 需要显式在类属性和方法上使用可访问性修饰符
             'clsx/prefer-objects-over-logical': 'error' // 禁止在clsx()中使用逻辑表达式
         }
     },
