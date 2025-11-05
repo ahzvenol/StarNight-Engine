@@ -20,11 +20,11 @@ export const $debugger = Symbol()
 
 export type $debugger = typeof $debugger
 
-export type GameScenarioEffectDSL = () => AsyncGenerator<number | $debugger, unknown, unknown>
+export type GameScenarioDSL = () => AsyncGenerator<number | $debugger, unknown, unknown>
 
-const GlobalEffectPromisesList: Array<Promise<unknown>> = []
+const GlobalEffectPromises: Array<Promise<unknown>> = []
 
-export function* ScenarioDSL(DSL: GameScenarioEffectDSL, debug: boolean = false): GameScript {
+export function* ScenarioDSL(DSL: GameScenarioDSL, debug: boolean = false): GameScript {
     let value: unknown
     let index: number
     let done: boolean | undefined
@@ -50,8 +50,8 @@ export function* ScenarioDSL(DSL: GameScenarioEffectDSL, debug: boolean = false)
                     break
                 }
             }
-            yield Promise.all(GlobalEffectPromisesList)
-            GlobalEffectPromisesList.length = 0
+            yield Promise.all(GlobalEffectPromises)
+            GlobalEffectPromises.length = 0
             return index
         }
     }
@@ -64,7 +64,7 @@ export function Api<T, R>(fn: StandardBlockingCommand<T, R>): ((arg0: T) => R) &
 export function Api<T, R>(fn: StandardCommand<T, R>): (arg0: T) => R {
     return (args) => {
         const res = fn(args)($context)
-        if (res instanceof Promise) GlobalEffectPromisesList.push(res)
+        if (res instanceof Promise) GlobalEffectPromises.push(res)
         return res
     }
 }
@@ -72,7 +72,7 @@ export function Api<T, R>(fn: StandardCommand<T, R>): (arg0: T) => R {
 export function GenericApi<T, R>(fn: StandardCommand<T, R>): (arg0: T) => R {
     return (args) => {
         const res = fn(args)($context)
-        if (res instanceof Promise) GlobalEffectPromisesList.push(res)
+        if (res instanceof Promise) GlobalEffectPromises.push(res)
         return res
     }
 }
