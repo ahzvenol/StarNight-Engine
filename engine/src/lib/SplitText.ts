@@ -69,7 +69,7 @@ let gsap: any,
 	_fonts: FontFaceSet | undefined, 
 	_coreInitted: boolean, // set to true when the GSAP core is registered
 	_initIfNecessary = () => _coreInitted || SplitText.register((window as any).gsap),
-	_charSegmenter: any = typeof Intl !== "undefined" && typeof Intl.Segmenter !== "undefined" ? new (Intl as any).Segmenter() : 0, // not all older browsers support Intl.Segmenter
+	_charSegmenter: any = typeof Intl?.Segmenter === "function" ? new (Intl as any).Segmenter() : 0, // not all older browsers support Intl.Segmenter
 	_toArray = (r: string | NodeList | Node | Node[]): Node[] => typeof r === "string" ? _toArray(document.querySelectorAll(r)) : "length" in r ? Array.from(r) : [r],
 	_elements = (targets: SplitTextTarget): HTMLElement[] => _toArray(targets).filter((e) => e instanceof HTMLElement) as HTMLElement[],
 	_emptyArray: string[] = [],

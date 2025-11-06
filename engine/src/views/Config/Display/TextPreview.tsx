@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js'
-import { SplitText } from 'gsap/SplitText'
 import { gsap } from 'gsap'
+import { SplitText } from '@/lib/SplitText'
 import { TextBox } from '@/views/Game/TextBox'
 import { store } from '@/store'
 import { translation } from '@/locales'
