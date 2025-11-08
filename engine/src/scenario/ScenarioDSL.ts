@@ -77,11 +77,28 @@ export function GenericApi<T, R>(fn: StandardCommand<T, R>): (arg0: T) => R {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const TagDynamic = <F>(fn: F): F & CommandTagDynamic => fn as any
+export const TagDynamic = <F>(fn: F): F & CommandTagDynamic => fn as F & CommandTagDynamic
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const TagNonBlock = <F>(fn: F): F & CommandTagNonBlocking => fn as any
+export const TagNonBlock = <F>(fn: F): F & CommandTagNonBlocking => fn as F & CommandTagNonBlocking
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const TagBlocking = <F>(fn: F): F & CommandTagBlocking => fn as any
+export const TagBlocking = <F>(fn: F): F & CommandTagBlocking => fn as F & CommandTagBlocking
+
+export type FilterDynamicApis<T> = {
+    [K in keyof T as T[K] extends CommandTagDynamic ? K : never]: T[K]
+}
+
+export type FilterBlockingApis<T> = {
+    [K in keyof T as
+    T[K] extends CommandTagBlocking
+        ? (T[K] extends CommandTagDynamic | CommandTagNonBlocking ? never : K)
+        : never
+    ]: T[K]
+}
+
+export type FilterNonBlockingApis<T> = {
+    [K in keyof T as
+    T[K] extends CommandTagNonBlocking
+        ? (T[K] extends CommandTagDynamic | CommandTagBlocking ? never : K)
+        : never
+    ]: T[K]
+}

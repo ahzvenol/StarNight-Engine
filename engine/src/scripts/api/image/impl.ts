@@ -84,15 +84,8 @@ Transform.prototype.updateTransform = function (parentTransform: Transform): voi
     }
 }
 
+// Image命令的作用目标包括（0:舞台 1:背景 string:立绘）,为了避免ts显示类型别名,参数处都直接写明具体类型
 type ImageStage = Container<RenderLayerContainer<NestedContainer<LazySprite | LazyLive2DModel>>>
-
-export type ImageTargetStage = 0
-
-export type ImageTargetBackground = 1
-
-export type ImageTargetSprite = string
-
-export type ImageTargetStageChildren = ImageTargetBackground | ImageTargetSprite
 
 declare module '@starnight/core' {
     interface GameLocalData {
@@ -103,7 +96,7 @@ declare module '@starnight/core' {
     }
     interface GameTempData {
         pixi: Application<HTMLCanvasElement>
-        stage: ImageStage & { map: Map<ImageTargetStageChildren, ImageStage['children'][number]> }
+        stage: ImageStage & { map: Map<1 | string, ImageStage['children'][number]> }
     }
 }
 
@@ -128,7 +121,7 @@ export type TransitionFunction = Function1<
 >
 
 export type ImageSetCommandArgs = {
-    target: ImageTargetStageChildren, src: string | null, z?: number, transition?: TransitionFunction
+    target: 1 | string, src: string | null, z?: number, transition?: TransitionFunction
 }
 
 function handleLoaded(app: Application, sprite: Sprite | LazyLive2DModel) {
@@ -179,16 +172,16 @@ export const set = DynamicMacro<ImageSetCommandArgs>(
 )
 
 export type ImageCloseCommandArgs = MergeExclusive<
-    { target: ImageTargetStageChildren | Array<ImageTargetStageChildren> },
-    { exclude?: ImageTargetStageChildren | Array<ImageTargetStageChildren> }
+    { target: (1 | string) | Array<(1 | string)> },
+    { exclude?: (1 | string) | Array<(1 | string)> }
 > & { transition?: TransitionFunction }
 
 export const close = DynamicMacro<ImageCloseCommandArgs>(
     ({ current, temp: { stage } }) =>
         function* ({ target: _target, exclude: _exclude, transition }) {
-            const _targets: Set<ImageTargetStageChildren> =
+            const _targets: Set<1 | string> =
                 Array.isArray(_target) ? new Set(_target) : isUndefined(_target) ? new Set() : new Set([_target])
-            const _excludes: Set<ImageTargetStageChildren> =
+            const _excludes: Set<1 | string> =
                 Array.isArray(_exclude) ? new Set(_exclude) : isUndefined(_exclude) ? new Set() : new Set([_exclude])
             const layers = [...stage.map.keys()]
             const targets = _targets.size > 0 ? layers.filter(_targets.has) : layers.filter(negate(_excludes.has))
@@ -200,14 +193,15 @@ export const close = DynamicMacro<ImageCloseCommandArgs>(
 )
 
 export type ImageTweenTarget =
-({ target: ImageTargetStage, inherit?: never } | { target: ImageTargetStageChildren, inherit?: false })
+({ target: 0, inherit?: never } | { target: 1 | string, inherit?: boolean })
 
 export type ImageTweenCommandArgs = ImageTweenTarget & { transform: TransformBlock }
 
 export const tween = DynamicMacro<ImageTweenCommandArgs>(
     ({ current, local: { iclearpoint }, temp: { stage } }) =>
-        function* ({ target: _target, inherit = true, transform }) {
+        function* ({ target: _target, inherit: _inherit, transform }) {
             if (isString(_target) && iclearpoint && current.count() < iclearpoint) return
+            const inherit = _inherit ?? _target === 1 ? false : true
             const target = _target === 0 ? stage : inherit
                 ? stage.map.get(_target)
                 : stage.map.get(_target)?.getChildAt(-1)?.internal
@@ -216,9 +210,8 @@ export const tween = DynamicMacro<ImageTweenCommandArgs>(
         }
 )
 
-export type SetFilterFunction = (filters: Array<Filter> | null) => Array<Filter> | null
-
-export type ImageFilterCommandArgs = ImageTweenTarget & { filters: Array<Filter> | SetFilterFunction | null }
+export type ImageFilterCommandArgs =
+ImageTweenTarget & { filters: Array<Filter> | ((filters: Array<Filter> | null) => Array<Filter> | null) | null }
 
 export const filters = NonBlocking<ImageFilterCommandArgs>(
     ({ current, local: { iclearpoint }, temp: { stage } }) =>

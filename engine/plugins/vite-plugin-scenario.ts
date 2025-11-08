@@ -77,10 +77,17 @@ export default function scenarioPlugin(options: Partial<Options> = {}): Plugin {
             })
 
             traverse(ast, {
+                // 编译$$.method()到await $$.method()
                 // 编译$include(url)到yield* (await import(url)).default()
                 CallExpression(path) {
                     if (!inRootAsyncGenerator(path)) return
-                    if (t.isIdentifier(path.node.callee, { name: '$include' })) {
+                    const callee = path.node.callee
+                    if (t.isMemberExpression(callee)) {
+                        if (t.isIdentifier(callee.object, { name: '$$' })) {
+                            path.replaceWith(t.awaitExpression(path.node))
+                            path.skip()
+                        }
+                    } else if (t.isIdentifier(callee, { name: '$include' })) {
                         path.replaceWith(
                             t.yieldExpression(
                                 t.callExpression(

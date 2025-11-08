@@ -43,9 +43,9 @@ export type AudioSetCommandArgs = {
     target: string,
     src: string,
     volume?: number,
-    html5?: boolean | undefined,
-    loop?: boolean | undefined,
-    rate?: number | undefined
+    html5?: boolean,
+    loop?: boolean,
+    rate?: number
 }
 
 export const set = NonBlocking<AudioSetCommandArgs>(

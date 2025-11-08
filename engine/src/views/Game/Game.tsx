@@ -60,9 +60,6 @@ export const Game: Component = () => {
                     <ControlPanel />
                 </div>
             </Show>
-            <Show when={ui().input.click() !== null}>
-                <div class={styles.Game_mask} onClick={ui().input.click()!} />
-            </Show>
             <Show when={ui().input.text() !== null}>
                 <TextInput />
             </Show>

@@ -1,4 +1,4 @@
-import type { FilterBlockingApis, FilterDynamicApis, FilterNonBlockingApis } from '../../scripts/index'
+import type { FilterNonBlockingApis, FilterDynamicApis, FilterBlockingApis } from '../ScenarioDSL'
 import * as 中文命令集合 from './api'
 
 type 中文命令集合类型 = typeof 中文命令集合

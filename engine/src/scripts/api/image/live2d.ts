@@ -1,8 +1,7 @@
-import type { ImageTargetSprite } from './impl'
 import { NonBlocking } from '@starnight/core'
 import { LazyLive2DModel } from './utils/LazyLive2DModel'
 
-export type Live2DMotionCommandArgs = { target: ImageTargetSprite, motion: string }
+export type Live2DMotionCommandArgs = { target: string, motion: string }
 
 export const motion = NonBlocking<Live2DMotionCommandArgs>(
     ({ current, local: { iclearpoint }, temp: { stage } }) =>
@@ -13,7 +12,7 @@ export const motion = NonBlocking<Live2DMotionCommandArgs>(
         }
 )
 
-export type Live2DExpressionCommandArgs = { target: ImageTargetSprite, expression: string }
+export type Live2DExpressionCommandArgs = { target: string, expression: string }
 
 export const expression = NonBlocking<Live2DExpressionCommandArgs>(
     ({ current, local: { iclearpoint }, temp: { stage } }) =>
@@ -24,7 +23,7 @@ export const expression = NonBlocking<Live2DExpressionCommandArgs>(
         }
 )
 
-export type Live2FocusCommandArgs = { target: ImageTargetSprite, x: number, y: number, instant?: boolean }
+export type Live2FocusCommandArgs = { target: string, x: number, y: number, instant?: boolean }
 
 export const focus = NonBlocking<Live2FocusCommandArgs>(
     ({ current, local: { iclearpoint }, temp: { stage } }) =>
@@ -36,7 +35,7 @@ export const focus = NonBlocking<Live2FocusCommandArgs>(
 )
 
 export type Live2BlinkCommandArgs =
-{ target: ImageTargetSprite, interval?: number, random?: number, closing?: number, opening?: number, closed?: number }
+{ target: string, interval?: number, random?: number, closing?: number, opening?: number, closed?: number }
 
 export const blink = NonBlocking<Live2BlinkCommandArgs>(
     ({ current, local: { iclearpoint }, temp: { stage } }) =>
@@ -53,7 +52,7 @@ export const blink = NonBlocking<Live2BlinkCommandArgs>(
 )
 
 export type Live2DCompositeCommandArgs = {
-    target: ImageTargetSprite, motion?: string, expression?: string,
+    target: string, motion?: string, expression?: string,
     focus?: { x: number, y: number, instant?: boolean },
     blink?: { interval?: number, random?: number, closing?: number, opening?: number, closed?: number }
 }

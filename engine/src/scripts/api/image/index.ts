@@ -6,7 +6,7 @@ import { Dissolve } from './transition'
 
 const dissolve = Dissolve(0.225)
 
-export type ImageSpriteCommandArgs = Impl.ImageSetCommandArgs & { src: string }
+export type ImageSpriteCommandArgs = Impl.ImageSetCommandArgs & { target: string, src: string }
 
 export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
     () =>

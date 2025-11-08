@@ -11,7 +11,7 @@ export const unlock = ActScope(
         ({ global }) =>
             (target) => {
                 if (!global.unlocked().includes(target)) {
-                    global.unlocked([target, ...global.unlocked()])
+                    global.unlocked((arr) => [target, ...arr])
                 }
             }
     )

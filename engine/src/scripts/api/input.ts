@@ -1,5 +1,5 @@
 import type { Reactive } from '@starnight/core'
-import { Blocking, DynamicBlocking, GameState, StarNight } from '@starnight/core'
+import { Blocking, GameState, StarNight } from '@starnight/core'
 import { System } from './index'
 
 type InputResolve<T> = { resolve: Function1<T, void> }
@@ -13,22 +13,6 @@ declare module '@starnight/core' {
 StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.input = StarNight.useReactive({}) as Reactive<GameUIInputData>
 })
-
-interface GameUIInputData {
-    click: null | InputResolve<unknown>['resolve']
-}
-
-StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.click(null))
-
-export const click = DynamicBlocking(
-    ({ ui: { input: { click } } }) =>
-        function* () {
-            const { promise, resolve } = Promise.withResolvers()
-            click(() => resolve)
-            yield promise
-            click(() => null)
-        }
-)
 
 interface GameUIInputData {
     iframe: null | ({ url: string } & InputResolve<unknown>)
@@ -48,20 +32,18 @@ export const iframe = Blocking<string, unknown>(
         }
 )
 
-type TextInput = { text: string } | void
-
 interface GameUIInputData {
-    text: null | (TextInput & InputResolve<string>)
+    text: null | ({ text?: string } & InputResolve<string>)
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.text(null))
 
-export const text = Blocking<TextInput, string>(
+export const text = Blocking<string | void, string>(
     (context) =>
         async (arg0) => {
             const { ui: { input: { text } } } = context
             const { promise, resolve } = Promise.withResolvers<string>()
-            text(Object.assign({ resolve }, arg0))
+            text({ resolve, text: arg0! })
             const res = await System.input(() => promise)(context)
             text(() => null)
             return res

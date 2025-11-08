@@ -96,7 +96,7 @@ const _apply = Dynamic<{ target: gsap.TweenTarget, transform: TweenBlock }>(
             const timeline = activetimelines.get(target)
                 ?? activetimelines.set(target, gsap.timeline()).get(target)!
             // 为了position参数工作正常,始终需要维护map并将subTimeline添加到根timeline
-            timeline.add(subTimeline, (transform.position))
+            timeline.add(subTimeline, transform.position)
             if (state.isInitializing()) subTimeline.progress(1)
             else {
                 // 如果当前存在无限循环的动画,就不再计入时间统计,此类timeline将在下一幕开始时被完成

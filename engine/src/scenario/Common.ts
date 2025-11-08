@@ -6,7 +6,8 @@ import { onStoreReady } from '@/store'
 import { MergedCommands } from '@/scripts'
 import { Api } from './ScenarioDSL'
 
-export const $character = (name: string) => (text: string, clip?: string) => Api(MergedCommands.Say.apply)({ text, name, clip })
+export const $character =
+(name: string) => (text: string, clip?: string) => Api(MergedCommands.Say.apply)({ text, name, clip })
 
 // 挂载关键变量和函数到window
 Object.assign(window, { $debugger, $character, $include: noop })
