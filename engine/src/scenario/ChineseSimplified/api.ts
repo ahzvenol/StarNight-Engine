@@ -1,6 +1,7 @@
-import type { TransformBlock, TweenCommandArgs } from '@/scripts/api/tween'
+import type { TweenCommandArgs } from '@/scripts/api/tween'
 import type { Live2DCompositeCommandArgs } from '@/scripts/api/image/live2d'
-import type { Live2D混合参数, 变换块 } from './translation'
+import type { ImageTweenCommandArgs } from '@/scripts/api/image/impl'
+import type { Live2D混合参数, 基本动画参数, 添加动画参数 } from './translation'
 import { MergedCommands } from '../../scripts/index'
 import { Alias, MapArgs } from '../Translate'
 import { Api, TagBlocking, GenericApi } from '../ScenarioDSL'
@@ -41,16 +42,15 @@ export const 设置立绘 = Api(
  * - 针对同一目标的多个动画默认按顺序执行，前一个动画完成后触发后一个动画。
  * @param 参数对象
  * @param .作用目标 - 图层标识符，舞台的标识符为0，背景的标识符为1（必需）
- * @param .继承 - 是否在重新设置立绘/背景后继承动画，在背景上默认false，在立绘上默认true，在舞台上此属性不生效。
+ * @param .继承 - 是否在重新设置立绘/背景后继承动画，在背景上默认false，在立绘上默认true，在舞台上此属性不可用。
  * @example
  * $.添加动画({ 作用目标: "咸鱼", 持续时间: 0.5, X坐标: "+=100", Y坐标: 720, 缓动函数: "M0,0,C0,0,1,1,1,1" })
  */
 export const 添加动画 = Api(
-    MapArgs<
-        { 作用目标: string | 0 | 1, 变换动画: TransformBlock, 继承?: boolean },
-        { 作用目标: string | 0 | 1, 变换动画: 变换块, 继承?: boolean }, void>(
-        Alias(MergedCommands.Image.tween, Object.assign(通用命令参数映射, 图层命令参数映射)),
-        ({ 变换动画, ...args }) => ({ 变换动画: TransformBlockChineseToEnglish(变换动画), ...args })
+    MapArgs<ImageTweenCommandArgs, 添加动画参数, void>(
+        MergedCommands.Image.tween,
+        ({ 作用目标, 变换动画, 继承 }) =>
+            ({ target: 作用目标, transform: TransformBlockChineseToEnglish(变换动画), inherit: 继承 }) as ImageTweenCommandArgs
     )
 )
 
@@ -61,7 +61,7 @@ export const 添加动画 = Api(
  * @param 参数对象
  * @param .作用目标 - 图层标识符，舞台的标识符为0，背景的标识符为1（必需）
  * @param .滤镜 - PixiJS 滤镜列表或滤镜设置函数（必需）
- * @param .继承 - 是否在重新设置立绘/背景后继承滤镜，在背景上默认false，在立绘上默认true，在舞台上此属性不生效。
+ * @param .继承 - 是否在重新设置立绘/背景后继承滤镜，在背景上默认false，在立绘上默认true，在舞台上此属性不可用。
  * @example
  * $.设置滤镜({ 作用目标: "咸鱼", 滤镜实例: new BlurFilter(5) })
  */
@@ -89,11 +89,8 @@ export const 设置滤镜 = Api(
  * $.设置Live2D参数({ 作用目标: "rana", 动作: "angry01" })
  */
 export const 设置Live2D = Api(
-    MapArgs<
-        Live2DCompositeCommandArgs,
-        Live2D混合参数, void>(
-        MergedCommands.Image.l2d,
-        Live2DArgsChineseToEnglish
+    MapArgs<Live2DCompositeCommandArgs, Live2D混合参数, void>(
+        MergedCommands.Image.l2d, Live2DArgsChineseToEnglish
     )
 )
 
@@ -342,10 +339,9 @@ export const 基本输入 = TagBlocking(
  * $.基本动画({ 作用目标: document.querySelector(".box"), 持续时间: 1000, x: "+=100", opacity: 0.5 })
  */
 export const 基本动画 = Api(
-    MapArgs<
-        TweenCommandArgs,
-        { 作用目标: gsap.TweenTarget, 变换动画: 变换块 }, void>(
+    MapArgs<TweenCommandArgs, 基本动画参数, void>(
         MergedCommands.Tween.apply,
-        ({ 作用目标, 变换动画 }) => ({ target: 作用目标, transform: TransformBlockChineseToEnglish(变换动画) })
+        ({ 作用目标, 变换动画 }) =>
+            ({ target: 作用目标, transform: TransformBlockChineseToEnglish(变换动画) })
     )
 )

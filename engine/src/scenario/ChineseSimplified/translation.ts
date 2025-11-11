@@ -78,7 +78,7 @@ type GSAP特殊属性 = { 缓动函数?: 缓动函数参数, 重复次数?: numb
 type 补间特殊属性 = { 持续时间?: number, 延迟时间?: number, 标签?: string } & GSAP特殊属性
 type 时间线特殊属性 = { 默认参数?: 补间特殊属性 | 补间变量, 变换动画: Array<补间块> } & GSAP特殊属性
 type 补间块 = MergeExclusive<(补间特殊属性 | (补间变量 & Pixi动画参数 & 滤镜变量)), 时间线特殊属性>
-export type 变换块 = 补间特殊属性 | 时间线特殊属性 | Array<补间块>
+type 变换块 = 补间特殊属性 | 时间线特殊属性 | Array<补间块>
 
 export function TransformBlockChineseToEnglish(obj: 变换块): TransformBlock
 export function TransformBlockChineseToEnglish(obj: unknown): unknown {
@@ -103,6 +103,9 @@ export function TransformBlockChineseToEnglish(obj: unknown): unknown {
     }
     return obj
 }
+
+export type 基本动画参数 = { 作用目标: gsap.TweenTarget, 变换动画: 变换块 }
+export type 添加动画参数 = ({ 作用目标: 0, 继承?: never } | { 作用目标: 1 | string, 继承?: boolean }) & { 变换动画: 变换块 }
 
 export type Live2D混合参数 = {
     作用目标: string, 动作?: string, 表情?: string,

@@ -31,11 +31,11 @@ export const instance = async (local: GameConstructorParams['local']) => {
     })
 }
 
-// 如果处在调试模式,直接进入游戏页
-debug.then((isDebug) => { if (isDebug) useGame({ count: 1 }) })
-
 // 如果处在开发环境,输出控制台日志
 if (isDevelopment()) {
+    // 如果处在调试模式,直接进入游戏页
+    debug.then((isDebug) => { if (isDebug) useGame({ count: 1 }) })
+
     StarNight.GameEvents.start.subscribe(({ instance: { uuid } }) => console.time(uuid))
     StarNight.GameEvents.ready.subscribe(({ instance: { uuid } }) => console.timeEnd(uuid))
 
