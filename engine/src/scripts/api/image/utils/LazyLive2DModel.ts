@@ -61,7 +61,7 @@ export class LazyLive2DModel extends Container {
                 if (this.cache.blink) this.blink(...this.cache.blink)
                 // @ts-expect-error 类型...的参数不能赋给类型...的参数。
                 this.order.forEach((key) => this[key](...this.cache[key]))
-                ;(this.cache as unknown as null) = (this.order as unknown as null) = null
+                this.cache = this.order = null!
             })
     }
 

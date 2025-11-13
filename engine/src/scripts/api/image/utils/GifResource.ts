@@ -128,7 +128,7 @@ export class GifResource extends BaseImageResource {
     public override dispose(): void {
         this.stop()
         super.dispose()
-        this._frames = []
+        this._frames = null!
         this._loadPromise = null
     }
 
