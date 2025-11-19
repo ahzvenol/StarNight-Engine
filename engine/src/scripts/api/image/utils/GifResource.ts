@@ -67,6 +67,7 @@ export class GifResource extends BaseImageResource {
 
             const gif = parseGIF(buffer)
             const gifFrames = decompressFrames(gif, true)
+
             if (!gifFrames.length) throw new Error('Invalid GIF file')
 
             const canvas = document.createElement('canvas')
