@@ -84,7 +84,8 @@ Transform.prototype.updateTransform = function (parentTransform: Transform): voi
     }
 }
 
-// Image命令的作用目标包括（0:舞台 1:背景 string:立绘）,为了避免ts显示类型别名,参数处都直接写明具体类型
+// Image命令的作用目标包括（0:舞台,1:背景,string:立绘）,为了避免ts显示类型别名,参数处都直接写明具体类型
+// Container即Stage,RenderLayerContainer为图层容器,NestedContainer为转场容器
 type ImageStage = Container<RenderLayerContainer<NestedContainer<LazySprite | LazyLive2DModel>>>
 
 declare module '@starnight/core' {
@@ -146,6 +147,7 @@ export const set = DynamicMacro<ImageSetCommandArgs>(
             if (isString(target) && iclearpoint && current.count() < iclearpoint) return
             const layer = stage.map.get(target)
                 ?? stage.addChild(new RenderLayerContainer<NestedContainer<LazySprite>>())
+            // z这个属性是特殊的,因为它只能设置在顶层容器上,否则不起作用
             layer.zIndex = z ?? layer.zIndex
             // 当src显式设置为null,就将layer从map中移除,此时并未实际移除该layer,但不会再查询到它
             stage.map[src === null ? 'delete' : 'set'](target, layer)
@@ -153,7 +155,6 @@ export const set = DynamicMacro<ImageSetCommandArgs>(
             const after = src === null ? undefined : src?.endsWith('.json')
                 ? layer.addChild(new NestedContainer(new LazyLive2DModel(src)))
                 : layer.addChild(new NestedContainer(new LazySprite(src, { resourceOptions: { muted: true } })))
-            // z这个属性是特殊的,因为它只能设置在顶层容器上,否则不起作用
             after?.once('loaded', () => handleLoaded(pixi, after.internal))
             if (!state.isInitializing()) {
                 after?.internal.load()

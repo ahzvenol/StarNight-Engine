@@ -16,6 +16,9 @@ declare module '@starnight/core' {
     interface GameUIInternalData {
         text: Reactive<HTMLElement | null>
     }
+    interface GameTempData {
+        activetimelines: Map<gsap.TweenTarget, gsap.core.Timeline>
+    }
 }
 
 StarNight.GameEvents.setup.subscribe(({ current, ui }) => {

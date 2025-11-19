@@ -54,7 +54,7 @@ export const set = NonBlocking<AudioSetCommandArgs>(
             const isNotEffectSocpe = state.isInitializing() || state.isFast()
             const isClip = type === 'clip'
             const isNotLoopSE = type === 'se' && args.loop !== true
-            // Clip的生命周期是幕,所以不用初始化
+            // Clip的生命周期是幕,所以不用初始化,不循环的SE也是如此
             if (isNotEffectSocpe && (isClip || isNotLoopSE)) return
             // 挂载新音频
             const audio = audiotracks[type]({
@@ -86,13 +86,13 @@ export const volume = Dynamic<AudioVolumeCommandArgs>(
             // 要设置的音量如果和当前音量相同不会触发fade事件
             if (!audio || audio.volume() === volume) return
             // 非loaded状态的音频无法调整音量,也不能触发fade事件
-            if (audio.state() !== 'loaded') yield new Promise<void>((res) => audio.once('load', res))
+            if (audio.state() !== 'loaded') yield new Promise((res) => audio.once('load', res))
             if (!duration) {
                 audio.volume(volume)
             } else {
                 audio.fade(audio.volume(), volume, duration * 1000)
                 // 为了避免fade到一半被unload等极端情况导致不触发fade事件,使用delay在时间已到时强制释放
-                const fade = new Promise<void>((res) => audio.once('fade', () => res()))
+                const fade = new Promise((res) => audio.once('fade', res))
                 yield Promise.race([fade, delay(duration * 1000)])
             }
         }
