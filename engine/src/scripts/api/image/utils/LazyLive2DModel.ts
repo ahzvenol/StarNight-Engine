@@ -21,27 +21,18 @@ const Live2DModel = Promise.all([Live2DCubism2, Live2DCubism4])
     .then((module) => module.Live2DModel)
     .catch(() => null)
 
-type Cache = Partial<{
+type Cache = {
     motion: Parameters<ILive2DModel['motion']>,
     expression: Parameters<ILive2DModel['expression']>,
     speak: Parameters<ILive2DModel['speak']>,
     focus: Parameters<ILive2DModel['focus']>,
     blink: Parameters<ILive2DModel['internalModel']['setBlinkParam']>
-}>
+}
 
 export class LazyLive2DModel extends Container {
     public model: ILive2DModel | null = null
 
-    protected cache: Cache = {}
-    protected order: Set<keyof Cache> = new Set()
-
-    protected updateCache<K extends keyof Cache>(key: K, args: Cache[K]): void {
-        if (this.order.has(key)) {
-            this.order.delete(key)
-        }
-        this.order.add(key)
-        this.cache[key] = args
-    }
+    protected cache: Map<keyof Cache, Cache[keyof Cache]> = new Map()
 
     public constructor(
         public readonly source: string | JSONObject | ModelSettings,
@@ -58,48 +49,46 @@ export class LazyLive2DModel extends Container {
                 this.model = model
                 this.addChild(model)
                 this.emit('loaded')
-                if (this.cache.blink) this.blink(...this.cache.blink)
                 // @ts-expect-error 类型...的参数不能赋给类型...的参数。
-                this.order.forEach((key) => this[key](...this.cache[key]))
-                this.cache = this.order = null!
+                this.cache = this.cache.forEach(([value, key]) => this[key](...value))
             })
     }
 
-    public motion(...args: Parameters<ILive2DModel['motion']>): Promise<boolean> {
+    public motion(...args: Cache['motion']): Promise<boolean> {
         if (this.model) {
             return this.model.motion(...args)
         }
-        this.updateCache('motion', args)
+        this.cache.set('motion', args)
         return Promise.resolve(false)
     }
 
-    public expression(...args: Parameters<ILive2DModel['expression']>): Promise<boolean> {
+    public expression(...args: Cache['expression']): Promise<boolean> {
         if (this.model) {
             return this.model.expression(...args)
         }
-        this.updateCache('expression', args)
+        this.cache.set('expression', args)
         return Promise.resolve(false)
     }
 
-    public speak(...args: Parameters<ILive2DModel['speak']>): Promise<boolean> {
+    public speak(...args: Cache['speak']): Promise<boolean> {
         if (this.model) {
             return this.model.speak(...args)
         }
-        this.updateCache('speak', args)
+        this.cache.set('speak', args)
         return Promise.resolve(false)
     }
 
-    public focus(...args: Parameters<ILive2DModel['focus']>): void {
+    public focus(...args: Cache['focus']): void {
         if (this.model) {
             return this.model.focus(...args)
         }
-        this.updateCache('focus', args)
+        this.cache.set('focus', args)
     }
 
-    public blink(...args: Parameters<ILive2DModel['internalModel']['setBlinkParam']>): void {
+    public blink(...args: Cache['blink']): void {
         if (this.model) {
             return this.model.internalModel.setBlinkParam(...args)
         }
-        this.cache.blink = { ...this.cache.blink, ...args }
+        this.cache.set('blink', { ...this.cache.get('blink') as Cache['blink'], ...args })
     }
 }
