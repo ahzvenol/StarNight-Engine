@@ -82,6 +82,7 @@
       "dependencies": {
         "es-toolkit": "^1.30.1",
         "micro-reactive-wrapper": "^1.0.0",
+        "multi-integer-range": "^6.0.0",
         "type-fest": "^4.41.0",
       },
       "devDependencies": {
@@ -1433,6 +1434,8 @@
     "mlly": ["mlly@1.7.4", "", { "dependencies": { "acorn": "^8.14.0", "pathe": "^2.0.1", "pkg-types": "^1.3.0", "ufo": "^1.5.4" } }, "sha512-qmdSIPC4bDJXgZTCR7XosJiNKySV7O215tsPtDN9iEO/7q/76b/ijtgRu/+epFXSJhijtTCCGp3DWS549P3xKw=="],
 
     "ms": ["ms@2.1.3", "", {}, "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="],
+
+    "multi-integer-range": ["multi-integer-range@6.0.0", "", {}, "sha512-I+QoBHmkEuvWM38eKGYOHZe+Tw05axYhCcErU0bVPWriYYPeQ2wsQh3OjV5JPmXcAAi3ynBsYPpDoMWHPaMI7g=="],
 
     "mz": ["mz@2.7.0", "", { "dependencies": { "any-promise": "^1.0.0", "object-assign": "^4.0.1", "thenify-all": "^1.0.0" } }, "sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q=="],
 

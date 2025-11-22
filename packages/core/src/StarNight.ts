@@ -1,14 +1,15 @@
 import type { Reactive } from 'micro-reactive-wrapper'
+import type { MultiIntegerRange } from 'multi-integer-range'
 import type { CommandOutput } from './types/Command'
 import type { GameConstructorParams, GameContext, GameLocalData, GameScript } from './types/Game'
 import { delay } from 'es-toolkit'
+import { append, has } from 'multi-integer-range'
 import { useReactiveWrapper } from 'micro-reactive-wrapper'
 import { Fork } from './Decorator'
 import { ActEvents, ClickEvents, GameEvents } from './Events'
 import { GameState } from './types/Game'
 import { PromiseX } from './utils/PromiseX'
 import { randomUUID } from './utils/randomUUID'
-import { RangeSet } from './utils/RangeSet'
 
 export type { Reactive } from 'micro-reactive-wrapper'
 
@@ -100,7 +101,7 @@ export class StarNightInstance {
 
     /** 开始游戏 */
     public start = () => this.GameEvents.start.publish(this.context)
-    /** 退出游戏 */
+    /** 终止游戏 */
     public stop = () => this.GameEvents.stop.publish(this.context)
     /** 挂起游戏 */
     public suspend = () => {
@@ -118,13 +119,13 @@ export class StarNightInstance {
 
 // 维护已读幕
 StarNight.ActEvents.next.subscribe(async ({ instance }) => {
-    if (!Number.isInteger(instance.current.index())) return
+    const index = instance.current.index()
+    if (!Number.isInteger(index)) return
     const currentsegment = instance.context.global.readsegment[instance.current.sence()]
     currentsegment((arr) => arr || [])
-    const range = RangeSet.fromRanges(currentsegment())
-    instance.isRead(range.includes(instance.current.index()))
+    instance.isRead(has(currentsegment(), [[index, index]]))
     if (!instance.isRead()) {
-        currentsegment(range.push(instance.current.index()).getRanges())
+        currentsegment(append(currentsegment(), [[index, index]]) satisfies MultiIntegerRange as [number, number][])
         // 处理在未读文本处解除快进的设置项
         if (instance.state.isFast() && !instance.context.config.fastforwardunread()) instance.state.toNormal()
     }
@@ -136,9 +137,10 @@ StarNight.ActEvents.start.subscribe(async (context) => {
     const { state, onGameStop, instance } = context
     const { ClickEvents, ActEvents } = instance
     if (state.isInitializing() || state.isFast()) return
-    const flag = new PromiseX<'Rush' | 'Stop'>()
-    Promise.race([ClickEvents.onStep(), ClickEvents.onFast()]).then(() => flag.resolve('Rush'))
-    Promise.race([ActEvents.onEnd(), onGameStop]).then(() => flag.resolve('Stop'))
+    const flag = Promise.race<'Rush' | 'Stop'>([
+        Promise.race([ClickEvents.onStep(), ClickEvents.onFast()]).then(() => 'Rush'),
+        Promise.race([ActEvents.onEnd(), onGameStop]).then(() => 'Stop')
+    ])
     if ((await flag) === 'Stop') return
     ActEvents.rush.publish(context)
 })
