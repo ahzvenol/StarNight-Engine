@@ -1,6 +1,7 @@
 import type { Component } from 'solid-js'
 import { useSignal } from 'micro-reactive-solid'
 import { onCleanup, onMount, Show } from 'solid-js'
+import { once } from 'es-toolkit'
 import { Content } from '@/utils/ui/Elements'
 import { Gallery } from '@/views/Gallery/Gallery'
 import { suppress } from '@/utils/solid/suppress'
@@ -15,13 +16,13 @@ export type GUIHomeRootPages = 'Title' | 'Config' | 'Save' | 'Load' | 'Gallery'
 
 export const GUIHomeRootState = useSignal<GUIHomeRootPages>('Title')
 
+const audio = once(() => BGM({ loop: true, src: store.system.titlebackgroundmusic() }))
+
 export const HomeRoot: Component = () => {
     GUIHomeRootState('Title')
 
-    const audio = BGM({ loop: true, src: store.system.titlebackgroundmusic() })
-
-    onMount(() => audio.play())
-    onCleanup(() => audio.stop())
+    onMount(() => audio().play())
+    onCleanup(() => audio().stop())
     return (
         <>
             <Title />
