@@ -1,56 +1,54 @@
 import type { Except } from 'type-fest'
+import type { StandardDynamicCommand } from '@starnight/core'
 import { ActScope, NonBlockingMacro } from '@starnight/core'
+import { isString } from 'es-toolkit'
 import * as Impl from './impl'
 
-export const volume = Impl.volume
+export const volume = Impl.volume as StandardDynamicCommand<Except<Impl.AudioVolumeCommandArgs, 'target'> & { target: string }, void>
 
 export type AudioBGMCommandArgs =
-Except<Impl.AudioSetCommandArgs, 'type' | 'target'> & { target?: string, duration?: number, loop?: false }
+Except<Impl.AudioSetCommandArgs, 'track' | 'target'> & { target?: string, duration?: number, loop?: false }
 
 export const bgm = NonBlockingMacro<AudioBGMCommandArgs>(
     () =>
-        function* (_args) {
-            const args = { loop: true, ..._args, type: 'bgm', target: _args.target ?? 'bgm' } as const
-            if (args.duration) {
-                yield (yield Impl.close({ target: args.target, duration: args.duration }))
-                yield Impl.set({ ...args, volume: 0 })
-                yield Impl.volume({ target: args.target, volume: args.volume ?? 1, duration: args.duration })
+        function* ({ target = 'bgm', volume = 1, loop = true, duration, ...args }) {
+            yield Impl.close({ target, duration })
+            if (duration) {
+                yield Impl.set({ loop, target, volume: 0, ...args, track: 'bgm' })
+                yield Impl.volume({ target, volume, duration })
             } else {
-                yield Impl.close({ target: args.target })
-                yield Impl.set(args)
+                yield Impl.set({ loop, target, volume, ...args, track: 'bgm' })
             }
         }
 )
 
 export type AudioSECommandArgs =
-Except<Impl.AudioSetCommandArgs, 'type' | 'target'> & { target?: string, duration?: number, loop?: true }
+Except<Impl.AudioSetCommandArgs, 'track' | 'target'> & { target?: string, duration?: number, loop?: true }
 
 export const se = NonBlockingMacro<AudioSECommandArgs>(
     () =>
-        function* (_args) {
-            const args = { ..._args, type: 'se', target: _args.target ?? 'se' } as const
-            if (args.duration) {
-                yield (yield Impl.close({ target: args.target, duration: args.duration }))
-                yield Impl.set({ ...args, volume: 0 })
-                yield Impl.volume({ target: args.target, volume: args.volume ?? 1, duration: args.duration })
+        function* ({ target: _target, volume = 1, loop = false, duration, ...args }) {
+            const target = _target ?? loop ? 'se' : Symbol()
+            if (isString(target)) yield Impl.close({ target, duration })
+            if (duration) {
+                yield Impl.set({ loop, target, volume: 0, ...args, track: 'se' })
+                yield Impl.volume({ target, volume, duration })
             } else {
-                yield Impl.close({ target: args.target })
-                yield Impl.set(args)
+                yield Impl.set({ loop, target, volume, ...args, track: 'se' })
             }
         }
 )
 
-export type AudioClipCommandArgs = Except<Impl.AudioSetCommandArgs, 'type' | 'target' | 'loop'>
+export type AudioClipCommandArgs = Except<Impl.AudioSetCommandArgs, 'track' | 'target' | 'loop'>
 
 export const clip = ActScope(
     NonBlockingMacro<AudioClipCommandArgs>(
         () =>
-            function* (_args) {
-                const args = { ..._args, type: 'clip', target: 'clip' } as const
-                yield Impl.close({ target: args.target })
-                yield Impl.set(args)
+            function* (args) {
+                yield Impl.close({ target: 'clip' })
+                yield Impl.set({ ...args, track: 'clip', target: 'clip' })
             }
     )
 )
 
-export const close = Impl.close
+export const close = Impl.close as StandardDynamicCommand<Except<Impl.AudioCloseCommandArgs, 'target'> & { target: string }, void>
