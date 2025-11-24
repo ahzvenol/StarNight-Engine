@@ -10,6 +10,6 @@ export const apply = DynamicMacro<SayCommandArgs>(
             if (clip !== undefined) yield Audio.clip({ src: clip })
             if (name !== undefined) yield Impl.name(name)
             yield Impl.log({ text, name, clip })
-            yield (yield Impl.text(text))
+            yield yield Impl.text(text)
         }
 )

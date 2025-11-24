@@ -6,6 +6,6 @@ export const use = BlockingMacro<VideoCommandArgs>(
     () =>
         function* ({ src }) {
             yield Var.unlock(src)
-            yield (yield Video.use({ src: `./static${src}` }))
+            yield yield Video.use({ src: `./static${src}` })
         }
 )

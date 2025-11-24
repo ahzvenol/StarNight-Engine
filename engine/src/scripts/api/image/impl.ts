@@ -18,18 +18,15 @@ import { LazyLive2DModel } from './utils/LazyLive2DModel'
 gsap.registerPlugin(PixiPlugin)
 PixiPlugin.registerPIXI({ Container, Sprite, BlurFilter, ColorMatrixFilter })
 
-// 扩大DisplayObject-name属性的适用类型
-// 修复Container-getChildByName方法的泛型
+// 通过GifResource支持.gif格式
+INSTALLED.push(GifResource)
+
+// 增强getChildAt函数,使其支持负数索引
 declare module 'pixi.js' {
     interface Container<T extends DisplayObject = DisplayObject> {
         getChildAt(index: number): T | undefined
     }
 }
-
-// 通过GifResource支持.gif格式
-INSTALLED.push(GifResource)
-
-// 增强getChildAt函数,使其支持负数索引
 Container.prototype.getChildAt = function (index: number) {
     return this.children.at(index)
 }
