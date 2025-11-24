@@ -1,5 +1,6 @@
 import type { Component } from 'solid-js'
 import { useSignal } from 'micro-reactive-solid'
+import { store } from '@/store'
 import { GUIRootState } from '../GUIRoot'
 import styles from './LandingPage.module.scss'
 
@@ -14,8 +15,8 @@ export const LandingPage: Component = () => {
     }
     return (
         <div class={styles.LandingPage_container} style={{ opacity: opacity() }} onClick={onClick}>
-            <link rel="preload" href="/Texture2D/title_bg.webp" as="image" />
-            <link rel="preload" href="/AudioClip/bgm01.flac" as="audio" />
+            <link rel="preload" href={store.system.titlebackground()} as="image" />
+            <link rel="preload" href={store.system.titlebackgroundmusic()} as="audio" />
             <div class={styles.LandingPage_tip}>PRESS THE SCREEN TO START</div>
         </div>
     )

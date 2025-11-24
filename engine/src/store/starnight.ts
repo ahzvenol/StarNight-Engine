@@ -13,9 +13,9 @@ export const starnight = useSignal<StarNightInstance>(null as unknown as StarNig
 
 export const ui = () => starnight().context.ui
 
-export const entry = import('./scenario').then((mod) => mod.entry)
+export const entry = import('./scenario').then((module) => module.entry)
 
-export const debug = import('./scenario').then((mod) => mod.debug)
+export const debug = import('./scenario').then((module) => module.debug)
 
 export const script = async () => ScenarioDSL(await entry, await debug)
 

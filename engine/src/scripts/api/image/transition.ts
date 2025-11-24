@@ -24,7 +24,7 @@ export const Fade: (out_duration: number, in_duration?: number) => TransitionFun
 export const ImageDissolve: (arg0: { src: string, duration: number, ramplen?: number, reverse?: boolean }) => TransitionFunction =
 ({ src, duration, ramplen = 8, reverse = false }) =>
     ({ before, after }) => {
-        const rule = Texture.from(src)
+        const rule = Texture.from(`./static${src}`)
         if (before) before.filters = [
             Object.assign(new ImageDissolveFilter(rule, { progress: 1, ramplen, reverse }), { blendMode: BLEND_MODES.ADD })
         ]

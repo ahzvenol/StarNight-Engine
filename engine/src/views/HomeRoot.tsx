@@ -5,6 +5,7 @@ import { Content } from '@/utils/ui/Elements'
 import { Gallery } from '@/views/Gallery/Gallery'
 import { suppress } from '@/utils/solid/suppress'
 import { SaveLoad } from '@/views/SaveLoad/SaveLoad'
+import { store } from '@/store'
 import { BGM } from '../store/audio'
 import { Config } from './Config/Config'
 import { Menu } from './Menu/Menu'
@@ -14,10 +15,10 @@ export type GUIHomeRootPages = 'Title' | 'Config' | 'Save' | 'Load' | 'Gallery'
 
 export const GUIHomeRootState = useSignal<GUIHomeRootPages>('Title')
 
-const audio = BGM({ loop: true, src: './static/AudioClip/bgm01.flac' })
-
 export const HomeRoot: Component = () => {
     GUIHomeRootState('Title')
+
+    const audio = BGM({ loop: true, src: store.system.titlebackgroundmusic() })
 
     onMount(() => audio.play())
     onCleanup(() => audio.stop())

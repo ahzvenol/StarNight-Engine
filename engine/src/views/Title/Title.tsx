@@ -18,7 +18,7 @@ export const Title: Component = () => {
                 class={styles.Title_main}
                 style={{
                     'background-size': 'cover',
-                    'background-image': 'url(./static/Texture2D/title_bg.webp)'
+                    'background-image': `url('${store.system.titlebackground()}')`
                 }}
             >
                 <div class={styles.Title_button_list}>

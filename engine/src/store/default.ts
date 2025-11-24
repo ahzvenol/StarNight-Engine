@@ -38,7 +38,9 @@ const system = {
     key: 'StarNight',
     versioncode: version,
     versionname: 'next',
-    releasedate: '2025.x'
+    releasedate: '2025.x',
+    titlebackground: '/static/Texture2D/title_bg.webp',
+    titlebackgroundmusic: '/static/AudioClip/bgm01.flac'
 }
 
 const config: Config = {
