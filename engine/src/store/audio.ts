@@ -1,26 +1,14 @@
-import type { Howl, HowlConstructor, HowlOptions } from '@/lib/howler'
 import { createEffect } from 'solid-js'
 import { HowlerInstance } from '@/lib/howler'
 import { onStoreReady } from '@/store/index'
 
-function suspendWhenDocumentHidden(audio: Howl) {
-    let wasPlaying = false
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            wasPlaying = audio.playing()
-            audio.pause()
-        } else if (wasPlaying) {
-            audio.play()
-        }
-    })
-}
-
-// 包装函数，将 suspendWhenDocumentHidden 应用到每个实例
-function wrapHowlWithSuspend(HowlClass: HowlConstructor) {
-    return function (options: HowlOptions): Howl {
-        const howlInstance = new HowlClass(options)
-        suspendWhenDocumentHidden(howlInstance)
-        return howlInstance
+declare module '@/lib/howler' {
+    interface Howl {
+        _autoplay: boolean
+        suspend?: boolean
+    }
+    interface HowlerGlobal {
+        _howls: Howl[]
     }
 }
 
@@ -30,11 +18,23 @@ const { Howler: SEGlobal, Howl: SEConstructor } = HowlerInstance()
 const { Howler: ClipGlobal, Howl: ClipConstructor } = HowlerInstance()
 const { Howler: UISEGlobal, Howl: UISEConstructor } = HowlerInstance()
 
-export const Howler = wrapHowlWithSuspend(HowlerConstructor)
-export const BGM = wrapHowlWithSuspend(BGMConstructor)
-export const SE = wrapHowlWithSuspend(SEConstructor)
-export const Clip = wrapHowlWithSuspend(ClipConstructor)
-export const UISE = wrapHowlWithSuspend(UISEConstructor)
+const globals = [HowlerGlobal, BGMGlobal, SEGlobal, ClipGlobal, UISEGlobal]
+
+document.addEventListener('visibilitychange', () => {
+    const howls = globals.flatMap((g) => g._howls)
+    for (const howl of howls) {
+        if (document.hidden) {
+            const isLoadingAutoplay = howl.state() === 'loading' && howl._autoplay
+            if (howl.playing() || isLoadingAutoplay) {
+                howl.suspend = true
+                howl.pause()
+            }
+        } else if (howl.suspend) {
+            howl.play()
+            howl.suspend = undefined
+        }
+    }
+})
 
 onStoreReady.then(({ config: { globalvolume, bgmvolume, sevolume, clipvolume, uisevolume } }) => {
     createEffect(() => HowlerGlobal.volume(globalvolume()))
@@ -43,3 +43,5 @@ onStoreReady.then(({ config: { globalvolume, bgmvolume, sevolume, clipvolume, ui
     createEffect(() => ClipGlobal.volume(globalvolume() * clipvolume()))
     createEffect(() => UISEGlobal.volume(globalvolume() * uisevolume()))
 })
+
+export { HowlerConstructor as Howler, BGMConstructor as BGM, SEConstructor as SE, ClipConstructor as Clip, UISEConstructor as UISE }
