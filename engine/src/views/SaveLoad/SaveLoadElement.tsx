@@ -5,6 +5,7 @@ import type { SaveLoadMode } from './SaveLoad'
 import { clsx } from 'clsx'
 import dayjs from 'dayjs'
 import { Show } from 'solid-js'
+import { Matrix, RenderTexture } from 'pixi.js'
 import { starnight } from '@/store/starnight'
 import { translation } from '@/locales'
 import { useGame } from '../GameRoot'
@@ -14,16 +15,23 @@ import styles from './SaveLoad.module.scss'
 
 type SaveLoadElementProps = { i: number, mode: SaveLoadMode, index: number, slot: Reactive<SaveLocalData> }
 
-function snapshot() {
+// 缩略图尺寸
+const width = 480, height = 270
+const renderTexture = RenderTexture.create({ width, height })
+
+async function snapshot(): Promise<string> {
     const app = starnight().context.temp.pixi
-    const stage = app.renderer.extract.canvas(app.stage, app.screen) as HTMLCanvasElement
-    const canvas = (<canvas width={480} height={270} />) as HTMLCanvasElement
-    canvas.getContext('2d')!.drawImage(stage, 0, 0, app.screen.width, app.screen.height, 0, 0, 480, 270)
-    return canvas.toDataURL('image/webp', 0.5)
+    // 计算缩放矩阵 (将舞台缩小到缩略图尺寸)
+    const scaleX = width / app.screen.width
+    const scaleY = height / app.screen.height
+    const matrix = new Matrix().scale(scaleX, scaleY)
+    // 将舞台渲染到 RenderTexture，提取 Base64, 0.5 是 webp 的质量参数
+    app.renderer.render(app.stage, { renderTexture, transform: matrix })
+    return app.renderer.extract.base64(renderTexture, 'image/webp', 0.5)
 }
 
-function record(slot: Reactive<SaveLocalData>) {
-    slot({ ...starnight().current(), date: dayjs().valueOf(), snapshot: snapshot() })
+async function record(slot: Reactive<SaveLocalData>) {
+    slot({ ...starnight().current(), date: dayjs().valueOf(), snapshot: await snapshot() })
 }
 
 export const SaveLoadElement: Component<SaveLoadElementProps> = ({ i, mode, index, slot }) => {
