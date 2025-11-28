@@ -1,9 +1,9 @@
-import { SystemCommands as System } from '@starnight/core'
+import { Commands } from '@starnight/core'
 
-export const cont = System.cont
+export const cont = Commands.cont
 
-export const end = System.end
+export const end = Commands.end
 
-export const wait = System.wait
+export const wait = Commands.wait
 
-export const input = System.input
+export const input = Commands.input
