@@ -1,5 +1,4 @@
 import type { Reactive } from 'micro-reactive-wrapper'
-import type { MultiIntegerRange } from 'multi-integer-range'
 import type { CommandOutput } from './types/Command'
 import type { GameConstructorParams, GameContext, GameLocalData, GameScript } from './types/Game'
 import { delay } from 'es-toolkit'
@@ -96,7 +95,7 @@ export class StarNightInstance {
         } as GameContext
         this.GameEvents.setup.publish(this.context)
 
-        ActLoop.bind(this)()
+        ActLoop.call(this)
     }
 
     /** 开始游戏 */
@@ -125,7 +124,7 @@ StarNight.ActEvents.next.subscribe(async ({ instance }) => {
     currentsegment((arr) => arr || [])
     instance.isRead(has(currentsegment(), [[index, index]]))
     if (!instance.isRead()) {
-        currentsegment(append(currentsegment(), [[index, index]]) satisfies MultiIntegerRange as [number, number][])
+        currentsegment(append(currentsegment(), [[index, index]]) as [number, number][])
         // 处理在未读文本处解除快进的设置项
         if (instance.state.isFast() && !instance.context.config.fastforwardunread()) instance.state.toNormal()
     }

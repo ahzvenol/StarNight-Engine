@@ -3,18 +3,21 @@ import { Container } from 'pixi.js'
 
 const Live2DCubism2 = new Promise<void>((resolve, reject) => {
     const script = document.createElement('script')
-    script.src = 'live2d.min1.js'
+    script.src = 'live2d.min.js'
     script.onload = () => resolve()
-    script.onerror = () => reject(console.warn('Could not find Cubism 4 runtime.'))
+    script.onerror = () => reject()
     document.head.appendChild(script)
 })
 const Live2DCubism4 = new Promise<void>((resolve, reject) => {
     const script = document.createElement('script')
     script.src = 'live2dcubismcore.min.js'
     script.onload = () => resolve()
-    script.onerror = () => reject(console.warn('Could not find Cubism 4 runtime.'))
+    script.onerror = () => reject()
     document.head.appendChild(script)
 })
+
+Live2DCubism2.catch(() => console.warn('Could not find Cubism 2 runtime.'))
+Live2DCubism4.catch(() => console.warn('Could not find Cubism 4 runtime.'))
 
 const Live2DModel = Promise.all([Live2DCubism2, Live2DCubism4])
     .then(() => import('@/lib/pixi-live2d'))

@@ -15,7 +15,7 @@ export const input = Blocking(
                 if (!res.done) input = res.value
                 else input = await promise()
             } else input = await promise()
-            current.input((arr) => [...arr!, input])
+            current.input((arr) => [...arr, input])
             return input as T
         }
 )
