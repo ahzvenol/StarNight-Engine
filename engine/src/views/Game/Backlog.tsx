@@ -12,7 +12,7 @@ import { Clip } from '../../store/audio'
 import styles from './Backlog.module.scss'
 
 const ClipNode: Component<{ src: string }> = ({ src }) => {
-    const clip = once(() => Clip({ src }))
+    const clip = once(() => new Clip({ src }))
     onCleanup(() => clip().unload())
     return (
         <div

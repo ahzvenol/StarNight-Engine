@@ -1,11 +1,11 @@
-import type { Howl, HowlOptions } from '@/lib/howler'
+import type { Howl, HowlConstructor } from '@/lib/howler'
 import { Dynamic, DynamicMacro, NonBlocking, StarNight } from '@starnight/core'
 import { delay } from 'es-toolkit'
 
 export interface AudioTracks {
-    clip: Function1<HowlOptions, Howl>
-    bgm: Function1<HowlOptions, Howl>
-    se: Function1<HowlOptions, Howl>
+    clip: HowlConstructor
+    bgm: HowlConstructor
+    se: HowlConstructor
 }
 
 declare module '@starnight/core' {
@@ -57,7 +57,7 @@ export const set = NonBlocking<AudioSetCommandArgs>(
             // Clip的生命周期是幕,所以不用初始化,不循环的SE也是如此
             if (isNotEffectSocpe && (isClip || isNotLoopSE)) return
             // 挂载新音频
-            const audio = audiotracks[track]({
+            const audio = new audiotracks[track]({
                 ...args,
                 pool: 1,
                 autoplay: true,

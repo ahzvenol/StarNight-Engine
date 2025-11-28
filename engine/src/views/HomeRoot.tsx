@@ -16,7 +16,7 @@ export type GUIHomeRootPages = 'Title' | 'Config' | 'Save' | 'Load' | 'Gallery'
 
 export const GUIHomeRootState = useSignal<GUIHomeRootPages>('Title')
 
-const audio = once(() => BGM({ loop: true, src: store.system.titlebackgroundmusic() }))
+const audio = once(() => new BGM({ loop: true, src: store.system.titlebackgroundmusic() }))
 
 export const HomeRoot: Component = () => {
     GUIHomeRootState('Title')

@@ -6,11 +6,11 @@ import page_flip_1 from '@/assets/page-flip-1.mp3'
 import switch_1 from '@/assets/switch-1.mp3'
 import { UISE } from '../store/audio'
 
-const SEEnter = UISE({ src: mouse_enter })
-const SEClick = UISE({ src: click_se })
-const SESwitch = UISE({ src: switch_1 })
-const SEPageChange = UISE({ src: page_flip_1 })
-const SEDialogOpen = UISE({ src: dialog_se })
+const SEEnter = new UISE({ src: mouse_enter })
+const SEClick = new UISE({ src: click_se })
+const SESwitch = new UISE({ src: switch_1 })
+const SEPageChange = new UISE({ src: page_flip_1 })
+const SEDialogOpen = new UISE({ src: dialog_se })
 
 type Effect = 'Enter' | 'Click' | 'Switch' | 'PageChange' | 'DialogOpen'
 

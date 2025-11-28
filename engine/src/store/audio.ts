@@ -12,13 +12,12 @@ declare module '@/lib/howler' {
     }
 }
 
-const { Howler: HowlerGlobal, Howl: HowlerConstructor } = HowlerInstance()
 const { Howler: BGMGlobal, Howl: BGMConstructor } = HowlerInstance()
 const { Howler: SEGlobal, Howl: SEConstructor } = HowlerInstance()
 const { Howler: ClipGlobal, Howl: ClipConstructor } = HowlerInstance()
 const { Howler: UISEGlobal, Howl: UISEConstructor } = HowlerInstance()
 
-const globals = [HowlerGlobal, BGMGlobal, SEGlobal, ClipGlobal, UISEGlobal]
+const globals = [BGMGlobal, SEGlobal, ClipGlobal, UISEGlobal]
 
 document.addEventListener('visibilitychange', () => {
     const howls = globals.flatMap((g) => g._howls)
@@ -37,11 +36,10 @@ document.addEventListener('visibilitychange', () => {
 })
 
 onStoreReady.then(({ config: { globalvolume, bgmvolume, sevolume, clipvolume, uisevolume } }) => {
-    createEffect(() => HowlerGlobal.volume(globalvolume()))
     createEffect(() => BGMGlobal.volume(globalvolume() * bgmvolume()))
     createEffect(() => SEGlobal.volume(globalvolume() * sevolume()))
     createEffect(() => ClipGlobal.volume(globalvolume() * clipvolume()))
     createEffect(() => UISEGlobal.volume(globalvolume() * uisevolume()))
 })
 
-export { HowlerConstructor as Howler, BGMConstructor as BGM, SEConstructor as SE, ClipConstructor as Clip, UISEConstructor as UISE }
+export { BGMConstructor as BGM, SEConstructor as SE, ClipConstructor as Clip, UISEConstructor as UISE }
