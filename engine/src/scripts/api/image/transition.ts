@@ -1,4 +1,4 @@
-import type { TransitionFunction } from './impl'
+import type { TransitionFunction } from './base'
 import { AlphaFilter, BLEND_MODES, Texture } from 'pixi.js'
 import { ImageDissolveFilter } from './utils/ImageDissolveFilter'
 

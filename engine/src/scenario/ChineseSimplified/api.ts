@@ -1,6 +1,6 @@
 import type { TweenCommandArgs } from '@/scripts/api/tween'
 import type { Live2DCompositeCommandArgs } from '@/scripts/api/image/live2d'
-import type { ImageTweenCommandArgs } from '@/scripts/api/image/impl'
+import type { ImageTweenCommandArgs } from '@/scripts/api/image/base'
 import type { Live2D混合参数, 基本动画参数, 添加动画参数 } from './translation'
 import { MergedCommands } from '../../scripts/index'
 import { Alias, MapArgs } from '../Translate'
