@@ -4,8 +4,8 @@ import { Var, Video } from '../api'
 
 export const use = BlockingMacro<VideoCommandArgs>(
     () =>
-        function* ({ src }) {
-            yield Var.unlock(src)
-            yield yield Video.use({ src: `./static${src}` })
+        function* (args) {
+            yield Var.unlock(args.src)
+            yield yield Video.use(args)
         }
 )

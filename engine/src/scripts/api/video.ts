@@ -21,6 +21,7 @@ export const use = ActScope(
     Blocking<VideoCommandArgs>(
         (context) =>
             async ({ src, skip = true }) => {
+                src = `./static${src}`
                 const { ui: { video } } = context
                 const { promise, resolve } = Promise.withResolvers<void>()
                 video({ src, race: skip ? resolve : null })

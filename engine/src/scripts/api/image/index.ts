@@ -11,6 +11,7 @@ export type ImageSpriteCommandArgs = Base.ImageSetCommandArgs & { target: string
 export const sprite = NonBlockingMacro<ImageSpriteCommandArgs>(
     () =>
         function* ({ transition = dissolve, ...args }) {
+            args.src = `./static${args.src}`
             yield Base.set({ transition, ...args })
         }
 )
@@ -20,6 +21,7 @@ export type ImageBGCommandArgs = Except<Base.ImageSetCommandArgs, 'z' | 'target'
 export const bg = NonBlockingMacro<ImageBGCommandArgs>(
     () =>
         function* ({ transition, ...args }) {
+            args.src = `./static${args.src}`
             yield Base.set({ transition, ...args, z: -Infinity, target: 1 })
         }
 )
