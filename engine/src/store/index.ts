@@ -38,7 +38,6 @@ async function initializeStore() {
     return store
 }
 
-// 各模块对store数据的依赖关系通过使用onStoreReady定义在effects中
 export const onStoreReady = initializeStore()
 
 onStoreReady.then((store) => log.info('Store初始化完毕:', store()))

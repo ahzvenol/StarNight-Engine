@@ -25,7 +25,7 @@ export default defineConfig(({ command }) => ({
         legacy({
             modernPolyfills: true,
             renderLegacyChunks: false
-        }),
+        }) as PluginOption,
         visualizer({
             filename: 'stats.html' // 默认在项目根目录下生成stats.html文件，可自定义
             // open: true //生成后自动打开浏览器查看
@@ -58,10 +58,9 @@ export default defineConfig(({ command }) => ({
     },
     build: {
         target: 'es2015',
-        sourcemap: false,
-        minify: 'terser'
+        sourcemap: false
     },
     esbuild: {
-        drop: command === 'build' ? ['console', 'debugger'] : []
+        drop: command === 'build' ? ['console', 'debugger'] as const : []
     }
 }))
