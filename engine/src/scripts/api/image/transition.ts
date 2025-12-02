@@ -7,7 +7,7 @@ export const Dissolve: (duration: number) => TransitionFunction =
     ({ before, after }) => {
         if (before) before.filters = [Object.assign(new AlphaFilter(1), { blendMode: BLEND_MODES.ADD })]
         if (after) after.filters = [Object.assign(new AlphaFilter(0), { blendMode: BLEND_MODES.ADD })]
-        return { before: { duration, [1]: { alpha: 0 } }, after: { duration, [1]: { alpha: 1 } } }
+        return { before: { duration, [0]: { alpha: 0 } }, after: { duration, [0]: { alpha: 1 } } }
     }
 
 export const Fade: (out_duration: number, in_duration?: number) => TransitionFunction =
@@ -16,8 +16,8 @@ export const Fade: (out_duration: number, in_duration?: number) => TransitionFun
         if (before) before.filters = [Object.assign(new AlphaFilter(1), { blendMode: BLEND_MODES.ADD })]
         if (after) after.filters = [Object.assign(new AlphaFilter(0), { blendMode: BLEND_MODES.ADD })]
         return {
-            before: { duration: out_duration, [1]: { alpha: 0 } },
-            after: { duration: in_duration, [1]: { alpha: 1 }, delay: out_duration }
+            before: { duration: out_duration, [0]: { alpha: 0 } },
+            after: { duration: in_duration, [0]: { alpha: 1 }, delay: out_duration }
         }
     }
 
@@ -31,5 +31,5 @@ export const ImageDissolve: (arg0: { src: string, duration: number, ramplen?: nu
         if (after) after.filters = [
             Object.assign(new ImageDissolveFilter(rule, { progress: 0, ramplen, reverse: !reverse }), { blendMode: BLEND_MODES.ADD })
         ]
-        return { before: { duration, [1]: { progress: 0 } }, after: { duration, [1]: { progress: 1 } } }
+        return { before: { duration, [0]: { progress: 0 } }, after: { duration, [0]: { progress: 1 } } }
     }
