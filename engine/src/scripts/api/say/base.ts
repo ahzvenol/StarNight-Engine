@@ -2,7 +2,7 @@ import type { GameLocalData, Reactive } from '@starnight/core'
 import { ActScope, Dynamic, NonBlocking, StarNight } from '@starnight/core'
 import { gsap } from 'gsap'
 import { cloneDeep } from 'es-toolkit'
-import { SplitText } from '@/lib/SplitText'
+import { SplitText } from 'gsap/SplitText'
 
 gsap.registerPlugin(SplitText)
 
