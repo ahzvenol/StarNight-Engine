@@ -70,7 +70,9 @@ const local: Record<number, SaveLocalData> & { [0]?: GameLocalData } & { [-1]?: 
 
 const extra = {}
 
-export const SystemDefaultStore = () => cloneDeep({ system, config, global, local, extra } as const)
+const store = { system, config, global, local, extra } as const
 
-export type Store = SimplifyDeep<ReturnType<typeof SystemDefaultStore>>
+export const SystemDefaultStore = () => cloneDeep(store)
+
+export type Store = SimplifyDeep<typeof store>
 export type ReactiveStore = Reactive<Store>
