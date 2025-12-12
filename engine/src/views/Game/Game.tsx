@@ -19,7 +19,7 @@ import { Iframe } from './Iframe'
 export const Game: Component = () => {
     log.info('GameUI组件函数被调用')
 
-    const showUI = useSignal(true)
+    const isUIVisible = useSignal(true)
 
     // 为点击设置0.1秒节流
     const click = throttle(
@@ -44,18 +44,18 @@ export const Game: Component = () => {
     return (
         <Content>
             <Stage view={ui().view} />
-            <Show when={showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'}>
+            <Show when={isUIVisible() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'}>
                 <div style={{ display: (ui().text() !== null && ui().input.choices() === null) ? 'contents' : 'none' }}>
                     <TextBox text={ui().text()!} name={ui().name()} />
                 </div>
             </Show>
-            <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => showUI(false)} />
-            <Show when={!showUI()}>
-                <div class={styles.Game_mask} onClick={() => showUI(true)} onContextMenu={() => showUI(true)} />
+            <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => isUIVisible(false)} />
+            <Show when={!isUIVisible()}>
+                <div class={styles.Game_mask} onClick={() => isUIVisible(true)} onContextMenu={() => isUIVisible(true)} />
             </Show>
-            <Show when={showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'}>
+            <Show when={isUIVisible() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'}>
                 <div style={{ display: (ui().text() !== null || ui().input.choices() !== null) ? 'contents' : 'none' }}>
-                    <ControlPanel showUI={showUI} />
+                    <ControlPanel setUIHidden={() => isUIVisible(false)} />
                 </div>
             </Show>
             <Show when={ui().input.text() !== null}>

@@ -22,7 +22,7 @@ import { About } from './About'
 export const System: Component = () => {
     const t = translation.menu.options.pages.system.options
 
-    const showAbout = useSignal(false)
+    const isAboutVisible = useSignal(false)
 
     const config = store.config
 
@@ -59,9 +59,8 @@ export const System: Component = () => {
             .catch(() => state(Either.left('导出失败')))
     }
     return (
-        <Show when={!showAbout()} fallback={<About close={() => showAbout(false)} />}>
+        <Show when={!isAboutVisible()} fallback={<About setAboutHidden={() => isAboutVisible(false)} />}>
             <div class={styles.Config_main_content_half}>
-                {/* {showAbout && <About onClose={toggleAbout} />} */}
                 <Cell title={t.autoSpeed.title}>
                     <Slider
                         signal={
@@ -132,7 +131,7 @@ export const System: Component = () => {
                 {/* <div class={styles.Config_about_title}>
                     <span
                         class={styles.Config_about_title_text}
-                        onClick={() => showAbout(!showAbout())}
+                        onClick={() => isAboutVisible(!isAboutVisible())}
                         innerText={t.about.title()}
                     />
                 </div> */}

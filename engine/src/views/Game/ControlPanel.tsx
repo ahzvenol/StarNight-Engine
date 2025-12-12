@@ -1,6 +1,5 @@
 import type { IIconProps } from 'icon-park-solid/src/runtime'
 import type { Component } from 'solid-js'
-import type { Signal } from 'micro-reactive-solid'
 import { clsx } from 'clsx'
 import {
     AlignTextLeftOne,
@@ -23,7 +22,7 @@ import { translation } from '@/locales'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './ControlPanel.module.scss'
 
-export const ControlPanel: Component<{ showUI: Signal<boolean> }> = ({ showUI }) => {
+export const ControlPanel: Component<{ setUIHidden: () => void }> = ({ setUIHidden }) => {
     const t = translation.gaming.buttons
 
     const slot = store.local[-1]
@@ -43,7 +42,7 @@ export const ControlPanel: Component<{ showUI: Signal<boolean> }> = ({ showUI })
                     class={styles.Game_ControlPanel_button}
                     style={{ 'font-size': fsize() }}
                     ref={useSoundEffect('Click', 'Enter')}
-                    onClick={() => showUI(false)}
+                    onClick={() => setUIHidden()}
                 >
                     <PreviewCloseOne class={styles.Game_ControlPanel_icon} {...iconProps} />
                     <span class={styles.Game_ControlPanel_text}>{t.hide()}</span>

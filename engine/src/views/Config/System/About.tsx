@@ -4,11 +4,11 @@ import { store } from '@/store'
 import { translation } from '@/locales'
 import styles from './about.module.scss'
 
-export const About: Component<{ close: () => void }> = ({ close }) => {
+export const About: Component<{ setAboutHidden: () => void }> = ({ setAboutHidden }) => {
     const system = store.system
     return (
         <div class={styles.About_container}>
-            <div class={styles.About_Button_back} onClick={close}>
+            <div class={styles.About_Button_back} onClick={setAboutHidden}>
                 <Left class={styles.About_icon} theme="outline" size="35" strokeWidth={3} fill="#333333" />
             </div>
             {/* <div class={styles.About_title}>{t('subTitle')}</div> */}

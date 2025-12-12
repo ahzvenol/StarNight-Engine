@@ -16,21 +16,21 @@ export const CGElement: Component<{ i: number, cgs: GalleryGroup }> = ({ i, cgs 
             : unlocked().includes(item.condition)
     )
     const pointer = useSignal(-1)
-    const canShow = unlockedItems.length > 0
+    const isElementUnlocked = unlockedItems.length > 0
     const isMax = () => pointer() >= unlockedItems.length - 1
     const now = () => `url(${unlockedItems[pointer()].url})`
     const next = () => (isMax() ? '' : `,url(${unlockedItems[pointer() + 1].url})`)
     return (
-        <Show when={canShow || cgs.uncover !== undefined}>
+        <Show when={isElementUnlocked || cgs.uncover !== undefined}>
             <div
                 ref={useSoundEffect('Click', 'Enter')}
                 class={styles.Gallery_CG_content_element}
                 style={{ 'animation-delay': `${100 + i * 60}ms` }}
-                onClick={() => { if (canShow) pointer(0) }}
+                onClick={() => { if (isElementUnlocked) pointer(0) }}
             >
                 <div
                     class={styles.Gallery_CG_content_element_image}
-                    style={{ 'background-image': canShow ? `url(${cgs.cover})` : `url(${cgs.uncover})` }}
+                    style={{ 'background-image': isElementUnlocked ? `url(${cgs.cover})` : `url(${cgs.uncover})` }}
                 />
             </div>
             <Show when={pointer() >= 0}>
