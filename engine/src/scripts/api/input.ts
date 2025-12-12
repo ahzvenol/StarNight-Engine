@@ -14,8 +14,10 @@ StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.input = StarNight.useReactive({}) as Reactive<GameUIInputData>
 })
 
+export type GameUIInputIframe = { url: string } & InputResolve<unknown>
+
 interface GameUIInputData {
-    iframe: null | ({ url: string } & InputResolve<unknown>)
+    iframe: GameUIInputIframe | null
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.iframe(null))
@@ -32,8 +34,10 @@ export const iframe = Blocking<string, unknown>(
         }
 )
 
+export type GameUIInputText = { text?: string } & InputResolve<string>
+
 interface GameUIInputData {
-    text: null | ({ text?: string } & InputResolve<string>)
+    text: GameUIInputText | null
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.text(null))
@@ -59,8 +63,10 @@ declare module '@starnight/core' {
     }
 }
 
+export type GameUIInputChoices = Array<ChoiceItem<number | string> & InputResolve<void>>
+
 interface GameUIInputData {
-    choices: Array<ChoiceItem<number | string> & InputResolve<void>> | null
+    choices: GameUIInputChoices | null
 }
 
 StarNight.GameEvents.setup.subscribe(({ ui: { input } }) => input.choices(null))

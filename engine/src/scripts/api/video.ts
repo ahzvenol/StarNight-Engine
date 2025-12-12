@@ -4,11 +4,11 @@ import { System } from './index'
 
 declare module '@starnight/core' {
     interface GameUIInternalData {
-        video: Reactive<VideoItem | null>
+        video: Reactive<GameUIVideoItem | null>
     }
 }
 
-type VideoItem = { src: string, race: Function0<void> | null }
+export type GameUIVideoItem = { src: string, skip: boolean, resolve: Function0<void> }
 
 StarNight.GameEvents.setup.subscribe(({ ui }) => {
     ui.video = StarNight.useReactive(null)
@@ -24,7 +24,7 @@ export const use = ActScope(
                 src = `./static${src}`
                 const { ui: { video } } = context
                 const { promise, resolve } = Promise.withResolvers<void>()
-                video({ src, race: skip ? resolve : null })
+                video({ src, skip, resolve })
                 await promise.then(() => video(null))
                 System.cont()(context)
             }

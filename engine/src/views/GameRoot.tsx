@@ -6,7 +6,7 @@ import { createEffect, on, onCleanup, Show } from 'solid-js'
 import { Transition } from 'solid-transition-group'
 import { Content } from '@/utils/ui/Elements'
 import { onStoreReady } from '@/store'
-import { instance, starnight } from '@/store/starnight'
+import { instance, starnight, ui } from '@/store/starnight'
 import { Backlog } from '@/views/Game/Backlog'
 import { Game } from '@/views/Game/Game'
 import styles from '@/views/Game/Game.module.scss'
@@ -96,7 +96,7 @@ export const GameRoot: Component = () => {
                 </Show>
                 <Transition enterToClass={styles.Game_Backlog_in} exitToClass={styles.Game_Backlog_out}>
                     <Show when={GUIGameRootState() === 'Backlog'}>
-                        <Backlog />
+                        <Backlog backlog={ui().backlog()} />
                     </Show>
                 </Transition>
             </Content>

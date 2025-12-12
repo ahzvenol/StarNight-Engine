@@ -1,18 +1,18 @@
 import type { Component } from 'solid-js'
+import type { GameUIInputText } from '@/scripts/api/input'
 import { useSignal } from 'micro-reactive-solid'
 import { store } from '@/store'
-import { ui } from '@/store/starnight'
 import { useSoundEffect } from '../useSoundEffect'
 import styles from './TextInput.module.scss'
 
-export const TextInput: Component = () => {
+export const TextInput: Component<{ input: GameUIInputText }> = (props) => {
     const config = store.config
     const input = useSignal('')
     return (
         <div class={styles.Game_TextInput_container_outer}>
             <div class={styles.Game_TextInput_container} style={{ 'font-family': config.textboxfont() }}>
                 <div class={styles.Game_TextInput_container_inner}>
-                    <div class={styles.Game_TextInput_title}>{ui().input.text()?.text ?? 'Please Input'}</div>
+                    <div class={styles.Game_TextInput_title}>{props.input?.text ?? 'Please Input'}</div>
                     <input
                         class={styles.Game_TextInput_input}
                         onMouseDown={(e) => (e.target as HTMLInputElement).focus()}
@@ -21,7 +21,7 @@ export const TextInput: Component = () => {
                     />
                     <div
                         ref={useSoundEffect('Click', 'Enter')}
-                        onClick={() => ui().input.text()!.resolve(input())}
+                        onClick={() => props.input.resolve(input())}
                         class={styles.Game_TextInput_button}
                     >
                         OK

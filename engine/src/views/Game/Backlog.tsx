@@ -1,9 +1,9 @@
 import type { Component } from 'solid-js'
+import type { BacklogActData } from '@/scripts/api/say/base'
 import { CloseSmall, Return, VolumeNotice } from 'icon-park-solid'
 import { For, onCleanup, Show } from 'solid-js'
 import { once } from 'es-toolkit'
 import { Scrollbar } from '@/utils/ui/Scrollbar'
-import { ui } from '@/store/starnight'
 import { GUIGameRootState, useGame } from '@/views/GameRoot'
 import { suppress } from '@/utils/solid/suppress'
 import { translation } from '@/locales'
@@ -30,7 +30,7 @@ const ClipNode: Component<{ src: string }> = ({ src }) => {
     )
 }
 
-export const Backlog: Component = () => {
+export const Backlog: Component<{ backlog: Array<BacklogActData> }> = (props) => {
     const t = translation.gaming
     return (
         <div
@@ -55,7 +55,7 @@ export const Backlog: Component = () => {
                 track={<div class={styles.Game_Backlog_Scrollbar_track} />}
                 thumb={<div class={styles.Game_Backlog_Scrollbar_thumb} />}
                 content={(
-                    <For each={ui().backlog()}>
+                    <For each={props.backlog}>
                         {(act, i) => (
                             <div class={styles.Game_Backlog_item} style={{ 'animation-delay': `${(i() % 20) * 20}ms` }}>
                                 <div class={styles.Game_Backlog_item_layout_1}>

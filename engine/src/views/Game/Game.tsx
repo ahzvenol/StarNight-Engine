@@ -1,4 +1,4 @@
-import type { Accessor, Component } from 'solid-js'
+import type { Component } from 'solid-js'
 import { throttle } from 'es-toolkit'
 import { useSignal } from 'micro-reactive-solid'
 import { createEffect, Show } from 'solid-js'
@@ -16,12 +16,10 @@ import { TextInput } from './TextInput'
 import { Video } from './Video'
 import { Iframe } from './Iframe'
 
-export const showUI = useSignal(true)
-
 export const Game: Component = () => {
     log.info('GameUI组件函数被调用')
 
-    showUI(true)
+    const showUI = useSignal(true)
 
     // 为点击设置0.1秒节流
     const click = throttle(
@@ -45,10 +43,10 @@ export const Game: Component = () => {
 
     return (
         <Content>
-            <Stage />
+            <Stage view={ui().view} />
             <Show when={showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'}>
                 <div style={{ display: (ui().text() !== null && ui().input.choices() === null) ? 'contents' : 'none' }}>
-                    <TextBox text={ui().text as Accessor<HTMLElement>} name={ui().name} />
+                    <TextBox text={ui().text()!} name={ui().name()} />
                 </div>
             </Show>
             <div class={styles.Game_mask} onClick={() => click()} onContextMenu={() => showUI(false)} />
@@ -57,23 +55,23 @@ export const Game: Component = () => {
             </Show>
             <Show when={showUI() && ui().state.ui() === 0 && GUIGameRootState() !== 'Backlog'}>
                 <div style={{ display: (ui().text() !== null || ui().input.choices() !== null) ? 'contents' : 'none' }}>
-                    <ControlPanel />
+                    <ControlPanel showUI={showUI} />
                 </div>
             </Show>
             <Show when={ui().input.text() !== null}>
-                <TextInput />
+                <TextInput input={ui().input.text()!} />
             </Show>
             <Show when={ui().input.choices() !== null}>
-                <Choice />
+                <Choice choices={ui().input.choices()!} />
             </Show>
             <Show when={ui().video() !== null}>
-                <Video />
+                <Video item={ui().video()!} />
             </Show>
             <Show when={ui().state.click() !== 0}>
                 <div class={styles.Game_mask} />
             </Show>
             <Show when={ui().input.iframe() !== null}>
-                <Iframe />
+                <Iframe iframe={ui().input.iframe()!} />
             </Show>
         </Content>
     )

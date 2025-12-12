@@ -1,11 +1,11 @@
 import type { Component } from 'solid-js'
+import type { GameUIVideoItem } from '@/scripts/api/video'
 import { Content } from '@/utils/ui/Elements'
 import { store } from '@/store'
-import { ui } from '@/store/starnight'
 import { useEventListener } from '@/utils/solid/useEventListener'
 import styles from './Video.module.scss'
 
-export const Video: Component = () => {
+export const Video: Component<{ item: GameUIVideoItem }> = (props) => {
     const globalvolume = store.config.globalvolume
     return (
         <Content class={styles.Game_Video_container}>
@@ -16,10 +16,14 @@ export const Video: Component = () => {
                         document.visibilityState === 'hidden' ? ref.pause() : ref.play()
                     )
                 }}
-                src={ui().video()!.src}
+                src={props.item!.src}
                 autoplay
-                onClick={() => ui().video()!.race?.()}
-                onEnded={() => ui().video()!.race?.()}
+                onClick={() => {
+                    if (props.item.skip) {
+                        props.item.resolve()
+                    }
+                }}
+                onEnded={() => props.item.resolve()}
                 playsinline
                 webkit-playsinline
                 // @ts-expect-error 类型上不存在属性

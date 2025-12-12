@@ -1,5 +1,6 @@
 import type { IIconProps } from 'icon-park-solid/src/runtime'
 import type { Component } from 'solid-js'
+import type { Signal } from 'micro-reactive-solid'
 import { clsx } from 'clsx'
 import {
     AlignTextLeftOne,
@@ -20,10 +21,9 @@ import { useDialog } from '@/views/GlobalDialog/GlobalDialog'
 import { GUIRootState } from '@/views/GUIRoot'
 import { translation } from '@/locales'
 import { useSoundEffect } from '../useSoundEffect'
-import { showUI } from './Game'
 import styles from './ControlPanel.module.scss'
 
-export const ControlPanel: Component = () => {
+export const ControlPanel: Component<{ showUI: Signal<boolean> }> = ({ showUI }) => {
     const t = translation.gaming.buttons
 
     const slot = store.local[-1]

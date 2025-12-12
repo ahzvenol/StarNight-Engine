@@ -1,9 +1,8 @@
 import type { Component } from 'solid-js'
-import { ui } from '@/store/starnight'
 import styles from './Stage.module.scss'
 
-export const Stage: Component = () => {
+export const Stage: Component<{ view: HTMLCanvasElement }> = (props) => {
     return (
-        <div class={styles.Game_Stage_container}>{ui().view}</div>
+        <div class={styles.Game_Stage_container}>{props.view}</div>
     )
 }
