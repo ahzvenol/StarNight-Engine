@@ -49,6 +49,4 @@ class Logger {
 }
 
 // 不用静态函数是因为代码提示问题
-const log = new Logger()
-
-export { log }
+export const log = new Logger()
