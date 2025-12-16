@@ -6,8 +6,8 @@ import { isMobile, isTouchDevice } from './utils/checkEnv'
 import { log } from './utils/Logger'
 import { exitFullscreen, requestFullscreen } from './utils/fullscreen'
 
-// 禁止右键,禁止拖动
-document.oncontextmenu = document.onmousedown = () => false
+// 禁止右键开启上下文菜单
+document.oncontextmenu = () => false
 
 // 为触摸设备添加css类,通过:global(.mobile)控制样式
 if (isMobile() || isTouchDevice()) document.documentElement.classList.add('mobile')
