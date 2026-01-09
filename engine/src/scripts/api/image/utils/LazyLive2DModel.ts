@@ -1,4 +1,4 @@
-import type { JSONObject, ModelSettings, Live2DFactoryOptions, Live2DModel as ILive2DModel } from '@/lib/pixi-live2d'
+import type { JSONObject, ModelSettings, Live2DFactoryOptions, Live2DModel as ILive2DModel, BlinkParam } from '@/lib/pixi-live2d'
 import { Container } from 'pixi.js'
 
 const Live2DCubism2 = new Promise<void>((resolve, reject) => {
@@ -35,7 +35,12 @@ type Cache = {
 export class LazyLive2DModel extends Container {
     public model: ILive2DModel | null = null
 
-    protected cache: Map<keyof Cache, Cache[keyof Cache]> = new Map()
+    protected queue: Map<keyof Cache, Cache[keyof Cache]> = new Map()
+
+    protected enqueue<K extends keyof Cache>(key: K, value: Cache[K]) {
+        this.queue.delete(key)
+        this.queue.set(key, value)
+    }
 
     public constructor(
         public readonly source: string | JSONObject | ModelSettings,
@@ -53,7 +58,7 @@ export class LazyLive2DModel extends Container {
                 this.addChild(model)
                 this.emit('loaded')
                 // @ts-expect-error 类型...的参数不能赋给类型...的参数。
-                this.cache = this.cache.forEach(([value, key]) => this[key](...value))
+                this.queue = this.queue.forEach((value, key) => this[key](...value))
             })
     }
 
@@ -61,7 +66,7 @@ export class LazyLive2DModel extends Container {
         if (this.model) {
             return this.model.motion(...args)
         }
-        this.cache.set('motion', args)
+        this.enqueue('motion', args)
         return Promise.resolve(false)
     }
 
@@ -69,7 +74,7 @@ export class LazyLive2DModel extends Container {
         if (this.model) {
             return this.model.expression(...args)
         }
-        this.cache.set('expression', args)
+        this.enqueue('expression', args)
         return Promise.resolve(false)
     }
 
@@ -77,7 +82,7 @@ export class LazyLive2DModel extends Container {
         if (this.model) {
             return this.model.speak(...args)
         }
-        this.cache.set('speak', args)
+        this.enqueue('speak', args)
         return Promise.resolve(false)
     }
 
@@ -85,13 +90,13 @@ export class LazyLive2DModel extends Container {
         if (this.model) {
             return this.model.focus(...args)
         }
-        this.cache.set('focus', args)
+        this.enqueue('focus', args)
     }
 
     public blink(...args: Cache['blink']): void {
         if (this.model) {
             return this.model.internalModel.setBlinkParam(...args)
         }
-        this.cache.set('blink', { ...this.cache.get('blink') as Cache['blink'], ...args })
+        this.enqueue('blink', [{ ...this.queue.get('blink')?.[0] as Partial<BlinkParam> | undefined, ...args[0] }])
     }
 }
