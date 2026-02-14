@@ -1,18 +1,47 @@
 <!doctype html>
-<html lang="zh">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-        <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
-        <link rel="manifest" href="manifest.json" />
-        <title>Loading...</title>
-    </head>
+<html lang="zh-CN">
 
-    <body>
-        <noscript>You need to enable JavaScript to run this app.</noscript>
+<head>
+    <meta charset="utf-8" />
+    <title>Loading...</title>
+    <!-- 视口设置 -->
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+    <!-- 指定地址栏颜色 -->
+    <meta name="theme-color" content="#000000">
+    <!-- 指定浏览器内核 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <!-- 禁用格式检测 -->
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <!-- iOS PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Android PWA -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- 图标设置 -->
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/icon.png">
+    <style>
+        html {
+            background-color: black;
+            /* 禁用下拉刷新 */
+            overscroll-behavior: none;
+            /* 禁用 iOS 长按菜单 */
+            -webkit-touch-callout: none;
+            /* 禁用 iOS 点击高亮 */
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
 
-        <div id="root"></div>
+<body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
 
-        <script src="/src/index.tsx" type="module"></script>
-    </body>
+    <div id="root"></div>
+
+    <script src="/src/index.tsx" type="module"></script>
+</body>
+
 </html>
