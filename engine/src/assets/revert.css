@@ -1,0 +1,64 @@
+/* 语义标签样式恢复 */
+/* 加粗 */
+b {
+    font-weight: bolder;
+}
+/* 斜体 */
+i {
+    font-style: italic;
+}
+/* 下划线 */
+u {
+    text-decoration: underline;
+}
+/* 删除线 */
+s {
+    text-decoration: line-through;
+}
+/* 小号文字 */
+small {
+    font-size: 80%;
+}
+/* 上标和下标 */
+sub, sup {
+    position: relative;
+    font-size: 75%;
+    line-height: 0;
+    vertical-align: baseline;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+sup {
+    top: -0.5em;
+}
+/* 大号文字 */
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+h4 {
+    font-size: 1em;
+}
+
+h5 {
+    font-size: 0.83em;
+}
+
+h6 {
+    font-size: 0.67em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+}
