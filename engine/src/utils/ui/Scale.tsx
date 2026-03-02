@@ -1,36 +1,33 @@
 import type { Component, ParentProps } from 'solid-js'
-import { onMount } from 'solid-js'
+import { createEffect, on, onMount, splitProps } from 'solid-js'
 import { useEventListener } from '@/utils/solid/useEventListener'
 
-export const Scale: Component<ParentProps<{ width: number, height: number, mode: 'auto' | 'full' }>> = (props) => {
-    let el!: HTMLDivElement
-    let slot!: HTMLDivElement
+export type ScaleMode = 'fill' | 'fit-ratio'
+
+export const Scale: Component<ParentProps<{ width: number, height: number, mode: ScaleMode }>> = (props) => {
+    let el!: HTMLDivElement, slot!: HTMLDivElement
     function resize() {
-        const width = parseInt(getComputedStyle(el).getPropertyValue('width'))
-        const height = parseInt(getComputedStyle(el).getPropertyValue('height'))
-        if (props.mode == 'auto') {
+        const width = el.clientWidth, height = el.clientHeight
+        if (props.mode === 'fill') {
+            slot.style.setProperty('transform', `scale(${width / props.width},${height / props.height})`)
+        } else {
             if (width / height >= props.width / props.height) {
                 const scale = height / props.height
-                slot.style.transform = `scale(${scale}) translate(${(width - props.width * scale) / 2 / scale}px,0)`
+                slot.style.setProperty('transform', `translateX(${(width - props.width * scale) / 2}px) scale(${scale})`)
             } else {
                 const scale = width / props.width
-                slot.style.transform = `scale(${scale}) translate(0,${(height - props.height * scale) / 2 / scale}px)`
+                slot.style.setProperty('transform', `translateY(${(height - props.height * scale) / 2}px) scale(${scale})`)
             }
-        } else {
-            slot.style.transform = `scale(${width / props.width},${height / props.height})`
         }
     }
-    onMount(() => {
-        slot.style.transformOrigin = '0px 0px'
-        slot.style.width = props.width + 'px'
-        slot.style.height = props.height + 'px'
-        slot.style.position = 'absolute'
-        resize()
-        useEventListener('resize', resize)
-    })
+    onMount(() => (resize(), useEventListener('resize', resize)))
+    const config = splitProps(props, ['children'])[1]
+    createEffect(on(() => Object.values(config), resize, { defer: true }))
     return (
         <div ref={el} style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'absolute' }}>
-            <div ref={slot}>{props.children}</div>
+            <div ref={slot} style={{ position: 'absolute', width: `${props.width}px`, height: `${props.height}px`, 'transform-origin': '0 0' }}>
+                {props.children}
+            </div>
         </div>
     )
 }
